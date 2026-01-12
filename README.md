@@ -43,15 +43,10 @@
 ## Demo Video
 
 <div align="center">
-  <video controls muted playsinline width="90%" poster="assets/images/architecture.jpg">
-    <source src="demo.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+  <a href="https://youtu.be/NkG13PLTBz4">
+    <img src="https://img.youtube.com/vi/NkG13PLTBz4/hqdefault.jpg" width="90%" alt="Demo video on YouTube">
+  </a>
 </div>
-
-<p align="center">
-  <b>Direct download / open:</b> <a href="demo.mp4">demo.mp4</a>
-</p>
 
 ---
 

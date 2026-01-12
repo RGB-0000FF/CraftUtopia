@@ -43,15 +43,10 @@
 ## 演示视频
 
 <div align="center">
-  <video controls muted playsinline width="90%" poster="assets/images/architecture.jpg">
-    <source src="demo.mp4" type="video/mp4">
-    您的浏览器不支持视频播放。
-  </video>
+  <a href="https://youtu.be/NkG13PLTBz4">
+    <img src="https://img.youtube.com/vi/NkG13PLTBz4/hqdefault.jpg" width="90%" alt="YouTube 演示视频">
+  </a>
 </div>
-
-<p align="center">
-  <b>直接下载 / 打开：</b> <a href="demo.mp4">demo.mp4</a>
-</p>
 
 ---
 
