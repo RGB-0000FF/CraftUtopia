@@ -67,7 +67,13 @@
       "side": "left",
       "kind": "assignment",
       "text": "Workers 021-040 are grouped into five lanes. Pool summaries report lane counts and shared-lock status.",
-      "systemLog": "foreman-b INFO assign packet=B lanes=5 workers=20 blocks=1885 locks=shared_axis:x0",
+      "stage": 4
+    },
+    {
+      "time": "00:33.4",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Assign work: Foreman-B splits Packet B across five lanes for workers 021-040.",
       "stage": 4
     },
     {
@@ -75,8 +81,14 @@
       "agent": "worker-pool",
       "side": "right",
       "kind": "progress",
-      "text": "Pool B update: 16 workers placing blocks, 4 waiting on Gate A, zero writes against the locked seam.",
-      "systemLog": "worker-pool INFO packet=B active=16 waiting=4 placed=612 shared_axis_write=0",
+      "text": "Pool B update: 16 workers are placing blocks, 4 are waiting on Gate A, and there are zero writes against the locked seam.",
+      "stage": 4
+    },
+    {
+      "time": "00:39.0",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Receive message: Pool B reports active workers, waiting workers, placed blocks, and locked-seam status.",
       "stage": 4
     },
     {
@@ -85,7 +97,13 @@
       "side": "right",
       "kind": "exception",
       "text": "worker-027 reports a blocked path in lane 3. I am routing that lane around temporary scaffolding instead of pausing the entire pool.",
-      "systemLog": "worker-027 WARN packet=B blocked_path lane=3 workaround=reroute_tmp_scaffold",
+      "stage": 4
+    },
+    {
+      "time": "00:44.8",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Exception report: worker-027 reports a blocked path and reroutes lane 3 around temporary scaffolding.",
       "stage": 4
     },
     {
@@ -94,7 +112,13 @@
       "side": "left",
       "kind": "return",
       "text": "Pool B complete. The one blocked lane was rerouted, all lanes are aligned, and the diff is ready for the next gate.",
-      "systemLog": "foreman-b INFO packet=B complete workers=20 placed=1885 rerouted=1 diff=world/packet_b.diff.jsonl",
+      "stage": 4
+    },
+    {
+      "time": "00:59.8",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Receive message: Foreman-B completes Packet B and submits the aligned diff.",
       "stage": 4
     }
   ]

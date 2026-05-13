@@ -94,8 +94,14 @@
       "agent": "project-manager",
       "side": "left",
       "kind": "planning",
-      "text": "I split the build into five simple Foreman packets: A, B, C, D, and E. Each Foreman gets a 20-worker pool; worker chatter stays aggregated unless an exception affects the global run.",
-      "systemLog": "pm DEBUG partition foremans=A,B,C,D,E foreman_count=5 workers=100 pool_size=20 shared_lock=x0 checkpoints=9",
+      "text": "I split the build into five Foreman packets: A, B, C, D, and E. Each Foreman gets a 20-worker pool, and worker chatter stays aggregated unless an exception affects the global run.",
+      "stage": 3
+    },
+    {
+      "time": "00:19.0",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Plan work: Project Manager partitions the blueprint into five packets and sets shared checkpoints.",
       "stage": 3
     },
     {
@@ -104,7 +110,13 @@
       "side": "right",
       "kind": "ack",
       "text": "Packet A accepted. My pool owns workers 001-020 and will report only pool totals plus blocking exceptions.",
-      "systemLog": "foreman-a INFO packet=A workers=001-020 blocks=2140 checkpoints=gate_a",
+      "stage": 3
+    },
+    {
+      "time": "00:22.0",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Receive message: Foreman-A accepts Packet A and takes ownership of workers 001-020.",
       "stage": 3
     },
     {
@@ -112,8 +124,14 @@
       "agent": "foreman-b",
       "side": "right",
       "kind": "ack",
-      "text": "Packet B accepted. My pool owns workers 021-040 and will keep shared-lock writes at zero.",
-      "systemLog": "foreman-b INFO packet=B workers=021-040 blocks=1885 locks=shared_axis:x0",
+      "text": "Packet B accepted. My pool owns workers 021-040 and will avoid all writes on the shared locked seam.",
+      "stage": 3
+    },
+    {
+      "time": "00:22.8",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Receive message: Foreman-B accepts Packet B and records the shared-axis lock.",
       "stage": 3
     },
     {
@@ -121,8 +139,14 @@
       "agent": "foreman-c",
       "side": "right",
       "kind": "ack",
-      "text": "Packet C accepted. My pool owns workers 041-060 and will pause dependent rows until required gates are green.",
-      "systemLog": "foreman-c INFO packet=C workers=041-060 blocks=2515 checkpoints=gate_c retry_policy=max2",
+      "text": "Packet C accepted. My pool owns workers 041-060 and will pause dependent rows until the required gates are green.",
+      "stage": 3
+    },
+    {
+      "time": "00:23.6",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Receive message: Foreman-C accepts Packet C and registers its checkpoint dependencies.",
       "stage": 3
     },
     {
@@ -131,7 +155,13 @@
       "side": "right",
       "kind": "ack",
       "text": "Packet D accepted. My pool owns workers 061-080 and will route uncertain cells to review instead of guessing.",
-      "systemLog": "foreman-d INFO packet=D workers=061-080 blocks=1610 uncertain=23 gate=review_d",
+      "stage": 3
+    },
+    {
+      "time": "00:24.4",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Receive message: Foreman-D accepts Packet D and marks uncertain cells for review.",
       "stage": 3
     },
     {
@@ -140,7 +170,13 @@
       "side": "right",
       "kind": "ack",
       "text": "Packet E accepted. My pool owns workers 081-100 and will track temporary tags, cleanup, and diff collection.",
-      "systemLog": "foreman-e INFO packet=E workers=081-100 temp_tag_prefix=tmp/ diff_sink=world/*.diff.jsonl",
+      "stage": 3
+    },
+    {
+      "time": "00:25.2",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Receive message: Foreman-E accepts Packet E and takes ownership of staging, cleanup, and diff collection.",
       "stage": 3
     },
     {
@@ -149,7 +185,13 @@
       "side": "left",
       "kind": "dispatch",
       "text": "Foreman worker pools may start. Keep the right-side chat focused on pool summaries, checkpoint events, and only the worker exceptions that affect the global run.",
-      "systemLog": "pm INFO dispatch foreman_pools=5 workers=100 concurrency=100 chat_policy=aggregate_plus_exceptions",
+      "stage": 3
+    },
+    {
+      "time": "00:31.8",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Send message: Project Manager dispatches all five Foreman pools and starts the build phase.",
       "stage": 3
     },
     {
@@ -158,7 +200,13 @@
       "side": "left",
       "kind": "return",
       "text": "Worker-pool build phase complete. Foreman-A through Foreman-E flushed diffs, patches, checkpoints, temporary tags, and skill-cache updates for verification.",
-      "systemLog": "pm INFO complete placed=9274 corrected=7 temp=31 foreman_pools=5 workers=100 out=world/merged_state.json",
+      "stage": 5
+    },
+    {
+      "time": "01:09.4",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Receive message: Project Manager collects all Foreman outputs and prepares them for final verification.",
       "stage": 5
     }
   ]

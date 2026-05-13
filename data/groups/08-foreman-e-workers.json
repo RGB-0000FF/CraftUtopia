@@ -67,7 +67,13 @@
       "side": "left",
       "kind": "assignment",
       "text": "Workers 081-100 handle staging, temporary access, path markers, and diff collection. Every temporary block must carry a tmp/* tag.",
-      "systemLog": "foreman-e INFO assign packet=E staging=6 scaffold=8 cleanup=6 workers=20 temp_tag_prefix=tmp/",
+      "stage": 4
+    },
+    {
+      "time": "00:36.0",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Assign work: Foreman-E assigns staging, scaffolding, cleanup, and diff collection to workers 081-100.",
       "stage": 4
     },
     {
@@ -76,7 +82,13 @@
       "side": "right",
       "kind": "skill-detection",
       "text": "The pool repeated safe straight-line placement enough times to publish place_line with bounds, air_check, and rollback guards.",
-      "systemLog": "run-monitor INFO skill-cache append logs/skills.jsonl name=place_line samples=18 guards=bounds,air_check,rollback",
+      "stage": 4
+    },
+    {
+      "time": "00:46.0",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Skill update: Run Monitor publishes the place_line helper after repeated safe placement samples.",
       "stage": 4
     },
     {
@@ -85,7 +97,13 @@
       "side": "right",
       "kind": "cleanup",
       "text": "Temporary access blocks are indexed by tag: tmp/scaffold/main-01 and tmp/path/main-03. Cleanup can be deterministic during verification.",
-      "systemLog": "worker-091 INFO packet=E temp_ledger tags=tmp/scaffold/main-01,tmp/path/main-03 count=31",
+      "stage": 4
+    },
+    {
+      "time": "00:57.2",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Ledger update: worker-091 records temporary scaffold and path tags for deterministic cleanup.",
       "stage": 4
     },
     {
@@ -93,8 +111,14 @@
       "agent": "foreman-e",
       "side": "left",
       "kind": "return",
-      "text": "Pool E complete. All diff shards are collected, temporary tag ledger is closed, and final cleanup has zero unknown temporary blocks.",
-      "systemLog": "foreman-e INFO packet=E complete workers=20 temp=31 diff_shards=5 remaining_tmp_unknown=0",
+      "text": "Pool E complete. All diff shards are collected, the temporary tag ledger is closed, and final cleanup has zero unknown temporary blocks.",
+      "stage": 4
+    },
+    {
+      "time": "01:07.8",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Receive message: Foreman-E completes Packet E, closes the temporary ledger, and submits collected diff shards.",
       "stage": 4
     }
   ]

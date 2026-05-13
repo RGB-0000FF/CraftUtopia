@@ -1570,16 +1570,22 @@
     }
 
     function createSystemNote(event) {
-      const { message, group } = event;
+      const { message, group, stageId } = event;
       const note = document.createElement('div');
       const noteSide = message.side === 'left' ? 'left' : 'right';
       const isToolNote = message.toolRef || String(message.kind || '').includes('tool');
       note.className = `system-note is-entering side-${noteSide}${isToolNote ? ' is-tool' : ''}`;
+      note.dataset.chatStage = String(stageId);
       note.dataset.roomId = group.id;
       note.dataset.noteLabel = isToolNote ? 'TOOL' : 'SYS';
+      note.dataset.eventKind = message.kind || (isToolNote ? 'tool-call' : 'system-log');
       appendMentionedText(note, message.systemLog || message.note);
       note.addEventListener('animationend', () => note.classList.remove('is-entering'), { once: true });
       return note;
+    }
+
+    function isStandaloneNote(message) {
+      return Boolean(message && !message.text && (message.systemLog || message.note));
     }
 
     function createChatMessage(event, index, isTyping = false) {
@@ -1684,6 +1690,21 @@
       }
 
       const { message, group, stageId } = event;
+      if (isStandaloneNote(message)) {
+        const note = createSystemNote(event);
+        setRoom(group.id, index === 0 ? 'auto' : 'smooth');
+        chatFeed.append(note);
+        chatMessages = [...document.querySelectorAll('[data-chat-stage]')];
+        applyRoomVisibility();
+        setStage(stageId, note);
+        lockAutoScrollSync();
+        scrollChatToBottom(index);
+        playbackCursor = index + 1;
+        isMessagePending = false;
+        updatePlaybackControls();
+        return;
+      }
+
       const agent = group.agents[message.agent];
       if (!agent) {
         playbackCursor = index + 1;

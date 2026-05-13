@@ -66,8 +66,14 @@
       "agent": "foreman-a",
       "side": "left",
       "kind": "assignment",
-      "text": "Workers 001-020 split into four lanes. Worker Pool reports lane totals; only blocked lanes speak individually.",
-      "systemLog": "foreman-a INFO assign packet=A lanes=4 workers=20 blocks=2140 checkpoint=gate_a",
+      "text": "Workers 001-020 are split into four lanes. Worker Pool reports lane totals, and only blocked lanes speak individually.",
+      "stage": 4
+    },
+    {
+      "time": "00:32.8",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Assign work: Foreman-A splits Packet A across four lanes for workers 001-020.",
       "stage": 4
     },
     {
@@ -75,8 +81,14 @@
       "agent": "worker-pool",
       "side": "right",
       "kind": "progress",
-      "text": "Pool A update: 20/20 workers active, 740 blocks placed, shared seam still locked, no failed placements.",
-      "systemLog": "worker-pool INFO packet=A active=20 placed=740 failed=0 shared_axis_write=0",
+      "text": "Pool A update: 20/20 workers are active, 740 blocks are placed, the shared seam is still locked, and no placements have failed.",
+      "stage": 4
+    },
+    {
+      "time": "00:36.2",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Receive message: Pool A reports active workers, placed blocks, and shared-seam status.",
       "stage": 4
     },
     {
@@ -85,7 +97,13 @@
       "side": "left",
       "kind": "checkpoint",
       "text": "Gate A is green. I am releasing the next dependency and keeping approved diffs immutable.",
-      "systemLog": "foreman-a INFO checkpoint=gate_a placed=2140 hash=packetA:83fa",
+      "stage": 4
+    },
+    {
+      "time": "00:41.8",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Checkpoint update: Foreman-A marks Gate A as complete and releases dependent work.",
       "stage": 4
     },
     {
@@ -93,8 +111,14 @@
       "agent": "worker-pool",
       "side": "right",
       "kind": "return",
-      "text": "Pool A complete. Final lane summaries and diff shards are flushed; no worker-level chat needed beyond the aggregate report.",
-      "systemLog": "worker-pool INFO packet=A complete workers=20 placed=2140 diff=world/packet_a.diff.jsonl exceptions=0",
+      "text": "Pool A complete. Final lane summaries and diff shards are flushed; no worker-level chat is needed beyond the aggregate report.",
+      "stage": 4
+    },
+    {
+      "time": "00:58.6",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Receive message: Pool A completes Packet A and submits its diff shard.",
       "stage": 4
     }
   ]

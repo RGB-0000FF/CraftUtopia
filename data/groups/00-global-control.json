@@ -38,8 +38,14 @@
       "agent": "user",
       "side": "left",
       "kind": "message",
-      "text": "Start run from workspace/Craft_Utopia/tiantan.png. Target: build the visible Tiantan structure in Minecraft and write generated files under workspace/Craft_Utopia/runs/tiantan_build_001.",
-      "systemLog": "INFO argv=craft-run --image workspace/Craft_Utopia/tiantan.png --out runs/tiantan_build_001; cwd=workspace/Craft_Utopia",
+      "text": "Start a run from workspace/Craft_Utopia/tiantan.png. Target: build the visible Tiantan structure in Minecraft and write all generated files under workspace/Craft_Utopia/runs/tiantan_build_001.",
+      "stage": 0
+    },
+    {
+      "time": "00:00.0",
+      "side": "left",
+      "kind": "system-log",
+      "systemLog": "Route message: User submits the image path and output target to System Bot.",
       "stage": 0
     },
     {
@@ -47,8 +53,14 @@
       "agent": "system-bot",
       "side": "right",
       "kind": "ack",
-      "text": "Request accepted. I created the run directory, pinned the input checksum, and opened a Project Manager channel for planning.",
-      "systemLog": "INFO mkdir runs/tiantan_build_001/{input,vision,blueprint,plan,world,logs}; image_sha256=8f41b07c...",
+      "text": "Received the build request. I will create the work directory and open a Project Manager channel for planning.",
+      "stage": 0
+    },
+    {
+      "time": "00:01.0",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Send message: System Bot forwards the build request and image path to Project Manager.",
       "stage": 0
     },
     {
@@ -56,8 +68,14 @@
       "agent": "system-bot",
       "side": "right",
       "kind": "status",
-      "text": "Project Manager has a blueprint and a Foreman-A to Foreman-E plan. The 100 workers are grouped into five synchronized worker-pool rooms now.",
-      "systemLog": "orchestrator INFO pm_status=plan_ready blueprint=9274 placements foreman_pools=5 workers=100",
+      "text": "Project Manager has prepared the blueprint and the Foreman-A to Foreman-E plan. The 100 workers are now grouped into five synchronized worker-pool rooms.",
+      "stage": 3
+    },
+    {
+      "time": "00:32.0",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Update status: Project Manager reports that the blueprint and five Foreman worker pools are ready.",
       "stage": 3
     },
     {
@@ -65,8 +83,14 @@
       "agent": "system-bot",
       "side": "right",
       "kind": "final",
-      "text": "Run complete. Final outputs are final_world.schem, report.json, replay.jsonl, and a tarball with the raw execution logs.",
-      "systemLog": "INFO status=success package=runs/tiantan_build_001/final/craft_tiantan_build_001.tar.zst size=18.7MB",
+      "text": "Run complete. Final outputs include final_world.schem, report.json, replay.jsonl, and a tarball containing the raw execution logs.",
+      "stage": 5
+    },
+    {
+      "time": "01:22.0",
+      "side": "right",
+      "kind": "system-log",
+      "systemLog": "Package result: System Bot returns the final schematic, reports, replay file, and compressed log archive to the user.",
       "stage": 5
     }
   ]
