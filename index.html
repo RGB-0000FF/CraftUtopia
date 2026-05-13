@@ -1743,13 +1743,23 @@
         .sort((a, b) => a.seconds - b.seconds || a.group.order - b.group.order || a.messageIndex - b.messageIndex);
     }
 
+    const pageBaseUrl = new URL(window.location.href);
+    if (pageBaseUrl.pathname.endsWith('.html')) {
+      pageBaseUrl.pathname = pageBaseUrl.pathname.replace(/[^/]*$/, '');
+    } else if (!pageBaseUrl.pathname.endsWith('/')) {
+      pageBaseUrl.pathname = `${pageBaseUrl.pathname}/`;
+    }
+    pageBaseUrl.search = '';
+    pageBaseUrl.hash = '';
+    const siteAssetUrl = (path) => new URL(path, pageBaseUrl).toString();
+
     async function loadGroupRooms() {
-      const manifestResponse = await fetch('data/groups/manifest.json', { cache: 'no-store' });
+      const manifestResponse = await fetch(siteAssetUrl('data/groups/manifest.json'), { cache: 'no-store' });
       if (!manifestResponse.ok) throw new Error(`Group manifest HTTP ${manifestResponse.status}`);
       const manifest = await manifestResponse.json();
       const groupEntries = [...(manifest.groups || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
       const groups = await Promise.all(groupEntries.map(async (entry) => {
-        const response = await fetch(`data/groups/${entry.file}`, { cache: 'no-store' });
+        const response = await fetch(siteAssetUrl(`data/groups/${entry.file}`), { cache: 'no-store' });
         if (!response.ok) throw new Error(`${entry.file} HTTP ${response.status}`);
         const group = await response.json();
         return { ...entry, ...group, order: entry.order ?? group.order ?? 0 };
@@ -1760,7 +1770,7 @@
     async function bootLog() {
       try {
         const [dialogueResponse, groupData] = await Promise.all([
-          fetch('data/run-config.json', { cache: 'no-store' }),
+          fetch(siteAssetUrl('data/run-config.json'), { cache: 'no-store' }),
           loadGroupRooms()
         ]);
         if (!dialogueResponse.ok) throw new Error(`Run config HTTP ${dialogueResponse.status}`);
