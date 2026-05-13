@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CraftUtopia Live Agent Console</title>
+  <title>CraftUtopia Group Chat Run Log</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
@@ -149,6 +149,10 @@
       padding: clamp(14px, calc(28px * var(--ui-scale)), 32px);
     }
 
+    .status .topline {
+      display: none;
+    }
+
     .topline,
     .bottom-strip,
     .log-header {
@@ -282,10 +286,9 @@
       overflow: hidden;
       border: 1px solid rgba(243,229,195,0.16);
       background:
-        radial-gradient(circle at 50% 44%, rgba(213,170,98,0.18), transparent 22rem),
-        radial-gradient(circle at 46% 64%, rgba(116,214,196,0.16), transparent 20rem),
-        linear-gradient(180deg, rgba(4,8,6,0.20), rgba(4,8,6,0.72)),
-        url("assets/images/stage-preview.jpg") center / cover no-repeat;
+        radial-gradient(circle at 50% 44%, rgba(213,170,98,0.16), transparent 22rem),
+        radial-gradient(circle at 46% 64%, rgba(116,214,196,0.14), transparent 20rem),
+        linear-gradient(180deg, rgba(4,8,6,0.18), rgba(4,8,6,0.64));
       clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
       box-shadow: inset 0 0 100px rgba(213,170,98,0.08);
     }
@@ -293,95 +296,24 @@
     .gif-stage::before {
       content: "";
       position: absolute;
-      inset: 8%;
-      border: 1px dashed rgba(243,229,195,0.22);
-      border-radius: 50%;
-      animation: orbit 24s linear infinite;
-    }
-
-    .gif-stage::after {
-      content: "LIVE VOXEL WORLD PREVIEW";
-      position: absolute;
-      left: 20px;
-      bottom: 18px;
-      padding: 7px 10px;
-      border: 1px solid rgba(116,214,196,0.32);
-      color: #d8fff7;
-      background: rgba(4, 8, 6, 0.58);
-      font-family: var(--font-mono);
-      font-size: 0.63rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-    }
-
-    .scanline {
-      position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, transparent 0%, rgba(116,214,196,0.12) 48%, transparent 52% 100%);
-      transform: translateY(-70%);
-      animation: scan 4.2s ease-in-out infinite;
-      mix-blend-mode: screen;
-    }
-
-    .world-proxy {
-      position: absolute;
-      left: 50%;
-      top: 55%;
-      width: min(58vmin, 54vw, calc(520px * var(--ui-scale)));
-      height: min(58vmin, 54vw, calc(520px * var(--ui-scale)));
-      max-width: 520px;
-      max-height: 520px;
-      transform: translate(-50%, -50%) rotateX(60deg) rotateZ(45deg);
-      transform-style: preserve-3d;
-      transition: transform 560ms cubic-bezier(.2,.8,.2,1), filter 560ms ease;
-      filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.42));
-    }
-
-    .world-proxy::before {
-      content: "";
-      position: absolute;
-      inset: 0;
+      z-index: 1;
       background:
-        linear-gradient(rgba(243,229,195,0.13) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(243,229,195,0.13) 1px, transparent 1px),
-        radial-gradient(circle, rgba(213,170,98,0.16), transparent 60%);
-      background-size: 38px 38px, 38px 38px, auto;
-      border: 1px solid rgba(243,229,195,0.18);
-      box-shadow: 0 0 80px rgba(213,170,98,0.12);
+        linear-gradient(180deg, rgba(3,6,4,0.12), transparent 26%, transparent 70%, rgba(3,6,4,0.42)),
+        radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,0.50) 100%);
+      pointer-events: none;
     }
 
-    .voxel {
-      --x: 50%;
-      --y: 50%;
-      --h: 44px;
-      --size: 42px;
-      position: absolute;
-      left: var(--x);
-      top: var(--y);
-      width: var(--size);
-      height: var(--size);
-      transform: translate(-50%, -50%) translateZ(var(--h));
-      transform-style: preserve-3d;
-      animation: build-rise 5.2s ease-in-out infinite;
-      animation-delay: var(--delay, 0s);
-    }
-
-    .voxel::before,
-    .voxel::after,
-    .voxel i {
-      content: "";
+    .world-gif {
       position: absolute;
       inset: 0;
-      border: 1px solid rgba(243,229,195,0.25);
-      background: linear-gradient(135deg, rgba(111,138,87,0.92), rgba(20,45,34,0.96));
-      box-shadow: inset 0 0 18px rgba(255,255,255,0.08), 0 0 20px rgba(116,214,196,0.08);
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+      filter: saturate(1.04) contrast(1.03);
     }
-
-    .voxel::before { transform-origin: bottom; transform: rotateX(90deg); background: linear-gradient(180deg, rgba(37, 67, 50, 0.96), rgba(4, 8, 6, 0.96)); }
-    .voxel::after { transform-origin: right; transform: rotateY(-90deg); background: linear-gradient(180deg, rgba(213,170,98,0.55), rgba(39,27,14,0.98)); }
-    .voxel.hot i { background: linear-gradient(135deg, rgba(255,217,135,0.94), rgba(111,69,31,0.98)); border-color: rgba(243,229,195,0.46); }
-    .voxel.tall { --h: 96px; --size: 48px; }
-    .voxel.core { --h: 150px; --size: 58px; }
 
     .side-telemetry {
       position: absolute;
@@ -397,6 +329,72 @@
       backdrop-filter: blur(14px);
       clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
       box-shadow: 0 18px 44px rgba(0,0,0,0.34);
+    }
+
+    .skill-library {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      z-index: 4;
+      width: min(250px, 42%);
+      padding: 12px;
+      border: 1px solid rgba(255,217,135,0.22);
+      background:
+        radial-gradient(circle at 0 0, rgba(255,217,135,0.12), transparent 9rem),
+        linear-gradient(180deg, rgba(4,8,6,0.76), rgba(4,8,6,0.50));
+      backdrop-filter: blur(14px);
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+      box-shadow: 0 18px 44px rgba(0,0,0,0.34);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(0.96);
+      transition: opacity 240ms ease, transform 240ms ease;
+    }
+
+    .skill-library.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .skill-library h3 {
+      margin: 0 0 9px;
+      color: var(--gold-hot);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 900;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .skill-list {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .skill-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 9px;
+      border: 1px solid rgba(243,229,195,0.10);
+      color: var(--bone);
+      background: rgba(13,28,22,0.54);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .skill-list span {
+      color: var(--parchment);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .metric {
@@ -543,15 +541,16 @@
     .log-board {
       display: grid;
       grid-template-rows: auto minmax(0, 1fr);
-      padding: clamp(14px, calc(27px * var(--ui-scale)), 32px);
+      width: min(1280px, 100%);
+      justify-self: center;
+      padding: clamp(12px, calc(18px * var(--ui-scale)), 22px);
       clip-path: none;
-      border-radius: 30px;
-      border-color: rgba(213,170,98,0.28);
+      border-radius: 22px;
+      border-color: rgba(213,170,98,0.18);
       background:
-        radial-gradient(circle at 18% 0%, rgba(255,217,135,0.16), transparent 22rem),
-        radial-gradient(circle at 88% 22%, rgba(116,214,196,0.13), transparent 19rem),
-        linear-gradient(155deg, rgba(18, 31, 24, 0.94), rgba(4, 8, 6, 0.84) 62%, rgba(17, 12, 6, 0.92));
-      box-shadow: 0 36px 100px rgba(0,0,0,0.50), inset 0 1px rgba(255,255,255,0.10);
+        radial-gradient(circle at 18% 0%, rgba(255,217,135,0.10), transparent 22rem),
+        linear-gradient(155deg, rgba(18, 31, 24, 0.90), rgba(4, 8, 6, 0.84) 62%, rgba(17, 12, 6, 0.88));
+      box-shadow: 0 24px 70px rgba(0,0,0,0.42), inset 0 1px rgba(255,255,255,0.08);
     }
 
     .log-board::after {
@@ -563,9 +562,9 @@
 
     .log-header {
       z-index: 2;
-      margin-bottom: 16px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(243,229,195,0.10);
+      margin-bottom: 10px;
+      padding-bottom: 0;
+      border-bottom: 0;
     }
 
     .chat-shell {
@@ -716,34 +715,18 @@
     }
 
     .log-title p {
-      margin: 0 0 6px;
+      margin: 0;
       color: var(--gold-hot);
       font-family: var(--font-mono);
-      font-size: 0.84rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.10em;
       text-transform: uppercase;
     }
 
     .log-title,
     .log-actions {
       min-width: 0;
-    }
-
-    .log-title h2 {
-      font-size: clamp(2.05rem, calc(2.7rem * var(--ui-scale)), 3.7rem);
-      letter-spacing: -0.045em;
-      overflow-wrap: anywhere;
-    }
-
-    .sys-badge {
-      padding: 9px 12px;
-      border: 1px solid rgba(116,214,196,0.34);
-      color: #d8fff7;
-      background: linear-gradient(180deg, rgba(116,214,196,0.16), rgba(116,214,196,0.06));
-      border-radius: 999px;
-      box-shadow: 0 0 28px rgba(116,214,196,0.10);
-      font-size: 0.84rem;
     }
 
     .log-actions {
@@ -803,14 +786,6 @@
       filter: grayscale(0.18);
     }
 
-    .step-progress {
-      color: rgba(243,229,195,0.56);
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-    }
-
     .chat-feed {
       position: relative;
       z-index: 2;
@@ -855,17 +830,6 @@
       font-size: clamp(0.9rem, calc(0.96rem * var(--ui-scale)), 1.14rem);
       line-height: 1.45;
       overflow-wrap: break-word;
-    }
-
-    .room-intro::before {
-      content: "GROUP INTRO";
-      display: block;
-      margin-bottom: 5px;
-      color: var(--gold-hot);
-      font-family: var(--font-mono);
-      font-size: 0.66rem;
-      font-weight: 900;
-      letter-spacing: 0.16em;
     }
 
     .agent-mention {
@@ -1220,19 +1184,6 @@
       50% { opacity: 1; transform: scale(1.16); }
     }
 
-    @keyframes orbit { to { transform: rotate(360deg); } }
-
-    @keyframes scan {
-      0%, 100% { transform: translateY(-75%); opacity: 0; }
-      18%, 76% { opacity: 1; }
-      58% { transform: translateY(75%); }
-    }
-
-    @keyframes build-rise {
-      0%, 100% { transform: translate(-50%, -50%) translateZ(var(--h)); filter: brightness(0.92); }
-      50% { transform: translate(-50%, -50%) translateZ(calc(var(--h) + 18px)); filter: brightness(1.16); }
-    }
-
     @keyframes log-pop {
       0% { opacity: 0; transform: translateY(18px) scale(0.94); filter: blur(3px); }
       58% { opacity: 1; transform: translateY(-5px) scale(1.025); filter: blur(0); }
@@ -1250,11 +1201,12 @@
       .app {
         min-height: 100svh;
         grid-template-columns: 1fr;
-        grid-template-rows: minmax(0, 1.34fr) minmax(270px, 0.66fr);
+        grid-template-rows: minmax(240px, 0.72fr) minmax(320px, 1fr);
         padding: 12px;
       }
 
       .side-telemetry { width: 150px; }
+      .skill-library { width: 190px; }
       .chat-feed { gap: 8px; }
       .system-note { margin: 0 24px 2px 28px; }
     }
@@ -1267,16 +1219,17 @@
       .live-chip { display: none; }
       .bottom-strip { min-height: 48px; padding: 0 12px; }
       .side-telemetry { top: 10px; right: 10px; width: 132px; }
-      .world-proxy { width: 330px; height: 330px; }
+      .skill-library { right: 10px; bottom: 10px; width: 154px; padding: 9px; }
+      .skill-library h3 { margin-bottom: 6px; font-size: 0.56rem; }
+      .skill-list { gap: 5px; }
+      .skill-list li { padding: 6px 7px; font-size: 0.64rem; }
+      .skill-list span { font-size: 0.56rem; }
       .log-board { padding: 16px; border-radius: 22px; }
       .log-header { align-items: flex-start; flex-direction: column; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; }
       .log-title { min-width: 0; }
       .log-title p { font-size: 0.68rem; letter-spacing: 0.13em; }
-      .log-title h2 { font-size: 1.85rem; white-space: normal; }
-      .sys-badge { font-size: 0.68rem; padding: 7px 9px; }
       .log-actions { justify-content: flex-start; }
       .step-button { min-height: 34px; padding: 7px 10px; font-size: 0.68rem; }
-      .step-progress { font-size: 0.64rem; }
       .chat-shell { grid-template-columns: 1fr; border-radius: 18px; }
       .room-list { display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 8px; border-right: 0; border-bottom: 1px solid rgba(243,229,195,0.10); }
       .room-list-header { display: none; }
@@ -1322,24 +1275,22 @@
       </header>
 
       <div class="visual-wrap">
-        <div class="gif-stage" aria-label="Live voxel world preview" tabindex="0">
-          <div class="scanline" aria-hidden="true"></div>
-          <div class="world-proxy" id="world-proxy" aria-hidden="true">
-            <div class="voxel core hot" style="--x: 50%; --y: 42%; --delay: -.4s"><i></i></div>
-            <div class="voxel tall" style="--x: 38%; --y: 54%; --delay: -.9s"><i></i></div>
-            <div class="voxel tall hot" style="--x: 62%; --y: 54%; --delay: -1.2s"><i></i></div>
-            <div class="voxel" style="--x: 28%; --y: 66%; --delay: -1.6s"><i></i></div>
-            <div class="voxel" style="--x: 50%; --y: 66%; --delay: -2s"><i></i></div>
-            <div class="voxel" style="--x: 72%; --y: 66%; --delay: -2.4s"><i></i></div>
-            <div class="voxel tall" style="--x: 38%; --y: 78%; --delay: -2.8s"><i></i></div>
-            <div class="voxel hot" style="--x: 62%; --y: 78%; --delay: -3.2s"><i></i></div>
-          </div>
+        <div class="gif-stage" aria-label="Minecraft replay preview" tabindex="0">
+          <img class="world-gif" src="素材/replay_videos_gif/2026_05_12_23_48_52.gif" alt="Minecraft replay preview">
         </div>
 
         <aside class="side-telemetry" aria-label="Runtime metrics">
-          <div class="metric" style="--value: 32%"><span>Blueprint</span><strong id="metric-a">32%</strong><small>Constraints extracted and structural sketch in progress</small></div>
-          <div class="metric" style="--value: 18%"><span>Agent Sync</span><strong id="metric-b">18%</strong><small>Planner is preparing the first build broadcast</small></div>
-          <div class="metric" style="--value: 06%"><span>Blocks</span><strong id="metric-c">006</strong><small>Preview voxels initialized for the live stage</small></div>
+          <div class="metric" style="--value: 10%"><span>Build</span><strong id="metric-a">10%</strong><small>Current construction completion</small></div>
+          <div class="metric" style="--value: 10%"><span>Time</span><strong id="metric-b">00:00.2</strong><small>Elapsed runtime</small></div>
+        </aside>
+
+        <aside class="skill-library" id="skill-library" aria-label="Skill library">
+          <h3>Skill Library</h3>
+          <ul class="skill-list">
+            <li>place_line <span>ready</span></li>
+            <li>air_check <span>guard</span></li>
+            <li>rollback <span>guard</span></li>
+          </ul>
         </aside>
       </div>
 
@@ -1350,18 +1301,14 @@
       <header class="log-header">
         <div class="log-title">
           <p id="log-kicker">Operational Agent Dialogue</p>
-          <h2 id="log-title">Design-Build Trace</h2>
         </div>
         <div class="log-actions">
-          <div class="sys-badge mono" id="log-badge">CORE ROLE MODE</div>
           <button class="step-button" id="playback-next" type="button">Next Message</button>
-          <span class="step-progress" id="playback-progress">0 / 0</span>
         </div>
       </header>
 
       <div class="chat-shell">
         <nav class="room-list" id="room-list" aria-label="Dialogue room switcher">
-          <p class="room-list-header">Group Chats</p>
         </nav>
 
         <section class="chat-feed" id="chat-feed" aria-label="Agent chat transcript">
@@ -1387,6 +1334,7 @@
     let playbackCursor = 0;
     let isMessagePending = false;
     let activeRoom = '';
+    let skillLibraryUnlocked = false;
     let mentionRegex = null;
     const mentionAccentByTerm = new Map();
 
@@ -1396,14 +1344,11 @@
     let roomTabs = [];
     const chatFeed = document.querySelector('#chat-feed');
     const metrics = document.querySelectorAll('.metric');
-    const metricText = [document.querySelector('#metric-a'), document.querySelector('#metric-b'), document.querySelector('#metric-c')];
+    const metricText = [document.querySelector('#metric-a'), document.querySelector('#metric-b')];
     const systemLine = document.querySelector('#system-line');
-    const worldProxy = document.querySelector('#world-proxy');
+    const skillLibrary = document.querySelector('#skill-library');
     const logKicker = document.querySelector('#log-kicker');
-    const logTitle = document.querySelector('#log-title');
-    const logBadge = document.querySelector('#log-badge');
     const playbackNext = document.querySelector('#playback-next');
-    const playbackProgress = document.querySelector('#playback-progress');
 
     function updateUiScale() {
       const viewport = window.visualViewport || window;
@@ -1597,7 +1542,7 @@
     }
 
     function renderRoomList(groups, entryGroup) {
-      roomList.innerHTML = '<p class="room-list-header">Group Chats</p>';
+      roomList.replaceChildren();
       groups.forEach((group) => {
         const button = document.createElement('button');
         button.className = 'room-tab';
@@ -1708,7 +1653,6 @@
     function updatePlaybackControls() {
       const total = playbackEvents.length;
       const shown = Math.min(playbackCursor, total);
-      if (playbackProgress) playbackProgress.textContent = `${shown} / ${total}`;
       if (!playbackNext) return;
 
       playbackNext.disabled = isMessagePending || shown >= total || total === 0;
@@ -1763,7 +1707,9 @@
       const completeMessage = () => {
         if (typingDelay > 0) finishTyping(article, message);
         if (message.systemLog || message.note) chatFeed.append(createSystemNote(event));
+        if (message.kind === 'skill-detection') skillLibraryUnlocked = true;
         applyRoomVisibility();
+        setStage(stageId, article);
         lockAutoScrollSync();
         scrollChatToBottom(index);
         playbackCursor = index + 1;
@@ -1785,6 +1731,8 @@
       isAutoScrolling = false;
       playbackCursor = 0;
       isMessagePending = false;
+      skillLibraryUnlocked = false;
+      skillLibrary?.classList.remove('is-visible');
       chatFeed.replaceChildren();
       chatFeed.append(...groupRooms.map(createRoomIntro));
       chatMessages = [];
@@ -1806,7 +1754,8 @@
       if (!stage) return;
 
       if (systemLine) appendMentionedText(systemLine, stage.system);
-      worldProxy.style.transform = `translate(${stage.tilt}`;
+      const isSkillMoment = activeMessage?.dataset.eventKind === 'skill-detection';
+      skillLibrary?.classList.toggle('is-visible', skillLibraryUnlocked || isSkillMoment);
 
       metricText.forEach((node, metricIndex) => { node.textContent = stage.metrics[metricIndex]; });
       metrics.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values[metricIndex]); });
@@ -1904,9 +1853,7 @@
         playbackEvents = buildPlaybackEvents(groupRooms);
         activeRoom = groupData.manifest.entryGroup || groupRooms[0]?.id || '';
 
-        logKicker.textContent = groupData.manifest.title || log.meta?.kicker || logKicker.textContent;
-        logTitle.textContent = log.meta?.title || logTitle.textContent;
-        logBadge.textContent = 'GROUP CHAT MODE';
+        if (logKicker) logKicker.textContent = groupData.manifest.title || log.meta?.kicker || logKicker.textContent;
         if (systemLine) appendMentionedText(systemLine, log.meta?.systemIntro || systemLine.textContent);
 
         renderPhaseControls();
