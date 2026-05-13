@@ -1,0 +1,121 @@
+{
+  "id": "pm-architecture",
+  "title": "Planner Worker",
+  "description": "Planner log for splitting the placement file into bounded jobs, shared locks, checkpoints, and retry behavior before build workers start.",
+  "agents": {
+    "system-bot": {
+      "name": "run-orchestrator",
+      "initials": "RUN",
+      "type": "orchestrator",
+      "accent": "#72ffd1",
+      "avatar": {
+        "skin": "#6d7f8f",
+        "hair": "#123235",
+        "shirt": "#14534a",
+        "trim": "#72ffd1",
+        "eyes": "#001f1a",
+        "accessory": "book"
+      }
+    },
+    "project-manager": {
+      "name": "planner",
+      "initials": "PLN",
+      "type": "manager",
+      "accent": "#ffd35a",
+      "avatar": {
+        "skin": "#d99a64",
+        "hair": "#5a3518",
+        "shirt": "#704418",
+        "trim": "#ffd35a",
+        "eyes": "#18110a",
+        "accessory": "crown"
+      }
+    },
+    "foreman-a": {
+      "name": "west-foreman",
+      "initials": "W-F",
+      "type": "foreman",
+      "accent": "#ff9b45",
+      "avatar": {
+        "skin": "#c17b4f",
+        "hair": "#2a211b",
+        "shirt": "#b15a18",
+        "trim": "#ff9b45",
+        "eyes": "#120b08",
+        "accessory": "hardhat"
+      }
+    },
+    "foreman-b": {
+      "name": "east-foreman",
+      "initials": "E-F",
+      "type": "foreman",
+      "accent": "#f06f9f",
+      "avatar": {
+        "skin": "#b96f52",
+        "hair": "#401b2c",
+        "shirt": "#8d2d51",
+        "trim": "#f06f9f",
+        "eyes": "#160713",
+        "accessory": "flag"
+      }
+    }
+  },
+  "messages": [
+    {
+      "time": "00:17.8",
+      "agent": "system-bot",
+      "side": "left",
+      "kind": "handoff",
+      "text": "Loaded workspace/Craft_Utopia/runs/tiantan_build_001/blueprint/placements.jsonl and scaffold_hints.json. Planning output will be written to workspace/Craft_Utopia/runs/tiantan_build_001/plan.",
+      "systemLog": "planner INFO open placements rows=9274 bbox=(-24,63,-18)..(24,95,21) hints=41"
+    },
+    {
+      "time": "00:19.0",
+      "agent": "project-manager",
+      "side": "right",
+      "kind": "thinking",
+      "text": "Splitting by x-volume is safer than splitting by object label. I am keeping column x=0 locked so the mirrored roof ribs cannot overwrite the center seam.",
+      "systemLog": "planner DEBUG partition west=x[-24,-1], east=x[1,24], shared=x[0]; lockfile=plan/locks.json"
+    },
+    {
+      "time": "00:21.2",
+      "agent": "project-manager",
+      "side": "right",
+      "kind": "planning",
+      "text": "Created two region files and six worker queues. Entrance trim stays in a gated queue until both roof checkpoints pass.",
+      "systemLog": "planner INFO wrote plan/west.json plan/east.json plan/checkpoints.json retry_policy=max2 backoff=750ms"
+    },
+    {
+      "time": "00:23.0",
+      "agent": "foreman-a",
+      "side": "left",
+      "kind": "ack",
+      "text": "west-foreman: builder-01 gets foundation and lower walls, builder-02 gets west roof rows, builder-03 owns movement markers and scaffold cleanup tags.",
+      "systemLog": "queue INFO publish west jobs=3 write_scope=plan/west.json readonly=shared_axis:x0 server=127.0.0.1:25565"
+    },
+    {
+      "time": "00:24.2",
+      "agent": "foreman-b",
+      "side": "left",
+      "kind": "ack",
+      "text": "east-foreman: mirror confirmed west geometry, stage the entrance supports, and wait for checkpoint roof_rib_alignment before closing the arch.",
+      "systemLog": "queue INFO publish east jobs=3 mirror=x*-1 delayed=entry_arch.close checkpoints=foundation_alignment,roof_rib_alignment"
+    },
+    {
+      "time": "00:26.0",
+      "agent": "project-manager",
+      "side": "right",
+      "kind": "dispatch",
+      "text": "Build workers may start. Stream block diffs to world/*.diff.jsonl and write any temporary blocks with tmp tags so verification can remove them deterministically.",
+      "systemLog": "planner INFO dispatch build_pool concurrency=6 diff_sink=world/*.diff.jsonl temp_tag_prefix=tmp/"
+    },
+    {
+      "time": "00:31.8",
+      "agent": "system-bot",
+      "side": "left",
+      "kind": "return",
+      "text": "Planning stage complete. Returning west/east job files, locks, checkpoints, and retry policy to the run console.",
+      "systemLog": "planner INFO exit=0 wrote plan/{west,east,locks,checkpoints,retry_policy}.json"
+    }
+  ]
+}

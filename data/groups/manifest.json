@@ -1,0 +1,30 @@
+{
+  "title": "CraftUtopia Experiment Run Log",
+  "entryGroup": "global-control",
+  "groups": [
+    {
+      "file": "00-global-control.json",
+      "order": 0
+    },
+    {
+      "file": "01-designer-lab.json",
+      "order": 1
+    },
+    {
+      "file": "02-pm-architecture.json",
+      "order": 2
+    },
+    {
+      "file": "03-foreman-west.json",
+      "order": 3
+    },
+    {
+      "file": "04-foreman-east.json",
+      "order": 4
+    },
+    {
+      "file": "05-audit-return.json",
+      "order": 5
+    }
+  ]
+}

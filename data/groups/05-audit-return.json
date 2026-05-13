@@ -1,0 +1,121 @@
+{
+  "id": "audit-return",
+  "title": "Verification Console",
+  "description": "Final verification log comparing the merged Minecraft world against placements.jsonl, applying a narrow patch, removing tagged temporary blocks, and packaging replay artifacts.",
+  "agents": {
+    "system-bot": {
+      "name": "run-orchestrator",
+      "initials": "RUN",
+      "type": "orchestrator",
+      "accent": "#72ffd1",
+      "avatar": {
+        "skin": "#6d7f8f",
+        "hair": "#123235",
+        "shirt": "#14534a",
+        "trim": "#72ffd1",
+        "eyes": "#001f1a",
+        "accessory": "book"
+      }
+    },
+    "project-manager": {
+      "name": "planner",
+      "initials": "PLN",
+      "type": "manager",
+      "accent": "#ffd35a",
+      "avatar": {
+        "skin": "#d99a64",
+        "hair": "#5a3518",
+        "shirt": "#704418",
+        "trim": "#ffd35a",
+        "eyes": "#18110a",
+        "accessory": "crown"
+      }
+    },
+    "worker-01": {
+      "name": "builder-01",
+      "initials": "B1",
+      "type": "worker",
+      "accent": "#ffcf3f",
+      "avatar": {
+        "skin": "#b7754d",
+        "hair": "#2b1c13",
+        "shirt": "#3158b7",
+        "trim": "#ffcf3f",
+        "eyes": "#0d1423",
+        "accessory": "pickaxe"
+      }
+    },
+    "worker-06": {
+      "name": "builder-06",
+      "initials": "B6",
+      "type": "worker",
+      "accent": "#b9f06c",
+      "avatar": {
+        "skin": "#a96f52",
+        "hair": "#203315",
+        "shirt": "#4f8424",
+        "trim": "#b9f06c",
+        "eyes": "#111d08",
+        "accessory": "torch"
+      }
+    }
+  },
+  "messages": [
+    {
+      "time": "01:10.6",
+      "agent": "system-bot",
+      "side": "left",
+      "kind": "handoff",
+      "text": "Loaded merged_state.json, placements.jsonl, west/east diffs, and tmp tag ledger from workspace/Craft_Utopia/runs/tiantan_build_001. Starting verification.",
+      "systemLog": "verify INFO open world=world/merged_state.json blueprint=blueprint/placements.jsonl diffs=2 tmp_tags=2"
+    },
+    {
+      "time": "01:12.0",
+      "agent": "project-manager",
+      "side": "right",
+      "kind": "audit",
+      "text": "Coverage check is clean except for three entrance-detail rows. Silhouette and roof symmetry are within tolerance after the west row patch.",
+      "systemLog": "verify INFO coverage placed=9271 expected=9274 missing=0 material_mismatch=3 symmetry_delta=0.018"
+    },
+    {
+      "time": "01:14.4",
+      "agent": "project-manager",
+      "side": "right",
+      "kind": "correction",
+      "text": "Issuing a small whitelist patch: move two lanterns one block inward and swap one lower entry lip block to dark prismarine. Roof and foundation stay locked.",
+      "systemLog": "verify INFO patch write audit/patch_entry_details.json ops=3 lock=roof,foundation rollback=world/merged_state.pre_patch.json"
+    },
+    {
+      "time": "01:16.2",
+      "agent": "worker-06",
+      "side": "right",
+      "kind": "patch-apply",
+      "text": "Applying the entrance patch exactly as listed. Diff monitor shows only the three approved coordinates changed.",
+      "systemLog": "builder-06 stdout apply_patch audit/patch_entry_details.json changed=3 rejected=0 protected_hits=0"
+    },
+    {
+      "time": "01:17.5",
+      "agent": "worker-01",
+      "side": "right",
+      "kind": "cleanup",
+      "text": "Removing temporary blocks by tag ID: tmp/scaffold/west-01 and tmp/path/north-03. No visual sweep or manual deletion.",
+      "systemLog": "builder-01 stdout cleanup tags=tmp/scaffold/west-01,tmp/path/north-03 removed=31 remaining_tmp=0"
+    },
+    {
+      "time": "01:19.4",
+      "agent": "project-manager",
+      "side": "right",
+      "kind": "audit-pass",
+      "text": "Final audit passed. The world diff matches the blueprint after the approved patch, and no temporary tags remain in the exported schematic.",
+      "systemLog": "verify INFO pass final_blocks=9274 checksum=0f33d0a9... report=audit/report.json final=final/final_world.schem"
+    },
+    {
+      "time": "01:21.2",
+      "agent": "system-bot",
+      "side": "left",
+      "kind": "return",
+      "text": "Packaging final_world.schem, report.json, replay.jsonl, logs/*.log, and the original input metadata for the run console.",
+      "systemLog": "package INFO tar --zstd -cf final/craft_tiantan_build_001.tar.zst final_world.schem audit/report.json logs/*.log replay.jsonl run.json"
+    }
+  ]
+}

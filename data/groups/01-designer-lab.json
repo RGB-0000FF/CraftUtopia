@@ -1,0 +1,104 @@
+{
+  "id": "designer-lab",
+  "title": "Vision and Blueprint Worker",
+  "description": "Image-to-schematic worker log with concrete command invocations, output paths, and stdout-style reconstruction notes.",
+  "agents": {
+    "system-bot": {
+      "name": "run-orchestrator",
+      "initials": "RUN",
+      "type": "orchestrator",
+      "accent": "#72ffd1",
+      "avatar": {
+        "skin": "#6d7f8f",
+        "hair": "#123235",
+        "shirt": "#14534a",
+        "trim": "#72ffd1",
+        "eyes": "#001f1a",
+        "accessory": "book"
+      }
+    },
+    "architect": {
+      "name": "vision-blueprint",
+      "initials": "VIS",
+      "type": "designer",
+      "accent": "#68e0ff",
+      "avatar": {
+        "skin": "#d79a68",
+        "hair": "#4b2b20",
+        "shirt": "#106a86",
+        "trim": "#68e0ff",
+        "eyes": "#062b34",
+        "accessory": "ruler"
+      }
+    }
+  },
+  "messages": [
+    {
+      "time": "00:02.5",
+      "agent": "system-bot",
+      "side": "left",
+      "kind": "handoff",
+      "text": "Mounted input image at workspace/Craft_Utopia/tiantan.png. Writing vision outputs to workspace/Craft_Utopia/runs/tiantan_build_001/vision and block exports to workspace/Craft_Utopia/runs/tiantan_build_001/blueprint.",
+      "systemLog": "vision-blueprint INFO read image size=1536x864 mode=RGB exif=none sha256=8f41b07c..."
+    },
+    {
+      "time": "00:03.4",
+      "agent": "architect",
+      "side": "right",
+      "kind": "thinking",
+      "text": "Manual check before tool calls: front face is usable; back side is not visible. I marked the roof lip, entrance lanterns, and right-side trim as low-confidence zones.",
+      "systemLog": "vision-blueprint DEBUG cues saved to vision/cues.json: footprint=oval-ish, symmetry_axis=x0, tiers=3, occluded_faces=back,north-east"
+    },
+    {
+      "time": "00:05.2",
+      "agent": "architect",
+      "side": "right",
+      "kind": "tool-call",
+      "toolRef": "trellis",
+      "text": "Calling TRELLIS from the run folder: reconstruct mesh from the single image with seed 2147 and write mesh.obj plus camera.json.",
+      "systemLog": "tool CALL trellis_reconstruct --image workspace/Craft_Utopia/tiantan.png --out workspace/Craft_Utopia/runs/tiantan_build_001/vision/mesh.obj --seed 2147 --device cuda:0"
+    },
+    {
+      "time": "00:08.0",
+      "agent": "architect",
+      "side": "right",
+      "kind": "thinking",
+      "text": "TRELLIS returned a usable mesh, but the curved roof edge is noisy. I am keeping the silhouette and simplifying unsupported overhangs before voxelizing.",
+      "systemLog": "vision-blueprint WARN mesh review: vertices=184216 faces=368192 watertight=false; roof_lip_noise=0.31; wrote vision/mesh_review.json"
+    },
+    {
+      "time": "00:10.0",
+      "agent": "architect",
+      "side": "right",
+      "kind": "tool-call",
+      "toolRef": "obj-to-schematic",
+      "text": "Calling obj2schematic to voxelize mesh.obj into a Minecraft grid with the project palette and 0.42 block tolerance.",
+      "systemLog": "tool CALL obj2schematic --mesh workspace/Craft_Utopia/runs/tiantan_build_001/vision/mesh.obj --palette configs/minecraft_palette.json --scale 0.42 --out workspace/Craft_Utopia/runs/tiantan_build_001/blueprint/stage_preview.schem"
+    },
+    {
+      "time": "00:13.4",
+      "agent": "architect",
+      "side": "right",
+      "kind": "tool-call",
+      "toolRef": "blueprint-compiler",
+      "text": "Exporting the schematic into sorted block placements, layer numbers, and region bounds so the planner can split it without reading the binary schem file.",
+      "systemLog": "tool CALL schematic_export --schem workspace/Craft_Utopia/runs/tiantan_build_001/blueprint/stage_preview.schem --format jsonl --sort y,x,z --out workspace/Craft_Utopia/runs/tiantan_build_001/blueprint/placements.jsonl"
+    },
+    {
+      "time": "00:15.7",
+      "agent": "architect",
+      "side": "right",
+      "kind": "artifact-ready",
+      "text": "Sanity check passed: every row has x/y/z/material/source. I left 23 low-confidence placements in uncertain_edges.json instead of pretending they are confirmed.",
+      "systemLog": "vision-blueprint INFO validate placements rows=9274 materials=18 bbox=(-24,63,-18)..(24,95,21) uncertain=23"
+    },
+    {
+      "time": "00:16.4",
+      "agent": "system-bot",
+      "side": "left",
+      "kind": "return",
+      "text": "Vision job complete. Returning placements.jsonl, stage_preview.schem, mesh_review.json, and cues.json to the planner queue.",
+      "systemLog": "vision-blueprint INFO job complete exit=0 wrote=blueprint/placements.jsonl,blueprint/stage_preview.schem,vision/cues.json,vision/mesh_review.json"
+    }
+  ]
+}

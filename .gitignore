@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Large media are hosted outside the Git repo / GitHub Pages build.
+# Use lightweight GIFs/posters in the site instead.
+assets/videos/
+assets/videos_faststart/
+assets/videos_1080p/
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.zip

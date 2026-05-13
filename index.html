@@ -1,0 +1,1810 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CraftUtopia Live Agent Console</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+    :root {
+      color-scheme: dark;
+      --void: #030604;
+      --nocturne: #07110d;
+      --pine: #0d1c16;
+      --moss: #6f8a57;
+      --moss-soft: rgba(111, 138, 87, 0.18);
+      --gold: #d5aa62;
+      --gold-hot: #ffd987;
+      --ember: #c36d37;
+      --aether: #74d6c4;
+      --parchment: #f3e5c3;
+      --bone: #c7b895;
+      --ash: #7f806f;
+      --line: rgba(243, 229, 195, 0.15);
+      --line-strong: rgba(213, 170, 98, 0.56);
+      --panel: rgba(7, 17, 13, 0.78);
+      --panel-deep: rgba(4, 8, 6, 0.88);
+      --shadow: 0 36px 120px rgba(0, 0, 0, 0.56);
+      --font-display: "Cinzel", "Trajan Pro", "Cormorant Garamond", Georgia, serif;
+      --font-ui: "Space Grotesk", "Avenir Next", "Helvetica Neue", sans-serif;
+      --font-mono: "IBM Plex Mono", "Cascadia Mono", "SFMono-Regular", monospace;
+      --mx: 0px;
+      --my: 0px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--void);
+      color: var(--parchment);
+      font-family: var(--font-ui);
+      text-rendering: geometricPrecision;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at calc(18% + var(--mx)) calc(16% + var(--my)), rgba(213, 170, 98, 0.24), transparent 31rem),
+        radial-gradient(circle at 76% 72%, rgba(116, 214, 196, 0.16), transparent 28rem),
+        linear-gradient(125deg, #030604 0%, #0a1510 42%, #172219 72%, #090705 100%);
+    }
+
+    body::after {
+      z-index: 30;
+      opacity: 0.34;
+      mix-blend-mode: soft-light;
+      background:
+        linear-gradient(115deg, transparent 0 42%, rgba(255,255,255,0.08) 47%, transparent 55% 100%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 8px),
+        radial-gradient(ellipse at center, transparent 48%, rgba(0, 0, 0, 0.76) 100%);
+    }
+
+    button {
+      border: 0;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 100vw;
+      height: 100svh;
+      min-height: 620px;
+      padding: clamp(16px, 2vw, 30px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.68fr) minmax(440px, 1.05fr);
+      gap: clamp(14px, 1.5vw, 24px);
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(213, 170, 98, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(213, 170, 98, 0.045) 1px, transparent 1px),
+        radial-gradient(circle at 20% 72%, rgba(111, 138, 87, 0.16), transparent 28rem);
+      background-size: 64px 64px, 64px 64px, auto;
+      mask-image: linear-gradient(90deg, rgba(0,0,0,0.86), rgba(0,0,0,0.24));
+      transform: translate3d(calc(var(--mx) * -0.3), calc(var(--my) * -0.3), 0);
+      pointer-events: none;
+    }
+
+    .status,
+    .log-board {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(20, 31, 23, 0.84), rgba(4, 8, 6, 0.9)),
+        radial-gradient(circle at 46% 0%, rgba(213, 170, 98, 0.14), transparent 28rem);
+      box-shadow: var(--shadow), inset 0 1px rgba(255,255,255,0.09);
+      clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+    }
+
+    .status::before,
+    .log-board::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent 0 38%, rgba(255, 217, 135, 0.10) 49%, transparent 60% 100%),
+        linear-gradient(90deg, rgba(255,255,255,0.03), transparent 28% 72%, rgba(255,255,255,0.025));
+      transform: translateX(-36%);
+      animation: panel-sheen 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .status::after,
+    .log-board::after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px solid rgba(213, 170, 98, 0.08);
+      pointer-events: none;
+      clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+    }
+
+    .status {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      padding: clamp(18px, 2vw, 28px);
+    }
+
+    .topline,
+    .bottom-strip,
+    .log-header {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand > div:last-child { min-width: 0; }
+
+    .status .topline {
+      position: absolute;
+      top: 12px;
+      left: 20px;
+      right: auto;
+      z-index: 7;
+      padding: 8px 10px;
+      border: 1px solid rgba(213,170,98,0.14);
+      background: linear-gradient(180deg, rgba(4,8,6,0.52), rgba(4,8,6,0.22));
+      box-shadow: 0 14px 34px rgba(0,0,0,0.24);
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      opacity: 1;
+      transform: none;
+    }
+
+    .status .brand { gap: 9px; }
+    .status .mark { width: 28px; height: 28px; }
+
+    .mark {
+      width: 38px;
+      height: 38px;
+      position: relative;
+      flex: 0 0 auto;
+      transform: rotate(45deg) skew(-8deg, -8deg);
+      background:
+        linear-gradient(135deg, var(--gold-hot), var(--gold) 48%, #644119 49% 52%, #223326 53%),
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,0.6), transparent 28%);
+      box-shadow: 0 0 34px rgba(213,170,98,0.34), inset 0 0 18px rgba(255,255,255,0.22);
+    }
+
+    .mark::before,
+    .mark::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(6, 8, 5, 0.74);
+    }
+
+    .mark::before { inset: 7px; }
+    .mark::after { inset: 14px; background: rgba(116, 214, 196, 0.16); }
+
+    .mono,
+    .kicker,
+    .phase-dot,
+    .system-note {
+      font-family: var(--font-mono);
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--gold-hot);
+      font-size: clamp(0.66rem, 0.78vw, 0.78rem);
+      font-weight: 700;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      color: var(--parchment);
+      font-family: var(--font-display);
+      letter-spacing: -0.035em;
+      line-height: 0.94;
+      text-shadow: 0 0 34px rgba(213,170,98,0.18);
+    }
+
+    h1 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: clamp(1.95rem, 3.25vw, 4.25rem);
+      font-weight: 800;
+    }
+
+    .live-chip {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(116,214,196,0.35);
+      color: #d8fff7;
+      background: rgba(116,214,196,0.08);
+      box-shadow: 0 0 24px rgba(116,214,196,0.10);
+      font-size: 0.82rem;
+      clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 11px, 100% 100%, 11px 100%, 0 calc(100% - 11px));
+    }
+
+    .live-chip::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--aether);
+      box-shadow: 0 0 18px rgba(116,214,196,0.8);
+      animation: pulse 1.45s ease-in-out infinite;
+    }
+
+    .visual-wrap {
+      position: relative;
+      z-index: 1;
+      min-height: 0;
+      margin: 0 0 clamp(16px, 2vh, 24px);
+      display: block;
+    }
+
+    .gif-stage {
+      position: relative;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid rgba(243,229,195,0.16);
+      background:
+        radial-gradient(circle at 50% 44%, rgba(213,170,98,0.18), transparent 22rem),
+        radial-gradient(circle at 46% 64%, rgba(116,214,196,0.16), transparent 20rem),
+        linear-gradient(180deg, rgba(4,8,6,0.20), rgba(4,8,6,0.72)),
+        url("assets/images/stage-preview.jpg") center / cover no-repeat;
+      clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+      box-shadow: inset 0 0 100px rgba(213,170,98,0.08);
+    }
+
+    .gif-stage::before {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border: 1px dashed rgba(243,229,195,0.22);
+      border-radius: 50%;
+      animation: orbit 24s linear infinite;
+    }
+
+    .gif-stage::after {
+      content: "LIVE VOXEL WORLD PREVIEW";
+      position: absolute;
+      left: 20px;
+      bottom: 18px;
+      padding: 7px 10px;
+      border: 1px solid rgba(116,214,196,0.32);
+      color: #d8fff7;
+      background: rgba(4, 8, 6, 0.58);
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+    }
+
+    .scanline {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(116,214,196,0.12) 48%, transparent 52% 100%);
+      transform: translateY(-70%);
+      animation: scan 4.2s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+
+    .world-proxy {
+      position: absolute;
+      left: 50%;
+      top: 55%;
+      width: min(52vh, 45vw);
+      height: min(52vh, 45vw);
+      max-width: 520px;
+      max-height: 520px;
+      transform: translate(-50%, -50%) rotateX(60deg) rotateZ(45deg);
+      transform-style: preserve-3d;
+      transition: transform 560ms cubic-bezier(.2,.8,.2,1), filter 560ms ease;
+      filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.42));
+    }
+
+    .world-proxy::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(243,229,195,0.13) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(243,229,195,0.13) 1px, transparent 1px),
+        radial-gradient(circle, rgba(213,170,98,0.16), transparent 60%);
+      background-size: 38px 38px, 38px 38px, auto;
+      border: 1px solid rgba(243,229,195,0.18);
+      box-shadow: 0 0 80px rgba(213,170,98,0.12);
+    }
+
+    .voxel {
+      --x: 50%;
+      --y: 50%;
+      --h: 44px;
+      --size: 42px;
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--size);
+      height: var(--size);
+      transform: translate(-50%, -50%) translateZ(var(--h));
+      transform-style: preserve-3d;
+      animation: build-rise 5.2s ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .voxel::before,
+    .voxel::after,
+    .voxel i {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(243,229,195,0.25);
+      background: linear-gradient(135deg, rgba(111,138,87,0.92), rgba(20,45,34,0.96));
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.08), 0 0 20px rgba(116,214,196,0.08);
+    }
+
+    .voxel::before { transform-origin: bottom; transform: rotateX(90deg); background: linear-gradient(180deg, rgba(37, 67, 50, 0.96), rgba(4, 8, 6, 0.96)); }
+    .voxel::after { transform-origin: right; transform: rotateY(-90deg); background: linear-gradient(180deg, rgba(213,170,98,0.55), rgba(39,27,14,0.98)); }
+    .voxel.hot i { background: linear-gradient(135deg, rgba(255,217,135,0.94), rgba(111,69,31,0.98)); border-color: rgba(243,229,195,0.46); }
+    .voxel.tall { --h: 96px; --size: 48px; }
+    .voxel.core { --h: 150px; --size: 58px; }
+
+    .side-telemetry {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 4;
+      width: min(190px, 34%);
+      display: grid;
+      gap: 7px;
+      padding: 10px;
+      border: 1px solid rgba(213,170,98,0.20);
+      background: linear-gradient(180deg, rgba(4,8,6,0.74), rgba(4,8,6,0.48));
+      backdrop-filter: blur(14px);
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+      box-shadow: 0 18px 44px rgba(0,0,0,0.34);
+    }
+
+    .metric {
+      position: relative;
+      min-height: 0;
+      padding: 8px 9px 10px;
+      border: 1px solid rgba(243,229,195,0.10);
+      background: linear-gradient(180deg, rgba(13, 28, 22, 0.58), rgba(4, 8, 6, 0.52));
+      overflow: hidden;
+    }
+
+    .metric::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,217,135,0.12), transparent 50%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .metric::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: calc(100% - var(--value));
+      bottom: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--aether), var(--gold-hot));
+      box-shadow: 0 0 18px rgba(116,214,196,0.28);
+      transition: right 520ms ease;
+    }
+
+    .metric span,
+    .metric strong,
+    .metric small { position: relative; }
+
+    .metric span {
+      display: block;
+      color: var(--ash);
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin: 5px 0 2px;
+      color: var(--parchment);
+      font-family: var(--font-display);
+      font-size: clamp(1.15rem, 1.45vw, 1.6rem);
+      line-height: 1;
+    }
+
+    .metric small {
+      color: var(--bone);
+      display: none;
+    }
+
+    .bottom-strip {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 62px;
+      padding: 0 18px;
+    }
+
+    .bottom-strip::before {
+      content: "";
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      top: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(116,214,196,0.24), rgba(255,217,135,0.72), rgba(116,214,196,0.24));
+      box-shadow: 0 0 18px rgba(213,170,98,0.18);
+      transform: translateY(-50%);
+    }
+
+    .phase-dot {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      border: 1px solid rgba(243,229,195,0.40);
+      border-radius: 50%;
+      color: var(--ash);
+      background: radial-gradient(circle, rgba(255,217,135,0.82), rgba(213,170,98,0.30) 48%, rgba(4,8,6,0.96) 52%);
+      font-size: 0;
+      font-weight: 700;
+      box-shadow: 0 0 0 7px rgba(4,8,6,0.84), 0 0 22px rgba(213,170,98,0.18);
+      transition: border-color 260ms ease, background 260ms ease, transform 260ms ease, box-shadow 260ms ease;
+      z-index: 1;
+    }
+
+    .phase-dot::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 14px);
+      min-width: max-content;
+      padding: 8px 10px;
+      border: 1px solid rgba(213,170,98,0.34);
+      color: var(--gold-hot);
+      background: rgba(4, 8, 6, 0.88);
+      box-shadow: 0 16px 34px rgba(0,0,0,0.34);
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      letter-spacing: 0.09em;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .phase-dot:hover::after,
+    .phase-dot:focus-visible::after {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .phase-dot.active {
+      border-color: var(--line-strong);
+      background: radial-gradient(circle, #fff3c1, var(--gold-hot) 34%, rgba(116,214,196,0.55) 56%, rgba(4,8,6,0.96) 60%);
+      transform: scale(1.32);
+      box-shadow: 0 0 0 8px rgba(4,8,6,0.86), 0 0 30px rgba(255,217,135,0.42);
+    }
+
+    .phase-dot.active::before {
+      content: "";
+      position: absolute;
+      inset: -9px;
+      border: 1px solid rgba(116,214,196,0.36);
+      border-radius: 50%;
+      background: transparent;
+      box-shadow: 0 0 16px rgba(255,217,135,0.66);
+    }
+
+    .log-board {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      padding: clamp(20px, 1.9vw, 28px);
+      clip-path: none;
+      border-radius: 30px;
+      border-color: rgba(213,170,98,0.28);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(255,217,135,0.16), transparent 22rem),
+        radial-gradient(circle at 88% 22%, rgba(116,214,196,0.13), transparent 19rem),
+        linear-gradient(155deg, rgba(18, 31, 24, 0.94), rgba(4, 8, 6, 0.84) 62%, rgba(17, 12, 6, 0.92));
+      box-shadow: 0 36px 100px rgba(0,0,0,0.50), inset 0 1px rgba(255,255,255,0.10);
+    }
+
+    .log-board::after {
+      inset: 11px;
+      border-radius: 24px;
+      clip-path: none;
+      border-color: rgba(255,217,135,0.12);
+    }
+
+    .log-header {
+      z-index: 2;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(243,229,195,0.10);
+    }
+
+    .chat-shell {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: clamp(212px, 22vw, 248px) minmax(0, 1fr);
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid rgba(243,229,195,0.12);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 8% 0%, rgba(255,217,135,0.10), transparent 15rem),
+        linear-gradient(180deg, rgba(4,8,6,0.42), rgba(4,8,6,0.18));
+      box-shadow: inset 0 1px rgba(255,255,255,0.05), 0 18px 34px rgba(0,0,0,0.18);
+    }
+
+    .room-list {
+      display: grid;
+      grid-auto-rows: max-content;
+      gap: 8px;
+      min-width: 0;
+      align-content: start;
+      justify-items: start;
+      overflow-y: auto;
+      padding: 12px;
+      border-right: 1px solid rgba(243,229,195,0.10);
+      background:
+        linear-gradient(180deg, rgba(255,217,135,0.055), transparent 34%),
+        rgba(3,7,5,0.28);
+    }
+
+    .room-list-header {
+      margin: 0 2px 4px;
+      color: rgba(243,229,195,0.60);
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      font-weight: 850;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .room-tab {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      width: 188px;
+      max-width: 100%;
+      min-height: 66px;
+      min-width: 0;
+      padding: 11px 10px;
+      border: 1px solid rgba(243,229,195,0.055);
+      border-radius: 16px;
+      color: rgba(243,229,195,0.34);
+      background: rgba(255,255,255,0.014);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      filter: grayscale(0.78) saturate(0.34);
+      opacity: 0.62;
+      transition: border-color 180ms ease, color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 180ms ease, filter 180ms ease, opacity 180ms ease;
+    }
+
+    .room-avatar {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid rgba(243,229,195,0.16);
+      border-radius: 11px;
+      background:
+        radial-gradient(circle at 28% 18%, rgba(255,255,255,0.18), transparent 36%),
+        linear-gradient(135deg, rgba(255,217,135,0.22), rgba(116,214,196,0.10));
+      box-shadow: inset 0 1px rgba(255,255,255,0.10), 0 10px 20px rgba(0,0,0,0.20);
+      opacity: 0.74;
+    }
+
+    .room-avatar.user-avatar {
+      color: #07110d;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255,255,255,0.38), transparent 24%),
+        linear-gradient(135deg, #ffd35a, #ff9b45);
+      font-size: 1.05rem;
+      font-weight: 950;
+    }
+
+    .room-avatar.group-avatar {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      padding: 4px;
+      background: linear-gradient(135deg, rgba(116,214,196,0.16), rgba(255,217,135,0.14));
+    }
+
+    .room-avatar.group-avatar span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      background: var(--tile);
+      box-shadow: inset 0 1px rgba(255,255,255,0.18);
+    }
+
+    .room-name,
+    .room-subtitle {
+      display: block;
+      min-width: 0;
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .room-name {
+      color: currentColor;
+      font-size: 0.9rem;
+      font-weight: 850;
+      letter-spacing: -0.01em;
+    }
+
+    .room-subtitle {
+      margin-top: 2px;
+      color: rgba(243,229,195,0.28);
+      font-size: 0.68rem;
+      line-height: 1.2;
+    }
+
+    .room-tab:hover,
+    .room-tab:focus-visible {
+      color: rgba(243,229,195,0.82);
+      border-color: rgba(255,217,135,0.18);
+      outline: none;
+      filter: grayscale(0.32) saturate(0.72);
+      opacity: 0.86;
+      transform: translateY(-1px);
+    }
+
+    .room-tab.active {
+      color: var(--parchment);
+      border-color: color-mix(in srgb, var(--gold-hot) 46%, transparent);
+      background:
+        radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--aether) 18%, transparent), transparent 5rem),
+        linear-gradient(135deg, rgba(255,217,135,0.14), rgba(116,214,196,0.08));
+      box-shadow: 0 12px 24px rgba(0,0,0,0.24), inset 0 1px rgba(255,255,255,0.08);
+      filter: none;
+      opacity: 1;
+      transform: translateX(2px);
+    }
+
+    .room-tab.active .room-avatar {
+      border-color: color-mix(in srgb, var(--gold-hot) 58%, transparent);
+      box-shadow: inset 0 1px rgba(255,255,255,0.14), 0 0 22px rgba(255,217,135,0.24);
+      opacity: 1;
+    }
+
+    .room-tab.active .room-subtitle {
+      color: rgba(243,229,195,0.54);
+    }
+
+    .log-title p {
+      margin: 0 0 6px;
+      color: var(--gold-hot);
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .log-title h2 {
+      font-size: clamp(2.25rem, 3vw, 3.6rem);
+      letter-spacing: -0.045em;
+    }
+
+    .sys-badge {
+      padding: 9px 12px;
+      border: 1px solid rgba(116,214,196,0.34);
+      color: #d8fff7;
+      background: linear-gradient(180deg, rgba(116,214,196,0.16), rgba(116,214,196,0.06));
+      border-radius: 999px;
+      box-shadow: 0 0 28px rgba(116,214,196,0.10);
+      font-size: 0.84rem;
+    }
+
+    .log-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .step-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 9px 13px;
+      border: 1px solid rgba(255,217,135,0.32);
+      border-radius: 999px;
+      color: #07110d;
+      background:
+        radial-gradient(circle at 25% 0%, rgba(255,255,255,0.46), transparent 44%),
+        linear-gradient(135deg, #ffd987, #74d6c4);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.22), 0 0 26px rgba(255,217,135,0.14);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease;
+    }
+
+    .step-button::after {
+      content: ">";
+      display: grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(7,17,13,0.16);
+      color: #07110d;
+      font-size: 0.76rem;
+    }
+
+    .step-button:hover,
+    .step-button:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      filter: saturate(1.08) brightness(1.04);
+    }
+
+    .step-button:disabled {
+      cursor: default;
+      opacity: 0.58;
+      transform: none;
+      filter: grayscale(0.18);
+    }
+
+    .step-progress {
+      color: rgba(243,229,195,0.56);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .chat-feed {
+      position: relative;
+      z-index: 2;
+      min-height: 0;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 16px 16px 16px 14px;
+      background:
+        radial-gradient(circle at 80% 0%, rgba(116,214,196,0.07), transparent 16rem),
+        linear-gradient(180deg, rgba(255,255,255,0.018), transparent 24%);
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,217,135,0.55) rgba(255,255,255,0.05);
+    }
+
+    .chat-feed::-webkit-scrollbar { width: 8px; }
+    .chat-feed::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+    .chat-feed::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(255,217,135,0.65), rgba(116,214,196,0.45));
+      border-radius: 999px;
+    }
+
+    .chat-placeholder {
+      align-self: center;
+      justify-self: center;
+      max-width: 360px;
+      margin: auto;
+      padding: 18px 20px;
+      border: 1px solid rgba(255,217,135,0.16);
+      border-radius: 22px;
+      color: rgba(243,229,195,0.66);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255,217,135,0.10), transparent 11rem),
+        rgba(4,8,6,0.36);
+      text-align: center;
+      line-height: 1.55;
+      box-shadow: inset 0 1px rgba(255,255,255,0.06);
+    }
+
+    .chat-placeholder strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--parchment);
+      font-size: 1rem;
+    }
+
+    .chat-message {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      gap: 8px;
+      align-items: start;
+      opacity: 0.88;
+      transform: translateX(0) scale(1);
+      transition: opacity 280ms ease, transform 280ms ease, filter 280ms ease;
+    }
+
+    .chat-message.alt {
+      grid-template-columns: minmax(0, 1fr) 54px;
+      padding-left: 0;
+    }
+
+    .chat-message.side-left .bubble,
+    .chat-message.from-user .bubble {
+      justify-self: start;
+    }
+
+    .chat-message.side-right .bubble,
+    .chat-message.from-agent .bubble {
+      justify-self: end;
+    }
+
+    .room-hidden {
+      display: none;
+    }
+
+    .speaker {
+      display: contents;
+      min-width: 0;
+    }
+
+    .speaker-name {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      justify-self: start;
+      text-align: left;
+    }
+
+    .avatar {
+      grid-column: 1;
+      grid-row: 2;
+      justify-self: start;
+    }
+
+    .bubble {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: start;
+    }
+
+    .chat-message.alt .avatar {
+      grid-column: 2;
+      justify-self: end;
+    }
+
+    .chat-message.alt .speaker-name {
+      grid-column: 1 / -1;
+      justify-self: end;
+      text-align: right;
+    }
+
+    .chat-message.alt .bubble {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .chat-message.active {
+      opacity: 1;
+      transform: translateX(0) scale(1.012);
+      filter: drop-shadow(0 18px 28px rgba(0,0,0,0.24));
+    }
+
+    .chat-message.is-entering,
+    .system-note.is-entering {
+      animation: log-pop 640ms cubic-bezier(0.18, 1.35, 0.32, 1) both;
+      transform-origin: 28px center;
+    }
+
+    .speaker-name {
+      max-width: none;
+      color: color-mix(in srgb, var(--agent-accent, var(--gold-hot)) 82%, var(--parchment));
+      overflow: visible;
+      text-overflow: clip;
+      white-space: nowrap;
+      overflow-wrap: normal;
+      font-size: clamp(0.98rem, 1vw, 1.14rem);
+      font-weight: 850;
+      line-height: 1.14;
+      letter-spacing: 0.01em;
+      text-align: center;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.54);
+    }
+
+    .avatar {
+      position: relative;
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border: 1px solid color-mix(in srgb, var(--agent-accent, var(--gold-hot)) 72%, rgba(243,229,195,0.30));
+      color: var(--gold-hot);
+      background:
+        radial-gradient(circle at 30% 14%, color-mix(in srgb, var(--agent-accent, var(--gold-hot)) 32%, transparent), transparent 34%),
+        linear-gradient(135deg, rgba(12, 24, 18, 0.82), rgba(4, 8, 6, 0.96));
+      box-shadow: 0 12px 28px rgba(0,0,0,0.28), 0 0 28px color-mix(in srgb, var(--agent-accent, var(--gold-hot)) 24%, transparent), inset 0 1px rgba(255,255,255,0.14);
+      border-radius: 7px;
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 800;
+      overflow: hidden;
+      image-rendering: pixelated;
+    }
+
+    .chat-message.alt .avatar {
+      border-radius: 7px;
+      background:
+        radial-gradient(circle at 70% 14%, color-mix(in srgb, var(--agent-accent, var(--aether)) 32%, transparent), transparent 34%),
+        linear-gradient(135deg, rgba(4, 8, 6, 0.96), rgba(12, 24, 18, 0.82));
+    }
+
+    .avatar img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+      opacity: 1;
+    }
+
+    .avatar::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      z-index: 1;
+      border: 1px solid color-mix(in srgb, var(--agent-accent, var(--gold-hot)) 44%, transparent);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.34);
+      pointer-events: none;
+    }
+
+    .chat-message.active .avatar::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      bottom: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--aether);
+      box-shadow: 0 0 14px rgba(116,214,196,0.82);
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+
+    .bubble {
+      position: relative;
+      width: fit-content;
+      max-width: min(100%, 58ch);
+      padding: 15px 16px 16px;
+      border: 1px solid rgba(243,229,195,0.18);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(243,229,195,0.08), transparent 11rem),
+        linear-gradient(180deg, rgba(34,37,31,0.82), rgba(9,13,10,0.92));
+      box-shadow: 0 16px 34px rgba(0,0,0,0.20), inset 0 1px rgba(255,255,255,0.075);
+      border-radius: 22px 22px 22px 8px;
+    }
+
+    .bubble::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: 18px;
+      width: 14px;
+      height: 14px;
+      border-left: 1px solid rgba(243,229,195,0.18);
+      border-bottom: 1px solid rgba(243,229,195,0.18);
+      background: rgba(22, 25, 20, 0.96);
+      transform: rotate(45deg);
+    }
+
+    .chat-message.side-left .bubble,
+    .chat-message.from-user .bubble {
+      border-radius: 22px 22px 22px 8px;
+    }
+
+    .chat-message.side-left .bubble::before,
+    .chat-message.from-user .bubble::before {
+      border-color: rgba(243,229,195,0.18);
+      background: rgba(22, 25, 20, 0.96);
+    }
+
+    .chat-message.alt .bubble {
+      border-radius: 22px 22px 8px 22px;
+    }
+
+    .chat-message.alt .bubble::before {
+      left: auto;
+      right: -8px;
+      border-left: 0;
+      border-bottom: 0;
+      border-right: 1px solid rgba(243,229,195,0.18);
+      border-top: 1px solid rgba(243,229,195,0.18);
+    }
+
+    .chat-message[data-event-kind="tool-call"] .bubble {
+      border-color: rgba(255,190,76,0.54);
+      background:
+        repeating-linear-gradient(135deg, rgba(255,217,135,0.10) 0 1px, transparent 1px 10px),
+        radial-gradient(circle at 88% 0%, rgba(255,190,76,0.22), transparent 12rem),
+        linear-gradient(135deg, rgba(58,35,7,0.76), rgba(10,14,12,0.92));
+      box-shadow: 0 18px 38px rgba(0,0,0,0.26), 0 0 26px rgba(255,190,76,0.11), inset 0 1px rgba(255,217,135,0.20);
+    }
+
+    .chat-message[data-event-kind="tool-call"] .bubble::before {
+      border-color: rgba(255,190,76,0.54);
+      background: rgba(44, 27, 8, 0.96);
+    }
+
+    .chat-message[data-event-kind="tool-call"] .bubble p {
+      color: #fff0c7;
+      font-family: var(--font-mono);
+      font-size: clamp(1.04rem, 1.1vw, 1.22rem);
+      font-weight: 650;
+      letter-spacing: -0.015em;
+      line-height: 1.54;
+    }
+
+    .chat-message.active:not([data-event-kind="tool-call"]) .bubble {
+      border-color: rgba(243,229,195,0.34);
+      box-shadow: 0 18px 38px rgba(0,0,0,0.28), 0 0 26px rgba(243,229,195,0.10), inset 0 1px rgba(255,255,255,0.10);
+    }
+
+    .bubble p {
+      margin: 0;
+      color: #dccdaa;
+      font-family: var(--font-ui);
+      font-size: clamp(1.12rem, 1.18vw, 1.32rem);
+      font-weight: 500;
+      line-height: 1.58;
+      letter-spacing: -0.01em;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-wrap: pretty;
+      word-break: normal;
+    }
+
+    .bubble p.typing-dots {
+      color: var(--parchment);
+      font-size: clamp(1.35rem, 1.55vw, 1.8rem);
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      line-height: 1.18;
+      animation: typing-pulse 920ms ease-in-out infinite;
+    }
+
+    .system-note {
+      position: relative;
+      margin: 4px 40px 6px 48px;
+      padding: 14px 16px;
+      border: 1px solid rgba(114,255,209,0.34);
+      border-radius: 16px;
+      color: #d9f5eb;
+      background:
+        linear-gradient(90deg, rgba(114,255,209,0.18), transparent 42%),
+        radial-gradient(circle at 0% 0%, rgba(114,255,209,0.13), transparent 12rem),
+        linear-gradient(135deg, rgba(3,22,18,0.80), rgba(5,10,8,0.62));
+      box-shadow: inset 0 1px rgba(255,255,255,0.055), 0 12px 24px rgba(0,0,0,0.16), 0 0 22px rgba(114,255,209,0.08);
+      font-family: var(--font-mono);
+      font-size: clamp(1.04rem, 1.1vw, 1.22rem);
+      font-weight: 620;
+      line-height: 1.54;
+      letter-spacing: -0.015em;
+      text-transform: none;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-wrap: pretty;
+      word-break: normal;
+    }
+
+    .system-note::before {
+      content: attr(data-note-label) ": ";
+      position: static;
+      display: inline;
+      color: #d8fff7;
+      text-shadow: 0 0 12px rgba(114,255,209,0.74);
+      font-size: 1em;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+
+    .system-note.is-tool {
+      border-color: rgba(255,190,76,0.38);
+      color: #fff0c7;
+      background:
+        linear-gradient(90deg, rgba(255,190,76,0.20), transparent 42%),
+        repeating-linear-gradient(135deg, rgba(255,217,135,0.08) 0 1px, transparent 1px 10px),
+        radial-gradient(circle at 100% 0%, rgba(255,190,76,0.14), transparent 12rem),
+        linear-gradient(135deg, rgba(43,26,6,0.76), rgba(5,10,8,0.60));
+      box-shadow: inset 0 1px rgba(255,255,255,0.055), 0 12px 24px rgba(0,0,0,0.16), 0 0 22px rgba(255,190,76,0.09);
+    }
+
+    .system-note.is-tool::before {
+      color: #fff2c2;
+      text-shadow: 0 0 12px rgba(255,190,76,0.76);
+    }
+
+    .log-loading,
+    .log-error {
+      position: relative;
+      z-index: 2;
+      margin: 20px 8px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,217,135,0.22);
+      border-radius: 14px;
+      color: var(--bone);
+      background: rgba(4,8,6,0.42);
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .log-error { border-color: rgba(255,114,114,0.45); color: #ffc2b8; }
+
+    @keyframes panel-sheen {
+      0%, 42%, 100% { transform: translateX(-36%); opacity: 0.38; }
+      62% { transform: translateX(42%); opacity: 0.75; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.62; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.16); }
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.6; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.16); }
+    }
+
+    @keyframes orbit { to { transform: rotate(360deg); } }
+
+    @keyframes scan {
+      0%, 100% { transform: translateY(-75%); opacity: 0; }
+      18%, 76% { opacity: 1; }
+      58% { transform: translateY(75%); }
+    }
+
+    @keyframes build-rise {
+      0%, 100% { transform: translate(-50%, -50%) translateZ(var(--h)); filter: brightness(0.92); }
+      50% { transform: translate(-50%, -50%) translateZ(calc(var(--h) + 18px)); filter: brightness(1.16); }
+    }
+
+    @keyframes log-pop {
+      0% { opacity: 0; transform: translateY(18px) scale(0.94); filter: blur(3px); }
+      58% { opacity: 1; transform: translateY(-5px) scale(1.025); filter: blur(0); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    @keyframes typing-pulse {
+      0%, 100% { opacity: 0.46; transform: translateY(0); }
+      45% { opacity: 1; transform: translateY(-2px); }
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    @media (max-width: 980px) {
+      .app {
+        min-height: 100svh;
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1.34fr) minmax(270px, 0.66fr);
+        padding: 12px;
+      }
+
+      .side-telemetry { width: 150px; }
+      .chat-feed { gap: 8px; }
+      .system-note { margin: 0 24px 2px 28px; }
+    }
+
+    @media (max-width: 620px) {
+      .app { width: 100%; min-height: 680px; gap: 10px; overflow: hidden; }
+      .status,
+      .log-board { width: 100%; max-width: calc(100vw - 24px); }
+      .topline { align-items: flex-start; }
+      .live-chip { display: none; }
+      .bottom-strip { min-height: 48px; padding: 0 12px; }
+      .side-telemetry { top: 10px; right: 10px; width: 132px; }
+      .world-proxy { width: 330px; height: 330px; }
+      .log-board { padding: 16px; border-radius: 22px; }
+      .log-header { align-items: flex-start; flex-direction: column; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; }
+      .log-title { min-width: 0; }
+      .log-title p { font-size: 0.68rem; letter-spacing: 0.13em; }
+      .log-title h2 { font-size: 1.85rem; white-space: normal; }
+      .sys-badge { font-size: 0.68rem; padding: 7px 9px; }
+      .log-actions { justify-content: flex-start; }
+      .step-button { min-height: 34px; padding: 7px 10px; font-size: 0.68rem; }
+      .step-progress { font-size: 0.64rem; }
+      .chat-shell { grid-template-columns: 1fr; border-radius: 18px; }
+      .room-list { display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 8px; border-right: 0; border-bottom: 1px solid rgba(243,229,195,0.10); }
+      .room-list-header { display: none; }
+      .room-tab { flex: 0 0 150px; grid-template-columns: 28px minmax(0, 1fr); gap: 6px; min-height: 48px; padding: 8px 9px; border-radius: 12px; }
+      .room-avatar { width: 28px; height: 28px; border-radius: 8px; }
+      .room-subtitle { display: none; }
+      .room-name { font-size: 0.72rem; }
+      .chat-feed { padding: 12px 8px 14px; }
+      .chat-message { grid-template-columns: 44px minmax(0, 1fr); gap: 6px; padding-left: 0; }
+      .chat-message.alt { grid-template-columns: minmax(0, 1fr) 44px; gap: 6px; padding-left: 0; }
+      .chat-message,
+      .bubble,
+      .speaker { min-width: 0; }
+      .chat-message.alt .speaker { grid-column: 2; }
+      .chat-message.alt .bubble { grid-column: 1; }
+      .speaker { gap: 5px; }
+      .speaker-name { max-width: none; font-size: 0.76rem; line-height: 1.08; }
+      .avatar { width: 44px; height: 44px; border-radius: 6px; font-size: 0.78rem; }
+      .bubble { padding: 12px 13px; border-radius: 18px 18px 18px 7px; }
+      .bubble p { overflow-wrap: break-word; font-size: 1rem; line-height: 1.5; }
+      .system-note { margin: 0; padding: 12px 13px; border-radius: 16px; font-size: 1rem; line-height: 1.5; overflow-wrap: break-word; }
+      .system-note::before { font-size: 1em; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-label="CraftUtopia live multi-agent demonstration">
+    <section class="status" aria-label="CraftUtopia runtime viewer">
+      <header class="topline">
+        <div class="brand">
+          <div class="mark" aria-hidden="true"></div>
+          <div>
+            <p class="kicker">CraftUtopia Runtime</p>
+          </div>
+        </div>
+      </header>
+
+      <div class="visual-wrap">
+        <div class="gif-stage" aria-label="Live voxel world preview" tabindex="0">
+          <div class="scanline" aria-hidden="true"></div>
+          <div class="world-proxy" id="world-proxy" aria-hidden="true">
+            <div class="voxel core hot" style="--x: 50%; --y: 42%; --delay: -.4s"><i></i></div>
+            <div class="voxel tall" style="--x: 38%; --y: 54%; --delay: -.9s"><i></i></div>
+            <div class="voxel tall hot" style="--x: 62%; --y: 54%; --delay: -1.2s"><i></i></div>
+            <div class="voxel" style="--x: 28%; --y: 66%; --delay: -1.6s"><i></i></div>
+            <div class="voxel" style="--x: 50%; --y: 66%; --delay: -2s"><i></i></div>
+            <div class="voxel" style="--x: 72%; --y: 66%; --delay: -2.4s"><i></i></div>
+            <div class="voxel tall" style="--x: 38%; --y: 78%; --delay: -2.8s"><i></i></div>
+            <div class="voxel hot" style="--x: 62%; --y: 78%; --delay: -3.2s"><i></i></div>
+          </div>
+        </div>
+
+        <aside class="side-telemetry" aria-label="Runtime metrics">
+          <div class="metric" style="--value: 32%"><span>Blueprint</span><strong id="metric-a">32%</strong><small>Constraints extracted and structural sketch in progress</small></div>
+          <div class="metric" style="--value: 18%"><span>Agent Sync</span><strong id="metric-b">18%</strong><small>Planner is preparing the first build broadcast</small></div>
+          <div class="metric" style="--value: 06%"><span>Blocks</span><strong id="metric-c">006</strong><small>Preview voxels initialized for the live stage</small></div>
+        </aside>
+      </div>
+
+      <nav class="bottom-strip" id="phase-controls" aria-label="Progress phase controls"></nav>
+    </section>
+
+    <aside class="log-board" aria-label="Multi-agent communication log">
+      <header class="log-header">
+        <div class="log-title">
+          <p id="log-kicker">Operational Agent Dialogue</p>
+          <h2 id="log-title">Design-Build Trace</h2>
+        </div>
+        <div class="log-actions">
+          <div class="sys-badge mono" id="log-badge">CORE ROLE MODE</div>
+          <button class="step-button" id="playback-next" type="button">Next Message</button>
+          <span class="step-progress" id="playback-progress">0 / 0</span>
+        </div>
+      </header>
+
+      <div class="chat-shell">
+        <nav class="room-list" id="room-list" aria-label="Dialogue room switcher">
+          <p class="room-list-header">Group Chats</p>
+        </nav>
+
+        <section class="chat-feed" id="chat-feed" aria-label="Agent chat transcript">
+          <div class="log-loading">Loading editable dialogue log...</div>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const AGENT_TYPING_DELAY = 2000;
+    const root = document.documentElement;
+    let stages = [];
+    let chatMessages = [];
+    let groupRooms = [];
+    let playbackEvents = [];
+    let logRevealTimer = null;
+    let autoScrollRelease = null;
+    let isAutoScrolling = false;
+    let playbackCursor = 0;
+    let isMessagePending = false;
+    let activeRoom = '';
+
+    const phaseControls = document.querySelector('#phase-controls');
+    const logBoard = document.querySelector('.log-board');
+    const roomList = document.querySelector('#room-list');
+    let roomTabs = [];
+    const chatFeed = document.querySelector('#chat-feed');
+    const metrics = document.querySelectorAll('.metric');
+    const metricText = [document.querySelector('#metric-a'), document.querySelector('#metric-b'), document.querySelector('#metric-c')];
+    const systemLine = document.querySelector('#system-line');
+    const worldProxy = document.querySelector('#world-proxy');
+    const logKicker = document.querySelector('#log-kicker');
+    const logTitle = document.querySelector('#log-title');
+    const logBadge = document.querySelector('#log-badge');
+    const playbackNext = document.querySelector('#playback-next');
+    const playbackProgress = document.querySelector('#playback-progress');
+
+    const escapeHtml = (value = '') => String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+
+    function accessoryMarkup(kind, trim, dark) {
+      const items = {
+        crown: `<rect x="20" y="4" width="24" height="6" fill="${trim}"/><rect x="16" y="8" width="8" height="8" fill="${trim}"/><rect x="28" y="8" width="8" height="8" fill="#fff2a8"/><rect x="40" y="8" width="8" height="8" fill="${trim}"/>`,
+        hardhat: `<rect x="14" y="10" width="36" height="8" fill="${trim}"/><rect x="18" y="6" width="28" height="8" fill="#ffd45f"/><rect x="30" y="6" width="4" height="12" fill="#8b5a13"/>`,
+        flag: `<rect x="45" y="9" width="3" height="25" fill="${dark}"/><rect x="48" y="9" width="11" height="8" fill="${trim}"/><rect x="48" y="17" width="7" height="7" fill="#ffd7e6"/>`,
+        compass: `<rect x="47" y="36" width="10" height="10" fill="${dark}"/><rect x="50" y="33" width="4" height="16" fill="${trim}"/><rect x="44" y="39" width="16" height="4" fill="${trim}"/>`,
+        chest: `<rect x="8" y="41" width="17" height="13" fill="#9a5b25"/><rect x="8" y="45" width="17" height="3" fill="${trim}"/><rect x="15" y="42" width="4" height="6" fill="#ffe08a"/>`,
+        pickaxe: `<path d="M42 12 L54 22" stroke="${trim}" stroke-width="5"/><path d="M49 18 L32 45" stroke="${dark}" stroke-width="5"/><rect x="29" y="43" width="8" height="8" fill="${trim}"/>`,
+        trowel: `<path d="M43 38 L55 50" stroke="${dark}" stroke-width="4"/><rect x="47" y="34" width="10" height="7" fill="${trim}"/>`,
+        torch: `<rect x="50" y="31" width="5" height="20" fill="#6e391c"/><rect x="47" y="24" width="11" height="10" fill="${trim}"/><rect x="50" y="20" width="5" height="6" fill="#fff6a5"/>`,
+        book: `<rect x="10" y="38" width="17" height="15" fill="${trim}"/><rect x="27" y="38" width="17" height="15" fill="#0d5c4f"/><rect x="26" y="38" width="2" height="15" fill="#e6fff7"/>`,
+        shield: `<rect x="45" y="32" width="12" height="17" fill="${trim}"/><rect x="48" y="35" width="6" height="11" fill="#ffd1d1"/><rect x="49" y="49" width="4" height="4" fill="${trim}"/>`,
+        ruler: `<rect x="45" y="34" width="6" height="23" fill="${trim}"/><rect x="51" y="38" width="4" height="2" fill="${dark}"/><rect x="51" y="46" width="4" height="2" fill="${dark}"/><rect x="51" y="54" width="4" height="2" fill="${dark}"/>`,
+        goggles: `<rect x="17" y="25" width="12" height="8" fill="${trim}"/><rect x="35" y="25" width="12" height="8" fill="${trim}"/><rect x="29" y="27" width="6" height="3" fill="${dark}"/>`,
+        map: `<rect x="43" y="38" width="14" height="16" fill="#e8d9a8"/><rect x="46" y="41" width="4" height="4" fill="${trim}"/><rect x="51" y="47" width="3" height="5" fill="#418a55"/>`
+      };
+      return items[kind] || '';
+    }
+
+    function avatarSvg(agent) {
+      const avatar = agent.avatar || {};
+      const skin = avatar.skin || '#c4865c';
+      const hair = avatar.hair || '#2a1d15';
+      const shirt = avatar.shirt || '#315c5c';
+      const trim = avatar.trim || agent.accent || '#ffd987';
+      const eyes = avatar.eyes || '#101010';
+      const dark = '#070a08';
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+        <rect width="64" height="64" fill="#08110d"/>
+        <rect x="8" y="8" width="48" height="48" fill="#15241c"/>
+        <rect x="14" y="42" width="36" height="14" fill="${shirt}"/>
+        <rect x="25" y="35" width="14" height="11" fill="${skin}"/>
+        <rect x="16" y="16" width="32" height="28" fill="${skin}"/>
+        <rect x="16" y="14" width="32" height="9" fill="${hair}"/>
+        <rect x="16" y="22" width="7" height="12" fill="${hair}"/>
+        <rect x="41" y="22" width="7" height="8" fill="${hair}"/>
+        <rect x="24" y="29" width="5" height="5" fill="${eyes}"/>
+        <rect x="36" y="29" width="5" height="5" fill="${eyes}"/>
+        <rect x="31" y="34" width="3" height="4" fill="#9e6348"/>
+        <rect x="27" y="39" width="11" height="3" fill="${dark}"/>
+        <rect x="14" y="42" width="36" height="4" fill="${trim}"/>
+        <rect x="10" y="10" width="44" height="3" fill="${trim}" opacity="0.52"/>
+        <rect x="10" y="54" width="44" height="3" fill="${dark}" opacity="0.62"/>
+        ${accessoryMarkup(avatar.accessory, trim, dark)}
+      </svg>`;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function renderPhaseControls() {
+      phaseControls.replaceChildren();
+      stages.forEach((stage, index) => {
+        const button = document.createElement('button');
+        button.className = `phase-dot${index === 0 ? ' active' : ''}`;
+        button.dataset.stage = String(stage.id);
+        button.dataset.label = stage.label;
+        button.setAttribute('aria-label', `Jump to ${stage.label}`);
+        button.textContent = stage.label;
+        button.addEventListener('click', () => {
+          const targetMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === stage.id);
+          if (targetMessage?.dataset.roomId) setRoom(targetMessage.dataset.roomId);
+          setStage(stage.id, targetMessage);
+          targetMessage?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        });
+        phaseControls.append(button);
+      });
+    }
+
+    function applyRoomVisibility() {
+      chatFeed.querySelectorAll('[data-room-id]').forEach((node) => {
+        node.classList.toggle('room-hidden', node.dataset.roomId !== activeRoom);
+      });
+    }
+
+    function setRoom(room, scrollBehavior = 'smooth') {
+      activeRoom = room;
+      logBoard.dataset.room = room;
+      roomTabs.forEach((tab) => {
+        const isActive = tab.dataset.room === room;
+        tab.classList.toggle('active', isActive);
+        tab.setAttribute('aria-pressed', String(isActive));
+      });
+      applyRoomVisibility();
+      lockAutoScrollSync();
+      chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior: scrollBehavior });
+    }
+
+    function renderRoomAvatar(group) {
+      const agents = Object.values(group.agents || {});
+      const avatarAgents = agents.slice(0, 4);
+      if (avatarAgents.length <= 1) {
+        const initial = avatarAgents[0]?.initials || group.title.slice(0, 1);
+        return `<span class="room-avatar user-avatar" aria-hidden="true">${escapeHtml(initial.slice(0, 2))}</span>`;
+      }
+      const tiles = avatarAgents.map((agent) => `<span style="--tile:${escapeHtml(agent.accent || '#ffd987')}"></span>`).join('');
+      return `<span class="room-avatar group-avatar" aria-hidden="true">${tiles}</span>`;
+    }
+
+    function renderRoomList(groups, entryGroup) {
+      roomList.innerHTML = '<p class="room-list-header">Group Chats</p>';
+      groups.forEach((group) => {
+        const button = document.createElement('button');
+        button.className = 'room-tab';
+        button.type = 'button';
+        button.dataset.room = group.id;
+        button.innerHTML = `${renderRoomAvatar(group)}<span><span class="room-name">${escapeHtml(group.title)}</span><span class="room-subtitle">${escapeHtml(group.description || group.type || '')}</span></span>`;
+        button.addEventListener('click', () => setRoom(group.id));
+        roomList.append(button);
+      });
+      roomTabs = [...roomList.querySelectorAll('.room-tab')];
+      setRoom(entryGroup, 'auto');
+    }
+
+    function getTypingDelay(message, agent) {
+      if (message.agent === 'user' || agent.type === 'client') return 0;
+      return AGENT_TYPING_DELAY;
+    }
+
+    function createSystemNote(event) {
+      const { message, group } = event;
+      const note = document.createElement('div');
+      const noteSide = message.side === 'left' ? 'left' : 'right';
+      const isToolNote = message.toolRef || String(message.kind || '').includes('tool');
+      note.className = `system-note is-entering side-${noteSide}${isToolNote ? ' is-tool' : ''}`;
+      note.dataset.roomId = group.id;
+      note.dataset.noteLabel = isToolNote ? 'TOOL' : 'SYS';
+      note.textContent = message.systemLog || message.note;
+      note.addEventListener('animationend', () => note.classList.remove('is-entering'), { once: true });
+      return note;
+    }
+
+    function createChatMessage(event, index, isTyping = false) {
+      const { message, group, stageId } = event;
+      const agent = group.agents[message.agent] || { name: message.agent, type: 'agent', accent: '#ffd987', avatar: {} };
+      const messageSide = message.side === 'left' ? 'left' : 'right';
+      const article = document.createElement('article');
+      article.className = `chat-message is-entering side-${messageSide}${messageSide === 'right' ? ' alt' : ''}`;
+      article.dataset.chatStage = String(stageId);
+      article.dataset.roomId = group.id;
+      article.dataset.agent = message.agent;
+      article.dataset.side = messageSide;
+      article.dataset.kind = agent.type;
+      article.dataset.eventKind = message.kind || 'message';
+      if (message.toolRef) article.dataset.toolRef = message.toolRef;
+      article.style.setProperty('--agent-accent', agent.accent || '#ffd987');
+
+      const speaker = document.createElement('div');
+      speaker.className = 'speaker';
+      speaker.style.setProperty('--agent-accent', agent.accent || '#ffd987');
+
+      const speakerName = document.createElement('div');
+      speakerName.className = 'speaker-name';
+      speakerName.textContent = agent.name;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.title = `${agent.name} (${agent.type})`;
+      avatar.style.setProperty('--agent-accent', agent.accent || '#ffd987');
+
+      const img = document.createElement('img');
+      img.src = avatarSvg(agent);
+      img.alt = '';
+      img.loading = 'lazy';
+      avatar.append(img);
+      speaker.append(speakerName, avatar);
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      const text = document.createElement('p');
+      text.className = isTyping ? 'typing-dots' : '';
+      text.textContent = isTyping ? '...' : message.text;
+      bubble.append(text);
+
+      article.append(speaker, bubble);
+      article.addEventListener('animationend', () => article.classList.remove('is-entering'), { once: true });
+      return article;
+    }
+
+    function finishTyping(article, message) {
+      const text = article.querySelector('.bubble p');
+      if (!text) return;
+      text.classList.remove('typing-dots');
+      text.textContent = message.text;
+    }
+
+    function scrollChatToBottom(index) {
+      chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior: index === 0 ? 'auto' : 'smooth' });
+    }
+
+    function lockAutoScrollSync() {
+      isAutoScrolling = true;
+      clearTimeout(autoScrollRelease);
+      autoScrollRelease = setTimeout(() => { isAutoScrolling = false; }, 900);
+    }
+
+    function updatePlaybackControls() {
+      const total = playbackEvents.length;
+      const shown = Math.min(playbackCursor, total);
+      if (playbackProgress) playbackProgress.textContent = `${shown} / ${total}`;
+      if (!playbackNext) return;
+
+      playbackNext.disabled = isMessagePending || shown >= total || total === 0;
+      if (isMessagePending) {
+        playbackNext.textContent = 'Typing...';
+      } else if (shown >= total && total > 0) {
+        playbackNext.textContent = 'Complete';
+      } else if (shown === 0) {
+        playbackNext.textContent = 'Start Task';
+      } else {
+        playbackNext.textContent = 'Next Message';
+      }
+    }
+
+    function advancePlayback() {
+      if (isMessagePending || playbackCursor >= playbackEvents.length) return;
+      chatFeed.querySelector('.chat-placeholder')?.remove();
+      isMessagePending = true;
+      updatePlaybackControls();
+      revealChatMessage(playbackCursor);
+    }
+
+    function revealChatMessage(index = 0) {
+      const event = playbackEvents[index];
+      if (!event) {
+        isMessagePending = false;
+        updatePlaybackControls();
+        return;
+      }
+
+      const { message, group, stageId } = event;
+      const agent = group.agents[message.agent];
+      if (!agent) {
+        playbackCursor = index + 1;
+        isMessagePending = false;
+        updatePlaybackControls();
+        advancePlayback();
+        return;
+      }
+
+      const typingDelay = getTypingDelay(message, agent);
+      setRoom(group.id, index === 0 ? 'auto' : 'smooth');
+      const article = createChatMessage(event, index, typingDelay > 0);
+      chatFeed.append(article);
+
+      chatMessages = [...document.querySelectorAll('[data-chat-stage]')];
+      applyRoomVisibility();
+      setStage(stageId, article);
+      lockAutoScrollSync();
+      scrollChatToBottom(index);
+
+      const completeMessage = () => {
+        if (typingDelay > 0) finishTyping(article, message);
+        if (message.systemLog || message.note) chatFeed.append(createSystemNote(event));
+        applyRoomVisibility();
+        lockAutoScrollSync();
+        scrollChatToBottom(index);
+        playbackCursor = index + 1;
+        isMessagePending = false;
+        updatePlaybackControls();
+      };
+
+      if (typingDelay > 0) {
+        logRevealTimer = setTimeout(completeMessage, typingDelay);
+      } else {
+        completeMessage();
+      }
+    }
+
+    function renderChat(events) {
+      clearTimeout(logRevealTimer);
+      clearTimeout(autoScrollRelease);
+      logRevealTimer = null;
+      isAutoScrolling = false;
+      playbackCursor = 0;
+      isMessagePending = false;
+      chatFeed.replaceChildren();
+      chatMessages = [];
+
+      if (!events?.length) {
+        chatFeed.innerHTML = '<div class="log-error">No group messages found in <code>data/groups</code>.</div>';
+        updatePlaybackControls();
+        return;
+      }
+
+      chatFeed.innerHTML = '<div class="chat-placeholder"><strong>Ready to route the task</strong>Click <span class="mono">Start Task</span> to reveal one chat message at a time.</div>';
+      updatePlaybackControls();
+    }
+
+    function setStage(stageId, activeMessage = null) {
+      const stage = stages.find((item) => Number(item.id) === Number(stageId)) || stages[0];
+      if (!stage) return;
+
+      if (systemLine) systemLine.textContent = stage.system;
+      worldProxy.style.transform = `translate(${stage.tilt}`;
+
+      metricText.forEach((node, metricIndex) => { node.textContent = stage.metrics[metricIndex]; });
+      metrics.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values[metricIndex]); });
+      phaseControls.querySelectorAll('.phase-dot').forEach((node) => node.classList.toggle('active', Number(node.dataset.stage) === Number(stage.id)));
+
+      const fallbackMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === Number(stage.id));
+      const focusedMessage = activeMessage || fallbackMessage;
+      chatMessages.forEach((node) => node.classList.toggle('active', node === focusedMessage));
+    }
+
+    function syncTimelineFromLog() {
+      if (!chatMessages.length) return;
+      const feedTop = chatFeed.getBoundingClientRect().top;
+      const anchor = feedTop + chatFeed.clientHeight * 0.22;
+      const visibleMessages = chatMessages.filter((message) => !message.classList.contains('room-hidden'));
+      if (!visibleMessages.length) return;
+      let current = visibleMessages[0];
+
+      visibleMessages.forEach((message) => {
+        if (message.getBoundingClientRect().top <= anchor) current = message;
+      });
+
+      setStage(Number(current.dataset.chatStage), current);
+    }
+
+    function parseTimelineTime(time = '00:00.0') {
+      const parts = String(time).split(':').map(Number);
+      if (parts.length === 1) return parts[0] || 0;
+      return parts.reduce((total, part) => (total * 60) + (Number.isFinite(part) ? part : 0), 0);
+    }
+
+    function inferStageId(groupId, seconds) {
+      if (groupId === 'designer-lab') return 0;
+      if (groupId === 'pm-architecture') return 1;
+      if (groupId === 'foreman-west' || groupId === 'foreman-east') return seconds < 33 ? 2 : 3;
+      if (groupId === 'audit-return') return 4;
+      if (seconds < 17) return 0;
+      if (seconds < 32) return 1;
+      if (seconds < 70) return 3;
+      return 4;
+    }
+
+    function buildPlaybackEvents(groups) {
+      return groups
+        .flatMap((group) => (group.messages || []).map((message, messageIndex) => {
+          const seconds = parseTimelineTime(message.time);
+          return {
+            group,
+            message,
+            messageIndex,
+            seconds,
+            stageId: message.stage ?? inferStageId(group.id, seconds)
+          };
+        }))
+        .sort((a, b) => a.seconds - b.seconds || a.group.order - b.group.order || a.messageIndex - b.messageIndex);
+    }
+
+    async function loadGroupRooms() {
+      const manifestResponse = await fetch('data/groups/manifest.json', { cache: 'no-store' });
+      if (!manifestResponse.ok) throw new Error(`Group manifest HTTP ${manifestResponse.status}`);
+      const manifest = await manifestResponse.json();
+      const groupEntries = [...(manifest.groups || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      const groups = await Promise.all(groupEntries.map(async (entry) => {
+        const response = await fetch(`data/groups/${entry.file}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`${entry.file} HTTP ${response.status}`);
+        const group = await response.json();
+        return { ...entry, ...group, order: entry.order ?? group.order ?? 0 };
+      }));
+      return { manifest, groups };
+    }
+
+    async function bootLog() {
+      try {
+        const [dialogueResponse, groupData] = await Promise.all([
+          fetch('data/run-config.json', { cache: 'no-store' }),
+          loadGroupRooms()
+        ]);
+        if (!dialogueResponse.ok) throw new Error(`Run config HTTP ${dialogueResponse.status}`);
+        const log = await dialogueResponse.json();
+        stages = log.stages || [];
+        groupRooms = groupData.groups;
+        playbackEvents = buildPlaybackEvents(groupRooms);
+        activeRoom = groupData.manifest.entryGroup || groupRooms[0]?.id || '';
+
+        logKicker.textContent = groupData.manifest.title || log.meta?.kicker || logKicker.textContent;
+        logTitle.textContent = log.meta?.title || logTitle.textContent;
+        logBadge.textContent = 'GROUP CHAT MODE';
+        if (systemLine) systemLine.textContent = log.meta?.systemIntro || systemLine.textContent;
+
+        renderPhaseControls();
+        renderRoomList(groupRooms, activeRoom);
+        renderChat(playbackEvents);
+        setStage(stages[0]?.id ?? 0, chatMessages[0]);
+      } catch (error) {
+        chatFeed.innerHTML = `<div class="log-error">Could not load group chat data. Serve this folder with <code>python main.py</code> or another static server. ${escapeHtml(error.message)}</div>`;
+        console.error(error);
+      }
+    }
+
+    let scrollFrame = null;
+    chatFeed.addEventListener('scroll', () => {
+      if (isAutoScrolling) return;
+      if (scrollFrame) return;
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = null;
+        syncTimelineFromLog();
+      });
+    }, { passive: true });
+
+    playbackNext?.addEventListener('click', advancePlayback);
+
+    window.addEventListener('pointermove', (event) => {
+      const x = event.clientX / window.innerWidth - 0.5;
+      const y = event.clientY / window.innerHeight - 0.5;
+      root.style.setProperty('--mx', `${(x * 26).toFixed(1)}px`);
+      root.style.setProperty('--my', `${(y * 20).toFixed(1)}px`);
+    }, { passive: true });
+
+    bootLog();
+  </script>
+</body>
+</html>
