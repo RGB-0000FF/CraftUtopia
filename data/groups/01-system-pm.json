@@ -44,9 +44,10 @@
     {
       "time": "00:01.8",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Send message: System Bot sends the build request and image path to Project Manager.",
-      "stage": 1
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: System Bot creates a Project Manager channel for this build request.",
+      "stage": 1,
+      "toolRef": "channel-open"
     },
     {
       "time": "00:02.4",
@@ -59,9 +60,10 @@
     {
       "time": "00:02.4",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Send message: Project Manager asks Designer to convert the image into a blueprint.",
-      "stage": 1
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: Project Manager opens the Designer channel to request image-to-blueprint conversion.",
+      "stage": 1,
+      "toolRef": "channel-open"
     },
     {
       "time": "00:18.0",
@@ -69,13 +71,6 @@
       "side": "right",
       "kind": "status",
       "text": "Designer returned placements.jsonl, stage_preview.schem, and uncertainty notes. I am planning five Foreman packets: A through E.",
-      "stage": 2
-    },
-    {
-      "time": "00:18.0",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Project Manager receives the blueprint files and uncertainty notes from Designer.",
       "stage": 2
     },
     {
@@ -89,9 +84,10 @@
     {
       "time": "00:31.8",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Prepare dispatch: Project Manager divides the blueprint into five Foreman packets and assigns 20 workers to each pool.",
-      "stage": 3
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: Project Manager prepares the Foreman council and five worker-pool rooms.",
+      "stage": 3,
+      "toolRef": "channel-open"
     },
     {
       "time": "01:19.4",
@@ -99,13 +95,6 @@
       "side": "right",
       "kind": "audit-pass",
       "text": "Final audit passed. The world diff matches the blueprint after approved fixes, and no temporary tags remain in the exported schematic.",
-      "stage": 5
-    },
-    {
-      "time": "01:19.4",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Verify result: Project Manager confirms the final world matches the blueprint and passes the audit.",
       "stage": 5
     },
     {
@@ -119,9 +108,10 @@
     {
       "time": "01:21.2",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Send message: Project Manager sends the final files and run metadata back to System Bot.",
-      "stage": 5
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.close: Project Manager returns the final package metadata to System Bot.",
+      "stage": 5,
+      "toolRef": "channel-close"
     }
   ]
 }

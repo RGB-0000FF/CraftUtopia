@@ -737,6 +737,53 @@
       flex-wrap: wrap;
     }
 
+    .jump-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 4px 5px 4px 10px;
+      border: 1px solid rgba(255,217,135,0.32);
+      border-radius: 999px;
+      color: #07110d;
+      background:
+        radial-gradient(circle at 25% 0%, rgba(255,255,255,0.30), transparent 44%),
+        linear-gradient(135deg, rgba(255,217,135,0.82), rgba(116,214,196,0.72));
+      box-shadow: 0 12px 24px rgba(0,0,0,0.18), 0 0 22px rgba(255,217,135,0.10);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .step-input {
+      width: 64px;
+      min-height: 28px;
+      border: 1px solid rgba(255,217,135,0.20);
+      border-radius: 999px;
+      color: #07110d;
+      background: rgba(7,17,13,0.12);
+      font: inherit;
+      font-size: 0.78rem;
+      text-align: center;
+      outline: none;
+    }
+
+    .step-input:focus {
+      border-color: rgba(116,214,196,0.52);
+      box-shadow: 0 0 0 2px rgba(116,214,196,0.12);
+    }
+
+    .playback-counter {
+      color: rgba(243,229,195,0.54);
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
     .step-button {
       position: relative;
       display: inline-flex;
@@ -760,16 +807,23 @@
       transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease;
     }
 
-    .step-button::after {
-      content: ">";
+    .step-button[data-icon]::after {
+      content: attr(data-icon);
       display: grid;
       place-items: center;
-      width: 18px;
+      min-width: 18px;
       height: 18px;
+      padding: 0 3px;
       border-radius: 50%;
       background: rgba(7,17,13,0.16);
       color: #07110d;
-      font-size: 0.76rem;
+      font-size: 0.64rem;
+    }
+
+    .step-button.compact {
+      min-height: 28px;
+      padding: 6px 9px;
+      font-size: 0.66rem;
     }
 
     .step-button:hover,
@@ -1229,7 +1283,11 @@
       .log-title { min-width: 0; }
       .log-title p { font-size: 0.68rem; letter-spacing: 0.13em; }
       .log-actions { justify-content: flex-start; }
+      .jump-control { min-height: 34px; padding-left: 8px; font-size: 0.62rem; }
+      .step-input { width: 52px; min-height: 26px; font-size: 0.68rem; }
+      .playback-counter { font-size: 0.66rem; }
       .step-button { min-height: 34px; padding: 7px 10px; font-size: 0.68rem; }
+      .step-button.compact { min-height: 26px; padding: 5px 8px; font-size: 0.6rem; }
       .chat-shell { grid-template-columns: 1fr; border-radius: 18px; }
       .room-list { display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 8px; border-right: 0; border-bottom: 1px solid rgba(243,229,195,0.10); }
       .room-list-header { display: none; }
@@ -1303,7 +1361,15 @@
           <p id="log-kicker">Operational Agent Dialogue</p>
         </div>
         <div class="log-actions">
-          <button class="step-button" id="playback-next" type="button">Next Message</button>
+          <button class="step-button" id="playback-prev" type="button" data-icon="<">Prev</button>
+          <button class="step-button" id="playback-next" type="button" data-icon=">">Next Message</button>
+          <button class="step-button" id="playback-auto" type="button" data-icon="AUTO">Auto Play</button>
+          <div class="jump-control" aria-label="Jump to message step">
+            <span>Step</span>
+            <input class="step-input" id="playback-step" type="number" min="0" value="0" inputmode="numeric" aria-label="Step number">
+            <button class="step-button compact" id="playback-jump" type="button">Jump</button>
+          </div>
+          <span class="playback-counter" id="playback-counter">0 / 0</span>
         </div>
       </header>
 
@@ -1320,6 +1386,9 @@
 
   <script>
     const AGENT_TYPING_DELAY = 2000;
+    const AUTO_PLAY_MIN_DELAY = 2600;
+    const AUTO_PLAY_MAX_DELAY = 11000;
+    const AUTO_PLAY_MS_PER_WORD = 190;
     const DESIGN_WIDTH = 1440;
     const DESIGN_HEIGHT = 900;
     const COMPACT_BREAKPOINT = 980;
@@ -1333,6 +1402,8 @@
     let isAutoScrolling = false;
     let playbackCursor = 0;
     let isMessagePending = false;
+    let autoPlayTimer = null;
+    let isAutoPlaying = false;
     let activeRoom = '';
     let skillLibraryUnlocked = false;
     let mentionRegex = null;
@@ -1348,7 +1419,12 @@
     const systemLine = document.querySelector('#system-line');
     const skillLibrary = document.querySelector('#skill-library');
     const logKicker = document.querySelector('#log-kicker');
+    const playbackPrev = document.querySelector('#playback-prev');
     const playbackNext = document.querySelector('#playback-next');
+    const playbackAuto = document.querySelector('#playback-auto');
+    const playbackStep = document.querySelector('#playback-step');
+    const playbackJump = document.querySelector('#playback-jump');
+    const playbackCounter = document.querySelector('#playback-counter');
 
     function updateUiScale() {
       const viewport = window.visualViewport || window;
@@ -1656,12 +1732,74 @@
       autoScrollRelease = setTimeout(() => { isAutoScrolling = false; }, 900);
     }
 
+    function stopAutoPlay(update = true) {
+      clearTimeout(autoPlayTimer);
+      autoPlayTimer = null;
+      isAutoPlaying = false;
+      if (update) updatePlaybackControls();
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function getReadableText(message = {}) {
+      return String(message.text || message.systemLog || message.note || '');
+    }
+
+    function countReadingUnits(text = '') {
+      const latinWords = text.match(/[A-Za-z0-9_./-]+/g) || [];
+      const cjkChars = text.match(/[\u3400-\u9FFF\uF900-\uFAFF]/g) || [];
+      const otherChars = text
+        .replace(/[A-Za-z0-9_./-]+/g, '')
+        .replace(/[\u3400-\u9FFF\uF900-\uFAFF]/g, '')
+        .replace(/\s/g, '').length;
+
+      return latinWords.length + Math.ceil(cjkChars.length / 2) + Math.ceil(otherChars / 6);
+    }
+
+    function getAutoPlayDelay(event) {
+      const units = countReadingUnits(getReadableText(event?.message));
+      return clamp(1800 + (units * AUTO_PLAY_MS_PER_WORD), AUTO_PLAY_MIN_DELAY, AUTO_PLAY_MAX_DELAY);
+    }
+
+    function scheduleAutoPlay() {
+      if (!isAutoPlaying) return;
+      clearTimeout(autoPlayTimer);
+      const previousEvent = playbackEvents[Math.max(playbackCursor - 1, 0)];
+      const delay = getAutoPlayDelay(previousEvent);
+      autoPlayTimer = setTimeout(() => {
+        autoPlayTimer = null;
+        if (!isAutoPlaying) return;
+        if (playbackCursor >= playbackEvents.length) {
+          stopAutoPlay();
+          return;
+        }
+        advancePlayback({ fromAuto: true });
+      }, delay);
+    }
+
     function updatePlaybackControls() {
       const total = playbackEvents.length;
       const shown = Math.min(playbackCursor, total);
+      const isComplete = shown >= total && total > 0;
+
+      if (playbackPrev) playbackPrev.disabled = isMessagePending || isAutoPlaying || shown <= 0;
+      if (playbackAuto) {
+        playbackAuto.disabled = total === 0 || (!isAutoPlaying && isComplete);
+        playbackAuto.textContent = isAutoPlaying ? 'Pause Auto' : 'Auto Play';
+      }
+      if (playbackStep) {
+        playbackStep.max = String(total);
+        playbackStep.disabled = isMessagePending || isAutoPlaying || total === 0;
+        if (document.activeElement !== playbackStep) playbackStep.value = String(shown);
+      }
+      if (playbackJump) playbackJump.disabled = isMessagePending || isAutoPlaying || total === 0;
+      if (playbackCounter) playbackCounter.textContent = `${shown} / ${total}`;
+
       if (!playbackNext) return;
 
-      playbackNext.disabled = isMessagePending || shown >= total || total === 0;
+      playbackNext.disabled = isMessagePending || isAutoPlaying || shown >= total || total === 0;
       if (isMessagePending) {
         playbackNext.textContent = 'Typing...';
       } else if (shown >= total && total > 0) {
@@ -1673,7 +1811,8 @@
       }
     }
 
-    function advancePlayback() {
+    function advancePlayback(options = {}) {
+      if (!options.fromAuto) stopAutoPlay(false);
       if (isMessagePending || playbackCursor >= playbackEvents.length) return;
       chatFeed.querySelector('.chat-placeholder')?.remove();
       isMessagePending = true;
@@ -1702,6 +1841,7 @@
         playbackCursor = index + 1;
         isMessagePending = false;
         updatePlaybackControls();
+        scheduleAutoPlay();
         return;
       }
 
@@ -1710,7 +1850,7 @@
         playbackCursor = index + 1;
         isMessagePending = false;
         updatePlaybackControls();
-        advancePlayback();
+        advancePlayback({ fromAuto: isAutoPlaying });
         return;
       }
 
@@ -1736,6 +1876,7 @@
         playbackCursor = index + 1;
         isMessagePending = false;
         updatePlaybackControls();
+        scheduleAutoPlay();
       };
 
       if (typingDelay > 0) {
@@ -1746,8 +1887,11 @@
     }
 
     function renderChat(events) {
+      stopAutoPlay(false);
       clearTimeout(logRevealTimer);
       clearTimeout(autoScrollRelease);
+      clearTimeout(autoPlayTimer);
+      autoPlayTimer = null;
       logRevealTimer = null;
       isAutoScrolling = false;
       playbackCursor = 0;
@@ -1768,6 +1912,85 @@
       chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Ready to route the task</strong>Click <span class="mono">Start Task</span> to reveal one chat message at a time.</div>');
       applyRoomVisibility();
       updatePlaybackControls();
+    }
+
+    function appendEventInstantly(event, index) {
+      const { message, group, stageId } = event;
+      let node = null;
+
+      if (isStandaloneNote(message)) {
+        node = createSystemNote(event);
+      } else {
+        const agent = group.agents[message.agent];
+        if (!agent) return null;
+        node = createChatMessage(event, index, false);
+        if (message.kind === 'skill-detection') skillLibraryUnlocked = true;
+      }
+
+      node.classList.remove('is-entering');
+      chatFeed.append(node);
+      return { node, group, stageId };
+    }
+
+    function renderPlaybackUntil(targetCount) {
+      stopAutoPlay(false);
+      clearTimeout(logRevealTimer);
+      clearTimeout(autoScrollRelease);
+      logRevealTimer = null;
+      isAutoScrolling = false;
+      isMessagePending = false;
+      skillLibraryUnlocked = false;
+      skillLibrary?.classList.remove('is-visible');
+
+      const total = playbackEvents.length;
+      const count = Math.min(Math.max(Number(targetCount) || 0, 0), total);
+      chatFeed.replaceChildren();
+      chatFeed.append(...groupRooms.map(createRoomIntro));
+      chatMessages = [];
+
+      let last = null;
+      for (let index = 0; index < count; index += 1) {
+        last = appendEventInstantly(playbackEvents[index], index) || last;
+      }
+
+      chatMessages = [...document.querySelectorAll('[data-chat-stage]')];
+      playbackCursor = count;
+
+      if (last) {
+        setRoom(last.group.id, 'auto');
+        applyRoomVisibility();
+        setStage(last.stageId, last.node);
+        lockAutoScrollSync();
+        chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior: 'auto' });
+      } else {
+        chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Ready to route the task</strong>Click <span class="mono">Start Task</span> to reveal one chat message at a time.</div>');
+        applyRoomVisibility();
+        setStage(stages[0]?.id ?? 0, chatMessages[0]);
+      }
+
+      updatePlaybackControls();
+    }
+
+    function jumpPlaybackBy(delta) {
+      if (isMessagePending || isAutoPlaying) return;
+      renderPlaybackUntil(playbackCursor + delta);
+    }
+
+    function jumpPlaybackToInput() {
+      if (isMessagePending || isAutoPlaying) return;
+      const target = Number.parseInt(playbackStep?.value || '0', 10);
+      renderPlaybackUntil(Number.isFinite(target) ? target : playbackCursor);
+    }
+
+    function toggleAutoPlay() {
+      if (isAutoPlaying) {
+        stopAutoPlay();
+        return;
+      }
+      if (playbackCursor >= playbackEvents.length || !playbackEvents.length) return;
+      isAutoPlaying = true;
+      updatePlaybackControls();
+      if (!isMessagePending) advancePlayback({ fromAuto: true });
     }
 
     function setStage(stageId, activeMessage = null) {
@@ -1897,7 +2120,13 @@
       });
     }, { passive: true });
 
-    playbackNext?.addEventListener('click', advancePlayback);
+    playbackPrev?.addEventListener('click', () => jumpPlaybackBy(-1));
+    playbackNext?.addEventListener('click', () => advancePlayback());
+    playbackAuto?.addEventListener('click', toggleAutoPlay);
+    playbackJump?.addEventListener('click', jumpPlaybackToInput);
+    playbackStep?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') jumpPlaybackToInput();
+    });
 
     updateUiScale();
     window.addEventListener('resize', updateUiScale, { passive: true });

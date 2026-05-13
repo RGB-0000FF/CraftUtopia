@@ -72,9 +72,10 @@
     {
       "time": "00:34.0",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Assign work: Foreman-C splits Packet C across alternating lanes with Gate A and Gate B dependencies.",
-      "stage": 4
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: Foreman-C assigns Packet C to workers 041-060.",
+      "stage": 4,
+      "toolRef": "channel-open"
     },
     {
       "time": "00:43.2",
@@ -85,25 +86,11 @@
       "stage": 4
     },
     {
-      "time": "00:43.2",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Exception report: worker-052 detects a row-02 offset and isolates seven placements for patching.",
-      "stage": 4
-    },
-    {
       "time": "00:48.6",
       "agent": "foreman-c",
       "side": "left",
       "kind": "correction",
       "text": "Patch applied to row 02. Gate C is now green; repetitive straight rows can use the bounded place_line helper.",
-      "stage": 4
-    },
-    {
-      "time": "00:48.6",
-      "side": "left",
-      "kind": "system-log",
-      "systemLog": "Checkpoint update: Foreman-C applies the row-02 patch, clears Gate C, and enables place_line for safe rows.",
       "stage": 4
     },
     {
@@ -117,9 +104,10 @@
     {
       "time": "01:01.4",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Pool C completes Packet C and submits its diff with high-risk corners marked for review.",
-      "stage": 4
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.close: Pool C completes Packet C and submits its diff shard.",
+      "stage": 4,
+      "toolRef": "channel-close"
     }
   ]
 }

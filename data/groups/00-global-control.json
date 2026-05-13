@@ -59,9 +59,10 @@
     {
       "time": "00:01.0",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Send message: System Bot forwards the build request and image path to Project Manager.",
-      "stage": 0
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: System Bot opens the Project Manager channel and forwards the build request.",
+      "stage": 0,
+      "toolRef": "channel-open"
     },
     {
       "time": "00:32.0",
@@ -69,13 +70,6 @@
       "side": "right",
       "kind": "status",
       "text": "Project Manager has prepared the blueprint and the Foreman-A to Foreman-E plan. The 100 workers are now grouped into five synchronized worker-pool rooms.",
-      "stage": 3
-    },
-    {
-      "time": "00:32.0",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Update status: Project Manager reports that the blueprint and five Foreman worker pools are ready.",
       "stage": 3
     },
     {
@@ -89,9 +83,10 @@
     {
       "time": "01:22.0",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Package result: System Bot returns the final schematic, reports, replay file, and compressed log archive to the user.",
-      "stage": 5
+      "kind": "tool-call",
+      "systemLog": "Tools Call: run.close: System Bot packages the final schematic, reports, replay file, and log archive for the user.",
+      "stage": 5,
+      "toolRef": "run-close"
     }
   ]
 }

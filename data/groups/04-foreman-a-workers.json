@@ -72,9 +72,10 @@
     {
       "time": "00:32.8",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Assign work: Foreman-A splits Packet A across four lanes for workers 001-020.",
-      "stage": 4
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: Foreman-A assigns Packet A to workers 001-020.",
+      "stage": 4,
+      "toolRef": "channel-open"
     },
     {
       "time": "00:36.2",
@@ -85,25 +86,11 @@
       "stage": 4
     },
     {
-      "time": "00:36.2",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Pool A reports active workers, placed blocks, and shared-seam status.",
-      "stage": 4
-    },
-    {
       "time": "00:41.8",
       "agent": "foreman-a",
       "side": "left",
       "kind": "checkpoint",
       "text": "Gate A is green. I am releasing the next dependency and keeping approved diffs immutable.",
-      "stage": 4
-    },
-    {
-      "time": "00:41.8",
-      "side": "left",
-      "kind": "system-log",
-      "systemLog": "Checkpoint update: Foreman-A marks Gate A as complete and releases dependent work.",
       "stage": 4
     },
     {
@@ -117,9 +104,10 @@
     {
       "time": "00:58.6",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Pool A completes Packet A and submits its diff shard.",
-      "stage": 4
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.close: Pool A completes Packet A and submits its diff shard.",
+      "stage": 4,
+      "toolRef": "channel-close"
     }
   ]
 }

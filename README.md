@@ -14,6 +14,6 @@ The agent dialogue is no longer hardcoded in `index.html`. Edit `data/run-config
 
 - `stages`: timeline labels, metrics, system-line text, and preview tilt.
 - `agents`: display names, role types, vivid accent colors, and MC-style pixel avatar palettes/accessories.
-- `messages`: stage, speaker, `side` (`left` or `right`), timestamp, and one event per item. Dialogue uses `text`; system/tool notes use standalone `systemLog` entries.
+- `messages`: stage, speaker, `side` (`left` or `right`), timestamp, and one event per item. Dialogue uses `text`; broadcast notes use standalone `systemLog`; channel open/close and other tools use standalone `kind: "tool-call"` entries with `toolRef`.
 
 Dialogue messages reference an `agent` key, so adding a new person only requires adding one agent entry and then using that key in `messages`.

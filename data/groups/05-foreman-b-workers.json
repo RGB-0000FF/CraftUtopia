@@ -72,9 +72,10 @@
     {
       "time": "00:33.4",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Assign work: Foreman-B splits Packet B across five lanes for workers 021-040.",
-      "stage": 4
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: Foreman-B assigns Packet B to workers 021-040.",
+      "stage": 4,
+      "toolRef": "channel-open"
     },
     {
       "time": "00:39.0",
@@ -85,25 +86,11 @@
       "stage": 4
     },
     {
-      "time": "00:39.0",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Pool B reports active workers, waiting workers, placed blocks, and locked-seam status.",
-      "stage": 4
-    },
-    {
       "time": "00:44.8",
       "agent": "worker-027",
       "side": "right",
       "kind": "exception",
       "text": "worker-027 reports a blocked path in lane 3. I am routing that lane around temporary scaffolding instead of pausing the entire pool.",
-      "stage": 4
-    },
-    {
-      "time": "00:44.8",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Exception report: worker-027 reports a blocked path and reroutes lane 3 around temporary scaffolding.",
       "stage": 4
     },
     {
@@ -117,9 +104,10 @@
     {
       "time": "00:59.8",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Receive message: Foreman-B completes Packet B and submits the aligned diff.",
-      "stage": 4
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.close: Foreman-B completes Packet B and submits the aligned diff.",
+      "stage": 4,
+      "toolRef": "channel-close"
     }
   ]
 }

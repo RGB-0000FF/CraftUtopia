@@ -100,9 +100,10 @@
     {
       "time": "00:19.0",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Plan work: Project Manager partitions the blueprint into five packets and sets shared checkpoints.",
-      "stage": 3
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: Project Manager opens the Foreman council and publishes the five work packets.",
+      "stage": 3,
+      "toolRef": "channel-open"
     },
     {
       "time": "00:22.0",
@@ -110,13 +111,6 @@
       "side": "right",
       "kind": "ack",
       "text": "Packet A accepted. My pool owns workers 001-020 and will report only pool totals plus blocking exceptions.",
-      "stage": 3
-    },
-    {
-      "time": "00:22.0",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Foreman-A accepts Packet A and takes ownership of workers 001-020.",
       "stage": 3
     },
     {
@@ -128,25 +122,11 @@
       "stage": 3
     },
     {
-      "time": "00:22.8",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Foreman-B accepts Packet B and records the shared-axis lock.",
-      "stage": 3
-    },
-    {
       "time": "00:23.6",
       "agent": "foreman-c",
       "side": "right",
       "kind": "ack",
       "text": "Packet C accepted. My pool owns workers 041-060 and will pause dependent rows until the required gates are green.",
-      "stage": 3
-    },
-    {
-      "time": "00:23.6",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Foreman-C accepts Packet C and registers its checkpoint dependencies.",
       "stage": 3
     },
     {
@@ -158,25 +138,11 @@
       "stage": 3
     },
     {
-      "time": "00:24.4",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Foreman-D accepts Packet D and marks uncertain cells for review.",
-      "stage": 3
-    },
-    {
       "time": "00:25.2",
       "agent": "foreman-e",
       "side": "right",
       "kind": "ack",
       "text": "Packet E accepted. My pool owns workers 081-100 and will track temporary tags, cleanup, and diff collection.",
-      "stage": 3
-    },
-    {
-      "time": "00:25.2",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Foreman-E accepts Packet E and takes ownership of staging, cleanup, and diff collection.",
       "stage": 3
     },
     {
@@ -190,9 +156,10 @@
     {
       "time": "00:31.8",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Send message: Project Manager dispatches all five Foreman pools and starts the build phase.",
-      "stage": 3
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: Project Manager starts the five Foreman worker-pool rooms.",
+      "stage": 3,
+      "toolRef": "channel-open"
     },
     {
       "time": "01:09.4",
@@ -205,9 +172,10 @@
     {
       "time": "01:09.4",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Receive message: Project Manager collects all Foreman outputs and prepares them for final verification.",
-      "stage": 5
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.close: Project Manager collects Foreman outputs and moves the build to final verification.",
+      "stage": 5,
+      "toolRef": "channel-close"
     }
   ]
 }

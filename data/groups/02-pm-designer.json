@@ -44,9 +44,10 @@
     {
       "time": "00:03.0",
       "side": "left",
-      "kind": "system-log",
-      "systemLog": "Send message: Project Manager sends the image path and blueprint request to Designer.",
-      "stage": 2
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.open: Project Manager sends the image path and blueprint request to Designer.",
+      "stage": 2,
+      "toolRef": "channel-open"
     },
     {
       "time": "00:03.8",
@@ -54,13 +55,6 @@
       "side": "right",
       "kind": "action",
       "text": "I received the image path. The input is an image file, so before we can make a usable Minecraft blueprint, I first need to reconstruct it as a 3D model. I will call TRELLIS to convert the image into mesh.obj and camera.json.",
-      "stage": 2
-    },
-    {
-      "time": "00:03.8",
-      "side": "right",
-      "kind": "system-log",
-      "systemLog": "Receive message: Designer receives an image file and decides to convert it into a 3D model first.",
       "stage": 2
     },
     {
@@ -122,9 +116,10 @@
     {
       "time": "00:16.4",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Send message: Designer returns the completed blueprint files, mesh review, visual cues, and uncertain placement list to Project Manager.",
-      "stage": 2
+      "kind": "tool-call",
+      "systemLog": "Tools Call: channel.close: Designer returns the completed blueprint files and uncertainty notes to Project Manager.",
+      "stage": 2,
+      "toolRef": "channel-close"
     }
   ]
 }
