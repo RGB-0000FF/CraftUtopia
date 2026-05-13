@@ -29,6 +29,7 @@
       --font-display: "Cinzel", "Trajan Pro", "Cormorant Garamond", Georgia, serif;
       --font-ui: "Space Grotesk", "Avenir Next", "Helvetica Neue", sans-serif;
       --font-mono: "IBM Plex Mono", "Cascadia Mono", "SFMono-Regular", monospace;
+      --ui-scale: 1;
       --mx: 0px;
       --my: 0px;
     }
@@ -85,11 +86,11 @@
       z-index: 1;
       width: 100vw;
       height: 100svh;
-      min-height: 620px;
-      padding: clamp(16px, 2vw, 30px);
+      min-height: 0;
+      padding: clamp(12px, calc(29px * var(--ui-scale)), 34px);
       display: grid;
-      grid-template-columns: minmax(0, 1.68fr) minmax(440px, 1.05fr);
-      gap: clamp(14px, 1.5vw, 24px);
+      grid-template-columns: minmax(0, 1.25fr) minmax(min(640px, 48vw), 1fr);
+      gap: clamp(10px, calc(22px * var(--ui-scale)), 28px);
     }
 
     .app::before {
@@ -145,7 +146,7 @@
     .status {
       display: grid;
       grid-template-rows: minmax(0, 1fr) auto;
-      padding: clamp(18px, 2vw, 28px);
+      padding: clamp(14px, calc(28px * var(--ui-scale)), 32px);
     }
 
     .topline,
@@ -220,7 +221,7 @@
     .kicker {
       margin: 0;
       color: var(--gold-hot);
-      font-size: clamp(0.66rem, 0.78vw, 0.78rem);
+      font-size: clamp(0.64rem, calc(0.7rem * var(--ui-scale)), 0.86rem);
       font-weight: 700;
     }
 
@@ -238,7 +239,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-size: clamp(1.95rem, 3.25vw, 4.25rem);
+      font-size: clamp(1.95rem, calc(2.93rem * var(--ui-scale)), 4.25rem);
       font-weight: 800;
     }
 
@@ -270,7 +271,7 @@
       position: relative;
       z-index: 1;
       min-height: 0;
-      margin: 0 0 clamp(16px, 2vh, 24px);
+      margin: 0 0 clamp(12px, calc(18px * var(--ui-scale)), 24px);
       display: block;
     }
 
@@ -326,8 +327,8 @@
       position: absolute;
       left: 50%;
       top: 55%;
-      width: min(52vh, 45vw);
-      height: min(52vh, 45vw);
+      width: min(58vmin, 54vw, calc(520px * var(--ui-scale)));
+      height: min(58vmin, 54vw, calc(520px * var(--ui-scale)));
       max-width: 520px;
       max-height: 520px;
       transform: translate(-50%, -50%) rotateX(60deg) rotateZ(45deg);
@@ -447,7 +448,7 @@
       margin: 5px 0 2px;
       color: var(--parchment);
       font-family: var(--font-display);
-      font-size: clamp(1.15rem, 1.45vw, 1.6rem);
+      font-size: clamp(1.05rem, calc(1.3rem * var(--ui-scale)), 1.7rem);
       line-height: 1;
     }
 
@@ -542,7 +543,7 @@
     .log-board {
       display: grid;
       grid-template-rows: auto minmax(0, 1fr);
-      padding: clamp(20px, 1.9vw, 28px);
+      padding: clamp(14px, calc(27px * var(--ui-scale)), 32px);
       clip-path: none;
       border-radius: 30px;
       border-color: rgba(213,170,98,0.28);
@@ -571,7 +572,7 @@
       position: relative;
       z-index: 2;
       display: grid;
-      grid-template-columns: clamp(212px, 22vw, 248px) minmax(0, 1fr);
+      grid-template-columns: clamp(184px, 18vw, calc(248px * var(--ui-scale))) minmax(0, 1fr);
       min-height: 0;
       overflow: hidden;
       border: 1px solid rgba(243,229,195,0.12);
@@ -590,6 +591,7 @@
       align-content: start;
       justify-items: start;
       overflow-y: auto;
+      overflow-x: hidden;
       padding: 12px;
       border-right: 1px solid rgba(243,229,195,0.10);
       background:
@@ -612,7 +614,7 @@
       grid-template-columns: 38px minmax(0, 1fr);
       gap: 10px;
       align-items: center;
-      width: 188px;
+      width: 100%;
       max-width: 100%;
       min-height: 66px;
       min-width: 0;
@@ -723,9 +725,15 @@
       text-transform: uppercase;
     }
 
+    .log-title,
+    .log-actions {
+      min-width: 0;
+    }
+
     .log-title h2 {
-      font-size: clamp(2.25rem, 3vw, 3.6rem);
+      font-size: clamp(2.05rem, calc(2.7rem * var(--ui-scale)), 3.7rem);
       letter-spacing: -0.045em;
+      overflow-wrap: anywhere;
     }
 
     .sys-badge {
@@ -844,7 +852,7 @@
         radial-gradient(circle at 0% 0%, rgba(255,217,135,0.14), transparent 12rem),
         rgba(5,10,8,0.92);
       box-shadow: 0 14px 28px rgba(0,0,0,0.22), inset 0 1px rgba(255,255,255,0.08);
-      font-size: clamp(0.96rem, 1vw, 1.08rem);
+      font-size: clamp(0.9rem, calc(0.96rem * var(--ui-scale)), 1.14rem);
       line-height: 1.45;
       overflow-wrap: break-word;
     }
@@ -896,6 +904,7 @@
       grid-template-rows: auto auto;
       gap: 8px;
       align-items: start;
+      min-width: 0;
       opacity: 0.88;
       transform: translateX(0) scale(1);
       transition: opacity 280ms ease, transform 280ms ease, filter 280ms ease;
@@ -979,7 +988,7 @@
       text-overflow: clip;
       white-space: nowrap;
       overflow-wrap: normal;
-      font-size: clamp(0.98rem, 1vw, 1.14rem);
+      font-size: clamp(0.86rem, calc(0.98rem * var(--ui-scale)), 1.14rem);
       font-weight: 850;
       line-height: 1.14;
       letter-spacing: 0.01em;
@@ -1051,6 +1060,7 @@
       position: relative;
       width: fit-content;
       max-width: min(100%, 58ch);
+      min-width: 0;
       padding: 15px 16px 16px;
       border: 1px solid rgba(243,229,195,0.18);
       background:
@@ -1106,19 +1116,19 @@
       margin: 0;
       color: #dccdaa;
       font-family: var(--font-ui);
-      font-size: clamp(1.12rem, 1.18vw, 1.32rem);
+      font-size: clamp(0.98rem, calc(1.12rem * var(--ui-scale)), 1.32rem);
       font-weight: 500;
       line-height: 1.58;
       letter-spacing: -0.01em;
       hyphens: auto;
-      overflow-wrap: break-word;
+      overflow-wrap: anywhere;
       text-wrap: pretty;
-      word-break: normal;
+      word-break: break-word;
     }
 
     .bubble p.typing-dots {
       color: var(--parchment);
-      font-size: clamp(1.35rem, 1.55vw, 1.8rem);
+      font-size: clamp(1.18rem, calc(1.4rem * var(--ui-scale)), 1.8rem);
       font-weight: 900;
       letter-spacing: 0.22em;
       line-height: 1.18;
@@ -1127,6 +1137,8 @@
 
     .system-note {
       position: relative;
+      max-width: 100%;
+      min-width: 0;
       margin: 4px 40px 6px 48px;
       padding: 14px 16px;
       border: 1px solid rgba(114,255,209,0.34);
@@ -1138,15 +1150,15 @@
         linear-gradient(135deg, rgba(3,22,18,0.80), rgba(5,10,8,0.62));
       box-shadow: inset 0 1px rgba(255,255,255,0.055), 0 12px 24px rgba(0,0,0,0.16), 0 0 22px rgba(114,255,209,0.08);
       font-family: var(--font-mono);
-      font-size: clamp(1.04rem, 1.1vw, 1.22rem);
+      font-size: clamp(0.96rem, calc(1.04rem * var(--ui-scale)), 1.22rem);
       font-weight: 620;
       line-height: 1.54;
       letter-spacing: -0.015em;
       text-transform: none;
       hyphens: auto;
-      overflow-wrap: break-word;
+      overflow-wrap: anywhere;
       text-wrap: pretty;
-      word-break: normal;
+      word-break: break-word;
     }
 
     .system-note::before {
@@ -1361,6 +1373,9 @@
 
   <script>
     const AGENT_TYPING_DELAY = 2000;
+    const DESIGN_WIDTH = 1440;
+    const DESIGN_HEIGHT = 900;
+    const COMPACT_BREAKPOINT = 980;
     const root = document.documentElement;
     let stages = [];
     let chatMessages = [];
@@ -1389,6 +1404,17 @@
     const logBadge = document.querySelector('#log-badge');
     const playbackNext = document.querySelector('#playback-next');
     const playbackProgress = document.querySelector('#playback-progress');
+
+    function updateUiScale() {
+      const viewport = window.visualViewport || window;
+      const viewportWidth = viewport.width || window.innerWidth;
+      const viewportHeight = viewport.height || window.innerHeight;
+      const rawScale = Math.min(viewportWidth / DESIGN_WIDTH, viewportHeight / DESIGN_HEIGHT);
+      const isCompact = viewportWidth <= COMPACT_BREAKPOINT;
+      const minScale = isCompact ? 0.82 : 0.74;
+      const scale = Math.min(Math.max(rawScale, minScale), 1.45);
+      root.style.setProperty('--ui-scale', scale.toFixed(4));
+    }
 
     const escapeHtml = (value = '') => String(value)
       .replace(/&/g, '&amp;')
@@ -1904,6 +1930,10 @@
     }, { passive: true });
 
     playbackNext?.addEventListener('click', advancePlayback);
+
+    updateUiScale();
+    window.addEventListener('resize', updateUiScale, { passive: true });
+    window.visualViewport?.addEventListener('resize', updateUiScale, { passive: true });
 
     window.addEventListener('pointermove', (event) => {
       const x = event.clientX / window.innerWidth - 0.5;
