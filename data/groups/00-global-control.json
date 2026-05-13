@@ -1,7 +1,7 @@
 {
-  "id": "global-control",
-  "title": "Run Console",
-  "description": "Operator-facing console for a real-looking local experiment run. It resolves the image path, opens the run folder, queues workers, records command output, and returns the final artifacts.",
+  "id": "user-system",
+  "title": "User and System Bot",
+  "description": "The user talks only with the overall System Bot. System Bot accepts the build request, tracks the PM, Foreman council, and 100-worker pool run, then returns the final package.",
   "agents": {
     "user": {
       "name": "User",
@@ -18,9 +18,9 @@
       }
     },
     "system-bot": {
-      "name": "system-bot",
-      "initials": "RUN",
-      "type": "orchestrator",
+      "name": "System Bot",
+      "initials": "SYS",
+      "type": "system",
       "accent": "#72ffd1",
       "avatar": {
         "skin": "#6d7f8f",
@@ -38,72 +38,36 @@
       "agent": "user",
       "side": "left",
       "kind": "message",
-      "text": "Start run from workspace/Craft_Utopia/tiantan.png. Target: build the visible Tiantan structure in Minecraft with six builder agents and write generated files under workspace/Craft_Utopia/runs/tiantan_build_001.",
-      "systemLog": "INFO argv=craft-run --image workspace/Craft_Utopia/tiantan.png --agents 6 --out runs/tiantan_build_001; cwd=workspace/Craft_Utopia"
+      "text": "Start run from workspace/Craft_Utopia/tiantan.png. Target: build the visible Tiantan structure in Minecraft and write generated files under workspace/Craft_Utopia/runs/tiantan_build_001.",
+      "systemLog": "INFO argv=craft-run --image workspace/Craft_Utopia/tiantan.png --out runs/tiantan_build_001; cwd=workspace/Craft_Utopia",
+      "stage": 0
     },
     {
       "time": "00:01.0",
       "agent": "system-bot",
       "side": "right",
       "kind": "ack",
-      "text": "Input resolved. I created the run directory, saved compact run_config.json, and pinned the image checksum before starting vision.",
-      "systemLog": "INFO mkdir runs/tiantan_build_001/{input,vision,blueprint,plan,world,logs}; image_sha256=8f41b07c... config=run_config.json"
-    },
-    {
-      "time": "00:02.2",
-      "agent": "system-bot",
-      "side": "right",
-      "kind": "handoff",
-      "text": "vision-blueprint: inspect the reference image, run reconstruction, and export placements.jsonl plus a short uncertainty report. Do not hand-edit a template.",
-      "systemLog": "INFO job=vision-blueprint-0 input=workspace/Craft_Utopia/tiantan.png out=workspace/Craft_Utopia/runs/tiantan_build_001/blueprint"
-    },
-    {
-      "time": "00:16.8",
-      "agent": "system-bot",
-      "side": "right",
-      "kind": "status",
-      "text": "Vision worker finished. It wrote mesh.obj, stage_preview.schem, placements.jsonl, and uncertain_edges.json for the roof lip and entrance trim.",
-      "systemLog": "INFO job=vision-blueprint-0 exit=0 duration=14.58s placements=9274 palette=18 uncertain=23 log=logs/vision-blueprint.log"
-    },
-    {
-      "time": "00:17.6",
-      "agent": "system-bot",
-      "side": "right",
-      "kind": "handoff",
-      "text": "planner: split placements into non-overlapping worker jobs. Keep x=0 locked until both sides report their roof checkpoints.",
-      "systemLog": "INFO job=planner-0 --blueprint runs/tiantan_build_001/blueprint/placements.jsonl --out runs/tiantan_build_001/plan"
+      "text": "Request accepted. I created the run directory, pinned the input checksum, and opened a Project Manager channel for planning.",
+      "systemLog": "INFO mkdir runs/tiantan_build_001/{input,vision,blueprint,plan,world,logs}; image_sha256=8f41b07c...",
+      "stage": 0
     },
     {
       "time": "00:32.0",
       "agent": "system-bot",
       "side": "right",
       "kind": "status",
-      "text": "Planner wrote west.json, east.json, locks.json, checkpoints.json, and the retry policy. Build workers are ready to connect to the local server.",
-      "systemLog": "planner INFO chunks=2 worker_jobs=6 locked_columns=1 checkpoints=7 server=127.0.0.1:25565"
-    },
-    {
-      "time": "01:09.4",
-      "agent": "system-bot",
-      "side": "right",
-      "kind": "status",
-      "text": "Build phase finished with one local roof-row correction and two temporary scaffold sets. The merge step wrote world/merged_state.json.",
-      "systemLog": "merge INFO west=4821 east=4453 skipped=0 corrected=7 temporary=31 out=world/merged_state.json"
-    },
-    {
-      "time": "01:10.2",
-      "agent": "system-bot",
-      "side": "right",
-      "kind": "handoff",
-      "text": "verify: compare the merged world with placements.jsonl, apply only whitelisted entrance fixes, remove tagged scaffolds, and package the replay logs.",
-      "systemLog": "INFO job=verify-0 --world world/merged_state.json --blueprint blueprint/placements.jsonl --cleanup-tags tmp/*"
+      "text": "Project Manager has a blueprint and a Foreman-A to Foreman-E plan. The 100 workers are grouped into five synchronized worker-pool rooms now.",
+      "systemLog": "orchestrator INFO pm_status=plan_ready blueprint=9274 placements foreman_pools=5 workers=100",
+      "stage": 3
     },
     {
       "time": "01:22.0",
       "agent": "system-bot",
       "side": "right",
       "kind": "final",
-      "text": "Run complete. Final outputs are final_world.schem, report.json, replay.jsonl, and a tarball with the raw worker logs.",
-      "systemLog": "INFO status=success package=runs/tiantan_build_001/final/craft_tiantan_build_001.tar.zst size=18.7MB"
+      "text": "Run complete. Final outputs are final_world.schem, report.json, replay.jsonl, and a tarball with the raw execution logs.",
+      "systemLog": "INFO status=success package=runs/tiantan_build_001/final/craft_tiantan_build_001.tar.zst size=18.7MB",
+      "stage": 5
     }
   ]
 }

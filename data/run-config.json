@@ -1,78 +1,94 @@
 {
   "meta": {
     "title": "Tiantan Minecraft Experiment Log",
-    "systemIntro": "Run tiantan_build_001 resolves workspace/Craft_Utopia/tiantan.png, writes generated files under workspace/Craft_Utopia/runs/tiantan_build_001, and replays worker, tool, and verification events without exposing local machine paths."
+    "systemIntro": "Run tiantan_build_001 resolves workspace/Craft_Utopia/tiantan.png and replays layered chats: User/System Bot, System Bot/PM, PM/Designer, PM/Foremans, and five Foreman-A through Foreman-E worker-pool rooms covering 100 workers."
   },
   "stages": [
     {
       "id": 0,
-      "label": "01 Ingest",
+      "label": "01 Request",
       "metrics": [
-        "1 img",
-        "6 bots",
+        "1 user",
+        "SYS",
         "0.21s"
       ],
       "values": [
-        "14%",
+        "10%",
         "6%",
         "4%"
       ],
-      "system": "craft-run opens workspace/Craft_Utopia/runs/tiantan_build_001; image=workspace/Craft_Utopia/tiantan.png; config=run_config.json.",
+      "system": "System Bot opens workspace/Craft_Utopia/runs/tiantan_build_001, pins the input image, and creates the Project Manager channel.",
       "tilt": "-50%, -50%) rotateX(60deg) rotateZ(45deg)"
     },
     {
       "id": 1,
-      "label": "02 Vision",
+      "label": "02 PM Setup",
+      "metrics": [
+        "PM",
+        "handoff",
+        "locks"
+      ],
+      "values": [
+        "28%",
+        "20%",
+        "14%"
+      ],
+      "system": "Project Manager accepts the run, requests Designer blueprint output, and prepares role-based planning constraints.",
+      "tilt": "-52%, -50%) rotateX(60deg) rotateZ(38deg)"
+    },
+    {
+      "id": 2,
+      "label": "03 Design",
       "metrics": [
         "9274",
         "18",
         "23"
       ],
       "values": [
-        "34%",
-        "22%",
-        "14%"
-      ],
-      "system": "trellis_reconstruct -> obj2schematic -> schematic_export; outputs land in vision/ and blueprint/.",
-      "tilt": "-52%, -50%) rotateX(60deg) rotateZ(38deg)"
-    },
-    {
-      "id": 2,
-      "label": "03 Plan",
-      "metrics": [
-        "2",
-        "6",
-        "7"
-      ],
-      "values": [
-        "56%",
-        "45%",
+        "46%",
+        "38%",
         "28%"
       ],
-      "system": "planner reads placements.jsonl and writes plan/{west,east,locks,checkpoints}.json.",
+      "system": "Designer runs reconstruction and exports placements.jsonl, stage_preview.schem, cues.json, and uncertainty notes.",
       "tilt": "-48%, -51%) rotateX(60deg) rotateZ(52deg)"
     },
     {
       "id": 3,
-      "label": "04 Build",
+      "label": "04 Foremen",
       "metrics": [
-        "9274",
-        "7",
-        "31"
+        "F-A..F-E",
+        "100 bots",
+        "9 gates"
       ],
       "values": [
-        "82%",
-        "74%",
-        "55%"
+        "64%",
+        "58%",
+        "42%"
       ],
-      "system": "build pool streams west/east diffs; temporary blocks use tmp/* tags for deterministic cleanup.",
-      "tilt": "-50%, -47%) rotateX(60deg) rotateZ(45deg) scale(1.06)"
+      "system": "Project Manager coordinates Foreman-A through Foreman-E and assigns one 20-worker pool to each Foreman.",
+      "tilt": "-49%, -49%) rotateX(60deg) rotateZ(48deg) scale(1.03)"
     },
     {
       "id": 4,
-      "label": "05 Verify",
+      "label": "05 Build Pools",
       "metrics": [
-        "3",
+        "5 pools",
+        "100 workers",
+        "31 tmp"
+      ],
+      "values": [
+        "86%",
+        "76%",
+        "60%"
+      ],
+      "system": "Foreman-A through Foreman-E worker-pool rooms show aggregate progress, checkpoint events, and only important worker exceptions.",
+      "tilt": "-50%, -47%) rotateX(60deg) rotateZ(45deg) scale(1.06)"
+    },
+    {
+      "id": 5,
+      "label": "06 Return",
+      "metrics": [
+        "9274",
         "0 tmp",
         "18.7MB"
       ],
@@ -81,7 +97,7 @@
         "94%",
         "88%"
       ],
-      "system": "verify compares merged_state.json with placements.jsonl; package writes final/craft_tiantan_build_001.tar.zst.",
+      "system": "Project Manager verifies merged_state.json against placements.jsonl and returns the packaged final artifacts through System Bot.",
       "tilt": "-50%, -50%) rotateX(60deg) rotateZ(45deg) scale(0.98)"
     }
   ]

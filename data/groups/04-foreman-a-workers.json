@@ -1,0 +1,101 @@
+{
+  "id": "foreman-a-workers",
+  "title": "Foreman-A Worker Pool",
+  "description": "Foreman-A coordinates workers 001-020 as one aggregated pool. The room shows pool summaries plus only important worker exceptions.",
+  "agents": {
+    "foreman-a": {
+      "name": "Foreman-A",
+      "initials": "F-A",
+      "type": "foreman",
+      "accent": "#ff9b45",
+      "avatar": {
+        "skin": "#c17b4f",
+        "hair": "#2a211b",
+        "shirt": "#b15a18",
+        "trim": "#ff9b45",
+        "eyes": "#120b08",
+        "accessory": "hardhat"
+      }
+    },
+    "worker-pool": {
+      "name": "Worker Pool 001-020",
+      "initials": "POOL",
+      "type": "worker",
+      "accent": "#72ffd1",
+      "avatar": {
+        "skin": "#6d7f8f",
+        "hair": "#123235",
+        "shirt": "#14534a",
+        "trim": "#72ffd1",
+        "eyes": "#001f1a",
+        "accessory": "goggles"
+      }
+    },
+    "worker-014": {
+      "name": "worker-014",
+      "initials": "W14",
+      "type": "worker",
+      "accent": "#ffcf3f",
+      "avatar": {
+        "skin": "#b7754d",
+        "hair": "#2b1c13",
+        "shirt": "#3158b7",
+        "trim": "#ffcf3f",
+        "eyes": "#0d1423",
+        "accessory": "pickaxe"
+      }
+    },
+    "run-monitor": {
+      "name": "Run Monitor",
+      "initials": "MON",
+      "type": "system",
+      "accent": "#ffd35a",
+      "avatar": {
+        "skin": "#d99a64",
+        "hair": "#5a3518",
+        "shirt": "#704418",
+        "trim": "#ffd35a",
+        "eyes": "#18110a",
+        "accessory": "book"
+      }
+    }
+  },
+  "messages": [
+    {
+      "time": "00:32.8",
+      "agent": "foreman-a",
+      "side": "left",
+      "kind": "assignment",
+      "text": "Workers 001-020 split into four lanes. Worker Pool reports lane totals; only blocked lanes speak individually.",
+      "systemLog": "foreman-a INFO assign packet=A lanes=4 workers=20 blocks=2140 checkpoint=gate_a",
+      "stage": 4
+    },
+    {
+      "time": "00:36.2",
+      "agent": "worker-pool",
+      "side": "right",
+      "kind": "progress",
+      "text": "Pool A update: 20/20 workers active, 740 blocks placed, shared seam still locked, no failed placements.",
+      "systemLog": "worker-pool INFO packet=A active=20 placed=740 failed=0 shared_axis_write=0",
+      "stage": 4
+    },
+    {
+      "time": "00:41.8",
+      "agent": "foreman-a",
+      "side": "left",
+      "kind": "checkpoint",
+      "text": "Gate A is green. I am releasing the next dependency and keeping approved diffs immutable.",
+      "systemLog": "foreman-a INFO checkpoint=gate_a placed=2140 hash=packetA:83fa",
+      "stage": 4
+    },
+    {
+      "time": "00:58.6",
+      "agent": "worker-pool",
+      "side": "right",
+      "kind": "return",
+      "text": "Pool A complete. Final lane summaries and diff shards are flushed; no worker-level chat needed beyond the aggregate report.",
+      "systemLog": "worker-pool INFO packet=A complete workers=20 placed=2140 diff=world/packet_a.diff.jsonl exceptions=0",
+      "stage": 4
+    }
+  ]
+}

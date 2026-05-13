@@ -1,0 +1,101 @@
+{
+  "id": "foreman-d-workers",
+  "title": "Foreman-D Worker Pool",
+  "description": "Foreman-D coordinates workers 061-080 as one aggregated pool. The room shows pool summaries plus only important worker exceptions.",
+  "agents": {
+    "foreman-d": {
+      "name": "Foreman-D",
+      "initials": "F-D",
+      "type": "foreman",
+      "accent": "#b9f06c",
+      "avatar": {
+        "skin": "#a96f52",
+        "hair": "#203315",
+        "shirt": "#4f8424",
+        "trim": "#b9f06c",
+        "eyes": "#111d08",
+        "accessory": "torch"
+      }
+    },
+    "worker-pool": {
+      "name": "Worker Pool 061-080",
+      "initials": "POOL",
+      "type": "worker",
+      "accent": "#72ffd1",
+      "avatar": {
+        "skin": "#6d7f8f",
+        "hair": "#123235",
+        "shirt": "#14534a",
+        "trim": "#72ffd1",
+        "eyes": "#001f1a",
+        "accessory": "goggles"
+      }
+    },
+    "worker-073": {
+      "name": "worker-073",
+      "initials": "W73",
+      "type": "worker",
+      "accent": "#b9f06c",
+      "avatar": {
+        "skin": "#b7754d",
+        "hair": "#2b1c13",
+        "shirt": "#3158b7",
+        "trim": "#b9f06c",
+        "eyes": "#0d1423",
+        "accessory": "pickaxe"
+      }
+    },
+    "run-monitor": {
+      "name": "Run Monitor",
+      "initials": "MON",
+      "type": "system",
+      "accent": "#ffd35a",
+      "avatar": {
+        "skin": "#d99a64",
+        "hair": "#5a3518",
+        "shirt": "#704418",
+        "trim": "#ffd35a",
+        "eyes": "#18110a",
+        "accessory": "book"
+      }
+    }
+  },
+  "messages": [
+    {
+      "time": "00:35.2",
+      "agent": "foreman-d",
+      "side": "left",
+      "kind": "assignment",
+      "text": "Workers 061-080 are split into four lanes. Any uncertain cell becomes a review item, not a guessed block.",
+      "systemLog": "foreman-d INFO assign packet=D lanes=4 workers=20 blocks=1610 uncertain=23 gate=review_d",
+      "stage": 4
+    },
+    {
+      "time": "00:52.0",
+      "agent": "worker-pool",
+      "side": "right",
+      "kind": "progress",
+      "text": "Pool D update: support blocks are staged, but final closure is waiting on Gate C.",
+      "systemLog": "worker-pool INFO packet=D staged=284 waiting_gate=gate_c active=12 idle=8",
+      "stage": 4
+    },
+    {
+      "time": "01:02.4",
+      "agent": "foreman-d",
+      "side": "left",
+      "kind": "progress",
+      "text": "Gate C is confirmed. The final closure is running now, while ambiguous cells remain deferred.",
+      "systemLog": "foreman-d INFO gate_release review_d confirmed=37 deferred=9 changed=142",
+      "stage": 4
+    },
+    {
+      "time": "01:06.0",
+      "agent": "worker-073",
+      "side": "right",
+      "kind": "return",
+      "text": "Pool D complete. worker-073 logged nine deferred cells for audit, and all confirmed blocks are in the diff.",
+      "systemLog": "worker-073 INFO packet=D complete confirmed=37 deferred=9 diff=world/packet_d.diff.jsonl",
+      "stage": 4
+    }
+  ]
+}

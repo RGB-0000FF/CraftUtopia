@@ -1,0 +1,101 @@
+{
+  "id": "foreman-c-workers",
+  "title": "Foreman-C Worker Pool",
+  "description": "Foreman-C coordinates workers 041-060 as one aggregated pool. The room shows pool summaries plus only important worker exceptions.",
+  "agents": {
+    "foreman-c": {
+      "name": "Foreman-C",
+      "initials": "F-C",
+      "type": "foreman",
+      "accent": "#f06f9f",
+      "avatar": {
+        "skin": "#b96f52",
+        "hair": "#401b2c",
+        "shirt": "#8d2d51",
+        "trim": "#f06f9f",
+        "eyes": "#160713",
+        "accessory": "flag"
+      }
+    },
+    "worker-pool": {
+      "name": "Worker Pool 041-060",
+      "initials": "POOL",
+      "type": "worker",
+      "accent": "#72ffd1",
+      "avatar": {
+        "skin": "#6d7f8f",
+        "hair": "#123235",
+        "shirt": "#14534a",
+        "trim": "#72ffd1",
+        "eyes": "#001f1a",
+        "accessory": "goggles"
+      }
+    },
+    "worker-052": {
+      "name": "worker-052",
+      "initials": "W52",
+      "type": "worker",
+      "accent": "#f06f9f",
+      "avatar": {
+        "skin": "#b7754d",
+        "hair": "#2b1c13",
+        "shirt": "#3158b7",
+        "trim": "#f06f9f",
+        "eyes": "#0d1423",
+        "accessory": "pickaxe"
+      }
+    },
+    "run-monitor": {
+      "name": "Run Monitor",
+      "initials": "MON",
+      "type": "system",
+      "accent": "#ffd35a",
+      "avatar": {
+        "skin": "#d99a64",
+        "hair": "#5a3518",
+        "shirt": "#704418",
+        "trim": "#ffd35a",
+        "eyes": "#18110a",
+        "accessory": "book"
+      }
+    }
+  },
+  "messages": [
+    {
+      "time": "00:34.0",
+      "agent": "foreman-c",
+      "side": "left",
+      "kind": "assignment",
+      "text": "Workers 041-060 take alternating lanes. The pool pauses dependent rows until Gate A and Gate B are green.",
+      "systemLog": "foreman-c INFO assign packet=C lanes=10 workers=20 blocks=2515 gates=gate_a,gate_b",
+      "stage": 4
+    },
+    {
+      "time": "00:43.2",
+      "agent": "worker-052",
+      "side": "right",
+      "kind": "exception",
+      "text": "worker-052 found a one-block offset in row 02. I am isolating seven placements as a patch and keeping other lanes moving.",
+      "systemLog": "worker-052 WARN packet=C mismatch row=02 expected_z=-7 observed_z=-8 affected=7",
+      "stage": 4
+    },
+    {
+      "time": "00:48.6",
+      "agent": "foreman-c",
+      "side": "left",
+      "kind": "correction",
+      "text": "Patch applied to row 02. Gate C is now green; repetitive straight rows can use the bounded place_line helper.",
+      "systemLog": "foreman-c INFO checkpoint=gate_c patch=plan/patches/packet_c_row_02.json affected=7 skill_call=place_line",
+      "stage": 4
+    },
+    {
+      "time": "01:01.4",
+      "agent": "worker-pool",
+      "side": "right",
+      "kind": "return",
+      "text": "Pool C complete. Workers placed all assigned lanes, skipped high-risk corners for review, and reported zero rollbacks.",
+      "systemLog": "worker-pool INFO packet=C complete workers=20 placed=2515 rollback=0 skipped_high_risk=14 diff=world/packet_c.diff.jsonl",
+      "stage": 4
+    }
+  ]
+}

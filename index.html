@@ -669,8 +669,7 @@
       box-shadow: inset 0 1px rgba(255,255,255,0.18);
     }
 
-    .room-name,
-    .room-subtitle {
+    .room-name {
       display: block;
       min-width: 0;
       overflow: visible;
@@ -684,13 +683,6 @@
       font-size: 0.9rem;
       font-weight: 850;
       letter-spacing: -0.01em;
-    }
-
-    .room-subtitle {
-      margin-top: 2px;
-      color: rgba(243,229,195,0.28);
-      font-size: 0.68rem;
-      line-height: 1.2;
     }
 
     .room-tab:hover,
@@ -719,10 +711,6 @@
       border-color: color-mix(in srgb, var(--gold-hot) 58%, transparent);
       box-shadow: inset 0 1px rgba(255,255,255,0.14), 0 0 22px rgba(255,217,135,0.24);
       opacity: 1;
-    }
-
-    .room-tab.active .room-subtitle {
-      color: rgba(243,229,195,0.54);
     }
 
     .log-title p {
@@ -838,6 +826,42 @@
     .chat-feed::-webkit-scrollbar-thumb {
       background: linear-gradient(180deg, rgba(255,217,135,0.65), rgba(116,214,196,0.45));
       border-radius: 999px;
+    }
+
+    .room-intro {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      margin: 0 2px 4px;
+      padding: 13px 15px;
+      border: 1px solid rgba(255,217,135,0.22);
+      border-radius: 18px;
+      color: rgba(243,229,195,0.82);
+      background:
+        linear-gradient(90deg, rgba(255,217,135,0.16), rgba(116,214,196,0.08)),
+        radial-gradient(circle at 0% 0%, rgba(255,217,135,0.14), transparent 12rem),
+        rgba(5,10,8,0.92);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.22), inset 0 1px rgba(255,255,255,0.08);
+      font-size: clamp(0.96rem, 1vw, 1.08rem);
+      line-height: 1.45;
+      overflow-wrap: break-word;
+    }
+
+    .room-intro::before {
+      content: "GROUP INTRO";
+      display: block;
+      margin-bottom: 5px;
+      color: var(--gold-hot);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+    }
+
+    .agent-mention {
+      color: var(--mention-accent, var(--gold-hot));
+      font-weight: 900;
+      text-shadow: 0 0 14px color-mix(in srgb, var(--mention-accent, var(--gold-hot)) 44%, transparent);
     }
 
     .chat-placeholder {
@@ -1267,7 +1291,6 @@
       .room-list-header { display: none; }
       .room-tab { flex: 0 0 150px; grid-template-columns: 28px minmax(0, 1fr); gap: 6px; min-height: 48px; padding: 8px 9px; border-radius: 12px; }
       .room-avatar { width: 28px; height: 28px; border-radius: 8px; }
-      .room-subtitle { display: none; }
       .room-name { font-size: 0.72rem; }
       .chat-feed { padding: 12px 8px 14px; }
       .chat-message { grid-template-columns: 44px minmax(0, 1fr); gap: 6px; padding-left: 0; }
@@ -1370,6 +1393,8 @@
     let playbackCursor = 0;
     let isMessagePending = false;
     let activeRoom = '';
+    let mentionRegex = null;
+    const mentionAccentByTerm = new Map();
 
     const phaseControls = document.querySelector('#phase-controls');
     const logBoard = document.querySelector('.log-board');
@@ -1392,6 +1417,82 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+
+    const escapeRegExp = (value = '') => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const titleCase = (value = '') => String(value)
+      .split(/(\s+|-)/)
+      .map((part) => (/^\w/.test(part) ? part.charAt(0).toUpperCase() + part.slice(1) : part))
+      .join('');
+
+    function addMentionTerm(terms, term, accent) {
+      const cleaned = String(term || '').trim();
+      if (cleaned.length < 3) return;
+      terms.set(cleaned.toLowerCase(), { term: cleaned, accent });
+    }
+
+    function buildMentionIndex(groups) {
+      const terms = new Map();
+      groups.forEach((group) => {
+        Object.entries(group.agents || {}).forEach(([key, agent]) => {
+          const accent = agent.accent || '#ffd987';
+          addMentionTerm(terms, agent.name, accent);
+          addMentionTerm(terms, key, accent);
+          addMentionTerm(terms, titleCase(key.replace(/-/g, ' ')), accent);
+          addMentionTerm(terms, titleCase(key), accent);
+
+          const foremanMatch = key.match(/^foreman-([a-z])$/);
+          if (foremanMatch) addMentionTerm(terms, `Foreman-${foremanMatch[1].toUpperCase()}`, accent);
+
+          const workerMatch = key.match(/^worker-(\d+)$/);
+          if (workerMatch) addMentionTerm(terms, `Worker-${workerMatch[1]}`, accent);
+
+          if (key === 'system-bot') addMentionTerm(terms, 'System Bot', accent);
+          if (key === 'project-manager') addMentionTerm(terms, 'Project Manager', accent);
+          if (key === 'skill-library') {
+            addMentionTerm(terms, 'Skill Library', accent);
+            addMentionTerm(terms, 'Shared Skill Library', accent);
+          }
+        });
+      });
+
+      mentionAccentByTerm.clear();
+      [...terms.values()].forEach(({ term, accent }) => mentionAccentByTerm.set(term.toLowerCase(), accent));
+      const pattern = [...terms.values()]
+        .map(({ term }) => escapeRegExp(term))
+        .sort((a, b) => b.length - a.length)
+        .join('|');
+      mentionRegex = pattern ? new RegExp(`(^|[^A-Za-z0-9_-])(${pattern})(?=$|[^A-Za-z0-9_-])`, 'gi') : null;
+    }
+
+    function appendMentionedText(node, value = '') {
+      const text = String(value || '');
+      node.replaceChildren();
+      if (!mentionRegex) {
+        node.textContent = text;
+        return;
+      }
+
+      mentionRegex.lastIndex = 0;
+      let cursor = 0;
+      let match;
+      while ((match = mentionRegex.exec(text)) !== null) {
+        const prefix = match[1] || '';
+        const mention = match[2] || '';
+        const mentionStart = match.index + prefix.length;
+        const mentionEnd = mentionStart + mention.length;
+        if (mentionStart > cursor) node.append(document.createTextNode(text.slice(cursor, mentionStart)));
+
+        const span = document.createElement('span');
+        span.className = 'agent-mention';
+        span.style.setProperty('--mention-accent', mentionAccentByTerm.get(mention.toLowerCase()) || '#ffd987');
+        span.textContent = mention;
+        node.append(span);
+        cursor = mentionEnd;
+      }
+
+      if (cursor < text.length) node.append(document.createTextNode(text.slice(cursor)));
+    }
 
     function accessoryMarkup(kind, trim, dark) {
       const items = {
@@ -1497,12 +1598,20 @@
         button.className = 'room-tab';
         button.type = 'button';
         button.dataset.room = group.id;
-        button.innerHTML = `${renderRoomAvatar(group)}<span><span class="room-name">${escapeHtml(group.title)}</span><span class="room-subtitle">${escapeHtml(group.description || group.type || '')}</span></span>`;
+        button.innerHTML = `${renderRoomAvatar(group)}<span><span class="room-name">${escapeHtml(group.title)}</span></span>`;
         button.addEventListener('click', () => setRoom(group.id));
         roomList.append(button);
       });
       roomTabs = [...roomList.querySelectorAll('.room-tab')];
       setRoom(entryGroup, 'auto');
+    }
+
+    function createRoomIntro(group) {
+      const intro = document.createElement('div');
+      intro.className = 'room-intro';
+      intro.dataset.roomId = group.id;
+      appendMentionedText(intro, group.description || group.type || group.title);
+      return intro;
     }
 
     function getTypingDelay(message, agent) {
@@ -1518,7 +1627,7 @@
       note.className = `system-note is-entering side-${noteSide}${isToolNote ? ' is-tool' : ''}`;
       note.dataset.roomId = group.id;
       note.dataset.noteLabel = isToolNote ? 'TOOL' : 'SYS';
-      note.textContent = message.systemLog || message.note;
+      appendMentionedText(note, message.systemLog || message.note);
       note.addEventListener('animationend', () => note.classList.remove('is-entering'), { once: true });
       return note;
     }
@@ -1562,7 +1671,11 @@
       bubble.className = 'bubble';
       const text = document.createElement('p');
       text.className = isTyping ? 'typing-dots' : '';
-      text.textContent = isTyping ? '...' : message.text;
+      if (isTyping) {
+        text.textContent = '...';
+      } else {
+        appendMentionedText(text, message.text);
+      }
       bubble.append(text);
 
       article.append(speaker, bubble);
@@ -1574,7 +1687,7 @@
       const text = article.querySelector('.bubble p');
       if (!text) return;
       text.classList.remove('typing-dots');
-      text.textContent = message.text;
+      appendMentionedText(text, message.text);
     }
 
     function scrollChatToBottom(index) {
@@ -1668,15 +1781,18 @@
       playbackCursor = 0;
       isMessagePending = false;
       chatFeed.replaceChildren();
+      chatFeed.append(...groupRooms.map(createRoomIntro));
       chatMessages = [];
 
       if (!events?.length) {
-        chatFeed.innerHTML = '<div class="log-error">No group messages found in <code>data/groups</code>.</div>';
+        chatFeed.insertAdjacentHTML('beforeend', '<div class="log-error">No group messages found in <code>data/groups</code>.</div>');
+        applyRoomVisibility();
         updatePlaybackControls();
         return;
       }
 
-      chatFeed.innerHTML = '<div class="chat-placeholder"><strong>Ready to route the task</strong>Click <span class="mono">Start Task</span> to reveal one chat message at a time.</div>';
+      chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Ready to route the task</strong>Click <span class="mono">Start Task</span> to reveal one chat message at a time.</div>');
+      applyRoomVisibility();
       updatePlaybackControls();
     }
 
@@ -1684,7 +1800,7 @@
       const stage = stages.find((item) => Number(item.id) === Number(stageId)) || stages[0];
       if (!stage) return;
 
-      if (systemLine) systemLine.textContent = stage.system;
+      if (systemLine) appendMentionedText(systemLine, stage.system);
       worldProxy.style.transform = `translate(${stage.tilt}`;
 
       metricText.forEach((node, metricIndex) => { node.textContent = stage.metrics[metricIndex]; });
@@ -1718,14 +1834,16 @@
     }
 
     function inferStageId(groupId, seconds) {
-      if (groupId === 'designer-lab') return 0;
-      if (groupId === 'pm-architecture') return 1;
-      if (groupId === 'foreman-west' || groupId === 'foreman-east') return seconds < 33 ? 2 : 3;
-      if (groupId === 'audit-return') return 4;
+      const workerPoolRooms = ['foreman-a-workers', 'foreman-b-workers', 'foreman-c-workers', 'foreman-d-workers', 'foreman-e-workers'];
+      if (groupId === 'user-system') return seconds < 2 ? 0 : seconds < 70 ? 3 : 5;
+      if (groupId === 'system-pm') return seconds < 18 ? 1 : seconds < 70 ? 3 : 5;
+      if (groupId === 'pm-designer') return 2;
+      if (groupId === 'pm-foremans') return seconds < 33 ? 3 : seconds < 70 ? 4 : 5;
+      if (workerPoolRooms.includes(groupId)) return 4;
       if (seconds < 17) return 0;
       if (seconds < 32) return 1;
       if (seconds < 70) return 3;
-      return 4;
+      return 5;
     }
 
     function buildPlaybackEvents(groups) {
@@ -1777,13 +1895,14 @@
         const log = await dialogueResponse.json();
         stages = log.stages || [];
         groupRooms = groupData.groups;
+        buildMentionIndex(groupRooms);
         playbackEvents = buildPlaybackEvents(groupRooms);
         activeRoom = groupData.manifest.entryGroup || groupRooms[0]?.id || '';
 
         logKicker.textContent = groupData.manifest.title || log.meta?.kicker || logKicker.textContent;
         logTitle.textContent = log.meta?.title || logTitle.textContent;
         logBadge.textContent = 'GROUP CHAT MODE';
-        if (systemLine) systemLine.textContent = log.meta?.systemIntro || systemLine.textContent;
+        if (systemLine) appendMentionedText(systemLine, log.meta?.systemIntro || systemLine.textContent);
 
         renderPhaseControls();
         renderRoomList(groupRooms, activeRoom);

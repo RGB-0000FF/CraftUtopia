@@ -1,0 +1,101 @@
+{
+  "id": "foreman-e-workers",
+  "title": "Foreman-E Worker Pool",
+  "description": "Foreman-E coordinates workers 081-100 as one aggregated pool. The room shows pool summaries plus only important worker exceptions.",
+  "agents": {
+    "foreman-e": {
+      "name": "Foreman-E",
+      "initials": "F-E",
+      "type": "foreman",
+      "accent": "#c7a5ff",
+      "avatar": {
+        "skin": "#d19b71",
+        "hair": "#35224c",
+        "shirt": "#5e3c99",
+        "trim": "#c7a5ff",
+        "eyes": "#171024",
+        "accessory": "chest"
+      }
+    },
+    "worker-pool": {
+      "name": "Worker Pool 081-100",
+      "initials": "POOL",
+      "type": "worker",
+      "accent": "#72ffd1",
+      "avatar": {
+        "skin": "#6d7f8f",
+        "hair": "#123235",
+        "shirt": "#14534a",
+        "trim": "#72ffd1",
+        "eyes": "#001f1a",
+        "accessory": "goggles"
+      }
+    },
+    "worker-091": {
+      "name": "worker-091",
+      "initials": "W91",
+      "type": "worker",
+      "accent": "#c7a5ff",
+      "avatar": {
+        "skin": "#b7754d",
+        "hair": "#2b1c13",
+        "shirt": "#3158b7",
+        "trim": "#c7a5ff",
+        "eyes": "#0d1423",
+        "accessory": "pickaxe"
+      }
+    },
+    "run-monitor": {
+      "name": "Run Monitor",
+      "initials": "MON",
+      "type": "system",
+      "accent": "#ffd35a",
+      "avatar": {
+        "skin": "#d99a64",
+        "hair": "#5a3518",
+        "shirt": "#704418",
+        "trim": "#ffd35a",
+        "eyes": "#18110a",
+        "accessory": "book"
+      }
+    }
+  },
+  "messages": [
+    {
+      "time": "00:36.0",
+      "agent": "foreman-e",
+      "side": "left",
+      "kind": "assignment",
+      "text": "Workers 081-100 handle staging, temporary access, path markers, and diff collection. Every temporary block must carry a tmp/* tag.",
+      "systemLog": "foreman-e INFO assign packet=E staging=6 scaffold=8 cleanup=6 workers=20 temp_tag_prefix=tmp/",
+      "stage": 4
+    },
+    {
+      "time": "00:46.0",
+      "agent": "run-monitor",
+      "side": "right",
+      "kind": "skill-detection",
+      "text": "The pool repeated safe straight-line placement enough times to publish place_line with bounds, air_check, and rollback guards.",
+      "systemLog": "run-monitor INFO skill-cache append logs/skills.jsonl name=place_line samples=18 guards=bounds,air_check,rollback",
+      "stage": 4
+    },
+    {
+      "time": "00:57.2",
+      "agent": "worker-091",
+      "side": "right",
+      "kind": "cleanup",
+      "text": "Temporary access blocks are indexed by tag: tmp/scaffold/main-01 and tmp/path/main-03. Cleanup can be deterministic during verification.",
+      "systemLog": "worker-091 INFO packet=E temp_ledger tags=tmp/scaffold/main-01,tmp/path/main-03 count=31",
+      "stage": 4
+    },
+    {
+      "time": "01:07.8",
+      "agent": "foreman-e",
+      "side": "left",
+      "kind": "return",
+      "text": "Pool E complete. All diff shards are collected, temporary tag ledger is closed, and final cleanup has zero unknown temporary blocks.",
+      "systemLog": "foreman-e INFO packet=E complete workers=20 temp=31 diff_shards=5 remaining_tmp_unknown=0",
+      "stage": 4
+    }
+  ]
+}
