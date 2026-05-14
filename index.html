@@ -2019,8 +2019,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      padding: 13px 14px;
+      gap: 10px;
+      padding: 8px 10px;
     }
 
     .console-title-group {
@@ -2052,7 +2052,7 @@
       overflow: hidden;
       color: #eaffef;
       font-family: var(--font-ui);
-      font-size: clamp(1.12rem, calc(1.32rem * var(--ui-scale)), 1.58rem);
+      font-size: clamp(0.98rem, calc(1.12rem * var(--ui-scale)), 1.32rem);
       font-weight: 900;
       letter-spacing: 0.02em;
       line-height: 1.08;
@@ -2082,7 +2082,7 @@
     .console-control-group {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 9px;
       flex: 0 0 auto;
     }
 
@@ -2090,13 +2090,13 @@
       position: relative;
       display: grid;
       place-items: center;
-      width: 54px;
-      height: 54px;
-      flex: 0 0 54px;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
       border-radius: 999px;
       color: #eaffef;
       font-family: var(--font-mono);
-      font-size: 0.74rem;
+      font-size: 0.64rem;
       font-weight: 950;
       letter-spacing: 0.02em;
     }
@@ -2115,7 +2115,7 @@
     .header-progress i::after {
       content: "";
       position: absolute;
-      inset: 6px;
+      inset: 5px;
       border-radius: inherit;
       border: 1px solid rgba(234,255,239,0.10);
     }
@@ -2131,9 +2131,9 @@
     }
 
     .console-play {
-      min-width: 84px;
-      min-height: 34px;
-      padding: 8px 13px;
+      min-width: 76px;
+      min-height: 30px;
+      padding: 7px 11px;
       border: 1px solid rgba(92,255,172,0.36);
       border-radius: 8px;
       color: #031108;
@@ -2141,7 +2141,7 @@
         linear-gradient(180deg, rgba(225,255,234,0.88), rgba(85,255,164,0.90)),
         radial-gradient(circle at 26% 0%, rgba(255,255,255,0.66), transparent 42%);
       box-shadow: 0 0 22px rgba(85,255,164,0.16), inset 0 1px rgba(255,255,255,0.42);
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       font-weight: 950;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -2995,7 +2995,7 @@
       <div class="chat-shell terminal-console">
         <header class="console-header">
           <div class="console-title-group">
-            <h2 id="console-task-title">CraftUtopia 建造 with 100 Agents</h2>
+            <h2 id="console-task-title">CraftUtopia Build with 100 Agents</h2>
           </div>
           <div class="console-control-group">
             <div class="header-progress console-meter" style="--value: 0%" aria-label="Build progress">
@@ -3609,7 +3609,7 @@
           endStage: 5,
           code: '[PM]',
           label: 'PM Control',
-          command: 'pm-orchestrator boot --session tiantan_build_001',
+          command: 'pm-orchestrator boot --session cs-704e',
           role: 'root process supervising every sub terminal',
           summary: 'Project Manager owns the full run and spawns sub terminals as needed.',
           level: 0,
@@ -3622,7 +3622,7 @@
           endStage: 1,
           code: '[01]',
           label: 'Initialize',
-          command: 'system ingest request --attach tiantan.png',
+          command: 'system ingest request --attach source.png',
           role: 'request parsed, run context opened',
           summary: summaryOf(0, 'System opens the run and Project Manager prepares orchestration.'),
           level: 1,
@@ -3841,7 +3841,7 @@
       if (event.skill) updateSkillStateFromEvent(event, index);
       chatMessages = [...document.querySelectorAll('.event-row[data-chat-stage]')];
       applyRoomVisibility();
-      setStage(event.stageId, article);
+      setStage(event.stageId, article, event);
       lockAutoScrollSync();
       scrollChatToBottom(index);
       playbackCursor = index + 1;
@@ -3885,7 +3885,7 @@
       if (event.skill) updateSkillStateFromEvent(event, index);
       node.classList.remove('is-entering');
       chatFeed.append(node);
-      return { node, stageId: event.stageId };
+      return { node, stageId: event.stageId, event };
     }
 
     function renderPlaybackUntil(targetCount) {
@@ -3915,7 +3915,7 @@
 
       if (last) {
         applyRoomVisibility();
-        setStage(last.stageId, last.node);
+        setStage(last.stageId, last.node, last.event);
         lockAutoScrollSync();
         chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior: 'auto' });
       } else {
@@ -3950,7 +3950,13 @@
       if (!isMessagePending) advancePlayback({ fromAuto: true });
     }
 
-    function setStage(stageId, activeMessage = null) {
+    function getPlaybackTotalSeconds() {
+      const eventTotal = playbackEvents.at(-1)?.seconds;
+      const stageTotal = parseTimelineTime(stages.at(-1)?.metrics?.[1] || '00:00.0');
+      return Math.max(eventTotal || 0, stageTotal || 0, 1);
+    }
+
+    function setStage(stageId, activeMessage = null, activeEvent = null) {
       const stage = stages.find((item) => Number(item.id) === Number(stageId)) || stages[0];
       if (!stage) return;
 
@@ -3958,11 +3964,18 @@
       skillLibrary?.classList.add('is-visible');
       if (activeMessage?.dataset.skillRef) renderSkillLibrary(activeMessage.dataset.skillRef);
 
-      if (consoleProgressValue) consoleProgressValue.textContent = stage.metrics?.[0] || '0%';
-      if (consoleElapsedValue) consoleElapsedValue.textContent = stage.metrics?.[1] || '00:00.0';
-      if (consoleProgressBar) consoleProgressBar.style.width = stage.values?.[0] || '0%';
-      if (consoleElapsedBar) consoleElapsedBar.style.width = stage.values?.[1] || '0%';
-      consoleMeters.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values?.[metricIndex] || '0%'); });
+      const eventIndex = Number(activeMessage?.dataset.eventIndex);
+      const focusedEvent = activeEvent || (Number.isFinite(eventIndex) ? playbackEvents[eventIndex] : null);
+      const fallbackTime = playbackCursor === 0 && !focusedEvent ? '00:00.0' : stage.metrics?.[1] || '00:00.0';
+      const elapsedTime = focusedEvent?.time || fallbackTime;
+      const elapsedSeconds = focusedEvent ? focusedEvent.seconds : parseTimelineTime(elapsedTime);
+      const progressValue = `${Math.round(clamp((elapsedSeconds / getPlaybackTotalSeconds()) * 100, 0, 100))}%`;
+
+      if (consoleProgressValue) consoleProgressValue.textContent = progressValue;
+      if (consoleElapsedValue) consoleElapsedValue.textContent = elapsedTime;
+      if (consoleProgressBar) consoleProgressBar.style.width = progressValue;
+      if (consoleElapsedBar) consoleElapsedBar.style.width = progressValue;
+      consoleMeters.forEach((node) => { node.style.setProperty('--value', progressValue); });
       renderMilestones(stage.id);
 
       const fallbackMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === Number(stage.id));
@@ -3974,7 +3987,8 @@
       if (!chatMessages.length) return;
       const latestMessage = chatMessages[chatMessages.length - 1];
       if (!latestMessage) return;
-      setStage(Number(latestMessage.dataset.chatStage), latestMessage);
+      const eventIndex = Number(latestMessage.dataset.eventIndex);
+      setStage(Number(latestMessage.dataset.chatStage), latestMessage, playbackEvents[eventIndex]);
     }
 
     function parseTimelineTime(time = '00:00.0') {
@@ -4028,8 +4042,8 @@
         playbackEvents = buildPlaybackEvents(groupRooms);
         activeRoom = 'all';
 
-        const runId = (runLog.intro || runLog.meta?.systemIntro || '').match(/tiantan_build_\d+/)?.[0] || 'tiantan_build_001';
-        if (consoleTaskTitle) consoleTaskTitle.textContent = 'CraftUtopia 建造 with 100 Agents';
+        const runId = runLog.meta?.runId || (runLog.intro || runLog.meta?.systemIntro || '').match(/tiantan_build_\d+/)?.[0] || 'run-current';
+        if (consoleTaskTitle) consoleTaskTitle.textContent = runLog.meta?.taskTitle || 'CraftUtopia Build with 100 Agents';
         if (consoleRunId) consoleRunId.textContent = `run ${runId}`;
         if (logKicker) logKicker.textContent = runLog.title || runLog.meta?.kicker || logKicker.textContent;
         if (systemLine) appendMentionedText(systemLine, runLog.intro || runLog.meta?.systemIntro || systemLine.textContent);
