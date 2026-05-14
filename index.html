@@ -336,19 +336,44 @@
       right: 16px;
       bottom: 16px;
       z-index: 4;
-      width: min(250px, 42%);
-      padding: 12px;
-      border: 1px solid rgba(255,217,135,0.22);
+      width: min(340px, 48%);
+      max-height: min(560px, 70svh);
+      padding: 13px;
+      border: 1px solid rgba(255,217,135,0.30);
       background:
-        radial-gradient(circle at 0 0, rgba(255,217,135,0.12), transparent 9rem),
-        linear-gradient(180deg, rgba(4,8,6,0.76), rgba(4,8,6,0.50));
+        radial-gradient(circle at 0 0, rgba(255,217,135,0.16), transparent 10rem),
+        radial-gradient(circle at 100% 100%, rgba(116,214,196,0.14), transparent 11rem),
+        repeating-linear-gradient(135deg, rgba(255,217,135,0.045) 0 1px, transparent 1px 9px),
+        linear-gradient(180deg, rgba(4,8,6,0.86), rgba(4,8,6,0.58));
       backdrop-filter: blur(14px);
       clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-      box-shadow: 0 18px 44px rgba(0,0,0,0.34);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.34), 0 0 36px rgba(255,217,135,0.10);
       opacity: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(116,214,196,0.45) rgba(255,255,255,0.04);
       pointer-events: none;
       transform: translateY(12px) scale(0.96);
       transition: opacity 240ms ease, transform 240ms ease;
+    }
+
+    .skill-library::-webkit-scrollbar { width: 6px; }
+    .skill-library::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+    .skill-library::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(116,214,196,0.62), rgba(255,217,135,0.52));
+      border-radius: 999px;
+    }
+
+    .skill-library::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      z-index: -1;
+      background: conic-gradient(from 90deg, rgba(255,217,135,0), rgba(255,217,135,0.42), rgba(116,214,196,0.36), rgba(255,217,135,0));
+      opacity: 0;
+      filter: blur(14px);
+      transition: opacity 260ms ease;
     }
 
     .skill-library.is-visible {
@@ -357,8 +382,19 @@
       transform: translateY(0) scale(1);
     }
 
+    .skill-library.is-visible::before { opacity: 0.62; animation: skill-aura 4.8s linear infinite; }
+
+    .skill-head {
+      position: relative;
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
     .skill-library h3 {
-      margin: 0 0 9px;
+      margin: 0 0 4px;
       color: var(--gold-hot);
       font-family: var(--font-mono);
       font-size: 0.66rem;
@@ -367,34 +403,264 @@
       text-transform: uppercase;
     }
 
+    .skill-head p {
+      margin: 0;
+      color: rgba(243,229,195,0.64);
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1.28;
+    }
+
+    .skill-pulse {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(116,214,196,0.52);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(216,255,247,0.98) 0 16%, rgba(116,214,196,0.34) 17% 38%, rgba(4,8,6,0.50) 39%),
+        conic-gradient(from 0deg, rgba(116,214,196,0.20), rgba(255,217,135,0.48), rgba(116,214,196,0.20));
+      box-shadow: 0 0 24px rgba(116,214,196,0.32);
+      animation: skill-beacon 1.9s ease-in-out infinite;
+    }
+
     .skill-list {
       display: grid;
-      gap: 7px;
+      gap: 8px;
       margin: 0;
       padding: 0;
       list-style: none;
     }
 
-    .skill-list li {
+    .skill-card {
+      position: relative;
+      display: grid;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 11px;
+      border: 1px solid rgba(243,229,195,0.12);
+      border-radius: 14px;
+      color: var(--bone);
+      background:
+        linear-gradient(135deg, rgba(13,28,22,0.84), rgba(4,8,6,0.66)),
+        radial-gradient(circle at 0 0, rgba(255,217,135,0.12), transparent 7rem);
+      font: inherit;
+      text-align: left;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .skill-card-top {
       display: flex;
-      align-items: center;
+      align-items: start;
       justify-content: space-between;
       gap: 10px;
-      padding: 8px 9px;
-      border: 1px solid rgba(243,229,195,0.10);
-      color: var(--bone);
-      background: rgba(13,28,22,0.54);
+      min-width: 0;
+    }
+
+    .skill-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 0 36%, rgba(255,255,255,0.16) 48%, transparent 60% 100%);
+      transform: translateX(-112%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .skill-card:hover,
+    .skill-card:focus-visible,
+    .skill-card.active {
+      outline: none;
+      transform: translateY(-2px) scale(1.015);
+      border-color: rgba(116,214,196,0.50);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.28), 0 0 28px rgba(116,214,196,0.16), inset 0 1px rgba(255,255,255,0.12);
+    }
+
+    .skill-card:hover::before,
+    .skill-card:focus-visible::before,
+    .skill-card.active::before {
+      animation: skill-scan 980ms ease forwards;
+    }
+
+    .skill-name {
+      display: block;
+      color: var(--parchment);
+      font-family: var(--font-mono);
       font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .skill-meta {
+      display: block;
+      margin-top: 4px;
+      color: rgba(243,229,195,0.62);
+      font-size: 0.68rem;
+      font-weight: 700;
+      line-height: 1.28;
+    }
+
+    .skill-status {
+      padding: 4px 7px;
+      border: 1px solid rgba(116,214,196,0.30);
+      border-radius: 999px;
+      color: #d8fff7;
+      background: rgba(116,214,196,0.12);
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .skill-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .skill-detail {
+      min-width: 0;
+      padding: 6px 7px;
+      border: 1px solid rgba(255,217,135,0.10);
+      border-radius: 10px;
+      background: rgba(4,8,6,0.34);
+    }
+
+    .skill-detail b,
+    .skill-detail span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .skill-detail b {
+      color: rgba(255,217,135,0.78);
+      font-family: var(--font-mono);
+      font-size: 0.50rem;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .skill-detail span {
+      margin-top: 3px;
+      color: rgba(243,229,195,0.76);
+      font-size: 0.62rem;
       font-weight: 800;
     }
 
-    .skill-list span {
-      color: var(--parchment);
+    .skill-share-line {
+      padding: 7px 8px;
+      border: 1px solid rgba(116,214,196,0.18);
+      border-radius: 10px;
+      color: rgba(216,255,247,0.82);
+      background: rgba(116,214,196,0.07);
       font-family: var(--font-mono);
-      font-size: 0.66rem;
-      letter-spacing: 0.08em;
+      font-size: 0.56rem;
+      font-weight: 850;
+      letter-spacing: 0.07em;
+      line-height: 1.35;
       text-transform: uppercase;
+    }
+
+    .skill-jump {
+      justify-self: start;
+      color: rgba(255,217,135,0.72);
+      font-family: var(--font-mono);
+      font-size: 0.53rem;
+      font-weight: 900;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    .skill-route {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .skill-route span {
+      position: relative;
+      flex: 1 1 auto;
+      padding: 6px 7px;
+      border: 1px solid rgba(255,217,135,0.16);
+      border-radius: 999px;
+      color: rgba(243,229,195,0.76);
+      background: rgba(4,8,6,0.42);
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      font-weight: 850;
+      letter-spacing: 0.07em;
+      text-align: center;
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .skill-route span.active {
+      border-color: rgba(116,214,196,0.42);
+      color: #d8fff7;
+      box-shadow: 0 0 18px rgba(116,214,196,0.14);
+    }
+
+    .skill-hint {
+      margin: 10px 2px 0;
+      color: rgba(243,229,195,0.54);
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .room-tab.has-skill-event::after {
+      content: "SKILL";
+      grid-column: 2;
+      justify-self: start;
+      margin-top: -2px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      color: #d8fff7;
+      background: rgba(116,214,196,0.12);
+      font-family: var(--font-mono);
+      font-size: 0.52rem;
+      font-weight: 900;
+      letter-spacing: 0.10em;
+      box-shadow: 0 0 14px rgba(116,214,196,0.12);
+    }
+
+    .chat-message[data-skill-ref] .bubble,
+    .system-note[data-skill-ref] {
+      border-color: rgba(116,214,196,0.44);
+      box-shadow: 0 18px 38px rgba(0,0,0,0.26), 0 0 34px rgba(116,214,196,0.18), inset 0 1px rgba(255,255,255,0.12);
+    }
+
+    .chat-message[data-skill-ref] .bubble::after {
+      content: attr(data-skill-label);
+      position: absolute;
+      right: 12px;
+      top: -10px;
+      padding: 4px 8px;
+      border: 1px solid rgba(116,214,196,0.36);
+      border-radius: 999px;
+      color: #d8fff7;
+      background: rgba(4,8,6,0.88);
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 900;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      box-shadow: 0 0 18px rgba(116,214,196,0.18);
     }
 
     .metric {
@@ -1251,6 +1517,21 @@
 
     @keyframes blink { 50% { opacity: 0; } }
 
+    @keyframes skill-aura {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes skill-beacon {
+      0%, 100% { transform: scale(0.92); filter: brightness(0.92); }
+      50% { transform: scale(1.08); filter: brightness(1.18); }
+    }
+
+    @keyframes skill-scan {
+      0% { opacity: 0; transform: translateX(-112%); }
+      35% { opacity: 0.78; }
+      100% { opacity: 0; transform: translateX(112%); }
+    }
+
     @media (max-width: 980px) {
       .app {
         min-height: 100svh;
@@ -1260,7 +1541,7 @@
       }
 
       .side-telemetry { width: 150px; }
-      .skill-library { width: 190px; }
+      .skill-library { width: min(300px, 58%); }
       .chat-feed { gap: 8px; }
       .system-note { margin: 0 24px 2px 28px; }
     }
@@ -1273,11 +1554,23 @@
       .live-chip { display: none; }
       .bottom-strip { min-height: 48px; padding: 0 12px; }
       .side-telemetry { top: 10px; right: 10px; width: 132px; }
-      .skill-library { right: 10px; bottom: 10px; width: 154px; padding: 9px; }
-      .skill-library h3 { margin-bottom: 6px; font-size: 0.56rem; }
+      .skill-library { right: 10px; bottom: 10px; width: min(260px, calc(100% - 20px)); padding: 9px; }
+      .skill-library h3 { margin-bottom: 3px; font-size: 0.56rem; }
+      .skill-head { margin-bottom: 7px; gap: 8px; }
+      .skill-head p { font-size: 0.61rem; }
+      .skill-pulse { width: 28px; height: 28px; }
       .skill-list { gap: 5px; }
-      .skill-list li { padding: 6px 7px; font-size: 0.64rem; }
-      .skill-list span { font-size: 0.56rem; }
+      .skill-card { padding: 7px 8px; border-radius: 12px; }
+      .skill-name { font-size: 0.62rem; }
+      .skill-meta { display: none; }
+      .skill-status { padding: 3px 6px; font-size: 0.50rem; }
+      .skill-detail-grid { grid-template-columns: 1fr; gap: 4px; }
+      .skill-detail { padding: 5px 6px; }
+      .skill-detail span { font-size: 0.56rem; }
+      .skill-share-line { font-size: 0.48rem; }
+      .skill-route { gap: 4px; margin-top: 7px; }
+      .skill-route span { padding: 4px 5px; font-size: 0.48rem; }
+      .skill-hint { display: none; }
       .log-board { padding: 16px; border-radius: 22px; }
       .log-header { align-items: flex-start; flex-direction: column; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; }
       .log-title { min-width: 0; }
@@ -1343,12 +1636,16 @@
         </aside>
 
         <aside class="skill-library" id="skill-library" aria-label="Skill library">
-          <h3>Skill Library</h3>
-          <ul class="skill-list">
-            <li>place_line <span>ready</span></li>
-            <li>air_check <span>guard</span></li>
-            <li>rollback <span>guard</span></li>
-          </ul>
+          <div class="skill-head">
+            <div>
+              <h3>Shared Skill Library</h3>
+              <p>Paper SKILLs: Place, Remove, Replace. Each row shows learned-from, shared-to, and used-by directly.</p>
+            </div>
+            <div class="skill-pulse" aria-hidden="true"></div>
+          </div>
+          <ul class="skill-list" id="skill-list"></ul>
+          <div class="skill-route" id="skill-route" aria-label="Skill propagation route"></div>
+          <p class="skill-hint">Click a row only if you want to jump to that SKILL's next timeline event.</p>
         </aside>
       </div>
 
@@ -1406,8 +1703,33 @@
     let isAutoPlaying = false;
     let activeRoom = '';
     let skillLibraryUnlocked = false;
+    let focusedSkillRef = '';
+    let skillState = new Map();
     let mentionRegex = null;
     const mentionAccentByTerm = new Map();
+    const SKILL_REGISTRY = {
+      place: {
+        name: 'Place',
+        summary: 'Guarded block placement with bounds check, air_check, and rollback metadata.',
+        learnedLabel: 'Foreman-E Worker Pool',
+        sharedTo: 'Foreman-A/B/C/D/E pools',
+        accent: '#72ffd1'
+      },
+      remove: {
+        name: 'Remove',
+        summary: 'Delete temporary or incorrect blocks only after tag ownership and rollback checks.',
+        learnedLabel: 'Foreman-E cleanup',
+        sharedTo: 'Foreman-A/B/C/D/E pools',
+        accent: '#ffd987'
+      },
+      replace: {
+        name: 'Replace',
+        summary: 'Verify wrong block, remove it safely, place correction, then write audit record.',
+        learnedLabel: 'Foreman-C row patch',
+        sharedTo: 'Foreman-A/B/C/D/E pools',
+        accent: '#f06f9f'
+      }
+    };
 
     const phaseControls = document.querySelector('#phase-controls');
     const logBoard = document.querySelector('.log-board');
@@ -1418,6 +1740,8 @@
     const metricText = [document.querySelector('#metric-a'), document.querySelector('#metric-b')];
     const systemLine = document.querySelector('#system-line');
     const skillLibrary = document.querySelector('#skill-library');
+    const skillList = document.querySelector('#skill-list');
+    const skillRoute = document.querySelector('#skill-route');
     const logKicker = document.querySelector('#log-kicker');
     const playbackPrev = document.querySelector('#playback-prev');
     const playbackNext = document.querySelector('#playback-next');
@@ -1481,6 +1805,11 @@
           }
         });
       });
+      Object.values(SKILL_REGISTRY).forEach((skill) => {
+        addMentionTerm(terms, skill.name, skill.accent || '#72ffd1');
+        addMentionTerm(terms, skill.name.replace(/_/g, ' '), skill.accent || '#72ffd1');
+        addMentionTerm(terms, 'Skill Scheduler', '#72ffd1');
+      });
 
       mentionAccentByTerm.clear();
       [...terms.values()].forEach(({ term, accent }) => mentionAccentByTerm.set(term.toLowerCase(), accent));
@@ -1518,6 +1847,146 @@
       }
 
       if (cursor < text.length) node.append(document.createTextNode(text.slice(cursor)));
+    }
+
+    function ensureSkillState(skillRef = '') {
+      const ref = String(skillRef || '').trim();
+      if (!ref) return null;
+      if (!skillState.has(ref)) {
+        const fallbackName = ref.replace(/_/g, ' ');
+        skillState.set(ref, {
+          ref,
+          ...(SKILL_REGISTRY[ref] || {
+            name: ref,
+            summary: `${fallbackName} shared across Foreman groups.`,
+            learnedLabel: 'Learned in pool',
+            baseRoute: ['learn', 'publish', 'reuse']
+          }),
+          learned: false,
+          published: false,
+          learnedRoom: '',
+          usedRooms: new Set(),
+          events: []
+        });
+      }
+      return skillState.get(ref);
+    }
+
+    function resetSkillState() {
+      skillState = new Map();
+      Object.keys(SKILL_REGISTRY).forEach(ensureSkillState);
+      focusedSkillRef = Object.keys(SKILL_REGISTRY)[0] || '';
+      skillLibraryUnlocked = false;
+      renderSkillLibrary();
+    }
+
+    function getSkillEventLabel(kind = '') {
+      if (kind === 'skill-detection') return 'Skill learned';
+      if (kind === 'skill-broadcast') return 'Skill broadcast';
+      if (kind === 'skill-use') return 'Skill reused';
+      return 'Skill event';
+    }
+
+    function getSkillSchedule(skillRef) {
+      return playbackEvents
+        .map((event, index) => ({ ...event, index }))
+        .filter(({ message }) => message?.skillRef === skillRef);
+    }
+
+    function updateSkillStateFromEvent(event, index = -1) {
+      const skillRef = event?.message?.skillRef;
+      const skill = ensureSkillState(skillRef);
+      if (!skill) return;
+
+      const kind = event.message.kind || 'skill-event';
+      if (kind === 'skill-detection') {
+        skill.learned = true;
+        skill.learnedRoom = event.group.title;
+        focusedSkillRef = skill.ref;
+      }
+      if (kind === 'skill-broadcast') skill.published = true;
+      if (kind === 'skill-use') skill.usedRooms.add(event.group.title);
+      skill.events.push({ index, kind, room: event.group.id, title: event.group.title });
+      skillLibraryUnlocked = true;
+      renderSkillLibrary(skill.ref);
+    }
+
+    function getSkillStatus(skill) {
+      if (skill.usedRooms.size) return `${skill.usedRooms.size} ${skill.usedRooms.size === 1 ? 'room' : 'rooms'}`;
+      if (skill.published) return 'shared';
+      if (skill.learned) return 'learned';
+      return 'locked';
+    }
+
+    function summarizeRooms(rooms, fallback = 'Waiting') {
+      const values = [...rooms];
+      if (!values.length) return fallback;
+      return values
+        .map((room) => room
+          .replace(' Worker Pool', '')
+          .replace('Project Manager and ', 'PM + '))
+        .join(', ');
+    }
+
+    function activateSkillCard(skillRef) {
+      focusedSkillRef = skillRef;
+      renderSkillLibrary(skillRef);
+      if (isMessagePending) return;
+      const schedule = getSkillSchedule(skillRef);
+      if (!schedule.length) return;
+      const nextEvent = schedule.find((event) => event.index + 1 > playbackCursor) || schedule[0];
+      renderPlaybackUntil(nextEvent.index + 1);
+    }
+
+    function renderSkillLibrary(activeRef = focusedSkillRef) {
+      if (!skillList || !skillRoute) return;
+      const skills = [...skillState.values()];
+      skillList.replaceChildren();
+
+      skills.forEach((skill) => {
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.className = `skill-card${skill.ref === activeRef ? ' active' : ''}`;
+        button.type = 'button';
+        button.dataset.skillRef = skill.ref;
+        button.setAttribute('aria-pressed', String(skill.ref === activeRef));
+        const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Waiting';
+        const usedBy = summarizeRooms(skill.usedRooms, 'No reuse yet');
+        button.innerHTML = `
+          <span class="skill-card-top">
+            <span>
+              <span class="skill-name">${escapeHtml(skill.name)}</span>
+              <span class="skill-meta">${escapeHtml(skill.summary)}</span>
+            </span>
+            <span class="skill-status">${escapeHtml(getSkillStatus(skill))}</span>
+          </span>
+          <span class="skill-detail-grid" aria-label="${escapeHtml(skill.name)} sharing details">
+            <span class="skill-detail"><b>Learned in</b><span title="${escapeHtml(learnedFrom)}">${escapeHtml(learnedFrom)}</span></span>
+            <span class="skill-detail"><b>Shared to</b><span title="${escapeHtml(skill.sharedTo)}">${escapeHtml(skill.sharedTo)}</span></span>
+            <span class="skill-detail"><b>Used by</b><span title="${escapeHtml(usedBy)}">${escapeHtml(usedBy)}</span></span>
+          </span>
+          <span class="skill-share-line">Shared via global Skill Library, not private to the learning room.</span>
+          <span class="skill-jump">Jump to next ${escapeHtml(skill.name)} event -></span>
+        `;
+        button.addEventListener('click', () => activateSkillCard(skill.ref));
+        item.append(button);
+        skillList.append(item);
+      });
+
+      const routeItems = [
+        { label: 'Shared scope: Foreman-A', active: true },
+        { label: 'Foreman-B', active: true },
+        { label: 'Foreman-C', active: true },
+        { label: 'Foreman-D', active: true },
+        { label: 'Foreman-E', active: true }
+      ];
+      skillRoute.replaceChildren(...routeItems.map((item) => {
+        const node = document.createElement('span');
+        node.className = item.active ? 'active' : '';
+        node.textContent = item.label;
+        node.title = item.label;
+        return node;
+      }));
     }
 
     function accessoryMarkup(kind, trim, dark) {
@@ -1624,6 +2093,7 @@
         button.className = 'room-tab';
         button.type = 'button';
         button.dataset.room = group.id;
+        button.classList.toggle('has-skill-event', (group.messages || []).some((message) => message.skillRef));
         button.innerHTML = `${renderRoomAvatar(group)}<span><span class="room-name">${escapeHtml(group.title)}</span></span>`;
         button.addEventListener('click', () => setRoom(group.id));
         roomList.append(button);
@@ -1655,6 +2125,10 @@
       note.dataset.roomId = group.id;
       note.dataset.noteLabel = isToolNote ? 'TOOL' : 'SYS';
       note.dataset.eventKind = message.kind || (isToolNote ? 'tool-call' : 'system-log');
+      if (message.skillRef) {
+        note.dataset.skillRef = message.skillRef;
+        note.title = `${getSkillEventLabel(message.kind)}: ${message.skillRef}`;
+      }
       appendMentionedText(note, message.systemLog || message.note);
       note.addEventListener('animationend', () => note.classList.remove('is-entering'), { once: true });
       return note;
@@ -1677,6 +2151,7 @@
       article.dataset.kind = agent.type;
       article.dataset.eventKind = message.kind || 'message';
       if (message.toolRef) article.dataset.toolRef = message.toolRef;
+      if (message.skillRef) article.dataset.skillRef = message.skillRef;
       article.style.setProperty('--agent-accent', agent.accent || '#ffd987');
 
       const speaker = document.createElement('div');
@@ -1701,6 +2176,7 @@
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
+      if (message.skillRef) bubble.dataset.skillLabel = getSkillEventLabel(message.kind);
       const text = document.createElement('p');
       text.className = isTyping ? 'typing-dots' : '';
       if (isTyping) {
@@ -1833,6 +2309,7 @@
         const note = createSystemNote(event);
         setRoom(group.id, index === 0 ? 'auto' : 'smooth');
         chatFeed.append(note);
+        if (message.skillRef) updateSkillStateFromEvent(event, index);
         chatMessages = [...document.querySelectorAll('[data-chat-stage]')];
         applyRoomVisibility();
         setStage(stageId, note);
@@ -1868,7 +2345,7 @@
       const completeMessage = () => {
         if (typingDelay > 0) finishTyping(article, message);
         if (message.systemLog || message.note) chatFeed.append(createSystemNote(event));
-        if (message.kind === 'skill-detection') skillLibraryUnlocked = true;
+        if (message.skillRef) updateSkillStateFromEvent(event, index);
         applyRoomVisibility();
         setStage(stageId, article);
         lockAutoScrollSync();
@@ -1896,8 +2373,8 @@
       isAutoScrolling = false;
       playbackCursor = 0;
       isMessagePending = false;
-      skillLibraryUnlocked = false;
-      skillLibrary?.classList.remove('is-visible');
+      resetSkillState();
+      skillLibrary?.classList.add('is-visible');
       chatFeed.replaceChildren();
       chatFeed.append(...groupRooms.map(createRoomIntro));
       chatMessages = [];
@@ -1924,9 +2401,9 @@
         const agent = group.agents[message.agent];
         if (!agent) return null;
         node = createChatMessage(event, index, false);
-        if (message.kind === 'skill-detection') skillLibraryUnlocked = true;
       }
 
+      if (message.skillRef) updateSkillStateFromEvent(event, index);
       node.classList.remove('is-entering');
       chatFeed.append(node);
       return { node, group, stageId };
@@ -1939,8 +2416,8 @@
       logRevealTimer = null;
       isAutoScrolling = false;
       isMessagePending = false;
-      skillLibraryUnlocked = false;
-      skillLibrary?.classList.remove('is-visible');
+      resetSkillState();
+      skillLibrary?.classList.add('is-visible');
 
       const total = playbackEvents.length;
       const count = Math.min(Math.max(Number(targetCount) || 0, 0), total);
@@ -1998,8 +2475,8 @@
       if (!stage) return;
 
       if (systemLine) appendMentionedText(systemLine, stage.system);
-      const isSkillMoment = activeMessage?.dataset.eventKind === 'skill-detection';
-      skillLibrary?.classList.toggle('is-visible', skillLibraryUnlocked || isSkillMoment);
+      skillLibrary?.classList.add('is-visible');
+      if (activeMessage?.dataset.skillRef) renderSkillLibrary(activeMessage.dataset.skillRef);
 
       metricText.forEach((node, metricIndex) => { node.textContent = stage.metrics[metricIndex]; });
       metrics.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values[metricIndex]); });

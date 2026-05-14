@@ -89,9 +89,18 @@
       "time": "00:48.6",
       "agent": "foreman-c",
       "side": "left",
-      "kind": "correction",
-      "text": "Patch applied to row 02. Gate C is now green; repetitive straight rows can use the bounded place_line helper.",
-      "stage": 4
+      "kind": "skill-detection",
+      "text": "Patch applied to row 02. Pool C has learned Replace: verify the wrong block, remove it safely, place the corrected block, then write one audit record. Publishing this SKILL to the shared library.",
+      "stage": 4,
+      "skillRef": "replace"
+    },
+    {
+      "time": "00:49.0",
+      "side": "left",
+      "kind": "skill-broadcast",
+      "skillRef": "replace",
+      "stage": 4,
+      "systemLog": "Skill Scheduler: Replace is committed to the Shared Skill Library from Foreman-C row-02 patch and shared to every Foreman worker pool."
     },
     {
       "time": "01:01.4",

@@ -90,6 +90,15 @@
       "toolRef": "channel-open"
     },
     {
+      "time": "00:51.0",
+      "agent": "project-manager",
+      "side": "right",
+      "kind": "skill-broadcast",
+      "skillRef": "place",
+      "stage": 4,
+      "text": "Shared skill scheduling is active: Place, Remove, and Replace are learned inside worker-pool rooms, then exposed through the global Skill Library for other pools to reuse."
+    },
+    {
       "time": "01:19.4",
       "agent": "project-manager",
       "side": "right",

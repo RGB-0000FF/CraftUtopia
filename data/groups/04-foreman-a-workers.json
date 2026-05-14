@@ -94,6 +94,24 @@
       "stage": 4
     },
     {
+      "time": "00:49.2",
+      "agent": "worker-pool",
+      "side": "right",
+      "kind": "skill-use",
+      "skillRef": "place",
+      "stage": 4,
+      "text": "Pool A pulls Place from the Shared Skill Library. Workers 001-020 reuse the Foreman-E learned SKILL for the remaining straight rim rows, with air_check before each placement."
+    },
+    {
+      "time": "00:58.0",
+      "agent": "worker-pool",
+      "side": "right",
+      "kind": "skill-use",
+      "skillRef": "remove",
+      "stage": 4,
+      "text": "Pool A pulls Remove from the Shared Skill Library to clear temporary lane markers by tmp/* tag without learning a local cleanup routine."
+    },
+    {
       "time": "00:58.6",
       "agent": "worker-pool",
       "side": "right",

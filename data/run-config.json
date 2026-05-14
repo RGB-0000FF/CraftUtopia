@@ -71,7 +71,7 @@
         "86%",
         "86%"
       ],
-      "system": "Foreman-A through Foreman-E worker-pool rooms show aggregate progress, checkpoint events, and only important worker exceptions.",
+      "system": "Worker pools learn three paper SKILLs: Place, Remove, and Replace. The Skill Scheduler publishes each one to a shared library so every Foreman room can reuse it.",
       "tilt": "-50%, -47%) rotateX(60deg) rotateZ(45deg) scale(1.06)"
     },
     {

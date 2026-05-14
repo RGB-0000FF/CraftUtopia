@@ -82,23 +82,26 @@
       "agent": "run-monitor",
       "side": "right",
       "kind": "skill-detection",
-      "text": "The pool repeated safe straight-line placement enough times to publish place_line with bounds, air_check, and rollback guards.",
-      "stage": 4
+      "text": "The pool repeated safe block placement enough times to learn Place: a guarded block-placement SKILL with bounds check, air_check, and rollback metadata. Publishing it to the shared library now.",
+      "stage": 4,
+      "skillRef": "place"
     },
     {
       "time": "00:46.0",
       "side": "right",
-      "kind": "system-log",
-      "systemLog": "Skill update: Run Monitor publishes the place_line helper after repeated safe placement samples.",
-      "stage": 4
+      "kind": "skill-broadcast",
+      "systemLog": "Skill Scheduler: Place is committed to the Shared Skill Library from Foreman-E Worker Pool and shared to Foreman-A, Foreman-B, Foreman-C, Foreman-D, and Foreman-E worker rooms.",
+      "stage": 4,
+      "skillRef": "place"
     },
     {
       "time": "00:57.2",
       "agent": "worker-091",
       "side": "right",
-      "kind": "cleanup",
-      "text": "Temporary access blocks are indexed by tag: tmp/scaffold/main-01 and tmp/path/main-03. Cleanup can be deterministic during verification.",
-      "stage": 4
+      "kind": "skill-detection",
+      "text": "Cleanup pattern learned. Worker-091 publishes Remove: a guarded SKILL for deleting temporary blocks by tmp/* tag after checking ownership and rollback safety.",
+      "stage": 4,
+      "skillRef": "remove"
     },
     {
       "time": "01:07.8",
@@ -107,6 +110,14 @@
       "kind": "return",
       "text": "Pool E complete. All diff shards are collected, the temporary tag ledger is closed, and final cleanup has zero unknown temporary blocks.",
       "stage": 4
+    },
+    {
+      "time": "00:57.6",
+      "side": "right",
+      "kind": "skill-broadcast",
+      "skillRef": "remove",
+      "stage": 4,
+      "systemLog": "Skill Scheduler: Remove is committed to the Shared Skill Library from Foreman-E cleanup and shared to all Foreman worker rooms for deterministic temporary-block cleanup."
     },
     {
       "time": "01:07.8",

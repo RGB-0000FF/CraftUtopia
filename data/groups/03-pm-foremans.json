@@ -162,6 +162,33 @@
       "toolRef": "channel-open"
     },
     {
+      "time": "00:47.0",
+      "agent": "project-manager",
+      "side": "left",
+      "kind": "skill-broadcast",
+      "skillRef": "place",
+      "stage": 4,
+      "text": "Skill Scheduler update: Foreman-E learned Place, and the shared library has propagated it to every Foreman worker room. All pools may reuse Place instead of relearning local block placement."
+    },
+    {
+      "time": "00:49.4",
+      "agent": "project-manager",
+      "side": "left",
+      "kind": "skill-broadcast",
+      "skillRef": "replace",
+      "stage": 4,
+      "text": "Skill Scheduler update: Foreman-C learned Replace during the row-02 patch. The library now exposes Replace to Foreman-A through Foreman-E worker rooms for future correction tasks."
+    },
+    {
+      "time": "00:58.2",
+      "agent": "project-manager",
+      "side": "left",
+      "kind": "skill-broadcast",
+      "skillRef": "remove",
+      "stage": 4,
+      "text": "Skill Scheduler update: Foreman-E learned Remove from temporary-tag cleanup. Remove is now shared globally so every pool can clear tmp/* blocks with the same guard policy."
+    },
+    {
       "time": "01:09.4",
       "agent": "project-manager",
       "side": "left",

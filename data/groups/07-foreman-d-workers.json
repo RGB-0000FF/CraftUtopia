@@ -102,6 +102,24 @@
       "stage": 4
     },
     {
+      "time": "01:03.2",
+      "agent": "worker-pool",
+      "side": "right",
+      "kind": "skill-use",
+      "skillRef": "place",
+      "stage": 4,
+      "text": "Pool D imports Place from the Shared Skill Library for confirmed closure rows. Ambiguous cells stay deferred, while the shared SKILL handles only bounded, verified spans."
+    },
+    {
+      "time": "01:04.0",
+      "agent": "foreman-d",
+      "side": "left",
+      "kind": "skill-use",
+      "skillRef": "remove",
+      "stage": 4,
+      "text": "Foreman-D also imports Remove from the Shared Skill Library to clear support blocks after closure, using the same tmp/* ownership guard learned in Foreman-E."
+    },
+    {
       "time": "01:06.0",
       "side": "right",
       "kind": "tool-call",

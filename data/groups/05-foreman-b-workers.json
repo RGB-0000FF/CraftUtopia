@@ -102,6 +102,15 @@
       "stage": 4
     },
     {
+      "time": "00:50.4",
+      "agent": "foreman-b",
+      "side": "left",
+      "kind": "skill-use",
+      "skillRef": "replace",
+      "stage": 4,
+      "text": "Reroute accepted. I am pulling Replace from the Shared Skill Library for the recovered lane: verify the bad segment, remove only that segment, then place the corrected blocks with rollback guard enabled."
+    },
+    {
       "time": "00:59.8",
       "side": "left",
       "kind": "tool-call",
