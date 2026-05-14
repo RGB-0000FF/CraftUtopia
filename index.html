@@ -89,8 +89,8 @@
       min-height: 0;
       padding: clamp(12px, calc(29px * var(--ui-scale)), 34px);
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(min(640px, 48vw), 1fr);
-      gap: clamp(10px, calc(22px * var(--ui-scale)), 28px);
+      grid-template-columns: minmax(0, 1fr) minmax(min(690px, 52vw), 1.12fr);
+      gap: clamp(10px, calc(18px * var(--ui-scale)), 24px);
     }
 
     .app::before {
@@ -145,7 +145,7 @@
 
     .status {
       display: grid;
-      grid-template-rows: minmax(0, 1fr) auto;
+      grid-template-rows: minmax(0, 1fr);
       padding: clamp(14px, calc(28px * var(--ui-scale)), 32px);
     }
 
@@ -154,7 +154,6 @@
     }
 
     .topline,
-    .bottom-strip,
     .log-header {
       position: relative;
       z-index: 2;
@@ -215,7 +214,6 @@
 
     .mono,
     .kicker,
-    .phase-dot,
     .system-note {
       font-family: var(--font-mono);
       letter-spacing: 0.09em;
@@ -275,8 +273,10 @@
       position: relative;
       z-index: 1;
       min-height: 0;
-      margin: 0 0 clamp(12px, calc(18px * var(--ui-scale)), 24px);
-      display: block;
+      margin: 0;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr);
+      gap: 0;
     }
 
     .gif-stage {
@@ -315,20 +315,164 @@
       filter: saturate(1.04) contrast(1.03);
     }
 
-    .side-telemetry {
+    .build-timeline {
       position: absolute;
-      top: 16px;
-      right: 16px;
+      left: clamp(16px, calc(24px * var(--ui-scale)), 30px);
+      right: clamp(16px, calc(24px * var(--ui-scale)), 30px);
+      bottom: clamp(16px, calc(24px * var(--ui-scale)), 30px);
       z-index: 4;
-      width: min(190px, 34%);
       display: grid;
-      gap: 7px;
-      padding: 10px;
-      border: 1px solid rgba(213,170,98,0.20);
-      background: linear-gradient(180deg, rgba(4,8,6,0.74), rgba(4,8,6,0.48));
-      backdrop-filter: blur(14px);
-      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-      box-shadow: 0 18px 44px rgba(0,0,0,0.34);
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px 8px 9px;
+      border: 1px solid rgba(216,255,247,0.14);
+      border-radius: 999px;
+      background:
+        linear-gradient(90deg, rgba(2, 12, 8, 0.82), rgba(3, 16, 10, 0.44) 46%, rgba(2, 12, 8, 0.76)),
+        radial-gradient(circle at 7% 50%, rgba(85,255,164,0.22), transparent 8rem),
+        radial-gradient(circle at 100% 50%, rgba(255,217,135,0.10), transparent 11rem);
+      box-shadow: 0 22px 46px rgba(0,0,0,0.38), inset 0 1px rgba(234,255,239,0.13), inset 0 -1px rgba(85,255,164,0.08);
+      backdrop-filter: blur(16px) saturate(1.28);
+    }
+
+    .build-timeline::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: -1px;
+      height: 1px;
+      background:
+        linear-gradient(90deg, transparent, rgba(85,255,164,0.56) 22%, rgba(255,217,135,0.42) 82%, transparent);
+      box-shadow: 0 0 16px rgba(85,255,164,0.28);
+      pointer-events: none;
+    }
+
+    .build-timeline::after {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: inherit;
+      background:
+        linear-gradient(100deg, transparent 0 36%, rgba(255,255,255,0.16) 47%, transparent 58% 100%);
+      opacity: 0;
+      transform: translateX(-42%);
+      animation: timeline-sweep 6.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .build-timeline-head,
+    .build-timeline-labels {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .build-timeline-head {
+      min-width: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 0;
+      padding: 5px 9px;
+      border: 1px solid rgba(255,217,135,0.20);
+      border-radius: 999px;
+      color: rgba(143,255,194,0.72);
+      background:
+        linear-gradient(180deg, rgba(255,217,135,0.10), rgba(0,0,0,0.18)),
+        rgba(3, 14, 9, 0.58);
+      box-shadow: inset 0 1px rgba(255,255,255,0.10), 0 0 18px rgba(255,217,135,0.10);
+      font-size: 0.66rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+    }
+
+    .build-timeline-head::before {
+      display: none;
+    }
+
+    .build-timeline-head strong {
+      color: var(--gold-hot);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 16px rgba(255,217,135,0.28);
+      white-space: nowrap;
+    }
+
+    .build-timeline-rail {
+      position: relative;
+      height: 6px;
+      overflow: visible;
+      border: 0;
+      border-radius: 999px;
+      background:
+        linear-gradient(90deg, rgba(85,255,164,0.16), rgba(255,217,135,0.14)),
+        rgba(0,0,0,0.44);
+      box-shadow: inset 0 0 0 1px rgba(216,255,247,0.10), 0 0 20px rgba(85,255,164,0.16);
+    }
+
+    .build-timeline-rail::before,
+    .build-timeline-rail::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
+
+    .build-timeline-rail::before {
+      left: 0;
+      background: #55ffa4;
+      box-shadow: 0 0 12px rgba(85,255,164,0.62);
+    }
+
+    .build-timeline-rail::after {
+      right: 0;
+      background: var(--gold-hot);
+      box-shadow: 0 0 12px rgba(255,217,135,0.58);
+    }
+
+    .build-timeline-rail span {
+      position: relative;
+      display: block;
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #55ffa4, #74d6c4 58%, #ffe08e);
+      box-shadow: 0 0 18px rgba(85,255,164,0.42), 0 0 30px rgba(255,217,135,0.16);
+      transition: width 420ms ease;
+    }
+
+    .build-timeline-rail span::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      border: 1px solid rgba(234,255,239,0.82);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle, #fff5bd 0 22%, #55ffa4 24% 42%, rgba(3,16,10,0.94) 44%);
+      box-shadow: 0 0 18px rgba(255,217,135,0.56), 0 0 26px rgba(85,255,164,0.32);
+      transform: translate(50%, -50%);
+    }
+
+    .build-timeline-labels {
+      margin-top: 7px;
+      color: rgba(207,255,222,0.44);
+      font-size: 0.54rem;
+      font-weight: 850;
+      letter-spacing: 0.10em;
     }
 
     .skill-library {
@@ -623,6 +767,194 @@
       text-transform: uppercase;
     }
 
+    .skill-library {
+      left: auto;
+      right: 16px;
+      top: 16px;
+      bottom: auto;
+      width: max-content;
+      max-width: calc(100% - 32px);
+      max-height: none;
+      min-height: 0;
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 9px;
+      border-color: rgba(255,217,135,0.22);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(4,8,6,0.82), rgba(4,8,6,0.56)),
+        radial-gradient(circle at 0 0, rgba(255,217,135,0.16), transparent 5rem);
+      clip-path: none;
+      overflow: hidden;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.26), 0 0 18px rgba(255,217,135,0.10);
+      transform: translateY(-8px) scale(0.96);
+    }
+
+    .skill-library.is-visible {
+      transform: translateY(0) scale(1);
+    }
+
+    .skill-library::after {
+      display: none;
+    }
+
+    .skill-library.is-visible.is-empty {
+      opacity: 0.78;
+    }
+
+    .skill-library.is-visible.is-empty::before {
+      opacity: 0.16;
+      animation: none;
+    }
+
+    .skill-head {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+    }
+
+    .skill-library h3 {
+      margin: 0;
+      color: var(--gold-hot);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+    }
+
+    .skill-head p,
+    .skill-route,
+    .skill-hint,
+    .skill-meta,
+    .skill-detail-grid,
+    .skill-share-line,
+    .skill-jump,
+    .skill-list {
+      display: none;
+    }
+
+    .skill-pulse {
+      display: none;
+      width: 14px;
+      height: 14px;
+      border-color: rgba(116,214,196,0.36);
+      box-shadow: 0 0 16px rgba(116,214,196,0.22);
+    }
+
+    .skill-library.is-empty .skill-pulse {
+      opacity: 0.28;
+      animation: none;
+    }
+
+    .skill-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(66px, 92px));
+      justify-content: center;
+      gap: 8px;
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+    }
+
+    .skill-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .skill-library .skill-list {
+      display: none;
+    }
+
+    .skill-card {
+      width: 100%;
+      min-height: 68px;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      align-items: center;
+      justify-items: center;
+      gap: 4px;
+      padding: 7px 7px 6px;
+      border-radius: 12px;
+      background:
+        linear-gradient(180deg, rgba(13,28,22,0.86), rgba(4,8,6,0.72)),
+        radial-gradient(circle at 50% 18%, rgba(116,214,196,0.16), transparent 4rem);
+      box-shadow: inset 0 1px rgba(255,255,255,0.08), 0 10px 24px rgba(0,0,0,0.24);
+      animation: skill-chip-in 320ms ease both;
+    }
+
+    .skill-card.is-locked {
+      cursor: default;
+      filter: grayscale(0.8);
+      opacity: 0.52;
+      border-color: rgba(243,229,195,0.08);
+      background:
+        repeating-linear-gradient(135deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 8px),
+        linear-gradient(180deg, rgba(13,28,22,0.46), rgba(4,8,6,0.62));
+    }
+
+    .skill-card.is-locked:hover,
+    .skill-card.is-locked:focus-visible {
+      transform: none;
+      border-color: rgba(243,229,195,0.08);
+      box-shadow: inset 0 1px rgba(255,255,255,0.06);
+    }
+
+    .skill-icon {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 38px;
+      border: 1px solid rgba(255,217,135,0.13);
+      border-radius: 9px;
+      background: rgba(0,0,0,0.22);
+      overflow: hidden;
+    }
+
+    .skill-icon svg {
+      width: 36px;
+      height: 36px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 5px 7px rgba(0,0,0,0.34));
+    }
+
+    .skill-card.is-locked .skill-icon::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border: 2px dashed rgba(243,229,195,0.20);
+      border-radius: 5px;
+    }
+
+    .skill-name {
+      max-width: 100%;
+      overflow: hidden;
+      font-size: 0.58rem;
+      letter-spacing: 0.09em;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .skill-status {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      padding: 1px 4px;
+      font-size: 0.40rem;
+      color: #04110a;
+      background: linear-gradient(180deg, rgba(216,255,247,0.92), rgba(116,214,196,0.78));
+    }
+
+    @keyframes skill-chip-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
     .room-tab.has-skill-event::after {
       content: "SKILL";
       grid-column: 2;
@@ -661,147 +993,6 @@
       letter-spacing: 0.10em;
       text-transform: uppercase;
       box-shadow: 0 0 18px rgba(116,214,196,0.18);
-    }
-
-    .metric {
-      position: relative;
-      min-height: 0;
-      padding: 8px 9px 10px;
-      border: 1px solid rgba(243,229,195,0.10);
-      background: linear-gradient(180deg, rgba(13, 28, 22, 0.58), rgba(4, 8, 6, 0.52));
-      overflow: hidden;
-    }
-
-    .metric::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 0 0, rgba(255,217,135,0.12), transparent 50%);
-      opacity: 0.8;
-      pointer-events: none;
-    }
-
-    .metric::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: calc(100% - var(--value));
-      bottom: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--aether), var(--gold-hot));
-      box-shadow: 0 0 18px rgba(116,214,196,0.28);
-      transition: right 520ms ease;
-    }
-
-    .metric span,
-    .metric strong,
-    .metric small { position: relative; }
-
-    .metric span {
-      display: block;
-      color: var(--ash);
-      font-family: var(--font-mono);
-      font-size: 0.58rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .metric strong {
-      display: block;
-      margin: 5px 0 2px;
-      color: var(--parchment);
-      font-family: var(--font-display);
-      font-size: clamp(1.05rem, calc(1.3rem * var(--ui-scale)), 1.7rem);
-      line-height: 1;
-    }
-
-    .metric small {
-      color: var(--bone);
-      display: none;
-    }
-
-    .bottom-strip {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 62px;
-      padding: 0 18px;
-    }
-
-    .bottom-strip::before {
-      content: "";
-      position: absolute;
-      left: 28px;
-      right: 28px;
-      top: 50%;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(116,214,196,0.24), rgba(255,217,135,0.72), rgba(116,214,196,0.24));
-      box-shadow: 0 0 18px rgba(213,170,98,0.18);
-      transform: translateY(-50%);
-    }
-
-    .phase-dot {
-      position: relative;
-      display: grid;
-      place-items: center;
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      border: 1px solid rgba(243,229,195,0.40);
-      border-radius: 50%;
-      color: var(--ash);
-      background: radial-gradient(circle, rgba(255,217,135,0.82), rgba(213,170,98,0.30) 48%, rgba(4,8,6,0.96) 52%);
-      font-size: 0;
-      font-weight: 700;
-      box-shadow: 0 0 0 7px rgba(4,8,6,0.84), 0 0 22px rgba(213,170,98,0.18);
-      transition: border-color 260ms ease, background 260ms ease, transform 260ms ease, box-shadow 260ms ease;
-      z-index: 1;
-    }
-
-    .phase-dot::after {
-      content: attr(data-label);
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + 14px);
-      min-width: max-content;
-      padding: 8px 10px;
-      border: 1px solid rgba(213,170,98,0.34);
-      color: var(--gold-hot);
-      background: rgba(4, 8, 6, 0.88);
-      box-shadow: 0 16px 34px rgba(0,0,0,0.34);
-      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-      font-family: var(--font-mono);
-      font-size: 0.76rem;
-      letter-spacing: 0.09em;
-      opacity: 0;
-      pointer-events: none;
-      transform: translate(-50%, 8px);
-      transition: opacity 180ms ease, transform 180ms ease;
-    }
-
-    .phase-dot:hover::after,
-    .phase-dot:focus-visible::after {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    .phase-dot.active {
-      border-color: var(--line-strong);
-      background: radial-gradient(circle, #fff3c1, var(--gold-hot) 34%, rgba(116,214,196,0.55) 56%, rgba(4,8,6,0.96) 60%);
-      transform: scale(1.32);
-      box-shadow: 0 0 0 8px rgba(4,8,6,0.86), 0 0 30px rgba(255,217,135,0.42);
-    }
-
-    .phase-dot.active::before {
-      content: "";
-      position: absolute;
-      inset: -9px;
-      border: 1px solid rgba(116,214,196,0.36);
-      border-radius: 50%;
-      background: transparent;
-      box-shadow: 0 0 16px rgba(255,217,135,0.66);
     }
 
     .log-board {
@@ -1653,6 +1844,11 @@
       62% { transform: translateX(42%); opacity: 0.75; }
     }
 
+    @keyframes timeline-sweep {
+      0%, 48%, 100% { transform: translateX(-70%); opacity: 0; }
+      68% { transform: translateX(70%); opacity: 0.72; }
+    }
+
     @keyframes pulse {
       0%, 100% { opacity: 0.62; transform: scale(0.9); }
       50% { opacity: 1; transform: scale(1.16); }
@@ -1702,8 +1898,7 @@
         padding: 12px;
       }
 
-      .side-telemetry { width: 150px; }
-      .skill-library { width: min(300px, 58%); }
+      .skill-library { max-width: calc(100% - 24px); }
       .chat-feed { gap: 8px; }
       .system-note { margin: 0 24px 2px 28px; }
     }
@@ -1714,25 +1909,20 @@
       .log-board { width: 100%; max-width: calc(100vw - 24px); }
       .topline { align-items: flex-start; }
       .live-chip { display: none; }
-      .bottom-strip { min-height: 48px; padding: 0 12px; }
-      .side-telemetry { top: 10px; right: 10px; width: 132px; }
-      .skill-library { right: 10px; bottom: 10px; width: min(260px, calc(100% - 20px)); padding: 9px; }
-      .skill-library h3 { margin-bottom: 3px; font-size: 0.56rem; }
-      .skill-head { margin-bottom: 7px; gap: 8px; }
-      .skill-head p { font-size: 0.61rem; }
-      .skill-pulse { width: 28px; height: 28px; }
+      .skill-library { top: 10px; right: 10px; bottom: auto; width: max-content; max-width: calc(100% - 20px); padding: 6px 8px; }
+      .skill-library { grid-template-columns: 1fr; }
+      .skill-library::after { left: 8px; top: 8px; padding: 3px 5px; font-size: 0.46rem; }
+      .skill-library h3 { font-size: 0.54rem; }
+      .skill-head { display: inline-flex; }
+      .skill-pulse { width: 12px; height: 12px; }
+      .skill-list { grid-template-columns: repeat(3, minmax(0, 1fr)); justify-content: stretch; }
       .skill-list { gap: 5px; }
-      .skill-card { padding: 7px 8px; border-radius: 12px; }
+      .skill-library .skill-list { display: none; }
+      .skill-card { min-height: 60px; padding: 5px 7px; border-radius: 10px; }
+      .skill-icon { width: 34px; height: 31px; }
+      .skill-icon svg { width: 30px; height: 30px; }
       .skill-name { font-size: 0.62rem; }
-      .skill-meta { display: none; }
       .skill-status { padding: 3px 6px; font-size: 0.50rem; }
-      .skill-detail-grid { grid-template-columns: 1fr; gap: 4px; }
-      .skill-detail { padding: 5px 6px; }
-      .skill-detail span { font-size: 0.56rem; }
-      .skill-share-line { font-size: 0.48rem; }
-      .skill-route { gap: 4px; margin-top: 7px; }
-      .skill-route span { padding: 4px 5px; font-size: 0.48rem; }
-      .skill-hint { display: none; }
       .log-board { padding: 16px; border-radius: 22px; }
       .log-header { align-items: flex-start; flex-direction: column; gap: 10px; margin-bottom: 10px; padding-bottom: 10px; }
       .log-title { min-width: 0; }
@@ -1777,7 +1967,7 @@
 
     .log-board {
       grid-template-rows: minmax(0, 1fr);
-      padding: clamp(10px, calc(14px * var(--ui-scale)), 18px);
+      padding: clamp(10px, calc(16px * var(--ui-scale)), 18px);
       border-radius: 18px;
       border-color: rgba(85, 255, 164, 0.18);
       background:
@@ -1794,9 +1984,7 @@
     }
 
     .log-board::after {
-      inset: 8px;
-      border-radius: 14px;
-      border-color: rgba(92,255,172,0.10);
+      display: none;
     }
 
     .terminal-console,
@@ -1805,32 +1993,26 @@
       z-index: 2;
       display: grid;
       grid-template-columns: 1fr;
-      grid-template-rows: auto auto minmax(150px, 0.58fr) minmax(180px, 1fr);
+      grid-template-rows: auto minmax(170px, 0.52fr) minmax(0, 1.7fr);
       gap: 10px;
       height: 100%;
       min-height: 0;
       overflow: hidden;
-      border: 1px solid rgba(92,255,172,0.18);
-      border-radius: 14px;
-      background:
-        radial-gradient(circle at 100% 0%, rgba(92,255,172,0.08), transparent 16rem),
-        repeating-linear-gradient(0deg, rgba(143,255,194,0.018) 0 1px, transparent 1px 5px),
-        #020705;
-      box-shadow: inset 0 1px rgba(255,255,255,0.04), inset 0 0 42px rgba(0,0,0,0.52);
-      padding: 12px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
     }
 
     .console-header,
-    .console-status,
     .console-milestones,
     .console-log {
       min-width: 0;
-      border: 1px solid rgba(92,255,172,0.16);
-      border-radius: 10px;
-      background:
-        linear-gradient(180deg, rgba(7, 18, 13, 0.92), rgba(2, 8, 5, 0.92)),
-        radial-gradient(circle at 0 0, rgba(92,255,172,0.08), transparent 12rem);
-      box-shadow: inset 0 1px rgba(255,255,255,0.04);
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
     }
 
     .console-header {
@@ -1849,7 +2031,6 @@
 
     .console-kicker,
     .console-meta,
-    .console-state-chip,
     .console-play,
     .console-section-title,
     .console-meter-head,
@@ -1870,7 +2051,7 @@
     .console-header h2 {
       overflow: hidden;
       color: #eaffef;
-      font-family: var(--font-mono);
+      font-family: var(--font-ui);
       font-size: clamp(1.12rem, calc(1.32rem * var(--ui-scale)), 1.58rem);
       font-weight: 900;
       letter-spacing: 0.02em;
@@ -1901,50 +2082,52 @@
     .console-control-group {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 12px;
       flex: 0 0 auto;
     }
 
-    .console-state-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      min-height: 28px;
-      padding: 6px 9px;
-      border: 1px solid rgba(92,255,172,0.22);
+    .header-progress {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      flex: 0 0 54px;
       border-radius: 999px;
-      color: #baffcc;
-      background: rgba(92,255,172,0.06);
-      font-size: 0.7rem;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      color: #eaffef;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 950;
+      letter-spacing: 0.02em;
     }
 
-    .console-state-chip::before {
+    .header-progress i {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(92,255,172,0.24);
+      border-radius: inherit;
+      background:
+        radial-gradient(circle at center, #031008 0 52%, transparent 53%),
+        conic-gradient(from -90deg, #55ffa4 0 var(--value), rgba(85,255,164,0.12) var(--value) 100%);
+      box-shadow: 0 0 20px rgba(85,255,164,0.15), inset 0 0 18px rgba(0,0,0,0.42);
+    }
+
+    .header-progress i::after {
       content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #55ffa4;
-      box-shadow: 0 0 14px rgba(85,255,164,0.70);
+      position: absolute;
+      inset: 6px;
+      border-radius: inherit;
+      border: 1px solid rgba(234,255,239,0.10);
     }
 
-    .console-state-chip[data-state="paused"] {
-      border-color: rgba(255,217,135,0.24);
-      color: #ffe4a6;
-      background: rgba(255,217,135,0.06);
+    .header-progress span {
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 0 10px rgba(85,255,164,0.32);
     }
 
-    .console-state-chip[data-state="paused"]::before {
-      background: #ffd987;
-      box-shadow: 0 0 12px rgba(255,217,135,0.58);
-    }
-
-    .console-state-chip[data-state="complete"] {
-      border-color: rgba(116,214,196,0.28);
-      color: #d8fff7;
-      background: rgba(116,214,196,0.07);
+    .header-progress b {
+      display: none;
     }
 
     .console-play {
@@ -1974,14 +2157,28 @@
 
     .console-status {
       display: grid;
-      gap: 9px;
-      padding: 11px 12px;
+      grid-template-columns: 1fr;
+      align-items: start;
+      gap: 6px;
+      padding: 8px 12px;
     }
 
     .console-meter {
       display: grid;
       gap: 7px;
       min-width: 0;
+    }
+
+    .console-meter-progress {
+      position: relative;
+      width: 100%;
+      justify-items: center;
+      gap: 4px;
+    }
+
+    .console-meter-time {
+      align-self: end;
+      gap: 6px;
     }
 
     .console-meter-head {
@@ -2002,6 +2199,40 @@
       white-space: nowrap;
     }
 
+    .console-meter-progress .console-meter-head {
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .console-meter-progress .console-meter-head span {
+      font-size: 0.55rem;
+      letter-spacing: 0.14em;
+      white-space: nowrap;
+    }
+
+    .console-meter-progress .console-meter-head strong {
+      position: absolute;
+      left: 50%;
+      top: 40px;
+      transform: translate(-50%, -50%);
+      color: #eaffef;
+      font-size: 0.86rem;
+      letter-spacing: 0.02em;
+      z-index: 1;
+    }
+
+    .console-meter-time .console-meter-head {
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    .console-meter-time .console-meter-head strong {
+      color: var(--gold-hot);
+      font-size: 0.78rem;
+    }
+
     .console-track {
       height: 10px;
       overflow: hidden;
@@ -2012,6 +2243,49 @@
         rgba(0,0,0,0.30);
     }
 
+    .console-meter-progress .console-track {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      border-radius: 999px;
+      border-color: rgba(92,255,172,0.20);
+      background:
+        radial-gradient(circle at center, #031008 0 52%, transparent 53%),
+        conic-gradient(from -90deg, #55ffa4 0 var(--value), rgba(85,255,164,0.12) var(--value) 100%);
+      box-shadow: 0 0 18px rgba(85,255,164,0.12), inset 0 0 20px rgba(0,0,0,0.34);
+    }
+
+    .console-meter-time .console-track {
+      position: relative;
+      height: 12px;
+      border-radius: 0;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,217,135,0.18) 0 1px, transparent 1px 48px),
+        linear-gradient(90deg, rgba(85,255,164,0.10), rgba(255,217,135,0.08)),
+        rgba(0,0,0,0.30);
+    }
+
+    .console-meter-time .console-track::before,
+    .console-meter-time .console-track::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #55ffa4;
+      box-shadow: 0 0 10px rgba(85,255,164,0.42);
+      transform: translateY(-50%);
+    }
+
+    .console-meter-time .console-track::before { left: 0; }
+
+    .console-meter-time .console-track::after {
+      left: var(--value);
+      background: var(--gold-hot);
+      transform: translate(-50%, -50%);
+    }
+
     .console-track span {
       display: block;
       width: var(--value);
@@ -2020,6 +2294,16 @@
       background: linear-gradient(90deg, #55ffa4, #c9ff76);
       box-shadow: 0 0 20px rgba(85,255,164,0.40);
       transition: width 420ms ease;
+    }
+
+    .console-meter-progress .console-track span {
+      display: none;
+    }
+
+    .console-meter-time .console-track span {
+      height: 2px;
+      margin-top: 4px;
+      background: linear-gradient(90deg, #55ffa4, var(--gold-hot));
     }
 
     .console-section-title {
@@ -2046,128 +2330,436 @@
       grid-template-rows: auto minmax(0, 1fr);
       min-height: 0;
       overflow: hidden;
+      border-top: 1px solid rgba(92,255,172,0.12);
     }
 
     .milestone-list {
       min-height: 0;
       margin: 0;
-      padding: 8px 10px 10px;
+      padding: 7px 9px 9px;
       list-style: none;
-      display: grid;
-      gap: 6px;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-color: rgba(85,255,164,0.34) rgba(0,0,0,0.18);
+      scrollbar-width: thin;
+      font-family: var(--font-mono);
+      background:
+        linear-gradient(90deg, rgba(85,255,164,0.045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(85,255,164,0.030) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    .milestone-list,
+    .milestone-list ol {
+      list-style: none;
+    }
+
+    .milestone-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .milestone-list::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.18);
+      border-radius: 999px;
+    }
+
+    .milestone-list::-webkit-scrollbar-thumb {
+      border: 2px solid rgba(0,0,0,0.18);
+      border-radius: 999px;
+      background: rgba(85,255,164,0.34);
     }
 
     .milestone-item {
       position: relative;
-      display: grid;
-      grid-template-columns: 18px minmax(0, 1fr);
-      gap: 7px;
+      display: block;
       min-width: 0;
-      color: rgba(207,255,222,0.48);
-      font-size: 0.72rem;
-      line-height: 1.32;
+      margin: 0;
+      color: rgba(207,255,222,0.58);
+      font-size: 0.64rem;
+      line-height: 1.28;
+      animation: milestoneReveal 220ms ease both;
+    }
+
+    .milestone-item + .milestone-item {
+      margin-top: 4px;
+    }
+
+    .milestone-children {
+      position: relative;
+      grid-column: 1;
+      margin: 5px 0 0 16px;
+      padding: 0 0 0 18px;
+    }
+
+    .milestone-children::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -7px;
+      bottom: 16px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(85,255,164,0.12), rgba(85,255,164,0.42), rgba(85,255,164,0.08));
+      box-shadow: 0 0 12px rgba(85,255,164,0.16);
+    }
+
+    .milestone-children > .milestone-item::before {
+      content: "";
+      position: absolute;
+      left: -18px;
+      top: 14px;
+      width: 18px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(85,255,164,0.44), rgba(85,255,164,0.12));
+    }
+
+    .milestone-children > .milestone-item::after {
+      content: "";
+      position: absolute;
+      left: -22px;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      border: 1px solid rgba(85,255,164,0.46);
+      border-radius: 999px;
+      background: #06140d;
+      box-shadow: inset 0 0 0 2px #020705, 0 0 10px rgba(85,255,164,0.18);
+    }
+
+    .milestone-children > .milestone-item:last-child::before {
+      background: linear-gradient(90deg, rgba(255,217,135,0.46), rgba(85,255,164,0.10));
     }
 
     .milestone-branch {
       position: relative;
-      width: 18px;
-      min-height: 31px;
+      grid-column: 1;
+      grid-row: 1 / 3;
+      align-self: start;
+      width: auto;
+      min-width: 34px;
+      min-height: 0;
+      margin-top: 1px;
+      padding: 3px 6px;
+      border: 1px solid rgba(116,214,196,0.20);
+      border-radius: 6px;
+      background: rgba(116,214,196,0.055);
+      color: rgba(116,214,196,0.70);
+      font-size: 0.50rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
-    .milestone-branch::before {
-      content: "";
-      position: absolute;
-      left: 7px;
-      top: -8px;
-      bottom: -8px;
-      width: 1px;
-      background: rgba(92,255,172,0.14);
+    .milestone-item.is-root > .milestone-body > .milestone-branch {
+      color: var(--gold-hot);
+      border-color: rgba(255,217,135,0.26);
+      background: rgba(255,217,135,0.075);
+      text-shadow: 0 0 12px rgba(255,217,135,0.28);
     }
-
-    .milestone-branch::after {
-      content: "";
-      position: absolute;
-      left: 3px;
-      top: 8px;
-      width: 9px;
-      height: 9px;
-      border: 1px solid rgba(92,255,172,0.25);
-      border-radius: 50%;
-      background: #020705;
-    }
-
-    .milestone-item:first-child .milestone-branch::before { top: 8px; }
-    .milestone-item:last-child .milestone-branch::before { bottom: calc(100% - 9px); }
 
     .milestone-body {
+      position: relative;
       min-width: 0;
       display: grid;
-      gap: 2px;
-      padding: 5px 7px;
-      border: 1px solid transparent;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: 8px;
+      gap: 3px;
+      padding: 5px 8px;
+      overflow: hidden;
+      border: 1px solid rgba(92,255,172,0.13);
+      border-left-color: rgba(85,255,164,0.42);
       border-radius: 8px;
+      background: rgba(0,0,0,0.18);
+      box-shadow: inset 0 1px rgba(255,255,255,0.035);
+    }
+
+    .milestone-body::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 7px;
+      bottom: 7px;
+      width: 3px;
+      border-radius: 0 999px 999px 0;
+      background: rgba(85,255,164,0.50);
+      box-shadow: 0 0 12px rgba(85,255,164,0.22);
+    }
+
+    .milestone-item.is-root > .milestone-body {
+      border-color: rgba(255,217,135,0.24);
+      border-left-color: rgba(255,217,135,0.70);
+      background: linear-gradient(90deg, rgba(255,217,135,0.10), rgba(0,0,0,0.16));
+    }
+
+    .milestone-item.is-root > .milestone-body::before {
+      background: var(--gold-hot);
+      box-shadow: 0 0 14px rgba(255,217,135,0.30);
+    }
+
+    .milestone-item.is-parallel > .milestone-body {
+      border-color: rgba(116,214,196,0.22);
+      border-left-color: rgba(116,214,196,0.72);
+      background: linear-gradient(90deg, rgba(116,214,196,0.08), rgba(0,0,0,0.18));
     }
 
     .milestone-line {
-      display: flex;
-      justify-content: space-between;
+      grid-column: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
       gap: 8px;
       min-width: 0;
     }
 
     .milestone-line strong {
       overflow: hidden;
-      color: rgba(234,255,239,0.70);
-      font-size: 0.76rem;
+      color: rgba(234,255,239,0.78);
+      font-size: 0.65rem;
       font-weight: 900;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.10em;
       text-overflow: ellipsis;
       text-transform: uppercase;
       white-space: nowrap;
     }
 
+    .milestone-line strong::before {
+      content: attr(data-code) " ";
+      color: rgba(116,214,196,0.70);
+      letter-spacing: 0.02em;
+    }
+
+    .milestone-item.is-root > .milestone-body .milestone-line strong {
+      color: var(--gold-hot);
+    }
+
+    .milestone-item.is-root > .milestone-body .milestone-line strong::before {
+      color: rgba(255,217,135,0.70);
+    }
+
     .milestone-line em {
-      flex: 0 0 auto;
-      color: rgba(207,255,222,0.38);
-      font-style: normal;
-      font-weight: 850;
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
+      display: none;
+    }
+
+    .milestone-role {
+      grid-column: 2;
+      display: block;
+      overflow: hidden;
+      color: rgba(207,255,222,0.58);
+      font-size: 0.52rem;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+      text-overflow: ellipsis;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .milestone-status-light {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(143,255,194,0.18);
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,0.34);
+    }
+
+    .milestone-item.is-running > .milestone-body .milestone-status-light {
+      border-color: rgba(255,217,135,0.66);
+      background: #ffd987;
+      box-shadow: 0 0 14px rgba(255,217,135,0.58), inset 0 0 0 2px rgba(0,0,0,0.32);
+      animation: milestoneLightBlink 0.9s ease-in-out infinite;
+    }
+
+    .milestone-item.is-complete > .milestone-body .milestone-status-light {
+      border-color: rgba(85,255,164,0.70);
+      background: #55ffa4;
+      box-shadow: 0 0 12px rgba(85,255,164,0.46), inset 0 0 0 2px rgba(0,0,0,0.32);
     }
 
     .milestone-summary {
-      display: -webkit-box;
+      grid-column: 2;
+      display: none;
       overflow: hidden;
       color: rgba(207,255,222,0.46);
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
     }
 
-    .milestone-item.is-running .milestone-body {
-      border-color: rgba(85,255,164,0.26);
-      background: rgba(85,255,164,0.06);
-      box-shadow: 0 0 24px rgba(85,255,164,0.08);
+    .milestone-worker-tree {
+      margin-top: 4px;
+      padding-left: 18px;
     }
 
-    .milestone-item.is-running .milestone-branch::after {
-      background: #55ffa4;
-      box-shadow: 0 0 15px rgba(85,255,164,0.72);
+    .milestone-worker-tree::before {
+      top: -6px;
+      bottom: 13px;
+      background: linear-gradient(180deg, rgba(116,214,196,0.08), rgba(116,214,196,0.38));
     }
 
-    .milestone-item.is-complete .milestone-branch::after {
-      background: #183924;
-      border-color: rgba(85,255,164,0.44);
-      box-shadow: inset 0 0 0 2px #020705;
+    .milestone-worker-tree > .milestone-item {
+      font-size: 0.56rem;
     }
 
-    .milestone-item.is-running .milestone-line strong,
-    .milestone-item.is-complete .milestone-line strong {
+    .milestone-worker-tree > .milestone-item + .milestone-item {
+      margin-top: 4px;
+    }
+
+    .milestone-worker-tree .milestone-branch {
+      min-width: 28px;
+      padding: 2px 5px;
+      color: rgba(116,214,196,0.58);
+      font-size: 0.44rem;
+    }
+
+    .milestone-worker-tree .milestone-body {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 7px 4px 9px;
+      border-style: dashed;
+      border-color: rgba(116,214,196,0.18);
+      border-left-color: rgba(116,214,196,0.54);
+      border-radius: 7px;
+      background: rgba(116,214,196,0.045);
+    }
+
+    .milestone-worker-tree .milestone-line {
+      display: block;
+      grid-column: 2;
+    }
+
+    .milestone-worker-tree .milestone-line strong {
+      font-size: 0.52rem;
+      letter-spacing: 0.06em;
+    }
+
+    .milestone-worker-tree .milestone-summary {
+      display: none;
+    }
+
+    .milestone-worker-tree .milestone-role {
+      grid-column: 2;
+      font-size: 0.46rem;
+    }
+
+    .milestone-load {
+      position: relative;
+      width: 46px;
+      height: 4px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(85,255,164,0.12);
+    }
+
+    .milestone-worker-tree .milestone-load {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      align-self: center;
+      justify-self: end;
+    }
+
+    .milestone-load::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--worker-load, 70%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, #74d6c4, #c9ff76);
+      box-shadow: 0 0 10px rgba(85,255,164,0.28);
+    }
+
+    .milestone-item.is-running > .milestone-body {
+      border-color: rgba(85,255,164,0.30);
+      border-left-color: #55ffa4;
+      background: linear-gradient(90deg, rgba(85,255,164,0.085), rgba(0,0,0,0.18));
+      box-shadow: inset 0 1px rgba(255,255,255,0.05), 0 0 18px rgba(85,255,164,0.08);
+    }
+
+    .milestone-item.is-running > .milestone-body::before,
+    .milestone-item.is-running::after {
+      animation: milestoneWorkerBlink 1s ease-in-out infinite;
+    }
+
+    .milestone-item.is-running > .milestone-body > .milestone-branch {
+      color: #55ffa4;
+      text-shadow: 0 0 12px rgba(85,255,164,0.46);
+      animation: milestoneWorkerBlink 1s ease-in-out infinite;
+    }
+
+    .milestone-children > .milestone-item.is-running::before {
+      height: 2px;
+      background: linear-gradient(90deg, #55ffa4, rgba(85,255,164,0.08));
+      animation: milestoneBranchFlow 1s ease-in-out infinite;
+    }
+
+    .milestone-item.is-complete > .milestone-body .milestone-line strong,
+    .milestone-item.is-running > .milestone-body .milestone-line strong {
       color: #eaffef;
     }
 
-    .milestone-item.is-running .milestone-line em {
-      color: #9dffc0;
+    @keyframes milestoneBranchFlow {
+      0%, 100% { opacity: 0.42; transform: scaleX(0.82); transform-origin: left; }
+      50% { opacity: 1; transform: scaleX(1); transform-origin: left; }
+    }
+
+    @keyframes milestoneLightBlink {
+      0%, 100% { opacity: 0.46; transform: scale(0.84); }
+      50% { opacity: 1; transform: scale(1.18); }
+    }
+
+    @keyframes milestoneReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes milestoneWorkingPulse {
+      0%, 100% {
+        border-color: rgba(85,255,164,0.20);
+        box-shadow: 0 0 16px rgba(85,255,164,0.06);
+      }
+      50% {
+        border-color: rgba(85,255,164,0.55);
+        box-shadow: 0 0 28px rgba(85,255,164,0.18);
+      }
+    }
+
+    @keyframes milestoneScan {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    @keyframes milestonePacket {
+      0%, 100% {
+        opacity: 0.48;
+        transform: scaleX(0.72);
+      }
+      50% {
+        opacity: 1;
+        transform: scaleX(1.16);
+      }
+    }
+
+    @keyframes milestoneDotBlink {
+      0%, 100% {
+        opacity: 0.45;
+        transform: scale(0.82);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.18);
+      }
+    }
+
+    @keyframes milestoneWorkerBlink {
+      0%, 100% { opacity: 0.48; }
+      50% { opacity: 1; }
     }
 
     .console-log {
@@ -2200,10 +2792,7 @@
 
     .terminal-log-line,
     .event-row.terminal-log-line {
-      display: grid;
-      grid-template-columns: max-content max-content minmax(0, 1fr);
-      align-items: baseline;
-      gap: 8px;
+      display: block;
       min-width: 0;
       margin: 0;
       padding: 4px 2px;
@@ -2234,6 +2823,8 @@
     }
 
     .terminal-log-line .event-time {
+      display: inline;
+      margin-right: 0.65ch;
       color: rgba(255,217,135,0.78);
       font-size: 1em;
       line-height: inherit;
@@ -2241,6 +2832,7 @@
 
     .terminal-log-line .event-badge {
       display: inline;
+      margin-right: 0.65ch;
       min-height: 0;
       padding: 0;
       border: 0;
@@ -2253,6 +2845,7 @@
     }
 
     .terminal-log-line .event-text {
+      display: inline;
       min-width: 0;
       margin: 0;
       color: inherit;
@@ -2292,7 +2885,7 @@
     @media (max-width: 980px) {
       .terminal-console,
       .chat-shell.terminal-console {
-        grid-template-rows: auto auto minmax(112px, 0.42fr) minmax(190px, 1fr);
+        grid-template-rows: auto minmax(150px, 0.48fr) minmax(190px, 1.5fr);
       }
     }
 
@@ -2309,7 +2902,7 @@
         width: 100%;
         max-width: 100%;
         gap: 8px;
-        grid-template-rows: auto auto minmax(70px, 0.25fr) minmax(140px, 1fr);
+        grid-template-rows: auto minmax(120px, 0.44fr) minmax(140px, 1.4fr);
         border-radius: 12px;
         padding: 9px;
       }
@@ -2357,8 +2950,6 @@
 
       .terminal-log-line,
       .event-row.terminal-log-line {
-        grid-template-columns: max-content max-content minmax(0, 1fr);
-        gap: 6px;
         padding: 4px 0;
         font-size: 0.78rem;
       }
@@ -2389,67 +2980,35 @@
         <div class="gif-stage" aria-label="Minecraft replay preview" tabindex="0">
           <video class="world-video" src="assets/replay_videos_mp4/replay-preview-2026-05-12.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Minecraft replay preview"></video>
         </div>
-
-        <aside class="side-telemetry" aria-label="Runtime metrics">
-          <div class="metric" style="--value: 10%"><span>Build</span><strong id="metric-a">10%</strong><small>Current construction completion</small></div>
-          <div class="metric" style="--value: 10%"><span>Time</span><strong id="metric-b">00:00.2</strong><small>Elapsed runtime</small></div>
-        </aside>
-
-        <aside class="skill-library" id="skill-library" aria-label="Skill library">
-          <div class="skill-head">
-            <div>
-              <h3>Shared Skill Library</h3>
-              <p>Paper SKILLs: Place, Remove, Replace. Each row shows learned-from, shared-to, and used-by directly.</p>
-            </div>
-            <div class="skill-pulse" aria-hidden="true"></div>
+        <div class="build-timeline" aria-label="Elapsed build timeline">
+          <div class="build-timeline-head">
+            <strong id="console-elapsed-value">00:00.0</strong>
           </div>
-          <ul class="skill-list" id="skill-list"></ul>
-          <div class="skill-route" id="skill-route" aria-label="Skill propagation route"></div>
-          <p class="skill-hint">Click a row only if you want to jump to that SKILL's next timeline event.</p>
-        </aside>
+          <div class="build-timeline-rail">
+            <span id="console-elapsed-bar"></span>
+          </div>
+        </div>
       </div>
-
-      <nav class="bottom-strip" id="phase-controls" aria-label="Progress phase controls"></nav>
     </section>
 
     <aside class="log-board" aria-label="Terminal task console">
       <div class="chat-shell terminal-console">
         <header class="console-header">
           <div class="console-title-group">
-            <p class="console-kicker">Terminal Task Console</p>
-            <h2 id="console-task-title">CraftUtopia Tiantan Build</h2>
-            <div class="console-meta">
-              <span id="console-run-id">run tiantan_build_001</span>
-              <span id="playback-counter">Event 0/0</span>
-            </div>
+            <h2 id="console-task-title">CraftUtopia 建造 with 100 Agents</h2>
           </div>
           <div class="console-control-group">
-            <span class="console-state-chip" id="run-state">paused</span>
+            <div class="header-progress console-meter" style="--value: 0%" aria-label="Build progress">
+              <span id="console-progress-value">0%</span>
+              <i aria-hidden="true"><b id="console-progress-bar"></b></i>
+            </div>
             <button class="console-play" id="playback-auto" type="button">Play</button>
           </div>
         </header>
 
-        <section class="console-status" aria-label="Run status percentages">
-          <div class="console-meter" style="--value: 0%">
-            <div class="console-meter-head">
-              <span>BUILD PROGRESS</span>
-              <strong id="console-progress-value">0%</strong>
-            </div>
-            <div class="console-track"><span id="console-progress-bar"></span></div>
-          </div>
-          <div class="console-meter" style="--value: 0%">
-            <div class="console-meter-head">
-              <span>ELAPSED TIME</span>
-              <strong id="console-elapsed-value">00:00.0</strong>
-            </div>
-            <div class="console-track"><span id="console-elapsed-bar"></span></div>
-          </div>
-        </section>
-
         <section class="console-milestones" aria-label="Run milestones">
           <div class="console-section-title">
             <span>Milestones</span>
-            <span id="milestone-count">0 stages</span>
           </div>
           <ol class="milestone-list" id="milestone-list"></ol>
         </section>
@@ -2457,7 +3016,6 @@
         <section class="console-log" aria-label="Detailed terminal log">
           <div class="console-section-title">
             <span>Detailed Log</span>
-            <span>auto-scroll</span>
           </div>
           <div class="chat-feed" id="chat-feed" aria-label="Execution event stream">
             <div class="log-loading">Loading execution log...</div>
@@ -2469,8 +3027,8 @@
 
   <script>
     const AGENT_TYPING_DELAY = 2000;
-    const AUTO_PLAY_MIN_DELAY = 650;
-    const AUTO_PLAY_MAX_DELAY = 1300;
+    const AUTO_PLAY_MIN_DELAY = 1000;
+    const AUTO_PLAY_MAX_DELAY = 1000;
     const AUTO_PLAY_MS_PER_WORD = 22;
     const DESIGN_WIDTH = 1440;
     const DESIGN_HEIGHT = 900;
@@ -2489,6 +3047,7 @@
     let autoPlayTimer = null;
     let isAutoPlaying = false;
     let activeRoom = '';
+    let milestoneRenderKey = '';
     let skillLibraryUnlocked = false;
     let focusedSkillRef = '';
     let skillState = new Map();
@@ -2518,13 +3077,10 @@
       }
     };
 
-    const phaseControls = document.querySelector('#phase-controls');
     const logBoard = document.querySelector('.log-board');
     const roomList = document.querySelector('#room-list');
     let roomTabs = [];
     const chatFeed = document.querySelector('#chat-feed');
-    const metrics = document.querySelectorAll('.metric');
-    const metricText = [document.querySelector('#metric-a'), document.querySelector('#metric-b')];
     const systemLine = document.querySelector('#system-line');
     const skillLibrary = document.querySelector('#skill-library');
     const skillList = document.querySelector('#skill-list');
@@ -2532,7 +3088,6 @@
     const logKicker = document.querySelector('#log-kicker');
     const consoleTaskTitle = document.querySelector('#console-task-title');
     const consoleRunId = document.querySelector('#console-run-id');
-    const runState = document.querySelector('#run-state');
     const milestoneList = document.querySelector('#milestone-list');
     const milestoneCount = document.querySelector('#milestone-count');
     const consoleProgressValue = document.querySelector('#console-progress-value');
@@ -2728,9 +3283,9 @@
     }
 
     function getSkillStatus(skill) {
-      if (skill.usedRooms.size) return `${skill.usedRooms.size} ${skill.usedRooms.size === 1 ? 'room' : 'rooms'}`;
       if (skill.published) return 'shared';
       if (skill.learned) return 'learned';
+      if (skill.usedRooms.size) return `${skill.usedRooms.size} ${skill.usedRooms.size === 1 ? 'room' : 'rooms'}`;
       return 'locked';
     }
 
@@ -2754,28 +3309,78 @@
       renderPlaybackUntil(nextEvent.index + 1);
     }
 
+    function getSkillIconMarkup(skillRef = '') {
+      const icons = {
+        place: `
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <rect x="12" y="10" width="24" height="8" fill="#7cc85f"/>
+            <rect x="8" y="18" width="32" height="18" fill="#8b5a2b"/>
+            <rect x="12" y="18" width="8" height="18" fill="#a96d34"/>
+            <rect x="28" y="18" width="8" height="18" fill="#6f4523"/>
+            <rect x="8" y="18" width="32" height="4" fill="#5fae4c"/>
+            <rect x="14" y="24" width="5" height="5" fill="#6b3d1f"/>
+            <rect x="25" y="29" width="6" height="4" fill="#5a331b"/>
+            <rect x="10" y="36" width="28" height="4" fill="#3b2415"/>
+          </svg>`,
+        remove: `
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <rect x="10" y="12" width="28" height="26" fill="#7f8b91"/>
+            <rect x="14" y="16" width="8" height="8" fill="#aab5b8"/>
+            <rect x="26" y="16" width="8" height="8" fill="#66747b"/>
+            <rect x="14" y="28" width="8" height="6" fill="#5e6a70"/>
+            <rect x="25" y="27" width="9" height="7" fill="#9da8ac"/>
+            <rect x="12" y="11" width="28" height="4" fill="#c4cccf"/>
+            <rect x="6" y="21" width="36" height="7" fill="#ff6961"/>
+            <rect x="10" y="23" width="28" height="3" fill="#ffd0cc"/>
+          </svg>`,
+        replace: `
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <rect x="7" y="21" width="15" height="15" fill="#8b5a2b"/>
+            <rect x="7" y="17" width="15" height="5" fill="#7cc85f"/>
+            <rect x="26" y="12" width="15" height="15" fill="#66747b"/>
+            <rect x="26" y="12" width="15" height="5" fill="#aab5b8"/>
+            <rect x="20" y="28" width="11" height="4" fill="#ffd987"/>
+            <rect x="28" y="24" width="4" height="12" fill="#ffd987"/>
+            <rect x="32" y="27" width="5" height="6" fill="#ffd987"/>
+            <rect x="10" y="36" width="28" height="3" fill="#3b2415"/>
+          </svg>`
+      };
+      return icons[skillRef] || `
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <rect x="12" y="12" width="24" height="24" fill="#74d6c4"/>
+          <rect x="16" y="16" width="16" height="16" fill="#0d1c16"/>
+        </svg>`;
+    }
+
     function renderSkillLibrary(activeRef = focusedSkillRef) {
       if (!skillList || !skillRoute) return;
-      const skills = [...skillState.values()];
+      const baseSkills = Object.keys(SKILL_REGISTRY).map(ensureSkillState).filter(Boolean);
+      const extraSkills = [...skillState.values()].filter((skill) => !SKILL_REGISTRY[skill.ref]);
+      const skills = [...baseSkills, ...extraSkills];
+      const unlockedCount = skills.filter((skill) => skill.learned || skill.events.length).length;
+      skillLibrary?.classList.toggle('is-empty', unlockedCount === 0);
+      const title = skillLibrary?.querySelector('h3');
+      if (title) title.textContent = `Skill · ${unlockedCount}/${skills.length}`;
       skillList.replaceChildren();
 
       skills.forEach((skill) => {
+        const isUnlocked = skill.learned || skill.events.length;
         const item = document.createElement('li');
         const button = document.createElement('button');
-        button.className = `skill-card${skill.ref === activeRef ? ' active' : ''}`;
+        button.className = `skill-card${skill.ref === activeRef && isUnlocked ? ' active' : ''}${isUnlocked ? '' : ' is-locked'}`;
         button.type = 'button';
         button.dataset.skillRef = skill.ref;
-        button.setAttribute('aria-pressed', String(skill.ref === activeRef));
+        button.disabled = !isUnlocked;
+        button.setAttribute('aria-pressed', String(skill.ref === activeRef && isUnlocked));
         const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Waiting';
         const usedBy = summarizeRooms(skill.usedRooms, 'No reuse yet');
-        button.innerHTML = `
-          <span class="skill-card-top">
-            <span>
-              <span class="skill-name">${escapeHtml(skill.name)}</span>
-              <span class="skill-meta">${escapeHtml(skill.summary)}</span>
-            </span>
-            <span class="skill-status">${escapeHtml(getSkillStatus(skill))}</span>
-          </span>
+        button.title = isUnlocked
+          ? `${skill.name}: ${skill.summary} Learned in ${learnedFrom}. Shared to ${skill.sharedTo}. Used by ${usedBy}.`
+          : 'Empty skill slot';
+        button.innerHTML = isUnlocked ? `
+          <span class="skill-icon">${getSkillIconMarkup(skill.ref)}</span>
+          <span class="skill-name">${escapeHtml(skill.name)}</span>
+          <span class="skill-status">${escapeHtml(getSkillStatus(skill))}</span>
           <span class="skill-detail-grid" aria-label="${escapeHtml(skill.name)} sharing details">
             <span class="skill-detail"><b>Learned in</b><span title="${escapeHtml(learnedFrom)}">${escapeHtml(learnedFrom)}</span></span>
             <span class="skill-detail"><b>Shared to</b><span title="${escapeHtml(skill.sharedTo)}">${escapeHtml(skill.sharedTo)}</span></span>
@@ -2783,8 +3388,11 @@
           </span>
           <span class="skill-share-line">Shared via global Skill Library, not private to the learning room.</span>
           <span class="skill-jump">Jump to next ${escapeHtml(skill.name)} event -></span>
+        ` : `
+          <span class="skill-icon" aria-hidden="true"></span>
+          <span class="skill-name">Empty</span>
         `;
-        button.addEventListener('click', () => activateSkillCard(skill.ref));
+        if (isUnlocked) button.addEventListener('click', () => activateSkillCard(skill.ref));
         item.append(button);
         skillList.append(item);
       });
@@ -2851,25 +3459,6 @@
         ${accessoryMarkup(avatar.accessory, trim, dark)}
       </svg>`;
       return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-    }
-
-    function renderPhaseControls() {
-      phaseControls.replaceChildren();
-      stages.forEach((stage, index) => {
-        const button = document.createElement('button');
-        button.className = `phase-dot${index === 0 ? ' active' : ''}`;
-        button.dataset.stage = String(stage.id);
-        button.dataset.label = stage.label;
-        button.setAttribute('aria-label', `Jump to ${stage.label}`);
-        button.textContent = stage.label;
-        button.addEventListener('click', () => {
-          const targetMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === stage.id);
-          setRoom(`stage-${stage.id}`);
-          setStage(stage.id, targetMessage);
-          targetMessage?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-        });
-        phaseControls.append(button);
-      });
     }
 
     function applyRoomVisibility() {
@@ -3010,40 +3599,173 @@
       return clamp(520 + (units * AUTO_PLAY_MS_PER_WORD), AUTO_PLAY_MIN_DELAY, AUTO_PLAY_MAX_DELAY);
     }
 
-    function getPlaybackState(total = playbackEvents.length, shown = playbackCursor) {
-      if (total > 0 && shown >= total) return 'complete';
-      return isAutoPlaying ? 'running' : 'paused';
+    function buildMilestoneNodes() {
+      const stageById = new Map([...stages, ...groupRooms].map((stage) => [Number(stage.id), stage]));
+      const summaryOf = (stageId, fallback) => stageById.get(Number(stageId))?.summary || stageById.get(Number(stageId))?.system || fallback;
+      return [
+        {
+          id: 'pm-terminal',
+          startStage: 0,
+          endStage: 5,
+          code: '[PM]',
+          label: 'PM Control',
+          command: 'pm-orchestrator boot --session tiantan_build_001',
+          role: 'root process supervising every sub terminal',
+          summary: 'Project Manager owns the full run and spawns sub terminals as needed.',
+          level: 0,
+          prefix: 'pm',
+          root: true
+        },
+        {
+          id: 'initialize',
+          startStage: 0,
+          endStage: 1,
+          code: '[01]',
+          label: 'Initialize',
+          command: 'system ingest request --attach tiantan.png',
+          role: 'request parsed, run context opened',
+          summary: summaryOf(0, 'System opens the run and Project Manager prepares orchestration.'),
+          level: 1,
+          prefix: 'job'
+        },
+        {
+          id: 'design-blueprint',
+          startStage: 2,
+          endStage: 2,
+          code: '[02]',
+          label: 'Blueprint',
+          command: 'designer scan image --emit build_spec',
+          role: 'design terminal creates structure plan',
+          summary: summaryOf(2, 'Designer converts the image into blueprint artifacts.'),
+          level: 1,
+          prefix: 'job'
+        },
+        {
+          id: 'foreman-dispatch',
+          startStage: 3,
+          endStage: 3,
+          code: '[03]',
+          label: 'Dispatch',
+          command: 'pm split work --lanes A,B,C,D,E',
+          role: 'packets routed to foreman terminals',
+          summary: summaryOf(3, 'PM splits packets and starts five Foreman worker-pool rooms.'),
+          level: 1,
+          prefix: 'job'
+        },
+        {
+          id: 'parallel-build',
+          startStage: 4,
+          endStage: 4,
+          code: '[04]',
+          label: 'Parallel Build',
+          command: 'foremen run --parallel --share-skill-cache',
+          role: '5 live panes place, remove, replace blocks',
+          summary: 'Keeps Foreman-A through Foreman-E working in parallel and coordinates shared SKILLs.',
+          level: 1,
+          prefix: 'fork',
+          parallel: true,
+          workers: ['A', 'B', 'C', 'D', 'E']
+        },
+        {
+          id: 'return',
+          startStage: 5,
+          endStage: 5,
+          code: '[05]',
+          label: 'Verify & Pack',
+          command: 'pm merge outputs --audit --package',
+          role: 'final world, reports, logs returned',
+          summary: summaryOf(5, 'PM verifies the merged build and returns final artifacts.'),
+          level: 1,
+          prefix: 'ret'
+        }
+      ];
+    }
+
+    function getMilestoneState(node, currentId, isComplete) {
+      if (isComplete || currentId > Number(node.endStage)) return 'complete';
+      if (currentId >= Number(node.startStage) && currentId <= Number(node.endStage)) return 'running';
+      return 'pending';
+    }
+
+    function createMilestoneItem(node, state, options = {}) {
+      const item = document.createElement('li');
+      const stateLabel = state === 'running' ? 'executing' : (state === 'complete' ? 'complete' : 'pending');
+      item.className = `milestone-item is-${state}${node.root ? ' is-root' : ''}${node.parallel ? ' is-parallel' : ''}${options.worker ? ' is-worker' : ''}`;
+      item.dataset.stage = String(node.startStage);
+      item.dataset.milestoneId = node.id;
+      const loadMarkup = options.worker ? `<span class="milestone-load" style="--worker-load: ${options.load || 70}%" aria-hidden="true"></span>` : '';
+      item.innerHTML = `
+        <span class="milestone-body">
+          <span class="milestone-branch" aria-hidden="true">${escapeHtml(node.prefix || 'sub')}</span>
+          <span class="milestone-line">
+            <strong data-code="${escapeHtml(node.code || '')}">${escapeHtml(node.label)}</strong>
+            <span class="milestone-status-light" title="${escapeHtml(stateLabel)}" aria-label="${escapeHtml(stateLabel)}"></span>
+          </span>
+          <span class="milestone-role">${escapeHtml(node.role || '')}</span>
+          ${loadMarkup}
+          <span class="milestone-summary">${escapeHtml(node.summary || '')}</span>
+        </span>
+      `;
+      return item;
+    }
+
+    function createWorkerTree(parentNode, state) {
+      if (!parentNode.workers?.length) return null;
+      const workerTree = document.createElement('ol');
+      workerTree.className = 'milestone-children milestone-worker-tree';
+      parentNode.workers.forEach((worker, index) => {
+        const workerNode = {
+          id: `${parentNode.id}-foreman-${worker}`,
+          startStage: parentNode.startStage,
+          endStage: parentNode.endStage,
+          code: `F-${worker}`,
+          label: `Foreman ${worker}`,
+          command: `lane-${worker.toLowerCase()} stream patch`,
+          role: `sub terminal lane ${worker}`,
+          prefix: 'tty'
+        };
+        workerTree.append(createMilestoneItem(workerNode, state, {
+          worker: true,
+          load: 72 + (index * 5)
+        }));
+      });
+      return workerTree;
     }
 
     function renderMilestones(currentStageId = stages[0]?.id ?? 0) {
       if (!milestoneList) return;
-      const sourceStages = groupRooms.length ? groupRooms : stages;
       const total = playbackEvents.length;
       const isComplete = total > 0 && playbackCursor >= total;
+      const currentId = Number(currentStageId);
+      const sourceNodes = buildMilestoneNodes();
+      const rootNode = sourceNodes.find((node) => node.root) || sourceNodes[0];
+      const childNodes = sourceNodes.filter((node) => node !== rootNode);
+      const visibleChildren = childNodes.filter((node) => isComplete || Number(node.startStage) <= currentId);
+      const visibleCount = (rootNode ? 1 : 0) + visibleChildren.length;
+      const renderKey = `${currentId}:${isComplete}:${visibleCount}:${sourceNodes.length}`;
+      if (renderKey === milestoneRenderKey && milestoneList.children.length) {
+        return;
+      }
+      milestoneRenderKey = renderKey;
       milestoneList.replaceChildren();
-      if (milestoneCount) milestoneCount.textContent = `${sourceStages.length} stages`;
+      if (milestoneCount) milestoneCount.textContent = `${visibleCount}/${sourceNodes.length} shown`;
 
-      sourceStages.forEach((stage) => {
-        const item = document.createElement('li');
-        const stageNumber = String(Number(stage.id) + 1).padStart(2, '0');
-        let state = 'pending';
-        if (isComplete || Number(stage.id) < Number(currentStageId)) state = 'complete';
-        else if (Number(stage.id) === Number(currentStageId)) state = 'running';
+      if (!rootNode) return;
+      const rootState = getMilestoneState(rootNode, currentId, isComplete);
+      const rootItem = createMilestoneItem(rootNode, rootState);
+      const childTree = document.createElement('ol');
+      childTree.className = 'milestone-children';
 
-        item.className = `milestone-item is-${state}`;
-        item.dataset.stage = String(stage.id);
-        item.innerHTML = `
-          <span class="milestone-branch" aria-hidden="true"></span>
-          <span class="milestone-body">
-            <span class="milestone-line">
-              <strong>${escapeHtml(stage.label || `Stage ${stageNumber}`)}</strong>
-              <em>${escapeHtml(state === 'running' ? 'current' : state)}</em>
-            </span>
-            <span class="milestone-summary">${escapeHtml(stage.summary || stage.system || '')}</span>
-          </span>
-        `;
-        milestoneList.append(item);
+      visibleChildren.forEach((node) => {
+        const state = getMilestoneState(node, currentId, isComplete);
+        const item = createMilestoneItem(node, state);
+        const workerTree = createWorkerTree(node, state);
+        if (workerTree) item.append(workerTree);
+        childTree.append(item);
       });
+
+      if (visibleChildren.length) rootItem.append(childTree);
+      milestoneList.append(rootItem);
     }
 
     function scheduleAutoPlay() {
@@ -3066,12 +3788,7 @@
       const total = playbackEvents.length;
       const shown = Math.min(playbackCursor, total);
       const isComplete = shown >= total && total > 0;
-      const state = getPlaybackState(total, shown);
 
-      if (runState) {
-        runState.textContent = state;
-        runState.dataset.state = state;
-      }
       renderMilestones(playbackEvents[Math.max(shown - 1, 0)]?.stageId ?? stages[0]?.id ?? 0);
 
       if (playbackPrev) playbackPrev.disabled = isMessagePending || isAutoPlaying || shown <= 0;
@@ -3145,6 +3862,7 @@
       playbackCursor = 0;
       isMessagePending = false;
       renderedStageIds = new Set();
+      milestoneRenderKey = '';
       resetSkillState();
       skillLibrary?.classList.add('is-visible');
       chatFeed.replaceChildren();
@@ -3178,6 +3896,7 @@
       isAutoScrolling = false;
       isMessagePending = false;
       renderedStageIds = new Set();
+      milestoneRenderKey = '';
       resetSkillState();
       skillLibrary?.classList.add('is-visible');
 
@@ -3239,15 +3958,12 @@
       skillLibrary?.classList.add('is-visible');
       if (activeMessage?.dataset.skillRef) renderSkillLibrary(activeMessage.dataset.skillRef);
 
-      metricText.forEach((node, metricIndex) => { node.textContent = stage.metrics?.[metricIndex] || ''; });
-      metrics.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values?.[metricIndex] || '0%'); });
       if (consoleProgressValue) consoleProgressValue.textContent = stage.metrics?.[0] || '0%';
       if (consoleElapsedValue) consoleElapsedValue.textContent = stage.metrics?.[1] || '00:00.0';
       if (consoleProgressBar) consoleProgressBar.style.width = stage.values?.[0] || '0%';
       if (consoleElapsedBar) consoleElapsedBar.style.width = stage.values?.[1] || '0%';
       consoleMeters.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values?.[metricIndex] || '0%'); });
       renderMilestones(stage.id);
-      phaseControls.querySelectorAll('.phase-dot').forEach((node) => node.classList.toggle('active', Number(node.dataset.stage) === Number(stage.id)));
 
       const fallbackMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === Number(stage.id));
       const focusedMessage = activeMessage || fallbackMessage;
@@ -3305,25 +4021,19 @@
 
     async function bootLog() {
       try {
-        const [configResponse, runLog] = await Promise.all([
-          fetch(siteAssetUrl('data/run-config.json'), { cache: 'no-store' }),
-          loadRunEvents()
-        ]);
-        if (!configResponse.ok) throw new Error(`Run config HTTP ${configResponse.status}`);
-        const log = await configResponse.json();
-        stages = log.stages || [];
+        const runLog = await loadRunEvents();
+        stages = runLog.stages || [];
         groupRooms = runLog.stages || [];
         buildMentionIndex([]);
         playbackEvents = buildPlaybackEvents(groupRooms);
         activeRoom = 'all';
 
-        const runId = (runLog.intro || log.meta?.systemIntro || '').match(/tiantan_build_\d+/)?.[0] || 'tiantan_build_001';
-        if (consoleTaskTitle) consoleTaskTitle.textContent = 'CraftUtopia Tiantan Build';
+        const runId = (runLog.intro || runLog.meta?.systemIntro || '').match(/tiantan_build_\d+/)?.[0] || 'tiantan_build_001';
+        if (consoleTaskTitle) consoleTaskTitle.textContent = 'CraftUtopia 建造 with 100 Agents';
         if (consoleRunId) consoleRunId.textContent = `run ${runId}`;
-        if (logKicker) logKicker.textContent = runLog.title || log.meta?.kicker || logKicker.textContent;
-        if (systemLine) appendMentionedText(systemLine, runLog.intro || log.meta?.systemIntro || systemLine.textContent);
+        if (logKicker) logKicker.textContent = runLog.title || runLog.meta?.kicker || logKicker.textContent;
+        if (systemLine) appendMentionedText(systemLine, runLog.intro || runLog.meta?.systemIntro || systemLine.textContent);
 
-        renderPhaseControls();
         renderRoomList(groupRooms, activeRoom);
         renderChat(playbackEvents);
         setStage(stages[0]?.id ?? 0, chatMessages[0]);
