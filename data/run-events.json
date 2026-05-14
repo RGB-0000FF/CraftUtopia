@@ -1,0 +1,206 @@
+{
+  "title": "Build Execution Log",
+  "intro": "Condensed stage-by-stage run log for tiantan_build_001.",
+  "stages": [
+    {
+      "id": 0,
+      "label": "01 Request",
+      "summary": "System receives the user request and opens the build run.",
+      "events": [
+        {
+          "time": "00:00.0",
+          "type": "REQUEST",
+          "text": "User submits workspace/Craft_Utopia/tiantan.png and targets workspace/Craft_Utopia/runs/tiantan_build_001."
+        },
+        {
+          "time": "00:00.2",
+          "type": "ROUTE",
+          "text": "System Bot registers the request, input image, output directory, and expected artifact package."
+        },
+        {
+          "time": "00:01.0",
+          "type": "TOOL",
+          "text": "System Bot opens the Project Manager channel and forwards the build request."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "label": "02 PM Setup",
+      "summary": "Project Manager accepts the run and prepares the orchestration plan.",
+      "events": [
+        {
+          "time": "00:04.0",
+          "type": "PLAN",
+          "text": "Project Manager accepts the run and defines the required outputs: schematic, report, replay, logs, and metadata."
+        },
+        {
+          "time": "00:07.6",
+          "type": "TOOL",
+          "text": "Project Manager opens the Designer channel for image-to-blueprint conversion."
+        },
+        {
+          "time": "00:11.2",
+          "type": "PLAN",
+          "text": "Project Manager reserves a Foreman council and five worker-pool rooms for the 100-worker build phase."
+        },
+        {
+          "time": "00:15.0",
+          "type": "ROUTE",
+          "text": "The run is organized around Designer output first, then packetized Foreman execution."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "label": "03 Design",
+      "summary": "Designer converts the image into blueprint artifacts for planning and construction.",
+      "events": [
+        {
+          "time": "00:18.4",
+          "type": "DESIGN",
+          "text": "Designer receives the Tiantan image path and blueprint requirements from Project Manager."
+        },
+        {
+          "time": "00:21.0",
+          "type": "TOOL",
+          "text": "TRELLIS converts the image into a 3D mesh and camera metadata."
+        },
+        {
+          "time": "00:24.5",
+          "type": "TOOL",
+          "text": "obj2schematic converts mesh.obj into stage_preview.schem using the project palette."
+        },
+        {
+          "time": "00:27.8",
+          "type": "DESIGN",
+          "text": "Designer exports placements.jsonl, cues.json, and uncertainty notes for build planning."
+        },
+        {
+          "time": "00:30.0",
+          "type": "ROUTE",
+          "text": "Blueprint package returns to Project Manager for packet splitting."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "label": "04 Foremen",
+      "summary": "Project Manager splits the blueprint into five Foreman packets.",
+      "events": [
+        {
+          "time": "00:32.0",
+          "type": "PLAN",
+          "text": "Project Manager splits the build into packets A, B, C, D, and E."
+        },
+        {
+          "time": "00:34.0",
+          "type": "DISPATCH",
+          "text": "Foreman-A through Foreman-E each receive one 20-worker pool covering workers 001-100."
+        },
+        {
+          "time": "00:35.0",
+          "type": "PLAN",
+          "text": "Foremen receive seam locks, uncertainty rules, temporary tag policy, and diff-shard requirements."
+        },
+        {
+          "time": "00:36.8",
+          "type": "TOOL",
+          "text": "Project Manager starts the five Foreman worker-pool rooms."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "label": "05 Build Pools",
+      "summary": "Five worker pools execute packets and share reusable construction skills.",
+      "events": [
+        {
+          "time": "00:39.0",
+          "type": "BUILD",
+          "text": "Pool A starts Packet A: base lanes, dome anchors, and early placement checkpoints."
+        },
+        {
+          "time": "00:40.5",
+          "type": "BUILD",
+          "text": "Pool B starts Packet B and avoids writes on the shared locked seam."
+        },
+        {
+          "time": "00:42.0",
+          "type": "BUILD",
+          "text": "Pool C starts Packet C and pauses dependent rows until required gates are green."
+        },
+        {
+          "time": "00:43.5",
+          "type": "BUILD",
+          "text": "Pool D starts Packet D and routes uncertain cells to review instead of guessing."
+        },
+        {
+          "time": "00:45.0",
+          "type": "BUILD",
+          "text": "Pool E starts Packet E with staging, temporary tags, cleanup, and diff collection."
+        },
+        {
+          "time": "00:47.0",
+          "type": "SKILL",
+          "text": "Place is learned by Foreman-E and shared to every Foreman worker pool.",
+          "skill": "place"
+        },
+        {
+          "time": "00:49.4",
+          "type": "SKILL",
+          "text": "Replace is learned by Foreman-C during a row patch and shared globally.",
+          "skill": "replace"
+        },
+        {
+          "time": "00:53.0",
+          "type": "REVIEW",
+          "text": "Pool B logs a locked-seam exception and waits for the safe handoff instead of overwriting shared cells."
+        },
+        {
+          "time": "00:56.0",
+          "type": "REVIEW",
+          "text": "Pool D defers uncertain cells for audit while submitting confirmed blocks."
+        },
+        {
+          "time": "00:58.2",
+          "type": "SKILL",
+          "text": "Remove is learned from temporary cleanup and shared to every worker pool.",
+          "skill": "remove"
+        },
+        {
+          "time": "01:04.0",
+          "type": "BUILD",
+          "text": "Pools A-E flush final lane summaries, patch notes, temporary-tag cleanup, and diff shards."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "label": "06 Return",
+      "summary": "Project Manager verifies the merged build and returns the final package.",
+      "events": [
+        {
+          "time": "01:09.4",
+          "type": "VERIFY",
+          "text": "Project Manager collects Foreman outputs, checkpoints, patches, and skill-cache updates."
+        },
+        {
+          "time": "01:15.0",
+          "type": "VERIFY",
+          "text": "Merged state is checked against placements.jsonl and unresolved audit notes."
+        },
+        {
+          "time": "01:20.0",
+          "type": "FINAL",
+          "text": "Final outputs are prepared: final_world.schem, report.json, replay.jsonl, logs, and source metadata."
+        },
+        {
+          "time": "01:22.0",
+          "type": "TOOL",
+          "text": "System Bot closes the run and packages the final schematic, reports, replay file, and log archive."
+        }
+      ]
+    }
+  ]
+}

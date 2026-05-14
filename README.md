@@ -8,12 +8,10 @@ python3 main.py
 
 Open `http://127.0.0.1:8000/index.html`.
 
-## Editable Dialogue Log
+## Editable Run Log
 
-The agent dialogue is no longer hardcoded in `index.html`. Edit `data/run-config.json` for stage metadata and `data/groups/*.json` for rooms/messages:
+The right-side demo log is no longer a chat transcript. Edit:
 
-- `stages`: timeline labels, metrics, system-line text, and preview tilt.
-- `agents`: display names, role types, vivid accent colors, and MC-style pixel avatar palettes/accessories.
-- `messages`: stage, speaker, `side` (`left` or `right`), timestamp, and one event per item. Dialogue uses `text`; broadcast notes use standalone `systemLog`; channel open/close and other tools use standalone `kind: "tool-call"` entries with `toolRef`.
-
-Dialogue messages reference an `agent` key, so adding a new person only requires adding one agent entry and then using that key in `messages`.
+- `data/run-config.json`: stage metadata, metrics, system-line text, and preview tilt.
+- `data/run-events.json`: the editable stage-by-stage execution log shown on the right.
+- `data/groups/*.json`: legacy source chat material kept for reference; the demo UI does not load it.

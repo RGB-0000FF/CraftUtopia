@@ -980,6 +980,32 @@
       opacity: 1;
     }
 
+    .event-filter-tab {
+      grid-template-columns: 42px minmax(0, 1fr);
+      min-height: 52px;
+    }
+
+    .filter-count {
+      width: 42px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,217,135,0.16);
+      border-radius: 12px;
+      color: rgba(255,217,135,0.82);
+      background: rgba(4,8,6,0.46);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+    }
+
+    .event-filter-tab.active .filter-count {
+      color: #07110d;
+      background: linear-gradient(135deg, var(--gold-hot), var(--aether));
+      box-shadow: 0 0 20px rgba(255,217,135,0.18);
+    }
+
     .log-title p {
       margin: 0;
       color: var(--gold-hot);
@@ -1129,6 +1155,123 @@
     .chat-feed::-webkit-scrollbar-thumb {
       background: linear-gradient(180deg, rgba(255,217,135,0.65), rgba(116,214,196,0.45));
       border-radius: 999px;
+    }
+
+    .stage-divider {
+      position: relative;
+      display: grid;
+      gap: 5px;
+      margin: 4px 0 0;
+      padding: 12px 14px 13px;
+      border: 1px solid rgba(255,217,135,0.18);
+      border-radius: 18px;
+      color: var(--parchment);
+      background:
+        linear-gradient(90deg, rgba(255,217,135,0.14), rgba(116,214,196,0.05)),
+        rgba(4,8,6,0.68);
+      box-shadow: inset 0 1px rgba(255,255,255,0.07);
+    }
+
+    .stage-divider span {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .stage-divider p {
+      margin: 0;
+      color: rgba(243,229,195,0.66);
+      font-size: 0.86rem;
+      line-height: 1.38;
+    }
+
+    .event-row {
+      display: grid;
+      grid-template-columns: 72px 78px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      min-width: 0;
+      padding: 12px 13px;
+      border: 1px solid rgba(243,229,195,0.10);
+      border-left: 4px solid rgba(255,217,135,0.34);
+      border-radius: 16px;
+      color: rgba(243,229,195,0.86);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(116,214,196,0.08), transparent 10rem),
+        linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
+        rgba(4,8,6,0.56);
+      box-shadow: inset 0 1px rgba(255,255,255,0.055), 0 10px 24px rgba(0,0,0,0.14);
+      opacity: 0.9;
+    }
+
+    .event-row.active {
+      opacity: 1;
+      border-color: rgba(255,217,135,0.28);
+      border-left-color: var(--gold-hot);
+      transform: none;
+      filter: none;
+      box-shadow: inset 0 1px rgba(255,255,255,0.08), 0 14px 28px rgba(0,0,0,0.22), 0 0 24px rgba(255,217,135,0.10);
+    }
+
+    .event-row[data-skill-ref] {
+      border-color: rgba(116,214,196,0.36);
+      border-left-color: var(--aether);
+      box-shadow: inset 0 1px rgba(255,255,255,0.08), 0 14px 28px rgba(0,0,0,0.18), 0 0 26px rgba(116,214,196,0.14);
+    }
+
+    .event-time {
+      color: rgba(255,217,135,0.76);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 900;
+      line-height: 1.6;
+      white-space: nowrap;
+    }
+
+    .event-badge {
+      display: inline-grid;
+      place-items: center;
+      min-height: 24px;
+      padding: 4px 8px;
+      border: 1px solid rgba(116,214,196,0.22);
+      border-radius: 999px;
+      color: #d8fff7;
+      background: rgba(116,214,196,0.09);
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      font-weight: 950;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .event-body {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .event-meta {
+      color: rgba(243,229,195,0.48);
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 850;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .event-text {
+      margin: 0;
+      color: #dccdaa;
+      font-family: var(--font-ui);
+      font-size: clamp(0.94rem, calc(1.02rem * var(--ui-scale)), 1.16rem);
+      font-weight: 560;
+      line-height: 1.42;
+      letter-spacing: -0.01em;
+      overflow-wrap: anywhere;
+      text-wrap: pretty;
     }
 
     .room-intro {
@@ -1472,6 +1615,22 @@
       text-shadow: 0 0 12px rgba(255,190,76,0.76);
     }
 
+    .event-row.chat-message {
+      display: grid;
+      grid-template-columns: 72px 78px minmax(0, 1fr);
+      grid-template-rows: auto;
+      gap: 10px;
+      align-items: start;
+      padding: 12px 13px;
+      border-left-width: 4px;
+      transform: none;
+    }
+
+    .event-row.chat-message.active {
+      transform: none;
+      filter: none;
+    }
+
     .log-loading,
     .log-error {
       position: relative;
@@ -1510,12 +1669,15 @@
       100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
     }
 
+    @keyframes terminal-line-in {
+      0% { opacity: 0.48; transform: translateY(5px); filter: blur(1px); }
+      100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
     @keyframes typing-pulse {
       0%, 100% { opacity: 0.46; transform: translateY(0); }
       45% { opacity: 1; transform: translateY(-2px); }
     }
-
-    @keyframes blink { 50% { opacity: 0; } }
 
     @keyframes skill-aura {
       to { transform: rotate(360deg); }
@@ -1585,6 +1747,8 @@
       .room-list { display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 8px; border-right: 0; border-bottom: 1px solid rgba(243,229,195,0.10); }
       .room-list-header { display: none; }
       .room-tab { flex: 0 0 150px; grid-template-columns: 28px minmax(0, 1fr); gap: 6px; min-height: 48px; padding: 8px 9px; border-radius: 12px; }
+      .event-filter-tab { grid-template-columns: 34px minmax(0, 1fr); }
+      .filter-count { width: 34px; height: 28px; border-radius: 9px; font-size: 0.56rem; }
       .room-avatar { width: 28px; height: 28px; border-radius: 8px; }
       .room-name { font-size: 0.72rem; }
       .chat-feed { padding: 12px 8px 14px; }
@@ -1600,8 +1764,604 @@
       .avatar { width: 44px; height: 44px; border-radius: 6px; font-size: 0.78rem; }
       .bubble { padding: 12px 13px; border-radius: 18px 18px 18px 7px; }
       .bubble p { overflow-wrap: break-word; font-size: 1rem; line-height: 1.5; }
+      .stage-divider { padding: 10px 11px; border-radius: 14px; }
+      .stage-divider p { font-size: 0.78rem; }
+      .event-row.chat-message { grid-template-columns: 62px minmax(0, 1fr); gap: 7px; padding: 10px 10px; border-radius: 14px; }
+      .event-time { font-size: 0.66rem; }
+      .event-badge { justify-self: start; font-size: 0.52rem; min-height: 21px; padding: 3px 7px; }
+      .event-body { grid-column: 1 / -1; }
+      .event-text { font-size: 0.92rem; line-height: 1.38; }
       .system-note { margin: 0; padding: 12px 13px; border-radius: 16px; font-size: 1rem; line-height: 1.5; overflow-wrap: break-word; }
       .system-note::before { font-size: 1em; }
+    }
+
+    .log-board {
+      grid-template-rows: minmax(0, 1fr);
+      padding: clamp(10px, calc(14px * var(--ui-scale)), 18px);
+      border-radius: 18px;
+      border-color: rgba(85, 255, 164, 0.18);
+      background:
+        linear-gradient(180deg, rgba(1, 10, 7, 0.96), rgba(2, 7, 5, 0.98)),
+        radial-gradient(circle at 0% 0%, rgba(79, 255, 163, 0.10), transparent 22rem);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.50), inset 0 0 0 1px rgba(158,255,198,0.04);
+    }
+
+    .log-board::before {
+      opacity: 0.24;
+      background:
+        linear-gradient(115deg, transparent 0 42%, rgba(92,255,172,0.12) 48%, transparent 56% 100%),
+        repeating-linear-gradient(0deg, rgba(143,255,194,0.035) 0 1px, transparent 1px 7px);
+    }
+
+    .log-board::after {
+      inset: 8px;
+      border-radius: 14px;
+      border-color: rgba(92,255,172,0.10);
+    }
+
+    .terminal-console,
+    .chat-shell.terminal-console {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto minmax(150px, 0.58fr) minmax(180px, 1fr);
+      gap: 10px;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid rgba(92,255,172,0.18);
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(92,255,172,0.08), transparent 16rem),
+        repeating-linear-gradient(0deg, rgba(143,255,194,0.018) 0 1px, transparent 1px 5px),
+        #020705;
+      box-shadow: inset 0 1px rgba(255,255,255,0.04), inset 0 0 42px rgba(0,0,0,0.52);
+      padding: 12px;
+    }
+
+    .console-header,
+    .console-status,
+    .console-milestones,
+    .console-log {
+      min-width: 0;
+      border: 1px solid rgba(92,255,172,0.16);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(7, 18, 13, 0.92), rgba(2, 8, 5, 0.92)),
+        radial-gradient(circle at 0 0, rgba(92,255,172,0.08), transparent 12rem);
+      box-shadow: inset 0 1px rgba(255,255,255,0.04);
+    }
+
+    .console-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 13px 14px;
+    }
+
+    .console-title-group {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .console-kicker,
+    .console-meta,
+    .console-state-chip,
+    .console-play,
+    .console-section-title,
+    .console-meter-head,
+    .milestone-item,
+    .terminal-log-line {
+      font-family: var(--font-mono);
+    }
+
+    .console-kicker {
+      margin: 0;
+      color: rgba(143,255,194,0.66);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .console-header h2 {
+      overflow: hidden;
+      color: #eaffef;
+      font-family: var(--font-mono);
+      font-size: clamp(1.12rem, calc(1.32rem * var(--ui-scale)), 1.58rem);
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      line-height: 1.08;
+      text-overflow: ellipsis;
+      text-shadow: 0 0 18px rgba(92,255,172,0.18);
+      white-space: nowrap;
+    }
+
+    .console-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: rgba(207,255,222,0.58);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .console-meta span {
+      padding: 3px 7px;
+      border: 1px solid rgba(92,255,172,0.10);
+      border-radius: 999px;
+      background: rgba(0,0,0,0.18);
+    }
+
+    .console-control-group {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex: 0 0 auto;
+    }
+
+    .console-state-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 28px;
+      padding: 6px 9px;
+      border: 1px solid rgba(92,255,172,0.22);
+      border-radius: 999px;
+      color: #baffcc;
+      background: rgba(92,255,172,0.06);
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .console-state-chip::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #55ffa4;
+      box-shadow: 0 0 14px rgba(85,255,164,0.70);
+    }
+
+    .console-state-chip[data-state="paused"] {
+      border-color: rgba(255,217,135,0.24);
+      color: #ffe4a6;
+      background: rgba(255,217,135,0.06);
+    }
+
+    .console-state-chip[data-state="paused"]::before {
+      background: #ffd987;
+      box-shadow: 0 0 12px rgba(255,217,135,0.58);
+    }
+
+    .console-state-chip[data-state="complete"] {
+      border-color: rgba(116,214,196,0.28);
+      color: #d8fff7;
+      background: rgba(116,214,196,0.07);
+    }
+
+    .console-play {
+      min-width: 84px;
+      min-height: 34px;
+      padding: 8px 13px;
+      border: 1px solid rgba(92,255,172,0.36);
+      border-radius: 8px;
+      color: #031108;
+      background:
+        linear-gradient(180deg, rgba(225,255,234,0.88), rgba(85,255,164,0.90)),
+        radial-gradient(circle at 26% 0%, rgba(255,255,255,0.66), transparent 42%);
+      box-shadow: 0 0 22px rgba(85,255,164,0.16), inset 0 1px rgba(255,255,255,0.42);
+      font-size: 0.82rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: transform 160ms ease, filter 160ms ease;
+    }
+
+    .console-play:hover,
+    .console-play:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      filter: brightness(1.06) saturate(1.08);
+    }
+
+    .console-status {
+      display: grid;
+      gap: 9px;
+      padding: 11px 12px;
+    }
+
+    .console-meter {
+      display: grid;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .console-meter-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(207,255,222,0.62);
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .console-meter-head strong {
+      color: #eaffef;
+      font-size: 0.82rem;
+      text-shadow: 0 0 12px rgba(85,255,164,0.28);
+      white-space: nowrap;
+    }
+
+    .console-track {
+      height: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(92,255,172,0.14);
+      border-radius: 999px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 12px),
+        rgba(0,0,0,0.30);
+    }
+
+    .console-track span {
+      display: block;
+      width: var(--value);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #55ffa4, #c9ff76);
+      box-shadow: 0 0 20px rgba(85,255,164,0.40);
+      transition: width 420ms ease;
+    }
+
+    .console-section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(92,255,172,0.12);
+      color: rgba(143,255,194,0.72);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .console-section-title span:last-child {
+      color: rgba(207,255,222,0.42);
+    }
+
+    .console-milestones,
+    .console-log {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .milestone-list {
+      min-height: 0;
+      margin: 0;
+      padding: 8px 10px 10px;
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .milestone-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr);
+      gap: 7px;
+      min-width: 0;
+      color: rgba(207,255,222,0.48);
+      font-size: 0.72rem;
+      line-height: 1.32;
+    }
+
+    .milestone-branch {
+      position: relative;
+      width: 18px;
+      min-height: 31px;
+    }
+
+    .milestone-branch::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: -8px;
+      bottom: -8px;
+      width: 1px;
+      background: rgba(92,255,172,0.14);
+    }
+
+    .milestone-branch::after {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 8px;
+      width: 9px;
+      height: 9px;
+      border: 1px solid rgba(92,255,172,0.25);
+      border-radius: 50%;
+      background: #020705;
+    }
+
+    .milestone-item:first-child .milestone-branch::before { top: 8px; }
+    .milestone-item:last-child .milestone-branch::before { bottom: calc(100% - 9px); }
+
+    .milestone-body {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+      padding: 5px 7px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+    }
+
+    .milestone-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .milestone-line strong {
+      overflow: hidden;
+      color: rgba(234,255,239,0.70);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .milestone-line em {
+      flex: 0 0 auto;
+      color: rgba(207,255,222,0.38);
+      font-style: normal;
+      font-weight: 850;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    .milestone-summary {
+      display: -webkit-box;
+      overflow: hidden;
+      color: rgba(207,255,222,0.46);
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+
+    .milestone-item.is-running .milestone-body {
+      border-color: rgba(85,255,164,0.26);
+      background: rgba(85,255,164,0.06);
+      box-shadow: 0 0 24px rgba(85,255,164,0.08);
+    }
+
+    .milestone-item.is-running .milestone-branch::after {
+      background: #55ffa4;
+      box-shadow: 0 0 15px rgba(85,255,164,0.72);
+    }
+
+    .milestone-item.is-complete .milestone-branch::after {
+      background: #183924;
+      border-color: rgba(85,255,164,0.44);
+      box-shadow: inset 0 0 0 2px #020705;
+    }
+
+    .milestone-item.is-running .milestone-line strong,
+    .milestone-item.is-complete .milestone-line strong {
+      color: #eaffef;
+    }
+
+    .milestone-item.is-running .milestone-line em {
+      color: #9dffc0;
+    }
+
+    .console-log {
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.32)),
+        #010503;
+    }
+
+    .console-log .chat-feed,
+    .chat-feed {
+      display: block;
+      min-height: 0;
+      padding: 9px 10px 12px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background:
+        repeating-linear-gradient(0deg, rgba(143,255,194,0.026) 0 1px, transparent 1px 18px),
+        linear-gradient(180deg, rgba(85,255,164,0.030), transparent 42%);
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(85,255,164,0.50) rgba(255,255,255,0.04);
+    }
+
+    .console-log .chat-feed::-webkit-scrollbar { width: 8px; }
+    .console-log .chat-feed::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+    .console-log .chat-feed::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(85,255,164,0.70), rgba(201,255,118,0.42));
+      border-radius: 999px;
+    }
+
+    .terminal-log-line,
+    .event-row.terminal-log-line {
+      display: grid;
+      grid-template-columns: max-content max-content minmax(0, 1fr);
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+      margin: 0;
+      padding: 4px 2px;
+      border: 0;
+      border-radius: 0;
+      color: rgba(207,255,222,0.74);
+      background: transparent;
+      box-shadow: none;
+      font-size: clamp(0.82rem, calc(0.92rem * var(--ui-scale)), 1.06rem);
+      letter-spacing: 0;
+      line-height: 1.5;
+      opacity: 0.82;
+    }
+
+    .terminal-log-line.active {
+      color: #eaffef;
+      opacity: 1;
+      text-shadow: 0 0 14px rgba(85,255,164,0.24);
+    }
+
+    .terminal-log-line.is-entering {
+      animation: terminal-line-in 260ms ease;
+    }
+
+    .terminal-log-line[data-skill-ref] {
+      color: #d8fff7;
+      text-shadow: 0 0 16px rgba(116,214,196,0.20);
+    }
+
+    .terminal-log-line .event-time {
+      color: rgba(255,217,135,0.78);
+      font-size: 1em;
+      line-height: inherit;
+    }
+
+    .terminal-log-line .event-badge {
+      display: inline;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      color: #7dffad;
+      background: transparent;
+      font-size: 1em;
+      line-height: inherit;
+      letter-spacing: 0.04em;
+    }
+
+    .terminal-log-line .event-text {
+      min-width: 0;
+      margin: 0;
+      color: inherit;
+      font-family: var(--font-mono);
+      font-size: 1em;
+      font-weight: 650;
+      line-height: inherit;
+      overflow-wrap: anywhere;
+    }
+
+    .terminal-log-line .agent-mention {
+      color: color-mix(in srgb, var(--mention-accent, #55ffa4) 86%, #eaffef);
+    }
+
+    .chat-placeholder,
+    .log-loading,
+    .log-error {
+      margin: 10px 4px;
+      padding: 11px 12px;
+      border: 1px solid rgba(92,255,172,0.18);
+      border-radius: 8px;
+      color: rgba(207,255,222,0.68);
+      background: rgba(0,0,0,0.24);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-align: left;
+    }
+
+    .chat-placeholder strong {
+      color: #eaffef;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 980px) {
+      .terminal-console,
+      .chat-shell.terminal-console {
+        grid-template-rows: auto auto minmax(112px, 0.42fr) minmax(190px, 1fr);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .log-board {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px;
+        border-radius: 16px;
+      }
+
+      .terminal-console,
+      .chat-shell.terminal-console {
+        width: 100%;
+        max-width: 100%;
+        gap: 8px;
+        grid-template-rows: auto auto minmax(70px, 0.25fr) minmax(140px, 1fr);
+        border-radius: 12px;
+        padding: 9px;
+      }
+
+      .console-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 11px;
+      }
+
+      .console-control-group {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .console-play {
+        min-width: 86px;
+      }
+
+      .console-header h2 {
+        font-size: 1.1rem;
+        white-space: normal;
+      }
+
+      .console-meta {
+        font-size: 0.66rem;
+      }
+
+      .console-status {
+        padding: 9px;
+      }
+
+      .milestone-list {
+        padding: 7px 8px;
+      }
+
+      .milestone-item {
+        font-size: 0.66rem;
+      }
+
+      .milestone-summary {
+        display: none;
+      }
+
+      .terminal-log-line,
+      .event-row.terminal-log-line {
+        grid-template-columns: max-content max-content minmax(0, 1fr);
+        gap: 6px;
+        padding: 4px 0;
+        font-size: 0.78rem;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1652,30 +2412,56 @@
       <nav class="bottom-strip" id="phase-controls" aria-label="Progress phase controls"></nav>
     </section>
 
-    <aside class="log-board" aria-label="Multi-agent communication log">
-      <header class="log-header">
-        <div class="log-title">
-          <p id="log-kicker">Operational Agent Dialogue</p>
-        </div>
-        <div class="log-actions">
-          <button class="step-button" id="playback-prev" type="button" data-icon="<">Prev</button>
-          <button class="step-button" id="playback-next" type="button" data-icon=">">Next Message</button>
-          <button class="step-button" id="playback-auto" type="button" data-icon="AUTO">Auto Play</button>
-          <div class="jump-control" aria-label="Jump to message step">
-            <span>Step</span>
-            <input class="step-input" id="playback-step" type="number" min="0" value="0" inputmode="numeric" aria-label="Step number">
-            <button class="step-button compact" id="playback-jump" type="button">Jump</button>
+    <aside class="log-board" aria-label="Terminal task console">
+      <div class="chat-shell terminal-console">
+        <header class="console-header">
+          <div class="console-title-group">
+            <p class="console-kicker">Terminal Task Console</p>
+            <h2 id="console-task-title">CraftUtopia Tiantan Build</h2>
+            <div class="console-meta">
+              <span id="console-run-id">run tiantan_build_001</span>
+              <span id="playback-counter">Event 0/0</span>
+            </div>
           </div>
-          <span class="playback-counter" id="playback-counter">0 / 0</span>
-        </div>
-      </header>
+          <div class="console-control-group">
+            <span class="console-state-chip" id="run-state">paused</span>
+            <button class="console-play" id="playback-auto" type="button">Play</button>
+          </div>
+        </header>
 
-      <div class="chat-shell">
-        <nav class="room-list" id="room-list" aria-label="Dialogue room switcher">
-        </nav>
+        <section class="console-status" aria-label="Run status percentages">
+          <div class="console-meter" style="--value: 0%">
+            <div class="console-meter-head">
+              <span>BUILD PROGRESS</span>
+              <strong id="console-progress-value">0%</strong>
+            </div>
+            <div class="console-track"><span id="console-progress-bar"></span></div>
+          </div>
+          <div class="console-meter" style="--value: 0%">
+            <div class="console-meter-head">
+              <span>ELAPSED TIME</span>
+              <strong id="console-elapsed-value">00:00.0</strong>
+            </div>
+            <div class="console-track"><span id="console-elapsed-bar"></span></div>
+          </div>
+        </section>
 
-        <section class="chat-feed" id="chat-feed" aria-label="Agent chat transcript">
-          <div class="log-loading">Loading editable dialogue log...</div>
+        <section class="console-milestones" aria-label="Run milestones">
+          <div class="console-section-title">
+            <span>Milestones</span>
+            <span id="milestone-count">0 stages</span>
+          </div>
+          <ol class="milestone-list" id="milestone-list"></ol>
+        </section>
+
+        <section class="console-log" aria-label="Detailed terminal log">
+          <div class="console-section-title">
+            <span>Detailed Log</span>
+            <span>auto-scroll</span>
+          </div>
+          <div class="chat-feed" id="chat-feed" aria-label="Execution event stream">
+            <div class="log-loading">Loading execution log...</div>
+          </div>
         </section>
       </div>
     </aside>
@@ -1683,9 +2469,9 @@
 
   <script>
     const AGENT_TYPING_DELAY = 2000;
-    const AUTO_PLAY_MIN_DELAY = 2600;
-    const AUTO_PLAY_MAX_DELAY = 11000;
-    const AUTO_PLAY_MS_PER_WORD = 190;
+    const AUTO_PLAY_MIN_DELAY = 650;
+    const AUTO_PLAY_MAX_DELAY = 1300;
+    const AUTO_PLAY_MS_PER_WORD = 22;
     const DESIGN_WIDTH = 1440;
     const DESIGN_HEIGHT = 900;
     const COMPACT_BREAKPOINT = 980;
@@ -1694,6 +2480,7 @@
     let chatMessages = [];
     let groupRooms = [];
     let playbackEvents = [];
+    let renderedStageIds = new Set();
     let logRevealTimer = null;
     let autoScrollRelease = null;
     let isAutoScrolling = false;
@@ -1743,6 +2530,16 @@
     const skillList = document.querySelector('#skill-list');
     const skillRoute = document.querySelector('#skill-route');
     const logKicker = document.querySelector('#log-kicker');
+    const consoleTaskTitle = document.querySelector('#console-task-title');
+    const consoleRunId = document.querySelector('#console-run-id');
+    const runState = document.querySelector('#run-state');
+    const milestoneList = document.querySelector('#milestone-list');
+    const milestoneCount = document.querySelector('#milestone-count');
+    const consoleProgressValue = document.querySelector('#console-progress-value');
+    const consoleElapsedValue = document.querySelector('#console-elapsed-value');
+    const consoleProgressBar = document.querySelector('#console-progress-bar');
+    const consoleElapsedBar = document.querySelector('#console-elapsed-bar');
+    const consoleMeters = document.querySelectorAll('.console-meter');
     const playbackPrev = document.querySelector('#playback-prev');
     const playbackNext = document.querySelector('#playback-next');
     const playbackAuto = document.querySelector('#playback-auto');
@@ -1783,6 +2580,25 @@
 
     function buildMentionIndex(groups) {
       const terms = new Map();
+      [
+        ['User', '#ffcf66'],
+        ['System Bot', '#72ffd1'],
+        ['Project Manager', '#ffd987'],
+        ['Designer', '#f6a5ff'],
+        ['TRELLIS', '#74d6c4'],
+        ['Foreman-A', '#ffd987'],
+        ['Foreman-B', '#9ddcff'],
+        ['Foreman-C', '#f06f9f'],
+        ['Foreman-D', '#a7ff83'],
+        ['Foreman-E', '#ffb66e'],
+        ['Pool A', '#ffd987'],
+        ['Pool B', '#9ddcff'],
+        ['Pool C', '#f06f9f'],
+        ['Pool D', '#a7ff83'],
+        ['Pool E', '#ffb66e'],
+        ['Skill Library', '#72ffd1'],
+        ['Shared Skill Library', '#72ffd1']
+      ].forEach(([term, accent]) => addMentionTerm(terms, term, accent));
       groups.forEach((group) => {
         Object.entries(group.agents || {}).forEach(([key, agent]) => {
           const accent = agent.accent || '#ffd987';
@@ -1890,23 +2706,23 @@
     function getSkillSchedule(skillRef) {
       return playbackEvents
         .map((event, index) => ({ ...event, index }))
-        .filter(({ message }) => message?.skillRef === skillRef);
+        .filter((event) => (event.skill || event.message?.skillRef) === skillRef);
     }
 
     function updateSkillStateFromEvent(event, index = -1) {
-      const skillRef = event?.message?.skillRef;
+      const skillRef = event?.skill || event?.message?.skillRef;
       const skill = ensureSkillState(skillRef);
       if (!skill) return;
 
-      const kind = event.message.kind || 'skill-event';
-      if (kind === 'skill-detection') {
-        skill.learned = true;
-        skill.learnedRoom = event.group.title;
-        focusedSkillRef = skill.ref;
-      }
-      if (kind === 'skill-broadcast') skill.published = true;
-      if (kind === 'skill-use') skill.usedRooms.add(event.group.title);
-      skill.events.push({ index, kind, room: event.group.id, title: event.group.title });
+      const kind = event.message?.kind || event.type || 'skill-event';
+      const stageTitle = event.group?.title || event.stageLabel || 'Build Pools';
+      skill.learned = true;
+      skill.published = true;
+      skill.learnedRoom = stageTitle;
+      ['Foreman-A Worker Pool', 'Foreman-B Worker Pool', 'Foreman-C Worker Pool', 'Foreman-D Worker Pool', 'Foreman-E Worker Pool']
+        .forEach((room) => skill.usedRooms.add(room));
+      focusedSkillRef = skill.ref;
+      skill.events.push({ index, kind, room: event.group?.id || `stage-${event.stageId}`, title: stageTitle });
       skillLibraryUnlocked = true;
       renderSkillLibrary(skill.ref);
     }
@@ -2048,7 +2864,7 @@
         button.textContent = stage.label;
         button.addEventListener('click', () => {
           const targetMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === stage.id);
-          if (targetMessage?.dataset.roomId) setRoom(targetMessage.dataset.roomId);
+          setRoom(`stage-${stage.id}`);
           setStage(stage.id, targetMessage);
           targetMessage?.scrollIntoView({ block: 'start', behavior: 'smooth' });
         });
@@ -2057,12 +2873,14 @@
     }
 
     function applyRoomVisibility() {
-      chatFeed.querySelectorAll('[data-room-id]').forEach((node) => {
-        node.classList.toggle('room-hidden', node.dataset.roomId !== activeRoom);
+      if (!roomList) return;
+      chatFeed.querySelectorAll('[data-stage-filter]').forEach((node) => {
+        node.classList.toggle('room-hidden', activeRoom !== 'all' && node.dataset.stageFilter !== activeRoom);
       });
     }
 
     function setRoom(room, scrollBehavior = 'smooth') {
+      if (!roomList) return;
       activeRoom = room;
       logBoard.dataset.room = room;
       roomTabs.forEach((tab) => {
@@ -2075,127 +2893,80 @@
       chatFeed.scrollTo({ top: 0, behavior: scrollBehavior });
     }
 
-    function renderRoomAvatar(group) {
-      const agents = Object.values(group.agents || {});
-      const avatarAgents = agents.slice(0, 4);
-      if (avatarAgents.length <= 1) {
-        const initial = avatarAgents[0]?.initials || group.title.slice(0, 1);
-        return `<span class="room-avatar user-avatar" aria-hidden="true">${escapeHtml(initial.slice(0, 2))}</span>`;
-      }
-      const tiles = avatarAgents.map((agent) => `<span style="--tile:${escapeHtml(agent.accent || '#ffd987')}"></span>`).join('');
-      return `<span class="room-avatar group-avatar" aria-hidden="true">${tiles}</span>`;
-    }
-
-    function renderRoomList(groups, entryGroup) {
+    function renderRoomList(groups, entryGroup = 'all') {
+      if (!roomList) return;
       roomList.replaceChildren();
+      const allButton = document.createElement('button');
+      allButton.className = 'room-tab event-filter-tab';
+      allButton.type = 'button';
+      allButton.dataset.room = 'all';
+      allButton.innerHTML = '<span class="filter-count">ALL</span><span><span class="room-name">All Stages</span></span>';
+      allButton.addEventListener('click', () => setRoom('all'));
+      roomList.append(allButton);
+
       groups.forEach((group) => {
         const button = document.createElement('button');
-        button.className = 'room-tab';
+        button.className = 'room-tab event-filter-tab';
         button.type = 'button';
-        button.dataset.room = group.id;
-        button.classList.toggle('has-skill-event', (group.messages || []).some((message) => message.skillRef));
-        button.innerHTML = `${renderRoomAvatar(group)}<span><span class="room-name">${escapeHtml(group.title)}</span></span>`;
-        button.addEventListener('click', () => setRoom(group.id));
+        button.dataset.room = `stage-${group.id}`;
+        const count = group.events?.length ?? 0;
+        button.classList.toggle('has-skill-event', (group.events || []).some((event) => event.skill));
+        button.innerHTML = `<span class="filter-count">${escapeHtml(String(count).padStart(2, '0'))}</span><span><span class="room-name">${escapeHtml(group.label)}</span></span>`;
+        button.addEventListener('click', () => setRoom(`stage-${group.id}`));
         roomList.append(button);
       });
       roomTabs = [...roomList.querySelectorAll('.room-tab')];
       setRoom(entryGroup, 'auto');
     }
 
-    function createRoomIntro(group) {
-      const intro = document.createElement('div');
-      intro.className = 'room-intro';
-      intro.dataset.roomId = group.id;
-      appendMentionedText(intro, group.description || group.type || group.title);
-      return intro;
+    function createStageDivider(event) {
+      const divider = document.createElement('div');
+      divider.className = 'stage-divider is-entering';
+      divider.dataset.stageFilter = `stage-${event.stageId}`;
+      divider.dataset.chatStage = String(event.stageId);
+      divider.innerHTML = `
+        <span>${escapeHtml(event.stageLabel || `Stage ${event.stageId}`)}</span>
+        <p>${escapeHtml(event.stageSummary || '')}</p>
+      `;
+      divider.addEventListener('animationend', () => divider.classList.remove('is-entering'), { once: true });
+      return divider;
     }
 
-    function getTypingDelay(message, agent) {
-      if (message.agent === 'user' || agent.type === 'client') return 0;
-      return AGENT_TYPING_DELAY;
+    function appendStageDividerIfNeeded(event) {
+      const key = String(event.stageId);
+      if (renderedStageIds.has(key)) return;
+      renderedStageIds.add(key);
+      chatFeed.append(createStageDivider(event));
     }
 
-    function createSystemNote(event) {
-      const { message, group, stageId } = event;
-      const note = document.createElement('div');
-      const noteSide = message.side === 'left' ? 'left' : 'right';
-      const isToolNote = message.toolRef || String(message.kind || '').includes('tool');
-      note.className = `system-note is-entering side-${noteSide}${isToolNote ? ' is-tool' : ''}`;
-      note.dataset.chatStage = String(stageId);
-      note.dataset.roomId = group.id;
-      note.dataset.noteLabel = isToolNote ? 'TOOL' : 'SYS';
-      note.dataset.eventKind = message.kind || (isToolNote ? 'tool-call' : 'system-log');
-      if (message.skillRef) {
-        note.dataset.skillRef = message.skillRef;
-        note.title = `${getSkillEventLabel(message.kind)}: ${message.skillRef}`;
-      }
-      appendMentionedText(note, message.systemLog || message.note);
-      note.addEventListener('animationend', () => note.classList.remove('is-entering'), { once: true });
-      return note;
-    }
-
-    function isStandaloneNote(message) {
-      return Boolean(message && !message.text && (message.systemLog || message.note));
-    }
-
-    function createChatMessage(event, index, isTyping = false) {
-      const { message, group, stageId } = event;
-      const agent = group.agents[message.agent] || { name: message.agent, type: 'agent', accent: '#ffd987', avatar: {} };
-      const messageSide = message.side === 'left' ? 'left' : 'right';
+    function createChatMessage(event, index) {
       const article = document.createElement('article');
-      article.className = `chat-message is-entering side-${messageSide}${messageSide === 'right' ? ' alt' : ''}`;
-      article.dataset.chatStage = String(stageId);
-      article.dataset.roomId = group.id;
-      article.dataset.agent = message.agent;
-      article.dataset.side = messageSide;
-      article.dataset.kind = agent.type;
-      article.dataset.eventKind = message.kind || 'message';
-      if (message.toolRef) article.dataset.toolRef = message.toolRef;
-      if (message.skillRef) article.dataset.skillRef = message.skillRef;
-      article.style.setProperty('--agent-accent', agent.accent || '#ffd987');
-
-      const speaker = document.createElement('div');
-      speaker.className = 'speaker';
-      speaker.style.setProperty('--agent-accent', agent.accent || '#ffd987');
-
-      const speakerName = document.createElement('div');
-      speakerName.className = 'speaker-name';
-      speakerName.textContent = agent.name;
-
-      const avatar = document.createElement('div');
-      avatar.className = 'avatar';
-      avatar.title = `${agent.name} (${agent.type})`;
-      avatar.style.setProperty('--agent-accent', agent.accent || '#ffd987');
-
-      const img = document.createElement('img');
-      img.src = avatarSvg(agent);
-      img.alt = '';
-      img.loading = 'lazy';
-      avatar.append(img);
-      speaker.append(speakerName, avatar);
-
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      if (message.skillRef) bubble.dataset.skillLabel = getSkillEventLabel(message.kind);
-      const text = document.createElement('p');
-      text.className = isTyping ? 'typing-dots' : '';
-      if (isTyping) {
-        text.textContent = '...';
-      } else {
-        appendMentionedText(text, message.text);
+      article.className = 'event-row terminal-log-line is-entering';
+      article.dataset.chatStage = String(event.stageId);
+      article.dataset.stageFilter = `stage-${event.stageId}`;
+      article.dataset.eventKind = event.type || 'EVENT';
+      article.dataset.eventIndex = String(index);
+      if (event.skill) {
+        article.dataset.skillRef = event.skill;
+        article.title = `Skill event: ${event.skill}`;
       }
-      bubble.append(text);
 
-      article.append(speaker, bubble);
+      const time = document.createElement('span');
+      time.className = 'event-time';
+      time.textContent = `[${event.time || '--:--'}]`;
+
+      const badge = document.createElement('span');
+      badge.className = 'event-badge';
+      badge.textContent = `[${event.type || 'EVENT'}]`;
+
+      const text = document.createElement('p');
+      text.className = 'event-text';
+      appendMentionedText(text, event.text || '');
+
+      article.append(time, badge, text);
       article.addEventListener('animationend', () => article.classList.remove('is-entering'), { once: true });
+      setTimeout(() => article.classList.remove('is-entering'), 320);
       return article;
-    }
-
-    function finishTyping(article, message) {
-      const text = article.querySelector('.bubble p');
-      if (!text) return;
-      text.classList.remove('typing-dots');
-      appendMentionedText(text, message.text);
     }
 
     function scrollChatToBottom(index) {
@@ -2236,7 +3007,43 @@
 
     function getAutoPlayDelay(event) {
       const units = countReadingUnits(getReadableText(event?.message));
-      return clamp(1800 + (units * AUTO_PLAY_MS_PER_WORD), AUTO_PLAY_MIN_DELAY, AUTO_PLAY_MAX_DELAY);
+      return clamp(520 + (units * AUTO_PLAY_MS_PER_WORD), AUTO_PLAY_MIN_DELAY, AUTO_PLAY_MAX_DELAY);
+    }
+
+    function getPlaybackState(total = playbackEvents.length, shown = playbackCursor) {
+      if (total > 0 && shown >= total) return 'complete';
+      return isAutoPlaying ? 'running' : 'paused';
+    }
+
+    function renderMilestones(currentStageId = stages[0]?.id ?? 0) {
+      if (!milestoneList) return;
+      const sourceStages = groupRooms.length ? groupRooms : stages;
+      const total = playbackEvents.length;
+      const isComplete = total > 0 && playbackCursor >= total;
+      milestoneList.replaceChildren();
+      if (milestoneCount) milestoneCount.textContent = `${sourceStages.length} stages`;
+
+      sourceStages.forEach((stage) => {
+        const item = document.createElement('li');
+        const stageNumber = String(Number(stage.id) + 1).padStart(2, '0');
+        let state = 'pending';
+        if (isComplete || Number(stage.id) < Number(currentStageId)) state = 'complete';
+        else if (Number(stage.id) === Number(currentStageId)) state = 'running';
+
+        item.className = `milestone-item is-${state}`;
+        item.dataset.stage = String(stage.id);
+        item.innerHTML = `
+          <span class="milestone-branch" aria-hidden="true"></span>
+          <span class="milestone-body">
+            <span class="milestone-line">
+              <strong>${escapeHtml(stage.label || `Stage ${stageNumber}`)}</strong>
+              <em>${escapeHtml(state === 'running' ? 'current' : state)}</em>
+            </span>
+            <span class="milestone-summary">${escapeHtml(stage.summary || stage.system || '')}</span>
+          </span>
+        `;
+        milestoneList.append(item);
+      });
     }
 
     function scheduleAutoPlay() {
@@ -2259,11 +3066,18 @@
       const total = playbackEvents.length;
       const shown = Math.min(playbackCursor, total);
       const isComplete = shown >= total && total > 0;
+      const state = getPlaybackState(total, shown);
+
+      if (runState) {
+        runState.textContent = state;
+        runState.dataset.state = state;
+      }
+      renderMilestones(playbackEvents[Math.max(shown - 1, 0)]?.stageId ?? stages[0]?.id ?? 0);
 
       if (playbackPrev) playbackPrev.disabled = isMessagePending || isAutoPlaying || shown <= 0;
       if (playbackAuto) {
-        playbackAuto.disabled = total === 0 || (!isAutoPlaying && isComplete);
-        playbackAuto.textContent = isAutoPlaying ? 'Pause Auto' : 'Auto Play';
+        playbackAuto.disabled = total === 0;
+        playbackAuto.textContent = isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play');
       }
       if (playbackStep) {
         playbackStep.max = String(total);
@@ -2271,19 +3085,19 @@
         if (document.activeElement !== playbackStep) playbackStep.value = String(shown);
       }
       if (playbackJump) playbackJump.disabled = isMessagePending || isAutoPlaying || total === 0;
-      if (playbackCounter) playbackCounter.textContent = `${shown} / ${total}`;
+      if (playbackCounter) playbackCounter.textContent = `Event ${shown}/${total}`;
 
       if (!playbackNext) return;
 
       playbackNext.disabled = isMessagePending || isAutoPlaying || shown >= total || total === 0;
       if (isMessagePending) {
-        playbackNext.textContent = 'Typing...';
+        playbackNext.textContent = 'Revealing...';
       } else if (shown >= total && total > 0) {
         playbackNext.textContent = 'Complete';
       } else if (shown === 0) {
-        playbackNext.textContent = 'Start Task';
+        playbackNext.textContent = 'Start Run';
       } else {
-        playbackNext.textContent = 'Next Message';
+        playbackNext.textContent = 'Next Event';
       }
     }
 
@@ -2304,63 +3118,20 @@
         return;
       }
 
-      const { message, group, stageId } = event;
-      if (isStandaloneNote(message)) {
-        const note = createSystemNote(event);
-        setRoom(group.id, index === 0 ? 'auto' : 'smooth');
-        chatFeed.append(note);
-        if (message.skillRef) updateSkillStateFromEvent(event, index);
-        chatMessages = [...document.querySelectorAll('[data-chat-stage]')];
-        applyRoomVisibility();
-        setStage(stageId, note);
-        lockAutoScrollSync();
-        scrollChatToBottom(index);
-        playbackCursor = index + 1;
-        isMessagePending = false;
-        updatePlaybackControls();
-        scheduleAutoPlay();
-        return;
-      }
-
-      const agent = group.agents[message.agent];
-      if (!agent) {
-        playbackCursor = index + 1;
-        isMessagePending = false;
-        updatePlaybackControls();
-        advancePlayback({ fromAuto: isAutoPlaying });
-        return;
-      }
-
-      const typingDelay = getTypingDelay(message, agent);
-      setRoom(group.id, index === 0 ? 'auto' : 'smooth');
-      const article = createChatMessage(event, index, typingDelay > 0);
+      const article = createChatMessage(event, index);
       chatFeed.append(article);
 
-      chatMessages = [...document.querySelectorAll('[data-chat-stage]')];
+      if (event.skill) updateSkillStateFromEvent(event, index);
+      chatMessages = [...document.querySelectorAll('.event-row[data-chat-stage]')];
       applyRoomVisibility();
-      setStage(stageId, article);
+      setStage(event.stageId, article);
       lockAutoScrollSync();
       scrollChatToBottom(index);
-
-      const completeMessage = () => {
-        if (typingDelay > 0) finishTyping(article, message);
-        if (message.systemLog || message.note) chatFeed.append(createSystemNote(event));
-        if (message.skillRef) updateSkillStateFromEvent(event, index);
-        applyRoomVisibility();
-        setStage(stageId, article);
-        lockAutoScrollSync();
-        scrollChatToBottom(index);
-        playbackCursor = index + 1;
-        isMessagePending = false;
-        updatePlaybackControls();
-        scheduleAutoPlay();
-      };
-
-      if (typingDelay > 0) {
-        logRevealTimer = setTimeout(completeMessage, typingDelay);
-      } else {
-        completeMessage();
-      }
+      playbackCursor = index + 1;
+      isMessagePending = false;
+      if (playbackCursor >= playbackEvents.length) stopAutoPlay(false);
+      updatePlaybackControls();
+      scheduleAutoPlay();
     }
 
     function renderChat(events) {
@@ -2373,40 +3144,30 @@
       isAutoScrolling = false;
       playbackCursor = 0;
       isMessagePending = false;
+      renderedStageIds = new Set();
       resetSkillState();
       skillLibrary?.classList.add('is-visible');
       chatFeed.replaceChildren();
-      chatFeed.append(...groupRooms.map(createRoomIntro));
       chatMessages = [];
 
       if (!events?.length) {
-        chatFeed.insertAdjacentHTML('beforeend', '<div class="log-error">No group messages found in <code>data/groups</code>.</div>');
+        chatFeed.insertAdjacentHTML('beforeend', '<div class="log-error">No run events found in <code>data/run-events.json</code>.</div>');
         applyRoomVisibility();
         updatePlaybackControls();
         return;
       }
 
-      chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Ready to route the task</strong>Click <span class="mono">Start Task</span> to reveal one chat message at a time.</div>');
+      chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Console armed</strong>Run log will stream automatically; press <span class="mono">Pause</span> to hold the feed.</div>');
       applyRoomVisibility();
       updatePlaybackControls();
     }
 
     function appendEventInstantly(event, index) {
-      const { message, group, stageId } = event;
-      let node = null;
-
-      if (isStandaloneNote(message)) {
-        node = createSystemNote(event);
-      } else {
-        const agent = group.agents[message.agent];
-        if (!agent) return null;
-        node = createChatMessage(event, index, false);
-      }
-
-      if (message.skillRef) updateSkillStateFromEvent(event, index);
+      const node = createChatMessage(event, index);
+      if (event.skill) updateSkillStateFromEvent(event, index);
       node.classList.remove('is-entering');
       chatFeed.append(node);
-      return { node, group, stageId };
+      return { node, stageId: event.stageId };
     }
 
     function renderPlaybackUntil(targetCount) {
@@ -2416,13 +3177,13 @@
       logRevealTimer = null;
       isAutoScrolling = false;
       isMessagePending = false;
+      renderedStageIds = new Set();
       resetSkillState();
       skillLibrary?.classList.add('is-visible');
 
       const total = playbackEvents.length;
       const count = Math.min(Math.max(Number(targetCount) || 0, 0), total);
       chatFeed.replaceChildren();
-      chatFeed.append(...groupRooms.map(createRoomIntro));
       chatMessages = [];
 
       let last = null;
@@ -2430,17 +3191,16 @@
         last = appendEventInstantly(playbackEvents[index], index) || last;
       }
 
-      chatMessages = [...document.querySelectorAll('[data-chat-stage]')];
+      chatMessages = [...document.querySelectorAll('.event-row[data-chat-stage]')];
       playbackCursor = count;
 
       if (last) {
-        setRoom(last.group.id, 'auto');
         applyRoomVisibility();
         setStage(last.stageId, last.node);
         lockAutoScrollSync();
         chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior: 'auto' });
       } else {
-        chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Ready to route the task</strong>Click <span class="mono">Start Task</span> to reveal one chat message at a time.</div>');
+        chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Console armed</strong>Press <span class="mono">Play</span> to stream the run log.</div>');
         applyRoomVisibility();
         setStage(stages[0]?.id ?? 0, chatMessages[0]);
       }
@@ -2464,7 +3224,8 @@
         stopAutoPlay();
         return;
       }
-      if (playbackCursor >= playbackEvents.length || !playbackEvents.length) return;
+      if (!playbackEvents.length) return;
+      if (playbackCursor >= playbackEvents.length) renderPlaybackUntil(0);
       isAutoPlaying = true;
       updatePlaybackControls();
       if (!isMessagePending) advancePlayback({ fromAuto: true });
@@ -2478,8 +3239,14 @@
       skillLibrary?.classList.add('is-visible');
       if (activeMessage?.dataset.skillRef) renderSkillLibrary(activeMessage.dataset.skillRef);
 
-      metricText.forEach((node, metricIndex) => { node.textContent = stage.metrics[metricIndex]; });
-      metrics.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values[metricIndex]); });
+      metricText.forEach((node, metricIndex) => { node.textContent = stage.metrics?.[metricIndex] || ''; });
+      metrics.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values?.[metricIndex] || '0%'); });
+      if (consoleProgressValue) consoleProgressValue.textContent = stage.metrics?.[0] || '0%';
+      if (consoleElapsedValue) consoleElapsedValue.textContent = stage.metrics?.[1] || '00:00.0';
+      if (consoleProgressBar) consoleProgressBar.style.width = stage.values?.[0] || '0%';
+      if (consoleElapsedBar) consoleElapsedBar.style.width = stage.values?.[1] || '0%';
+      consoleMeters.forEach((node, metricIndex) => { node.style.setProperty('--value', stage.values?.[metricIndex] || '0%'); });
+      renderMilestones(stage.id);
       phaseControls.querySelectorAll('.phase-dot').forEach((node) => node.classList.toggle('active', Number(node.dataset.stage) === Number(stage.id)));
 
       const fallbackMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === Number(stage.id));
@@ -2489,17 +3256,9 @@
 
     function syncTimelineFromLog() {
       if (!chatMessages.length) return;
-      const feedTop = chatFeed.getBoundingClientRect().top;
-      const anchor = feedTop + chatFeed.clientHeight * 0.22;
-      const visibleMessages = chatMessages.filter((message) => !message.classList.contains('room-hidden'));
-      if (!visibleMessages.length) return;
-      let current = visibleMessages[0];
-
-      visibleMessages.forEach((message) => {
-        if (message.getBoundingClientRect().top <= anchor) current = message;
-      });
-
-      setStage(Number(current.dataset.chatStage), current);
+      const latestMessage = chatMessages[chatMessages.length - 1];
+      if (!latestMessage) return;
+      setStage(Number(latestMessage.dataset.chatStage), latestMessage);
     }
 
     function parseTimelineTime(time = '00:00.0') {
@@ -2508,32 +3267,24 @@
       return parts.reduce((total, part) => (total * 60) + (Number.isFinite(part) ? part : 0), 0);
     }
 
-    function inferStageId(groupId, seconds) {
-      const workerPoolRooms = ['foreman-a-workers', 'foreman-b-workers', 'foreman-c-workers', 'foreman-d-workers', 'foreman-e-workers'];
-      if (groupId === 'user-system') return seconds < 2 ? 0 : seconds < 70 ? 3 : 5;
-      if (groupId === 'system-pm') return seconds < 18 ? 1 : seconds < 70 ? 3 : 5;
-      if (groupId === 'pm-designer') return 2;
-      if (groupId === 'pm-foremans') return seconds < 33 ? 3 : seconds < 70 ? 4 : 5;
-      if (workerPoolRooms.includes(groupId)) return 4;
-      if (seconds < 17) return 0;
-      if (seconds < 32) return 1;
-      if (seconds < 70) return 3;
-      return 5;
-    }
-
-    function buildPlaybackEvents(groups) {
-      return groups
-        .flatMap((group) => (group.messages || []).map((message, messageIndex) => {
-          const seconds = parseTimelineTime(message.time);
-          return {
-            group,
-            message,
-            messageIndex,
-            seconds,
-            stageId: message.stage ?? inferStageId(group.id, seconds)
-          };
-        }))
-        .sort((a, b) => a.seconds - b.seconds || a.group.order - b.group.order || a.messageIndex - b.messageIndex);
+    function buildPlaybackEvents(runStages = []) {
+      return runStages
+        .flatMap((stage, stageIndex) => (stage.events || []).map((event, eventIndex) => ({
+          ...event,
+          stageId: stage.id,
+          stageLabel: stage.label,
+          stageSummary: stage.summary,
+          stageIndex,
+          eventIndex,
+          seconds: parseTimelineTime(event.time),
+          group: { id: `stage-${stage.id}`, title: stage.label },
+          message: {
+            text: event.text,
+            kind: event.type,
+            skillRef: event.skill
+          }
+        })))
+        .sort((a, b) => a.seconds - b.seconds || a.stageIndex - b.stageIndex || a.eventIndex - b.eventIndex);
     }
 
     const pageBaseUrl = new URL(window.location.href);
@@ -2546,43 +3297,39 @@
     pageBaseUrl.hash = '';
     const siteAssetUrl = (path) => new URL(path, pageBaseUrl).toString();
 
-    async function loadGroupRooms() {
-      const manifestResponse = await fetch(siteAssetUrl('data/groups/manifest.json'), { cache: 'no-store' });
-      if (!manifestResponse.ok) throw new Error(`Group manifest HTTP ${manifestResponse.status}`);
-      const manifest = await manifestResponse.json();
-      const groupEntries = [...(manifest.groups || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      const groups = await Promise.all(groupEntries.map(async (entry) => {
-        const response = await fetch(siteAssetUrl(`data/groups/${entry.file}`), { cache: 'no-store' });
-        if (!response.ok) throw new Error(`${entry.file} HTTP ${response.status}`);
-        const group = await response.json();
-        return { ...entry, ...group, order: entry.order ?? group.order ?? 0 };
-      }));
-      return { manifest, groups };
+    async function loadRunEvents() {
+      const response = await fetch(siteAssetUrl('data/run-events.json'), { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Run events HTTP ${response.status}`);
+      return response.json();
     }
 
     async function bootLog() {
       try {
-        const [dialogueResponse, groupData] = await Promise.all([
+        const [configResponse, runLog] = await Promise.all([
           fetch(siteAssetUrl('data/run-config.json'), { cache: 'no-store' }),
-          loadGroupRooms()
+          loadRunEvents()
         ]);
-        if (!dialogueResponse.ok) throw new Error(`Run config HTTP ${dialogueResponse.status}`);
-        const log = await dialogueResponse.json();
+        if (!configResponse.ok) throw new Error(`Run config HTTP ${configResponse.status}`);
+        const log = await configResponse.json();
         stages = log.stages || [];
-        groupRooms = groupData.groups;
-        buildMentionIndex(groupRooms);
+        groupRooms = runLog.stages || [];
+        buildMentionIndex([]);
         playbackEvents = buildPlaybackEvents(groupRooms);
-        activeRoom = groupData.manifest.entryGroup || groupRooms[0]?.id || '';
+        activeRoom = 'all';
 
-        if (logKicker) logKicker.textContent = groupData.manifest.title || log.meta?.kicker || logKicker.textContent;
-        if (systemLine) appendMentionedText(systemLine, log.meta?.systemIntro || systemLine.textContent);
+        const runId = (runLog.intro || log.meta?.systemIntro || '').match(/tiantan_build_\d+/)?.[0] || 'tiantan_build_001';
+        if (consoleTaskTitle) consoleTaskTitle.textContent = 'CraftUtopia Tiantan Build';
+        if (consoleRunId) consoleRunId.textContent = `run ${runId}`;
+        if (logKicker) logKicker.textContent = runLog.title || log.meta?.kicker || logKicker.textContent;
+        if (systemLine) appendMentionedText(systemLine, runLog.intro || log.meta?.systemIntro || systemLine.textContent);
 
         renderPhaseControls();
         renderRoomList(groupRooms, activeRoom);
         renderChat(playbackEvents);
         setStage(stages[0]?.id ?? 0, chatMessages[0]);
+        toggleAutoPlay();
       } catch (error) {
-        chatFeed.innerHTML = `<div class="log-error">Could not load group chat data. Serve this folder with <code>python main.py</code> or another static server. ${escapeHtml(error.message)}</div>`;
+        chatFeed.innerHTML = `<div class="log-error">Could not load run event data. Serve this folder with <code>python main.py</code> or another static server. ${escapeHtml(error.message)}</div>`;
         console.error(error);
       }
     }
