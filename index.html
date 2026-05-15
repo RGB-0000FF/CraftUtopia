@@ -1993,7 +1993,7 @@
       z-index: 2;
       display: grid;
       grid-template-columns: 1fr;
-      grid-template-rows: auto minmax(170px, 0.52fr) minmax(0, 1.7fr);
+      grid-template-rows: auto 178px 42px minmax(0, 1fr);
       gap: 10px;
       height: 100%;
       min-height: 0;
@@ -2005,8 +2005,14 @@
       padding: 0;
     }
 
+    .terminal-console.is-framework-expanded,
+    .chat-shell.terminal-console.is-framework-expanded {
+      grid-template-rows: auto 178px auto minmax(0, 1fr);
+    }
+
     .console-header,
     .console-milestones,
+    .console-framework,
     .console-log {
       min-width: 0;
       border: 0;
@@ -2364,12 +2370,198 @@
     }
 
     .console-milestones,
+    .console-framework,
     .console-log {
       display: grid;
       grid-template-rows: auto minmax(0, 1fr);
       min-height: 0;
       overflow: hidden;
       border-top: 1px solid rgba(92,255,172,0.12);
+    }
+
+    .console-framework {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(116,214,196,0.055), rgba(0,0,0,0.24)),
+        #010604;
+    }
+
+    .console-framework:not(.is-expanded) {
+      grid-template-rows: 1fr;
+    }
+
+    .console-framework.is-expanded {
+      grid-template-rows: auto auto;
+    }
+
+    .framework-toggle {
+      box-sizing: border-box;
+      flex: 0 0 42px;
+      width: 100%;
+      height: 42px;
+      min-height: 42px;
+      max-height: 42px;
+      padding: 8px 10px;
+      border-right: 0;
+      border-left: 0;
+      border-top: 0;
+      background: transparent;
+      cursor: pointer;
+      transform: none;
+      transition: none;
+      user-select: none;
+    }
+
+    .framework-toggle span:first-child {
+      color: rgba(207,255,222,0.42);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+    }
+
+    .framework-toggle:hover,
+    .framework-toggle:focus-visible,
+    .framework-toggle:active {
+      outline: none;
+      transform: none;
+      filter: none;
+    }
+
+    .framework-hint {
+      margin-left: auto;
+      color: rgba(207,255,222,0.32);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .framework-arrows {
+      display: inline-grid;
+      grid-template-rows: repeat(2, 5px);
+      place-items: center;
+      width: 18px;
+      height: 15px;
+      margin-left: 2px;
+    }
+
+    .framework-arrows::before,
+    .framework-arrows::after {
+      content: "";
+      display: block;
+      width: 9px;
+      height: 9px;
+      border-right: 2px solid rgba(207,255,222,0.32);
+      border-bottom: 2px solid rgba(207,255,222,0.32);
+      transform: rotate(45deg);
+    }
+
+    .framework-preview {
+      min-height: 0;
+      padding: 8px 10px 10px;
+      background:
+        radial-gradient(circle at 22% 0%, rgba(143,220,255,0.08), transparent 36%),
+        linear-gradient(90deg, rgba(143,220,255,0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(85,255,164,0.024) 1px, transparent 1px);
+      background-size: auto, 24px 24px, 24px 24px;
+    }
+
+    .console-framework:not(.is-expanded) .framework-preview {
+      display: none;
+    }
+
+    .framework-preview-button {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(143,220,255,0.16);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.32);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035), 0 0 22px rgba(143,220,255,0.055);
+      cursor: zoom-in;
+    }
+
+    .framework-preview-button:hover,
+    .framework-preview-button:focus-visible {
+      outline: none;
+      border-color: rgba(143,220,255,0.42);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.055), 0 0 24px rgba(143,220,255,0.12);
+    }
+
+    .framework-preview img {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .framework-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 34px;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(10px);
+    }
+
+    .framework-lightbox[hidden] {
+      display: none;
+    }
+
+    .framework-lightbox-figure {
+      position: relative;
+      width: min(1120px, 92vw);
+      height: min(720px, 86vh);
+      margin: 0;
+      padding: 16px;
+      border: 1px solid rgba(143,220,255,0.28);
+      border-radius: 12px;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(143,220,255,0.10), transparent 36%),
+        rgba(1,8,6,0.96);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.62), 0 0 40px rgba(143,220,255,0.10);
+    }
+
+    .framework-lightbox-figure img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.28);
+    }
+
+    .framework-lightbox-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(143,220,255,0.34);
+      border-radius: 8px;
+      color: #eaffef;
+      background: rgba(0,0,0,0.58);
+      box-shadow: 0 0 18px rgba(0,0,0,0.32);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .framework-lightbox-close:hover,
+    .framework-lightbox-close:focus-visible {
+      outline: none;
+      border-color: rgba(143,220,255,0.62);
+      background: rgba(9,28,28,0.86);
     }
 
     .milestone-list {
@@ -2928,7 +3120,12 @@
     @media (max-width: 980px) {
       .terminal-console,
       .chat-shell.terminal-console {
-        grid-template-rows: auto minmax(150px, 0.48fr) minmax(190px, 1.5fr);
+        grid-template-rows: auto 164px 42px minmax(190px, 1fr);
+      }
+
+      .terminal-console.is-framework-expanded,
+      .chat-shell.terminal-console.is-framework-expanded {
+        grid-template-rows: auto 164px auto minmax(180px, 1fr);
       }
     }
 
@@ -2945,9 +3142,14 @@
         width: 100%;
         max-width: 100%;
         gap: 8px;
-        grid-template-rows: auto minmax(120px, 0.44fr) minmax(140px, 1.4fr);
+        grid-template-rows: auto 144px 42px minmax(140px, 1fr);
         border-radius: 12px;
         padding: 9px;
+      }
+
+      .terminal-console.is-framework-expanded,
+      .chat-shell.terminal-console.is-framework-expanded {
+        grid-template-rows: auto 144px auto minmax(130px, 1fr);
       }
 
       .console-header {
@@ -3057,6 +3259,19 @@
           <ol class="milestone-list" id="milestone-list"></ol>
         </section>
 
+        <section class="console-framework" aria-label="Execution framework">
+          <div class="console-section-title framework-toggle" id="framework-toggle" role="button" tabindex="0" aria-expanded="false">
+            <span>Execution Framework</span>
+            <span class="framework-hint" id="framework-hint">Click to view details</span>
+            <span class="framework-arrows" id="framework-arrows" aria-hidden="true"></span>
+          </div>
+          <div class="framework-preview">
+            <button class="framework-preview-button" id="framework-open" type="button" aria-label="Open execution framework image">
+              <img src="assets/images/architecture.jpg" alt="CraftUtopia execution framework architecture">
+            </button>
+          </div>
+        </section>
+
         <section class="console-log" aria-label="Detailed terminal log">
           <div class="console-section-title">
             <span>Detailed Log</span>
@@ -3068,6 +3283,13 @@
       </div>
     </aside>
   </main>
+
+  <div class="framework-lightbox" id="framework-lightbox" role="dialog" aria-modal="true" aria-label="Execution framework preview" hidden>
+    <figure class="framework-lightbox-figure">
+      <button class="framework-lightbox-close" id="framework-close" type="button" aria-label="Close execution framework preview">x</button>
+      <img src="assets/images/architecture.jpg" alt="CraftUtopia execution framework architecture">
+    </figure>
+  </div>
 
   <script>
     const AGENT_TYPING_DELAY = 2000;
@@ -3140,6 +3362,12 @@
     const consoleProgressBar = document.querySelector('#console-progress-bar');
     const consoleElapsedBar = document.querySelector('#console-elapsed-bar');
     const consoleMeters = document.querySelectorAll('.console-meter');
+    const terminalConsole = document.querySelector('.terminal-console');
+    const consoleFramework = document.querySelector('.console-framework');
+    const frameworkToggle = document.querySelector('#framework-toggle');
+    const frameworkOpen = document.querySelector('#framework-open');
+    const frameworkLightbox = document.querySelector('#framework-lightbox');
+    const frameworkClose = document.querySelector('#framework-close');
     const playbackPrev = document.querySelector('#playback-prev');
     const playbackNext = document.querySelector('#playback-next');
     const playbackAuto = document.querySelector('#playback-auto');
@@ -4107,6 +4335,26 @@
       );
     }
 
+    function setFrameworkExpanded(isExpanded) {
+      terminalConsole?.classList.toggle('is-framework-expanded', isExpanded);
+      consoleFramework?.classList.toggle('is-expanded', isExpanded);
+      frameworkToggle?.setAttribute('aria-expanded', String(isExpanded));
+    }
+
+    function openFrameworkLightbox() {
+      if (!frameworkLightbox) return;
+      frameworkLightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+      frameworkClose?.focus();
+    }
+
+    function closeFrameworkLightbox() {
+      if (!frameworkLightbox || frameworkLightbox.hidden) return;
+      frameworkLightbox.hidden = true;
+      document.body.style.overflow = '';
+      frameworkOpen?.focus();
+    }
+
     const pageBaseUrl = new URL(window.location.href);
     if (pageBaseUrl.pathname.endsWith('.html')) {
       pageBaseUrl.pathname = pageBaseUrl.pathname.replace(/[^/]*$/, '');
@@ -4162,9 +4410,25 @@
     playbackNext?.addEventListener('click', () => advancePlayback());
     playbackAuto?.addEventListener('click', toggleAutoPlay);
     playbackSpeedToggle?.addEventListener('click', togglePlaybackSpeed);
+    frameworkToggle?.addEventListener('click', () => {
+      setFrameworkExpanded(!terminalConsole?.classList.contains('is-framework-expanded'));
+    });
+    frameworkToggle?.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      setFrameworkExpanded(!terminalConsole?.classList.contains('is-framework-expanded'));
+    });
+    frameworkOpen?.addEventListener('click', openFrameworkLightbox);
+    frameworkClose?.addEventListener('click', closeFrameworkLightbox);
+    frameworkLightbox?.addEventListener('click', (event) => {
+      if (event.target === frameworkLightbox) closeFrameworkLightbox();
+    });
     playbackJump?.addEventListener('click', jumpPlaybackToInput);
     playbackStep?.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') jumpPlaybackToInput();
+    });
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeFrameworkLightbox();
     });
 
     updateUiScale();
