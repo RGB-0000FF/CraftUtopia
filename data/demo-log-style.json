@@ -1,0 +1,169 @@
+{
+  "id": "demo_log_style",
+  "version": 1,
+  "purpose": "Human-readable terminal-style log format for the construction demo.",
+  "principles": [
+    "Every displayed log line should be a string, not raw JSON.",
+    "Use a Linux terminal / multi-service log style: relative time, actor, vertical divider, event label, message.",
+    "Keep normal events as one line.",
+    "Render tool and skill events as a main line plus indented sublines.",
+    "Make TOOL and SKILL visually scannable without requiring the viewer to understand internal system names.",
+    "Use demo vocabulary such as subtask, region, foreman, worker, tool, and skill."
+  ],
+  "layout": {
+    "time": {
+      "format": "T+SS.ss",
+      "example": "T+03.91",
+      "note": "Relative time is for pacing only; exact timestamps are not important in the demo."
+    },
+    "actor": {
+      "width": 14,
+      "examples": ["ProjectManager", "Foreman-03", "Worker-047"],
+      "note": "Use full display names in demo logs. Short codes such as PM, F-03, and W-047 may exist internally, but should not be used in the visible log line.",
+      "roles": {
+        "ProjectManager": "Project Manager",
+        "Foreman-01..Foreman-05": "Logical Foreman",
+        "Worker-001..Worker-100": "Worker"
+      }
+    },
+    "divider": "│",
+    "sublineIndent": "                        ",
+    "sublineBranch": "├─",
+    "sublineLast": "└─",
+    "separator": " · ",
+    "arrow": "⇢",
+    "progressBar": {
+      "width": 10,
+      "filled": "█",
+      "empty": "░",
+      "example": "[█████░░░░░]"
+    }
+  },
+  "normalLog": {
+    "description": "Single-line event for planning, assignment, progress, synchronization, and completion.",
+    "template": "{time}  {actor} │ {label}  {message}",
+    "labels": {
+      "PLAN": "Planning or blueprint-level decision.",
+      "TASK": "Subtask or region assignment.",
+      "PROG": "Progress snapshot.",
+      "SYNC": "Report collection or coordination.",
+      "PASS": "Verification or subtask success.",
+      "WARN": "Recoverable problem that leads to repair."
+    },
+    "examples": [
+      "T+00.42  ProjectManager │ PLAN  blueprint loaded · xini.json · 95,151 blocks · 52 levels",
+      "T+02.10  Foreman-03     │ TASK  group C assigned · workers 041-060 · target 486 subtasks",
+      "T+06.20  Foreman-03     │ PROG  group C [█████░░░░░] 214/486 · active workers 20",
+      "T+12.40  ProjectManager │ SYNC  collected reports · 5 foremen · 100 workers · 72% complete",
+      "T+04.16  Worker-052     │ WARN  D-021 mismatch · 2 missing · 1 wrong",
+      "T+05.33  Worker-052     │ PASS  D-021 verified after patch · accepted"
+    ]
+  },
+  "toolLog": {
+    "description": "Three-line event that shows a tool call and its input/result as sublines.",
+    "template": [
+      "{time}  {actor} │ {state} {toolName}",
+      "                        ├─ input   {input}",
+      "                        └─ result  {result}"
+    ],
+    "states": {
+      "TOOL▶": "Tool is being called or starts execution.",
+      "TOOL✓": "Tool completed successfully.",
+      "TOOL✕": "Tool completed with a recoverable failure."
+    },
+    "examples": [
+      [
+        "T+01.08  ProjectManager │ TOOL▶ Read Blueprint",
+        "                        ├─ input   xini.json",
+        "                        └─ result  95,151 blocks · bounds x[-60,30] z[6,148] · 427ms"
+      ],
+      [
+        "T+02.74  Foreman-03     │ TOOL▶ Split Region",
+        "                        ├─ input   group=C · axis=x/z · max=50 blocks",
+        "                        └─ result  486 subtasks ready · 281ms"
+      ],
+      [
+        "T+03.91  Worker-047     │ TOOL▶ Run Script",
+        "                        ├─ input   build_c_014.js",
+        "                        └─ result  48 blocks placed · 182ms"
+      ],
+      [
+        "T+04.16  Worker-052     │ TOOL✕ Verify Region",
+        "                        ├─ input   subtask D-021",
+        "                        └─ result  failed · 2 missing · 1 wrong"
+      ],
+      [
+        "T+04.88  Worker-052     │ TOOL▶ Patch Region",
+        "                        ├─ input   subtask D-021 · 3 mismatches",
+        "                        └─ result  fixed · 3 blocks repaired"
+      ]
+    ]
+  },
+  "skillLog": {
+    "description": "Three-line event for learning, publishing, broadcasting, and using skills.",
+    "template": [
+      "{time}  {actor} │ {state} {skillName}",
+      "                        ├─ {sublineAKey}  {sublineAValue}",
+      "                        └─ result  {result}"
+    ],
+    "states": {
+      "SKILL◆": "A new reusable skill has been learned or improved.",
+      "SKILL↗": "A skill is published or broadcast to downstream agents.",
+      "SKILL▶": "A worker starts using a skill.",
+      "SKILL✓": "A skill-based action completed successfully."
+    },
+    "examples": [
+      [
+        "T+08.50  ProjectManager │ SKILL◆ Learned Build Region v1",
+        "                        ├─ source  128 completed subtasks · 17 repairs",
+        "                        └─ result  reusable region-build pattern ready"
+      ],
+      [
+        "T+08.92  ProjectManager │ SKILL↗ Published Build Region v1",
+        "                        ├─ target  5 foremen",
+        "                        └─ result  skill available for regional execution"
+      ],
+      [
+        "T+09.31  Foreman-03     │ SKILL↗ Broadcast Build Region v1",
+        "                        ├─ target  workers 041-060",
+        "                        └─ result  20 workers updated"
+      ],
+      [
+        "T+10.04  Worker-047     │ SKILL▶ Use Build Region v1",
+        "                        ├─ input   subtask C-089 · 46 target blocks",
+        "                        └─ result  completed from learned pattern · verified"
+      ]
+    ]
+  },
+  "recommendedHighlighting": {
+    "PLAN": "blue",
+    "TASK": "cyan",
+    "PROG": "green",
+    "SYNC": "purple",
+    "PASS": "green",
+    "WARN": "yellow",
+    "TOOL▶": "cyan",
+    "TOOL✓": "green",
+    "TOOL✕": "yellow",
+    "SKILL◆": "magenta",
+    "SKILL↗": "magenta",
+    "SKILL▶": "magenta",
+    "SKILL✓": "green"
+  },
+  "compactExample": [
+    "T+00.42  ProjectManager │ PLAN  blueprint loaded · xini.json · 95,151 blocks · 52 levels",
+    "T+01.08  ProjectManager │ TOOL▶ Read Blueprint",
+    "                        ├─ input   xini.json",
+    "                        └─ result  95,151 blocks · bounds x[-60,30] z[6,148] · 427ms",
+    "T+02.10  Foreman-03     │ TASK  group C assigned · workers 041-060 · target 486 subtasks",
+    "T+02.74  Foreman-03     │ TOOL▶ Split Region",
+    "                        ├─ input   group=C · axis=x/z · max=50 blocks",
+    "                        └─ result  486 subtasks ready · 281ms",
+    "T+03.91  Worker-047     │ TOOL▶ Run Script",
+    "                        ├─ input   build_c_014.js",
+    "                        └─ result  48 blocks placed · 182ms",
+    "T+08.50  ProjectManager │ SKILL◆ Learned Build Region v1",
+    "                        ├─ source  128 completed subtasks · 17 repairs",
+    "                        └─ result  reusable region-build pattern ready"
+  ]
+}
