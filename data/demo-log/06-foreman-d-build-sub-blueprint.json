@@ -1,0 +1,2888 @@
+{
+  "stage": {
+    "id": 6,
+    "label": "06 Foreman-D Build Sub Blueprint",
+    "summary": "Foreman-D spends this phase building Region-D; tool calls gradually shift into shared Skills as patterns repeat.",
+    "metrics": [
+      "11:20.0",
+      "14:30.0",
+      "Region-D build"
+    ],
+    "children": [
+      {
+        "id": "6.1",
+        "label": "split sub blueprint",
+        "summary": "Foreman-D splits Region-D into worker subtasks."
+      },
+      {
+        "id": "6.2",
+        "label": "worker construction",
+        "summary": "Workers 061-080 perform the main build work."
+      },
+      {
+        "id": "6.3",
+        "label": "tools become skills",
+        "summary": "Repeated tool loops are learned, broadcast, and reused during construction."
+      }
+    ]
+  },
+  "events": [
+    {
+      "time": "11:20.0",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Inspect sub blueprint before building Region-D.",
+      "sublines": [
+        "tool_call: Read Sub Blueprint[Region-D.json] -> success, 44 subtasks, Workers 061-080",
+        "log: ownership -> Foreman-D owns Region-D"
+      ],
+      "tool": "Read Sub Blueprint"
+    },
+    {
+      "time": "11:20.7",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Split Region-D into worker-sized subtasks.",
+      "sublines": [
+        "tool_call: Split Sub Blueprint[Region-D, method: x/z slices] -> success, 44 subtasks prepared",
+        "progress: Region-D subtask split 0% -> 100%"
+      ],
+      "tool": "Split Sub Blueprint",
+      "progress": {
+        "label": "Region-D subtasks",
+        "current": 44,
+        "total": 44
+      }
+    },
+    {
+      "time": "11:21.3",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Assign the Region-D subtasks to Workers 061-080.",
+      "sublines": [
+        "tool_call: Assign Subtasks[Region-D, Workers 061-080, 44 subtasks] -> success, queue opened"
+      ],
+      "tool": "Assign Subtasks"
+    },
+    {
+      "time": "11:22.0",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Check the initial queue state for Region-D.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 44, running 0, complete 0, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "11:22.7",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-001.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-001] -> success, script generated from shared placement pattern, 263 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:23.3",
+      "actor": "Worker-062",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-002.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-002] -> success, 297 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:24.0",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-003.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-003] -> success, script generated from shared placement pattern, 331 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:24.7",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-004.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-004] -> success, script generated from shared placement pattern, 365 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:25.4",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-005.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-005] -> success, script generated from shared placement pattern, 399 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:26.0",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-006.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-006] -> success, script generated from shared placement pattern, 433 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:26.7",
+      "actor": "Worker-067",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-007.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-007] -> success, 467 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:27.4",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Repair mismatched blocks in Region-D/subtask-008 with Replace Region.",
+      "sublines": [
+        "skill_call: Use Skill[Replace Region, Region-D/subtask-008] -> success, 5 corrections prepared"
+      ],
+      "skill": "replace_region"
+    },
+    {
+      "time": "11:28.0",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-009.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-009] -> success, script generated from shared placement pattern, 535 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:28.7",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Place scaffold support before building Region-D/subtask-010.",
+      "sublines": [
+        "skill_call: Use Skill[Scaffold, Region-D/subtask-010] -> success, temporary support plan generated"
+      ],
+      "skill": "scaffold"
+    },
+    {
+      "time": "11:29.4",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-011.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-011] -> success, script generated from shared placement pattern, 603 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:30.0",
+      "actor": "Worker-072",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-012.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-012] -> success, 637 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:30.7",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-013.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-013] -> success, script generated from shared placement pattern, 671 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:31.4",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-014.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-014] -> success, script generated from shared placement pattern, 165 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:32.0",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-015.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-015] -> success, script generated from shared placement pattern, 199 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:32.7",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-016.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-016] -> success, script generated from shared placement pattern, 233 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:33.4",
+      "actor": "Worker-077",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-017.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-017] -> success, 267 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:34.0",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-018.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-018] -> success, script generated from shared placement pattern, 301 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:34.7",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-019.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-019] -> success, script generated from shared placement pattern, 335 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:35.4",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-020.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-020] -> success, script generated from shared placement pattern, 369 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:36.1",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-021.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-021] -> success, script generated from shared placement pattern, 403 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:36.7",
+      "actor": "Worker-062",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-022.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-022] -> success, 437 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:37.4",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-023.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-023] -> success, script generated from shared placement pattern, 471 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:38.1",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-024.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-024] -> success, script generated from shared placement pattern, 505 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:38.7",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-025.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-025] -> success, script generated from shared placement pattern, 539 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:39.4",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-026.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-026] -> success, script generated from shared placement pattern, 573 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:40.1",
+      "actor": "Worker-067",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-027.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-027] -> success, 607 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:40.7",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 35, running 5, complete 6, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "11:41.4",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-028.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-028] -> success, script generated from shared placement pattern, 664 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:42.1",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-029.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-029] -> success, script generated from shared placement pattern, 698 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:42.7",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-030.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-030] -> success, script generated from shared placement pattern, 192 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:43.4",
+      "actor": "Worker-071",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-031.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-031] -> success, 226 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:44.1",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-032.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-032] -> success, script generated from shared placement pattern, 260 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:44.8",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-033.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-033] -> success, script generated from shared placement pattern, 294 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:45.4",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-034.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-034] -> success, script generated from shared placement pattern, 328 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:46.1",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-035.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-035] -> success, script generated from shared placement pattern, 362 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:46.8",
+      "actor": "Worker-076",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-036.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-036] -> success, 396 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:47.4",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-037.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-037] -> success, script generated from shared placement pattern, 430 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:48.1",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-038.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-038] -> success, script generated from shared placement pattern, 464 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:48.8",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-039.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-039] -> success, script generated from shared placement pattern, 498 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:49.4",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-040.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-040] -> success, script generated from shared placement pattern, 532 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:50.1",
+      "actor": "Worker-061",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-041.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-041] -> success, 566 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:50.8",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-042.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-042] -> success, script generated from shared placement pattern, 600 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:51.4",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-043.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-043] -> success, script generated from shared placement pattern, 634 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:52.1",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-044.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-044] -> success, script generated from shared placement pattern, 668 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:52.8",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-001.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-001] -> success, script generated from shared placement pattern, 218 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:53.5",
+      "actor": "Worker-066",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-002.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-002] -> success, 252 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:54.1",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-003.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-003] -> success, script generated from shared placement pattern, 286 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:54.8",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-004.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-004] -> success, script generated from shared placement pattern, 320 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:55.5",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-005.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-005] -> success, script generated from shared placement pattern, 354 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:56.1",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Repair mismatched blocks in Region-D/subtask-006 with Replace Region.",
+      "sublines": [
+        "skill_call: Use Skill[Replace Region, Region-D/subtask-006] -> success, 3 corrections prepared"
+      ],
+      "skill": "replace_region"
+    },
+    {
+      "time": "11:56.8",
+      "actor": "Worker-071",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-007.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-007] -> success, 422 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "11:57.5",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-008.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-008] -> success, script generated from shared placement pattern, 456 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:58.1",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-009.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-009] -> success, script generated from shared placement pattern, 490 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:58.8",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-010.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-010] -> success, script generated from shared placement pattern, 524 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "11:59.5",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-011.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-011] -> success, script generated from shared placement pattern, 558 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:00.1",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Place scaffold support before building Region-D/subtask-012.",
+      "sublines": [
+        "skill_call: Use Skill[Scaffold, Region-D/subtask-012] -> success, temporary support plan generated"
+      ],
+      "skill": "scaffold"
+    },
+    {
+      "time": "12:00.8",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-013.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-013] -> success, script generated from shared placement pattern, 626 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:01.5",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 29, running 5, complete 12, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "12:02.1",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-014.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-014] -> success, script generated from shared placement pattern, 683 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:02.8",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-015.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-015] -> success, script generated from shared placement pattern, 177 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:03.5",
+      "actor": "Worker-080",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-016.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-016] -> success, 211 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:04.2",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-017.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-017] -> success, script generated from shared placement pattern, 245 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:04.8",
+      "actor": "ProjectManager",
+      "kind": "TOOL",
+      "action": "Sampling progress from Foreman-D.",
+      "sublines": [
+        "tool_call: Collect Reports[Foreman-D] -> success, Region-D complete 13/44, active Skills: Build Region, Replace Region, Scaffold"
+      ],
+      "tool": "Collect Reports"
+    },
+    {
+      "time": "12:05.5",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-018.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-018] -> success, script generated from shared placement pattern, 302 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:06.2",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-019.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-019] -> success, script generated from shared placement pattern, 336 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:06.8",
+      "actor": "Worker-064",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-020.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-020] -> success, 370 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:07.5",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-021.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-021] -> success, script generated from shared placement pattern, 404 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:08.2",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-022.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-022] -> success, script generated from shared placement pattern, 438 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:08.8",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-023.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-023] -> success, script generated from shared placement pattern, 472 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:09.5",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-024.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-024] -> success, script generated from shared placement pattern, 506 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:10.2",
+      "actor": "Worker-069",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-025.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-025] -> success, 540 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:10.8",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-026.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-026] -> success, script generated from shared placement pattern, 574 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:11.5",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-027.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-027] -> success, script generated from shared placement pattern, 608 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:12.2",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-028.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-028] -> success, script generated from shared placement pattern, 642 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:12.9",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-029.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-029] -> success, script generated from shared placement pattern, 676 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:13.5",
+      "actor": "Worker-074",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-030.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-030] -> success, 170 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:14.2",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-031.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-031] -> success, script generated from shared placement pattern, 204 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:14.9",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-032.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-032] -> success, script generated from shared placement pattern, 238 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:15.5",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-033.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-033] -> success, script generated from shared placement pattern, 272 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:16.2",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-034.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-034] -> success, script generated from shared placement pattern, 306 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:16.9",
+      "actor": "Worker-079",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-035.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-035] -> success, 340 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:17.5",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-036.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-036] -> success, script generated from shared placement pattern, 374 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:18.2",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-037.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-037] -> success, script generated from shared placement pattern, 408 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:18.9",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-038.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-038] -> success, script generated from shared placement pattern, 442 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:19.5",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-039.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-039] -> success, script generated from shared placement pattern, 476 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:20.2",
+      "actor": "Worker-064",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-040.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-040] -> success, 510 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:20.9",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-041.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-041] -> success, script generated from shared placement pattern, 544 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:21.5",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-042.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-042] -> success, script generated from shared placement pattern, 578 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:22.2",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 23, running 5, complete 18, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "12:22.9",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-043.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-043] -> success, script generated from shared placement pattern, 635 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:23.6",
+      "actor": "Worker-068",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-044.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-044] -> success, 669 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:24.2",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-001.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-001] -> success, script generated from shared placement pattern, 219 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:24.9",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Repair mismatched blocks in Region-D/subtask-002 with Replace Region.",
+      "sublines": [
+        "skill_call: Use Skill[Replace Region, Region-D/subtask-002] -> success, 10 corrections prepared"
+      ],
+      "skill": "replace_region"
+    },
+    {
+      "time": "12:25.6",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-003.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-003] -> success, script generated from shared placement pattern, 287 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:26.2",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-004.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-004] -> success, script generated from shared placement pattern, 321 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:26.9",
+      "actor": "Worker-073",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-005.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-005] -> success, 355 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:27.6",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-006.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-006] -> success, script generated from shared placement pattern, 389 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:28.2",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-007.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-007] -> success, script generated from shared placement pattern, 423 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:28.9",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-008.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-008] -> success, script generated from shared placement pattern, 457 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:29.6",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-009.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-009] -> success, script generated from shared placement pattern, 491 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:30.2",
+      "actor": "Worker-078",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-010.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-010] -> success, 525 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:30.9",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-011.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-011] -> success, script generated from shared placement pattern, 559 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:31.6",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Place scaffold support before building Region-D/subtask-012.",
+      "sublines": [
+        "skill_call: Use Skill[Scaffold, Region-D/subtask-012] -> success, temporary support plan generated"
+      ],
+      "skill": "scaffold"
+    },
+    {
+      "time": "12:32.3",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-013.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-013] -> success, script generated from shared placement pattern, 627 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:32.9",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-014.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-014] -> success, script generated from shared placement pattern, 661 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:33.6",
+      "actor": "Worker-063",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-015.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-015] -> success, 695 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:34.3",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-016.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-016] -> success, script generated from shared placement pattern, 189 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:34.9",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-017.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-017] -> success, script generated from shared placement pattern, 223 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:35.6",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-018.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-018] -> success, script generated from shared placement pattern, 257 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:36.3",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-019.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-019] -> success, script generated from shared placement pattern, 291 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:36.9",
+      "actor": "Worker-068",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-020.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-020] -> success, 325 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:37.6",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-021.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-021] -> success, script generated from shared placement pattern, 359 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:38.3",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-022.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-022] -> success, script generated from shared placement pattern, 393 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:38.9",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-023.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-023] -> success, script generated from shared placement pattern, 427 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:39.6",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-024.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-024] -> success, script generated from shared placement pattern, 461 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:40.3",
+      "actor": "Worker-073",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-025.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-025] -> success, 495 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:41.0",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-026.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-026] -> success, script generated from shared placement pattern, 529 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:41.6",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-027.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-027] -> success, script generated from shared placement pattern, 563 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:42.3",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-028.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-028] -> success, script generated from shared placement pattern, 597 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:43.0",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 17, running 5, complete 24, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "12:43.6",
+      "actor": "Worker-077",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-029.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-029] -> success, 654 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:44.3",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-030.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-030] -> success, script generated from shared placement pattern, 688 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:45.0",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-031.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-031] -> success, script generated from shared placement pattern, 182 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:45.6",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-032.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-032] -> success, script generated from shared placement pattern, 216 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:46.3",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-033.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-033] -> success, script generated from shared placement pattern, 250 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:47.0",
+      "actor": "Worker-062",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-034.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-034] -> success, 284 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:47.6",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-035.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-035] -> success, script generated from shared placement pattern, 318 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:48.3",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-036.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-036] -> success, script generated from shared placement pattern, 352 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:49.0",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-037.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-037] -> success, script generated from shared placement pattern, 386 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:49.6",
+      "actor": "ProjectManager",
+      "kind": "TOOL",
+      "action": "Sampling progress from Foreman-D.",
+      "sublines": [
+        "tool_call: Collect Reports[Foreman-D] -> success, Region-D complete 25/44, active Skills: Build Region, Replace Region, Scaffold"
+      ],
+      "tool": "Collect Reports"
+    },
+    {
+      "time": "12:50.3",
+      "actor": "Worker-066",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-038.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-038] -> success, 443 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:51.0",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-039.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-039] -> success, script generated from shared placement pattern, 477 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:51.7",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-040.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-040] -> success, script generated from shared placement pattern, 511 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:52.3",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-041.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-041] -> success, script generated from shared placement pattern, 545 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:53.0",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-042.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-042] -> success, script generated from shared placement pattern, 579 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:53.7",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Repair mismatched blocks in Region-D/subtask-043 with Replace Region.",
+      "sublines": [
+        "skill_call: Use Skill[Replace Region, Region-D/subtask-043] -> success, 8 corrections prepared"
+      ],
+      "skill": "replace_region"
+    },
+    {
+      "time": "12:54.3",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-044.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-044] -> success, script generated from shared placement pattern, 647 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:55.0",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-001.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-001] -> success, script generated from shared placement pattern, 197 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:55.7",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-002.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-002] -> success, script generated from shared placement pattern, 231 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:56.3",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-003.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-003] -> success, script generated from shared placement pattern, 265 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:57.0",
+      "actor": "Worker-076",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-004.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-004] -> success, 299 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "12:57.7",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-005.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-005] -> success, script generated from shared placement pattern, 333 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:58.3",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-006.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-006] -> success, script generated from shared placement pattern, 367 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:59.0",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-007.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-007] -> success, script generated from shared placement pattern, 401 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "12:59.7",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-008.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-008] -> success, script generated from shared placement pattern, 435 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:00.4",
+      "actor": "Worker-061",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-009.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-009] -> success, 469 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:01.0",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-010.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-010] -> success, script generated from shared placement pattern, 503 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:01.7",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-011.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-011] -> success, script generated from shared placement pattern, 537 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:02.4",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-012.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-012] -> success, script generated from shared placement pattern, 571 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:03.0",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Place scaffold support before building Region-D/subtask-013.",
+      "sublines": [
+        "skill_call: Use Skill[Scaffold, Region-D/subtask-013] -> success, temporary support plan generated"
+      ],
+      "skill": "scaffold"
+    },
+    {
+      "time": "13:03.7",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 12, running 5, complete 29, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "13:04.4",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-014.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-014] -> success, script generated from shared placement pattern, 662 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:05.0",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-015.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-015] -> success, script generated from shared placement pattern, 696 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:05.7",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-016.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-016] -> success, script generated from shared placement pattern, 190 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:06.4",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-017.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-017] -> success, script generated from shared placement pattern, 224 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:07.0",
+      "actor": "Worker-070",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-018.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-018] -> success, 258 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:07.7",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-019.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-019] -> success, script generated from shared placement pattern, 292 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:08.4",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-020.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-020] -> success, script generated from shared placement pattern, 326 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:09.0",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-021.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-021] -> success, script generated from shared placement pattern, 360 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:09.7",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-022.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-022] -> success, script generated from shared placement pattern, 394 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:10.4",
+      "actor": "Worker-075",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-023.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-023] -> success, 428 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:11.1",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-024.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-024] -> success, script generated from shared placement pattern, 462 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:11.7",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-025.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-025] -> success, script generated from shared placement pattern, 496 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:12.4",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-026.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-026] -> success, script generated from shared placement pattern, 530 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:13.1",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-027.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-027] -> success, script generated from shared placement pattern, 564 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:13.7",
+      "actor": "Worker-080",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-028.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-028] -> success, 598 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:14.4",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-029.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-029] -> success, script generated from shared placement pattern, 632 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:15.1",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-030.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-030] -> success, script generated from shared placement pattern, 666 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:15.7",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-031.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-031] -> success, script generated from shared placement pattern, 160 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:16.4",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-032.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-032] -> success, script generated from shared placement pattern, 194 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:17.1",
+      "actor": "Worker-065",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-033.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-033] -> success, 228 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:17.7",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-034.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-034] -> success, script generated from shared placement pattern, 262 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:18.4",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-035.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-035] -> success, script generated from shared placement pattern, 296 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:19.1",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-036.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-036] -> success, script generated from shared placement pattern, 330 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:19.8",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-037.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-037] -> success, script generated from shared placement pattern, 364 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:20.4",
+      "actor": "Worker-070",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-038.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-038] -> success, 398 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:21.1",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-039.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-039] -> success, script generated from shared placement pattern, 432 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:21.8",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-040.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-040] -> success, script generated from shared placement pattern, 466 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:22.4",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Repair mismatched blocks in Region-D/subtask-041 with Replace Region.",
+      "sublines": [
+        "skill_call: Use Skill[Replace Region, Region-D/subtask-041] -> success, 6 corrections prepared"
+      ],
+      "skill": "replace_region"
+    },
+    {
+      "time": "13:23.1",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-042.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-042] -> success, script generated from shared placement pattern, 534 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:23.8",
+      "actor": "Worker-075",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-043.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-043] -> success, 568 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:24.4",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 6, running 5, complete 35, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "13:25.1",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-044.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-044] -> success, script generated from shared placement pattern, 625 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:25.8",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-001.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-001] -> success, script generated from shared placement pattern, 175 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:26.4",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-002.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-002] -> success, script generated from shared placement pattern, 209 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:27.1",
+      "actor": "Worker-079",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-003.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-003] -> success, 243 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:27.8",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-004.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-004] -> success, script generated from shared placement pattern, 277 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:28.5",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-005.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-005] -> success, script generated from shared placement pattern, 311 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:29.1",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-006.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-006] -> success, script generated from shared placement pattern, 345 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:29.8",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-007.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-007] -> success, script generated from shared placement pattern, 379 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:30.5",
+      "actor": "Worker-064",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-008.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-008] -> success, 413 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:31.1",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-009.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-009] -> success, script generated from shared placement pattern, 447 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:31.8",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-010.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-010] -> success, script generated from shared placement pattern, 481 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:32.5",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-011.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-011] -> success, script generated from shared placement pattern, 515 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:33.1",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-012.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-012] -> success, script generated from shared placement pattern, 549 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:33.8",
+      "actor": "Worker-069",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-013.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-013] -> success, 583 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:34.5",
+      "actor": "ProjectManager",
+      "kind": "TOOL",
+      "action": "Sampling progress from Foreman-D.",
+      "sublines": [
+        "tool_call: Collect Reports[Foreman-D] -> success, Region-D complete 38/44, active Skills: Build Region, Replace Region, Scaffold"
+      ],
+      "tool": "Collect Reports"
+    },
+    {
+      "time": "13:35.1",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-014.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-014] -> success, script generated from shared placement pattern, 640 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:35.8",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-015.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-015] -> success, script generated from shared placement pattern, 674 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:36.5",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-016.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-016] -> success, script generated from shared placement pattern, 168 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:37.1",
+      "actor": "Worker-073",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-017.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-017] -> success, 202 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:37.8",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-018.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-018] -> success, script generated from shared placement pattern, 236 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:38.5",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-019.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-019] -> success, script generated from shared placement pattern, 270 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:39.2",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-020.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-020] -> success, script generated from shared placement pattern, 304 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:39.8",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-021.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-021] -> success, script generated from shared placement pattern, 338 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:40.5",
+      "actor": "Worker-078",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-022.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-022] -> success, 372 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:41.2",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-023.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-023] -> success, script generated from shared placement pattern, 406 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:41.8",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-024.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-024] -> success, script generated from shared placement pattern, 440 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:42.5",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-025.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-025] -> success, script generated from shared placement pattern, 474 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:43.2",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-026.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-026] -> success, script generated from shared placement pattern, 508 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:43.8",
+      "actor": "Worker-063",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-027.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-027] -> success, 542 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:44.5",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-028.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-028] -> success, script generated from shared placement pattern, 576 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:45.2",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 0, running 3, complete 41, failed 1"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "13:45.8",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-029.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-029] -> success, script generated from shared placement pattern, 633 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:46.5",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-030.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-030] -> success, script generated from shared placement pattern, 667 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:47.2",
+      "actor": "Worker-067",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-031.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-031] -> success, 161 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:47.9",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-032.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-032] -> success, script generated from shared placement pattern, 195 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:48.5",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-033.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-033] -> success, script generated from shared placement pattern, 229 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:49.2",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-034.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-034] -> success, script generated from shared placement pattern, 263 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:49.9",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-035.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-035] -> success, script generated from shared placement pattern, 297 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:50.5",
+      "actor": "Worker-072",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-036.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-036] -> success, 331 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:51.2",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Repair mismatched blocks in Region-D/subtask-037 with Replace Region.",
+      "sublines": [
+        "skill_call: Use Skill[Replace Region, Region-D/subtask-037] -> success, 4 corrections prepared"
+      ],
+      "skill": "replace_region"
+    },
+    {
+      "time": "13:51.9",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-038.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-038] -> success, script generated from shared placement pattern, 399 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:52.5",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-039.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-039] -> success, script generated from shared placement pattern, 433 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:53.2",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-040.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-040] -> success, script generated from shared placement pattern, 467 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:53.9",
+      "actor": "Worker-077",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-041.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-041] -> success, 501 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:54.5",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-042.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-042] -> success, script generated from shared placement pattern, 535 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:55.2",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-043.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-043] -> success, script generated from shared placement pattern, 569 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:55.9",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-044.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-044] -> success, script generated from shared placement pattern, 603 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:56.5",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-001.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-001] -> success, script generated from shared placement pattern, 693 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:57.2",
+      "actor": "Worker-062",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-002.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-002] -> success, 187 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "13:57.9",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-003.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-003] -> success, script generated from shared placement pattern, 221 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:58.6",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-004.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-004] -> success, script generated from shared placement pattern, 255 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:59.2",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-005.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-005] -> success, script generated from shared placement pattern, 289 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "13:59.9",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-006.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-006] -> success, script generated from shared placement pattern, 323 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:00.6",
+      "actor": "Worker-067",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-007.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-007] -> success, 357 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:01.2",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-008.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-008] -> success, script generated from shared placement pattern, 391 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:01.9",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-009.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-009] -> success, script generated from shared placement pattern, 425 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:02.6",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-010.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-010] -> success, script generated from shared placement pattern, 459 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:03.2",
+      "actor": "Worker-071",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-011.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-011] -> success, script generated from shared placement pattern, 493 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:03.9",
+      "actor": "Worker-072",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-012.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-012] -> success, 527 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:04.6",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-013.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-013] -> success, script generated from shared placement pattern, 561 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:05.2",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-014.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-014] -> success, script generated from shared placement pattern, 595 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:05.9",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 0, running 0, complete 44, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "14:06.6",
+      "actor": "Worker-075",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-015.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-015] -> success, script generated from shared placement pattern, 652 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:07.3",
+      "actor": "Worker-076",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-016.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-016] -> success, 686 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:07.9",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-017.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-017] -> success, script generated from shared placement pattern, 180 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:08.6",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-018.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-018] -> success, script generated from shared placement pattern, 214 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:09.3",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-019.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-019] -> success, script generated from shared placement pattern, 248 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:09.9",
+      "actor": "Worker-080",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-020.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-020] -> success, script generated from shared placement pattern, 282 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:10.6",
+      "actor": "Worker-061",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-021.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-021] -> success, 316 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:11.3",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-022.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-022] -> success, script generated from shared placement pattern, 350 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:11.9",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-023.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-023] -> success, script generated from shared placement pattern, 384 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:12.6",
+      "actor": "Worker-064",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-024.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-024] -> success, script generated from shared placement pattern, 418 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:13.3",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-025.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-025] -> success, script generated from shared placement pattern, 452 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:13.9",
+      "actor": "Worker-066",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-026.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-026] -> success, 486 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:14.6",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-027.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-027] -> success, script generated from shared placement pattern, 520 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:15.3",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-028.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-028] -> success, script generated from shared placement pattern, 554 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:16.0",
+      "actor": "Worker-069",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-029.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-029] -> success, script generated from shared placement pattern, 588 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:16.6",
+      "actor": "Worker-070",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-030.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-030] -> success, script generated from shared placement pattern, 622 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:17.3",
+      "actor": "Worker-071",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-031.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-031] -> success, 656 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:18.0",
+      "actor": "Worker-072",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-032.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-032] -> success, script generated from shared placement pattern, 690 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:18.6",
+      "actor": "Worker-073",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-033.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-033] -> success, script generated from shared placement pattern, 184 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:19.3",
+      "actor": "ProjectManager",
+      "kind": "TOOL",
+      "action": "Sampling progress from Foreman-D.",
+      "sublines": [
+        "tool_call: Collect Reports[Foreman-D] -> success, Region-D complete 44/44, active Skills: Build Region, Replace Region, Scaffold"
+      ],
+      "tool": "Collect Reports"
+    },
+    {
+      "time": "14:20.0",
+      "actor": "Worker-074",
+      "kind": "SKILL",
+      "action": "Repair mismatched blocks in Region-D/subtask-034 with Replace Region.",
+      "sublines": [
+        "skill_call: Use Skill[Replace Region, Region-D/subtask-034] -> success, 11 corrections prepared"
+      ],
+      "skill": "replace_region"
+    },
+    {
+      "time": "14:20.6",
+      "actor": "Worker-075",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-035.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-035] -> success, 275 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:21.3",
+      "actor": "Worker-076",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-036.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-036] -> success, script generated from shared placement pattern, 309 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:22.0",
+      "actor": "Worker-077",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-037.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-037] -> success, script generated from shared placement pattern, 343 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:22.6",
+      "actor": "Worker-078",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-038.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-038] -> success, script generated from shared placement pattern, 377 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:23.3",
+      "actor": "Worker-079",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-039.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-039] -> success, script generated from shared placement pattern, 411 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:24.0",
+      "actor": "Worker-080",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-040.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-040] -> success, 445 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:24.6",
+      "actor": "Worker-061",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-041.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-041] -> success, script generated from shared placement pattern, 479 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:25.3",
+      "actor": "Worker-062",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-042.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-042] -> success, script generated from shared placement pattern, 513 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:26.0",
+      "actor": "Worker-063",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-043.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-043] -> success, script generated from shared placement pattern, 547 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:26.7",
+      "actor": "Foreman-D",
+      "kind": "TOOL",
+      "action": "Checking Region-D queue progress while Workers are building.",
+      "sublines": [
+        "tool_call: Check Subtasks[Region-D] -> success, open 0, running 0, complete 44, failed 0"
+      ],
+      "tool": "Check Subtasks"
+    },
+    {
+      "time": "14:27.3",
+      "actor": "Worker-064",
+      "kind": "TOOL",
+      "action": "Read target region for Region-D/subtask-044.",
+      "sublines": [
+        "tool_call: Read Subtask[Region-D/subtask-044] -> success, 604 blocks processed"
+      ],
+      "tool": "Read Subtask"
+    },
+    {
+      "time": "14:28.0",
+      "actor": "Worker-065",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-001.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-001] -> success, script generated from shared placement pattern, 694 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:28.7",
+      "actor": "Worker-066",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-002.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-002] -> success, script generated from shared placement pattern, 188 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:29.3",
+      "actor": "Worker-067",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-003.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-003] -> success, script generated from shared placement pattern, 222 placements"
+      ],
+      "skill": "build_region"
+    },
+    {
+      "time": "14:30.0",
+      "actor": "Worker-068",
+      "kind": "SKILL",
+      "action": "Use Build Region for Region-D/subtask-004.",
+      "sublines": [
+        "skill_call: Use Skill[Build Region, Region-D/subtask-004] -> success, script generated from shared placement pattern, 256 placements"
+      ],
+      "skill": "build_region"
+    }
+  ]
+}

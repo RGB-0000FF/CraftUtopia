@@ -1,0 +1,159 @@
+CraftUtopia Demo Process
+=======================
+
+This file describes the editable demo-log structure used by the frontend.
+
+Core story
+----------
+The demo should be easy to understand:
+
+    InitEnvironments
+        - start minecraft server
+        - init bot
+
+    Transfer Image To Blueprint
+        - show only three visible tool calls
+
+    Build Blueprint
+        - ProjectManager reads the blueprint
+        - ProjectManager splits it into five Foreman sub blueprints
+        - ProjectManager dispatches one sub blueprint to each Foreman
+
+    Foreman-A Build Sub Blueprint
+    Foreman-B Build Sub Blueprint
+    Foreman-C Build Sub Blueprint
+    Foreman-D Build Sub Blueprint
+    Foreman-E Build Sub Blueprint
+        - each Foreman owns one sub blueprint and 20 Workers
+        - this is where most visible log events should live
+        - Workers call tools, build, verify, repair, and submit subtasks
+        - repeated tool patterns gradually become Skills
+
+    Close And Clean Environment
+        - final verification
+        - cleanup
+        - stop bots
+        - close minecraft server
+
+Stage files
+-----------
+The editable source files live in data/demo-log/.
+
+    manifest.json
+    00-init-environments.json
+    01-transfer-image-to-blueprint.json
+    02-build-blueprint.json
+    03-foreman-a-build-sub-blueprint.json
+    04-foreman-b-build-sub-blueprint.json
+    05-foreman-c-build-sub-blueprint.json
+    06-foreman-d-build-sub-blueprint.json
+    07-foreman-e-build-sub-blueprint.json
+    08-close-and-clean-environment.json
+
+Editable JSON source format
+---------------------------
+Each phase file only keeps fields that humans should edit:
+
+    {
+      "stage": {
+        "id": 3,
+        "label": "03 Foreman-A Build Sub Blueprint",
+        "summary": "Foreman-A spends this phase building Region-A.",
+        "metrics": ["00:55.0", "04:10.0", "Region-A build"],
+        "children": [
+          { "id": "3.1", "label": "split sub blueprint", "summary": "Foreman-A splits Region-A into worker subtasks." }
+        ]
+      },
+      "events": [
+        {
+          "time": "00:55.0",
+          "actor": "Foreman-A",
+          "kind": "TOOL",
+          "action": "Inspect sub blueprint before building Region-A.",
+          "sublines": [
+            "tool_call: Read Sub Blueprint[Region-A.json] -> success, 42 subtasks, Workers 001-020"
+          ],
+          "tool": "Read Sub Blueprint"
+        }
+      ]
+    }
+
+Do not hand-edit rendered cache fields such as text, line, lines, seq, display, or timecode.
+The frontend generates those fields at runtime.
+
+Event kind rule
+---------------
+Keep the visible demo labels very simple:
+
+    LOG      ordinary event, status, coordination, verification, cleanup, or progress
+    TOOL     an agent calls a tool
+    SKILL    an agent learns, publishes, or uses a skill
+
+System events should stay LOG. Tools are only for agents.
+Avoid extra labels such as BOOT, PLAN, INPUT, AGENTS, COORD, CHECK, PASS, CLEAN, TOOL✓, SKILL◆, or SKILL↗ in the visible demo log.
+
+Subline rule
+------------
+The main event sentence should stay readable on its own.
+Sublines belong to the immediately previous main event.
+A tool call and its result should stay together in the same subline.
+
+Good:
+    Worker-021: I can use Build Region for Region-B/subtask-017.
+        -> skill_call: Use Skill[Build Region, Region-B/subtask-017] -> success, script generated from shared placement pattern
+
+Avoid:
+    Separate event for tool call.
+    Separate event for tool result.
+
+Skill placement rule
+--------------------
+Skills are not standalone stages.
+They appear inside the Foreman build files because they are learned while work is happening.
+
+Recommended skill story:
+
+    Foreman-A Build Sub Blueprint
+        early tool-heavy building
+        Build Region is learned after repeated read/generate/run/verify/submit loops
+
+    Foreman-B Build Sub Blueprint
+        Build Region is reused
+        Replace Region is learned after repeated repair/mismatch patches
+
+    Foreman-C Build Sub Blueprint
+        Build Region and Replace Region are reused
+        Scaffold is learned when tall or awkward regions need temporary support
+
+    Foreman-D Build Sub Blueprint
+        mostly skill-assisted building
+        Build Region, Replace Region, and Scaffold are reused heavily
+
+    Foreman-E Build Sub Blueprint
+        late build and cleanup pressure
+        Clean Region is learned when cleanup becomes a repeated task
+
+    Close And Clean Environment
+        Clean Region is reused for final cleanup
+
+Current event distribution
+--------------------------
+Total visible events: 1518
+
+    00 InitEnvironments                         17
+    01 Transfer Image To Blueprint               6
+    02 Build Blueprint                          45
+    03 Foreman-A Build Sub Blueprint           260
+    04 Foreman-B Build Sub Blueprint           280
+    05 Foreman-C Build Sub Blueprint           300
+    06 Foreman-D Build Sub Blueprint           285
+    07 Foreman-E Build Sub Blueprint           260
+    08 Close And Clean Environment              65
+
+The Foreman build stages contain 1385 events, so the demo's visible time and information density are concentrated on construction.
+
+Vocabulary
+----------
+Use "subtask", not internal task-market wording.
+Use full actor names: ProjectManager, Designer, Foreman-A, Worker-047.
+Use stage names as frontend milestone names.

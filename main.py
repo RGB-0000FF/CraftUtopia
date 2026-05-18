@@ -17,7 +17,7 @@ def main() -> None:
 
     with ThreadingHTTPServer((host, port), handler) as server:
         print(f"CraftUtopia demo: http://{host}:{port}/index.html")
-        print("Edit data/run-config.json for stage metadata and data/run-events.json for the right-side log.")
+        print("Edit data/demo-log/manifest.json and the phase files in data/demo-log/ for the right-side log.")
         server.serve_forever()
 
 

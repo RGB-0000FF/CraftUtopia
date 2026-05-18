@@ -82,6 +82,9 @@
     }
 
     .app {
+      --app-resizer-width: 18px;
+      --log-board-min: 420px;
+      --log-board-width: 560px;
       position: relative;
       z-index: 1;
       width: 100vw;
@@ -89,8 +92,73 @@
       min-height: 0;
       padding: clamp(12px, calc(29px * var(--ui-scale)), 34px);
       display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(380px, 2fr);
+      grid-template-columns: minmax(0, 1fr) var(--app-resizer-width) minmax(var(--log-board-min), var(--log-board-width));
       gap: clamp(10px, calc(18px * var(--ui-scale)), 24px);
+    }
+
+    .app.is-resizing {
+      cursor: col-resize;
+      user-select: none;
+    }
+
+    .app.is-resizing .status,
+    .app.is-resizing .log-board {
+      pointer-events: none;
+    }
+
+    .app-resizer {
+      position: relative;
+      z-index: 4;
+      min-width: var(--app-resizer-width);
+      align-self: stretch;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      cursor: col-resize;
+      touch-action: none;
+    }
+
+    .app-resizer::before {
+      content: "";
+      width: 2px;
+      height: min(100%, 840px);
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255,217,135,0.08), rgba(85,255,164,0.20), rgba(116,214,196,0.10)),
+        rgba(3,16,8,0.42);
+      box-shadow: inset 0 0 0 1px rgba(234,255,239,0.05);
+      opacity: 0.58;
+      transition: width 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .app-resizer::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(234,255,239,0.07);
+      background:
+        linear-gradient(180deg, transparent 8px, rgba(234,255,239,0.18) 8px 9px, transparent 9px 17px, rgba(234,255,239,0.18) 17px 18px, transparent 18px 26px, rgba(234,255,239,0.18) 26px 27px, transparent 27px),
+        rgba(0,0,0,0.16);
+      opacity: 0.42;
+      pointer-events: none;
+    }
+
+    .app-resizer:hover::before,
+    .app-resizer:focus-visible::before,
+    .app.is-resizing .app-resizer::before {
+      width: 4px;
+      background:
+        linear-gradient(180deg, rgba(255,217,135,0.16), rgba(85,255,164,0.38), rgba(116,214,196,0.18)),
+        rgba(3,16,8,0.68);
+      box-shadow: 0 0 14px rgba(85,255,164,0.16), inset 0 0 0 1px rgba(234,255,239,0.08);
+      opacity: 0.86;
+    }
+
+    .app-resizer:focus-visible {
+      outline: 2px solid rgba(85,255,164,0.58);
+      outline-offset: 3px;
     }
 
     .app::before {
@@ -315,6 +383,36 @@
       filter: saturate(1.04) contrast(1.03);
     }
 
+    .timeline-intro {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      padding: clamp(18px, calc(30px * var(--ui-scale)), 38px);
+      background:
+        radial-gradient(circle at 50% 46%, rgba(116,214,196,0.14), transparent 24rem),
+        linear-gradient(180deg, rgba(2,8,6,0.54), rgba(2,8,6,0.88));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 260ms ease;
+    }
+
+    .timeline-intro.is-visible {
+      opacity: 1;
+    }
+
+    .timeline-intro img {
+      display: block;
+      width: min(92%, 1120px);
+      max-height: min(86%, 760px);
+      object-fit: contain;
+      border: 1px solid rgba(143,220,255,0.24);
+      border-radius: 8px;
+      background: rgba(0,0,0,0.30);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.42), 0 0 38px rgba(116,214,196,0.12);
+    }
+
     .build-timeline {
       position: absolute;
       left: clamp(16px, calc(24px * var(--ui-scale)), 30px);
@@ -334,6 +432,14 @@
         radial-gradient(circle at 100% 50%, rgba(255,217,135,0.10), transparent 11rem);
       box-shadow: 0 22px 46px rgba(0,0,0,0.38), inset 0 1px rgba(234,255,239,0.13), inset 0 -1px rgba(85,255,164,0.08);
       backdrop-filter: blur(16px) saturate(1.28);
+      cursor: pointer;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .build-timeline.is-scrubbing {
+      border-color: rgba(255,217,135,0.34);
+      box-shadow: 0 24px 50px rgba(0,0,0,0.42), 0 0 24px rgba(255,217,135,0.16), inset 0 1px rgba(234,255,239,0.16);
     }
 
     .build-timeline::before {
@@ -417,6 +523,11 @@
       box-shadow: inset 0 0 0 1px rgba(216,255,247,0.10), 0 0 20px rgba(85,255,164,0.16);
     }
 
+    .build-timeline-rail::selection,
+    .build-timeline *::selection {
+      background: transparent;
+    }
+
     .build-timeline-rail::before,
     .build-timeline-rail::after {
       content: "";
@@ -465,6 +576,86 @@
         radial-gradient(circle, #fff5bd 0 22%, #55ffa4 24% 42%, rgba(3,16,10,0.94) 44%);
       box-shadow: 0 0 18px rgba(255,217,135,0.56), 0 0 26px rgba(85,255,164,0.32);
       transform: translate(50%, -50%);
+    }
+
+    .timeline-marker {
+      --marker-left: 0%;
+      position: absolute;
+      left: var(--marker-left);
+      top: 50%;
+      z-index: 4;
+      width: 18px;
+      height: 24px;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .timeline-markers {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .timeline-markers .timeline-marker {
+      pointer-events: auto;
+    }
+
+    .timeline-marker::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 6px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,217,135,0.40);
+      background: linear-gradient(180deg, rgba(255,217,135,0.88), rgba(85,255,164,0.62));
+      box-shadow: 0 0 14px rgba(255,217,135,0.30), 0 0 18px rgba(85,255,164,0.18);
+      transform: translate(-50%, -50%);
+    }
+
+    .timeline-marker::after {
+      content: attr(aria-label);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 9px);
+      max-width: 150px;
+      padding: 4px 7px;
+      border: 1px solid rgba(216,255,247,0.16);
+      border-radius: 6px;
+      color: rgba(233,255,243,0.82);
+      background: rgba(2,12,8,0.88);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.30);
+      font-family: var(--font-mono);
+      font-size: 0.54rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 4px);
+      transition: opacity 150ms ease, transform 150ms ease;
+    }
+
+    .timeline-marker:hover::after,
+    .timeline-marker:focus-visible::after,
+    .timeline-marker.is-active::after {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .timeline-marker.is-active::before {
+      width: 8px;
+      height: 24px;
+      border-color: rgba(234,255,239,0.76);
+      box-shadow: 0 0 18px rgba(255,217,135,0.42), 0 0 24px rgba(85,255,164,0.26);
     }
 
     .build-timeline-labels {
@@ -1898,6 +2089,10 @@
         padding: 12px;
       }
 
+      .app-resizer {
+        display: none;
+      }
+
       .skill-library { max-width: calc(100% - 24px); }
       .chat-feed { gap: 8px; }
       .system-note { margin: 0 24px 2px 28px; }
@@ -2022,10 +2217,10 @@
     }
 
     .console-header {
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(18px, 0.55fr) minmax(178px, max-content);
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      column-gap: 10px;
       padding: 8px 10px;
     }
 
@@ -2033,6 +2228,12 @@
       min-width: 0;
       display: grid;
       gap: 4px;
+    }
+
+    .console-header-spacer {
+      min-width: 18px;
+      height: 1px;
+      pointer-events: none;
     }
 
     .console-kicker,
@@ -2098,6 +2299,9 @@
       align-items: center;
       justify-content: flex-end;
       gap: 9px;
+      min-width: 178px;
+      width: max-content;
+      justify-self: end;
       flex: 0 0 auto;
     }
 
@@ -2787,6 +2991,7 @@
     }
 
     .milestone-status-light {
+      --milestone-light-y: 0;
       width: 9px;
       height: 9px;
       border-radius: 999px;
@@ -2855,13 +3060,28 @@
       background: rgba(116,214,196,0.045);
     }
 
+    .milestone-worker-tree .milestone-body {
+      grid-template-columns: auto minmax(0, 1fr);
+      padding-right: 20px;
+    }
+
     .milestone-worker-tree .milestone-line {
-      display: block;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 6px;
       grid-column: 2;
     }
 
     .milestone-worker-tree .milestone-status-light {
-      display: none;
+      position: absolute;
+      top: 50%;
+      right: 7px;
+      display: block;
+      width: 7px;
+      height: 7px;
+      --milestone-light-y: -50%;
+      transform: translateY(var(--milestone-light-y));
     }
 
     .milestone-worker-tree .milestone-line strong {
@@ -2939,8 +3159,8 @@
     }
 
     @keyframes milestoneLightBlink {
-      0%, 100% { opacity: 0.46; transform: scale(0.84); }
-      50% { opacity: 1; transform: scale(1.18); }
+      0%, 100% { opacity: 0.46; transform: translateY(var(--milestone-light-y, 0)) scale(0.84); }
+      50% { opacity: 1; transform: translateY(var(--milestone-light-y, 0)) scale(1.18); }
     }
 
     @keyframes milestoneReveal {
@@ -3025,6 +3245,38 @@
       border-radius: 999px;
     }
 
+    .console-log .stage-divider {
+      display: block;
+      margin: 8px 0 5px;
+      padding: 6px 7px;
+      border: 1px solid rgba(85,255,164,0.16);
+      border-radius: 4px;
+      color: rgba(214,255,229,0.82);
+      background:
+        linear-gradient(90deg, rgba(85,255,164,0.10), rgba(119,225,255,0.035)),
+        rgba(1,5,3,0.72);
+      box-shadow: inset 0 1px rgba(255,255,255,0.04);
+    }
+
+    .console-log .stage-divider span {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .console-log .stage-divider p {
+      margin: 2px 0 0;
+      color: rgba(182,255,209,0.58);
+      font-family: var(--font-mono);
+      font-size: 0.60rem;
+      font-weight: 650;
+      line-height: 1.25;
+    }
+
     .terminal-log-line,
     .event-row.terminal-log-line {
       display: block;
@@ -3089,6 +3341,237 @@
       font-weight: 650;
       line-height: inherit;
       overflow-wrap: anywhere;
+      white-space: normal;
+    }
+
+    .terminal-log-line.is-structured {
+      display: block;
+      padding: 5px 4px 7px;
+    }
+
+    .terminal-log-line.is-structured .event-text {
+      display: block;
+      min-width: 0;
+      max-width: 100%;
+      overflow-x: visible;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      white-space: normal;
+      text-wrap: wrap;
+      line-height: 1.42;
+      color: #dfffe9;
+    }
+
+    .structured-main {
+      display: block;
+      min-width: 0;
+      color: rgba(224,255,234,0.90);
+      font-family: var(--font-mono);
+      font-size: 0.96em;
+      font-weight: 720;
+      line-height: 1.36;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+
+    .structured-time {
+      display: inline;
+      margin-right: 0.38ch;
+      color: rgba(255,217,135,0.78);
+      font-weight: 760;
+    }
+
+    .structured-actor {
+      display: inline;
+      margin-right: 0.38ch;
+      color: #d4ffe1;
+      font-weight: 820;
+      white-space: nowrap;
+    }
+
+    .structured-kind {
+      display: inline-block;
+      margin-right: 0.55ch;
+      padding: 1px 5px 2px;
+      border: 1px solid rgba(125,255,173,0.25);
+      border-radius: 4px;
+      color: #82ffb3;
+      background: rgba(85,255,164,0.07);
+      font-size: 0.86em;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .structured-action {
+      display: inline;
+      min-width: 0;
+      margin-right: 0.45ch;
+      color: rgba(224,255,234,0.86);
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .structured-result {
+      display: inline;
+      min-width: 0;
+      margin: 0;
+      color: rgba(199,255,218,0.72);
+      font-family: var(--font-mono);
+      font-size: 0.96em;
+      font-weight: 620;
+      line-height: inherit;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .structured-sublines {
+      display: block;
+      margin-top: 2px;
+      color: rgba(182,255,209,0.72);
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      font-weight: 620;
+      line-height: 1.32;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .structured-subline {
+      display: block;
+      min-width: 0;
+      margin: 1px 0 0;
+      padding: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .structured-subline-prefix {
+      display: inline;
+      margin-right: 1.35ch;
+      color: rgba(255,217,135,0.74);
+      font-weight: 900;
+    }
+
+    .structured-subline-body {
+      display: inline;
+      min-width: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .structured-progress {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5ch;
+      min-width: 0;
+      margin-left: 0.65ch;
+      vertical-align: baseline;
+      color: rgba(201,255,118,0.88);
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      font-weight: 820;
+      line-height: 1.25;
+    }
+
+    .structured-progress-track {
+      display: inline-grid;
+      grid-template-columns: repeat(8, 1ch);
+      gap: 1px;
+      flex: 0 0 auto;
+    }
+
+    .structured-progress-cell {
+      width: 1ch;
+      height: 0.72em;
+      border-radius: 2px;
+      background: rgba(201,255,118,0.16);
+      box-shadow: inset 0 0 0 1px rgba(201,255,118,0.08);
+    }
+
+    .structured-progress-cell.is-filled {
+      background: linear-gradient(180deg, rgba(201,255,118,0.96), rgba(85,255,164,0.70));
+      box-shadow: 0 0 8px rgba(157,255,137,0.18);
+    }
+
+    .structured-progress-text {
+      white-space: nowrap;
+      color: rgba(224,255,180,0.74);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind^="TOOL"] .structured-kind {
+      border-color: rgba(119,225,255,0.30);
+      color: #8cecff;
+      background: rgba(119,225,255,0.08);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind^="TOOL"] .structured-action {
+      color: #d2f9ff;
+    }
+
+    .terminal-log-line.is-structured[data-event-kind="LOG"] .structured-kind {
+      border-color: rgba(198,232,210,0.24);
+      color: #cbeedd;
+      background: rgba(198,232,210,0.06);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind="AGENTS"] .structured-kind {
+      border-color: rgba(139,255,178,0.32);
+      color: #91ffbd;
+      background: rgba(85,255,164,0.09);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind="COORD"] .structured-kind,
+    .terminal-log-line.is-structured[data-event-kind="CHECK"] .structured-kind {
+      border-color: rgba(255,217,135,0.30);
+      color: #ffe1a0;
+      background: rgba(255,217,135,0.08);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind="INPUT"] .structured-kind {
+      border-color: rgba(119,225,255,0.30);
+      color: #9cecff;
+      background: rgba(119,225,255,0.08);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind^="SKILL"] .structured-kind {
+      border-color: rgba(220,146,255,0.34);
+      color: #efc5ff;
+      background: rgba(220,146,255,0.10);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind^="SKILL"] .structured-action {
+      color: #f0d7ff;
+    }
+
+    .terminal-log-line.is-structured[data-event-kind="WARN"] .structured-kind,
+    .terminal-log-line.is-structured[data-event-kind="TOOL✕"] .structured-kind {
+      border-color: rgba(255,210,109,0.34);
+      color: #ffe5a8;
+      background: rgba(255,210,109,0.10);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind="WARN"] .structured-action,
+    .terminal-log-line.is-structured[data-event-kind="TOOL✕"] .structured-action,
+    .terminal-log-line.is-structured[data-event-kind="WARN"] .structured-result,
+    .terminal-log-line.is-structured[data-event-kind="TOOL✕"] .structured-result {
+      color: #ffe5a8;
+    }
+
+    .terminal-log-line.is-structured[data-event-kind="PASS"] .structured-kind {
+      border-color: rgba(155,255,175,0.34);
+      color: #caffd6;
+      background: rgba(155,255,175,0.10);
+    }
+
+    .terminal-log-line.is-structured[data-event-kind="PASS"] .structured-action,
+    .terminal-log-line.is-structured[data-event-kind="PASS"] .structured-result {
+      color: #caffd6;
+    }
+
+    @media (max-width: 760px) {
+      .structured-main {
+        font-size: 0.92em;
+      }
     }
 
     .terminal-log-line .agent-mention {
@@ -3154,12 +3637,18 @@
 
       .console-header {
         align-items: flex-start;
-        flex-direction: column;
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 10px;
         padding: 11px;
+      }
+
+      .console-header-spacer {
+        display: none;
       }
 
       .console-control-group {
         width: 100%;
+        min-width: 0;
         justify-content: flex-start;
         flex-wrap: wrap;
       }
@@ -3223,18 +3712,24 @@
 
       <div class="visual-wrap">
         <div class="gif-stage" aria-label="Minecraft replay preview" tabindex="0">
-          <video class="world-video" src="assets/replay_videos_mp4/replay-preview-2026-05-12.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Minecraft replay preview"></video>
+          <video class="world-video" src="assets/replay_videos_mp4/build-process-2026-05-17-235648-web.mp4" muted playsinline preload="metadata" aria-label="Minecraft build replay"></video>
+          <div class="timeline-intro is-visible" id="timeline-intro" aria-hidden="true">
+            <img src="assets/images/architecture.jpg" alt="">
+          </div>
         </div>
-        <div class="build-timeline" aria-label="Elapsed build timeline">
+        <div class="build-timeline" role="slider" tabindex="0" aria-label="Elapsed build timeline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="00:00.0">
           <div class="build-timeline-head">
             <strong id="console-elapsed-value">00:00.0</strong>
           </div>
           <div class="build-timeline-rail">
             <span id="console-elapsed-bar"></span>
+            <div class="timeline-markers" id="timeline-markers" aria-hidden="false"></div>
           </div>
         </div>
       </div>
     </section>
+
+    <div class="app-resizer" id="app-resizer" role="separator" tabindex="0" aria-label="Resize terminal console" aria-orientation="vertical" aria-valuemin="420" aria-valuemax="720" aria-valuenow="560"></div>
 
     <aside class="log-board" aria-label="Terminal task console">
       <div class="chat-shell terminal-console">
@@ -3242,6 +3737,7 @@
           <div class="console-title-group">
             <h2 id="console-task-title">CraftUtopia Build<span class="console-title-break">with <span class="console-title-scale">100</span> Agents</span></h2>
           </div>
+          <div class="console-header-spacer" aria-hidden="true"></div>
           <div class="console-control-group">
             <div class="header-progress console-meter" style="--value: 0%" aria-label="Build progress">
               <span id="console-progress-value">0%</span>
@@ -3296,55 +3792,92 @@
     const AUTO_PLAY_MIN_DELAY = 1000;
     const AUTO_PLAY_MAX_DELAY = 1000;
     const AUTO_PLAY_MS_PER_WORD = 22;
+    const INTRO_ARCHITECTURE_SECONDS = 10;
+    const DEMO_FALLBACK_VIDEO_SECONDS = 89.767;
+    const KEYFRAME_HOLD_MS = 5000;
+    const TIMELINE_KEYFRAMES = [
+      { id: 'blueprint-ready', label: 'Blueprint Ready', demoSeconds: 10, stageId: 1 },
+      { id: 'build-region', label: 'Build Region', demoSeconds: 17, skill: 'build_region' },
+      { id: 'scaffold', label: 'Scaffold', demoSeconds: 28, skill: 'scaffold' },
+      { id: 'replace-region', label: 'Replace Region', demoSeconds: 38, skill: 'replace_region' },
+      { id: 'clean-region', label: 'Clean Region', demoSeconds: 50, skill: 'clean_region' }
+    ];
     const DESIGN_WIDTH = 1440;
     const DESIGN_HEIGHT = 900;
     const COMPACT_BREAKPOINT = 980;
+    const LOG_FOLLOW_THRESHOLD = 56;
     const root = document.documentElement;
     let stages = [];
     let chatMessages = [];
     let groupRooms = [];
     let playbackEvents = [];
     let renderedStageIds = new Set();
+    let progressRows = new Map();
     let logRevealTimer = null;
     let autoScrollRelease = null;
     let isAutoScrolling = false;
+    let shouldFollowLog = true;
     let playbackCursor = 0;
     let isMessagePending = false;
     let autoPlayTimer = null;
+    let autoPlayFrame = null;
+    let autoPlayClockStartSeconds = 0;
+    let autoPlayClockStartedAt = 0;
     let isAutoPlaying = false;
     let playbackSpeed = 1;
+    let demoVideoSeconds = DEMO_FALLBACK_VIDEO_SECONDS;
+    let timelineAnchors = [];
+    let keyframeHoldTimer = null;
+    let frameworkCollapseTimer = null;
+    let isKeyframeHolding = false;
+    let frozenVideoTime = 0;
+    let heldKeyframes = new Set();
     let activeRoom = '';
     let milestoneRenderKey = '';
     let skillLibraryUnlocked = false;
     let focusedSkillRef = '';
     let skillState = new Map();
     let mentionRegex = null;
+    let isScrubbingTimeline = false;
+    let scrubFrame = null;
     const mentionAccentByTerm = new Map();
     const SKILL_REGISTRY = {
-      place: {
-        name: 'Place',
-        summary: 'Guarded block placement with bounds check, air_check, and rollback metadata.',
-        learnedLabel: 'Foreman-E Worker Pool',
-        sharedTo: 'Foreman-A/B/C/D/E pools',
+      build_region: {
+        name: 'Build Region',
+        summary: 'Reusable bounded placement loop learned after many Workers repeat read, script, run, verify, submit.',
+        learnedLabel: 'Foreman-A Build',
+        sharedTo: 'Foreman-A..Foreman-E',
         accent: '#72ffd1'
       },
-      remove: {
-        name: 'Remove',
-        summary: 'Delete temporary or incorrect blocks only after tag ownership and rollback checks.',
-        learnedLabel: 'Foreman-E cleanup',
-        sharedTo: 'Foreman-A/B/C/D/E pools',
+      replace_region: {
+        name: 'Replace Region',
+        summary: 'Wrong-block and missing-block repair pattern learned when mid-build repair pressure increases.',
+        learnedLabel: 'Foreman-B Build',
+        sharedTo: 'Foreman-A..Foreman-E',
+        accent: '#f06f9f'
+      },
+      scaffold: {
+        name: 'Scaffold',
+        summary: 'Temporary support placement with cleanup markers learned from awkward high-region builds.',
+        learnedLabel: 'Foreman-C Build',
+        sharedTo: 'Foreman-A..Foreman-E',
         accent: '#ffd987'
       },
-      replace: {
-        name: 'Replace',
-        summary: 'Verify wrong block, remove it safely, place correction, then write audit record.',
-        learnedLabel: 'Foreman-C row patch',
-        sharedTo: 'Foreman-A/B/C/D/E pools',
-        accent: '#f06f9f'
+      clean_region: {
+        name: 'Clean Region',
+        summary: 'Final cleanup pass for scaffold and leftover blocks while preserving valid blueprint blocks.',
+        learnedLabel: 'Foreman-E Build',
+        sharedTo: 'Foreman-A..Foreman-E',
+        accent: '#9dff89'
       }
     };
 
+    const appShell = document.querySelector('.app');
+    const appResizer = document.querySelector('#app-resizer');
     const logBoard = document.querySelector('.log-board');
+    const LOG_BOARD_MIN_WIDTH = 420;
+    const LOG_BOARD_MAX_WIDTH = 720;
+    const STATUS_MIN_WIDTH = 360;
     const roomList = document.querySelector('#room-list');
     let roomTabs = [];
     const chatFeed = document.querySelector('#chat-feed');
@@ -3361,6 +3894,11 @@
     const consoleElapsedValue = document.querySelector('#console-elapsed-value');
     const consoleProgressBar = document.querySelector('#console-progress-bar');
     const consoleElapsedBar = document.querySelector('#console-elapsed-bar');
+    const buildTimeline = document.querySelector('.build-timeline');
+    const buildTimelineRail = document.querySelector('.build-timeline-rail');
+    const timelineMarkers = document.querySelector('#timeline-markers');
+    const worldVideo = document.querySelector('.world-video');
+    const timelineIntro = document.querySelector('#timeline-intro');
     const consoleMeters = document.querySelectorAll('.console-meter');
     const terminalConsole = document.querySelector('.terminal-console');
     const consoleFramework = document.querySelector('.console-framework');
@@ -3412,6 +3950,7 @@
       [
         ['User', '#ffcf66'],
         ['System Bot', '#72ffd1'],
+        ['ProjectManager', '#ffd987'],
         ['Project Manager', '#ffd987'],
         ['Designer', '#f6a5ff'],
         ['TRELLIS', '#74d6c4'],
@@ -3420,11 +3959,14 @@
         ['Foreman-C', '#f06f9f'],
         ['Foreman-D', '#a7ff83'],
         ['Foreman-E', '#ffb66e'],
-        ['Pool A', '#ffd987'],
-        ['Pool B', '#9ddcff'],
-        ['Pool C', '#f06f9f'],
-        ['Pool D', '#a7ff83'],
-        ['Pool E', '#ffb66e'],
+        ['Worker-001', '#72ffd1'],
+        ['Worker-047', '#f06f9f'],
+        ['Worker-100', '#ffb66e'],
+        ['Region-A', '#ffd987'],
+        ['Region-B', '#9ddcff'],
+        ['Region-C', '#f06f9f'],
+        ['Region-D', '#a7ff83'],
+        ['Region-E', '#ffb66e'],
         ['Skill Library', '#72ffd1'],
         ['Shared Skill Library', '#72ffd1']
       ].forEach(([term, accent]) => addMentionTerm(terms, term, accent));
@@ -3494,6 +4036,140 @@
       if (cursor < text.length) node.append(document.createTextNode(text.slice(cursor)));
     }
 
+    function createStructuredLogText(event) {
+      const display = event.display || null;
+      if (display?.timecode && display?.actor && display?.kind) {
+        return {
+          timecode: String(display.timecode),
+          actor: String(display.actor),
+          kind: String(display.kind),
+          action: String(display.action || ''),
+          result: display.result ? String(display.result) : '',
+          sublines: Array.isArray(display.sublines) ? display.sublines.map((line) => String(line)) : [],
+          progress: event.progress || display.progress || null
+        };
+      }
+
+      const lines = Array.isArray(event.lines) && event.lines.length
+        ? event.lines.map((line) => String(line))
+        : String(event.text || '').split('\n');
+      const first = lines[0] || '';
+      const bracketMatch = first.match(/^\[(T\+\d+(?:\.\d+)?)\]\s+\[([^\]]+)\]\s+\[([^\]]+)\]\s*(.*)$/);
+      if (bracketMatch) {
+        const resultMatch = (lines[1] || '').match(/^\[result\]\s*(.*)$/);
+        return {
+          timecode: bracketMatch[1],
+          actor: bracketMatch[2].trim(),
+          kind: bracketMatch[3].trim(),
+          action: bracketMatch[4].trim(),
+          result: resultMatch ? resultMatch[1].trim() : '',
+          sublines: Array.isArray(event.sublines) ? event.sublines.map((line) => String(line)) : [],
+          progress: event.progress || null
+        };
+      }
+      const match = first.match(/^(T\+\d+(?:\.\d+)?)\s*(?:│|\s)\s*(.+?)\s*│\s*(\S+)\s*(.*)$/);
+      if (!match) return null;
+      const resultMatch = (lines[1] || '').match(/^\s*(?:↳|└─\s*result)\s*(.*)$/);
+      return {
+        timecode: match[1],
+        actor: match[2].trim(),
+        kind: match[3].trim(),
+        action: match[4].trim(),
+        result: resultMatch ? resultMatch[1].trim() : '',
+        sublines: Array.isArray(event.sublines) ? event.sublines.map((line) => String(line)) : [],
+        progress: event.progress || null
+      };
+    }
+
+    function createStructuredProgress(progress) {
+      if (!progress) return null;
+      const total = Number(progress.total || 0);
+      const current = Number(progress.current || 0);
+      if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(current)) return null;
+      const ratio = Math.max(0, Math.min(1, current / total));
+      const cells = 8;
+      const filled = Math.max(0, Math.min(cells, Math.round(ratio * cells)));
+      const wrap = document.createElement('span');
+      wrap.className = 'structured-progress';
+
+      const track = document.createElement('span');
+      track.className = 'structured-progress-track';
+      for (let i = 0; i < cells; i += 1) {
+        const cell = document.createElement('span');
+        cell.className = `structured-progress-cell${i < filled ? ' is-filled' : ''}`;
+        track.append(cell);
+      }
+
+      const label = progress.label ? `${progress.label} ` : '';
+      const text = document.createElement('span');
+      text.className = 'structured-progress-text';
+      text.textContent = `${label}${Math.round(ratio * 100)}%`;
+      wrap.append(track, text);
+      return wrap;
+    }
+
+    function appendStructuredLog(node, event) {
+      const log = createStructuredLogText(event);
+      if (!log) return false;
+
+      node.replaceChildren();
+
+      const main = document.createElement('span');
+      main.className = 'structured-main';
+
+      const timecode = document.createElement('span');
+      timecode.className = 'structured-time';
+      timecode.textContent = `[${log.timecode}]`;
+
+      const actor = document.createElement('span');
+      actor.className = 'structured-actor';
+      actor.textContent = `[${log.actor}]`;
+
+      const kind = document.createElement('span');
+      kind.className = 'structured-kind';
+      kind.textContent = `[${log.kind}]`;
+
+      const action = document.createElement('span');
+      action.className = 'structured-action';
+      action.textContent = log.action;
+
+      if (log.result) {
+        const result = document.createElement('span');
+        result.className = 'structured-result';
+        result.textContent = `→ ${log.result}`;
+        if (log.kind === 'LOG') main.append(timecode, actor, action, result);
+        else main.append(timecode, actor, kind, action, result);
+      } else {
+        if (log.kind === 'LOG') main.append(timecode, actor, action);
+        else main.append(timecode, actor, kind, action);
+      }
+
+      const progress = createStructuredProgress(log.progress);
+      if (progress) {
+        main.append(progress);
+      }
+      node.append(main);
+
+      if (log.sublines?.length) {
+        const sublines = document.createElement('span');
+        sublines.className = 'structured-sublines';
+        log.sublines.forEach((line) => {
+          const subline = document.createElement('span');
+          subline.className = 'structured-subline';
+          const prefix = document.createElement('span');
+          prefix.className = 'structured-subline-prefix';
+          prefix.textContent = '↳';
+          const body = document.createElement('span');
+          body.className = 'structured-subline-body';
+          body.textContent = line;
+          subline.append(prefix, body);
+          sublines.append(subline);
+        });
+        node.append(sublines);
+      }
+      return true;
+    }
+
     function ensureSkillState(skillRef = '') {
       const ref = String(skillRef || '').trim();
       if (!ref) return null;
@@ -3545,11 +4221,22 @@
 
       const kind = event.message?.kind || event.type || 'skill-event';
       const stageTitle = event.group?.title || event.stageLabel || 'Build Pools';
-      skill.learned = true;
-      skill.published = true;
-      skill.learnedRoom = stageTitle;
-      ['Foreman-A Worker Pool', 'Foreman-B Worker Pool', 'Foreman-C Worker Pool', 'Foreman-D Worker Pool', 'Foreman-E Worker Pool']
-        .forEach((room) => skill.usedRooms.add(room));
+      if (String(kind).includes('SKILL◆')) {
+        skill.learned = true;
+        skill.learnedRoom = stageTitle;
+      } else if (String(kind).includes('SKILL↗')) {
+        skill.learned = true;
+        skill.published = true;
+        if (!skill.learnedRoom) skill.learnedRoom = stageTitle;
+      } else if (String(kind).includes('SKILL')) {
+        skill.learned = true;
+        skill.published = true;
+        if (!skill.learnedRoom) skill.learnedRoom = skill.learnedLabel || stageTitle;
+        skill.usedRooms.add(stageTitle);
+      } else {
+        skill.learned = true;
+        if (!skill.learnedRoom) skill.learnedRoom = stageTitle;
+      }
       focusedSkillRef = skill.ref;
       skill.events.push({ index, kind, room: event.group?.id || `stage-${event.stageId}`, title: stageTitle });
       skillLibraryUnlocked = true;
@@ -3585,7 +4272,7 @@
 
     function getSkillIconMarkup(skillRef = '') {
       const icons = {
-        place: `
+        build_region: `
           <svg viewBox="0 0 48 48" aria-hidden="true">
             <rect x="12" y="10" width="24" height="8" fill="#7cc85f"/>
             <rect x="8" y="18" width="32" height="18" fill="#8b5a2b"/>
@@ -3596,7 +4283,7 @@
             <rect x="25" y="29" width="6" height="4" fill="#5a331b"/>
             <rect x="10" y="36" width="28" height="4" fill="#3b2415"/>
           </svg>`,
-        remove: `
+        clean_region: `
           <svg viewBox="0 0 48 48" aria-hidden="true">
             <rect x="10" y="12" width="28" height="26" fill="#7f8b91"/>
             <rect x="14" y="16" width="8" height="8" fill="#aab5b8"/>
@@ -3607,7 +4294,7 @@
             <rect x="6" y="21" width="36" height="7" fill="#ff6961"/>
             <rect x="10" y="23" width="28" height="3" fill="#ffd0cc"/>
           </svg>`,
-        replace: `
+        replace_region: `
           <svg viewBox="0 0 48 48" aria-hidden="true">
             <rect x="7" y="21" width="15" height="15" fill="#8b5a2b"/>
             <rect x="7" y="17" width="15" height="5" fill="#7cc85f"/>
@@ -3617,6 +4304,16 @@
             <rect x="28" y="24" width="4" height="12" fill="#ffd987"/>
             <rect x="32" y="27" width="5" height="6" fill="#ffd987"/>
             <rect x="10" y="36" width="28" height="3" fill="#3b2415"/>
+          </svg>`,
+        scaffold: `
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <rect x="12" y="34" width="24" height="5" fill="#8b5a2b"/>
+            <rect x="15" y="15" width="4" height="22" fill="#ffd987"/>
+            <rect x="29" y="15" width="4" height="22" fill="#ffd987"/>
+            <rect x="10" y="20" width="28" height="4" fill="#74d6c4"/>
+            <rect x="10" y="28" width="28" height="4" fill="#74d6c4"/>
+            <path d="M16 34 L32 20" stroke="#0d1c16" stroke-width="3"/>
+            <path d="M16 20 L32 34" stroke="#0d1c16" stroke-width="3"/>
           </svg>`
       };
       return icons[skillRef] || `
@@ -3799,20 +4496,38 @@
       const key = String(event.stageId);
       if (renderedStageIds.has(key)) return;
       renderedStageIds.add(key);
-      chatFeed.append(createStageDivider(event));
     }
 
-    function createChatMessage(event, index) {
-      const article = document.createElement('article');
+    function getEventProgress(event = {}) {
+      return event.progress || event.display?.progress || null;
+    }
+
+    function getProgressRowKey(event = {}) {
+      const progress = getEventProgress(event);
+      if (!progress?.label) return '';
+      return `${event.stageId}:${progress.label}`;
+    }
+
+    function populateChatMessage(article, event, index, options = {}) {
       article.className = 'event-row terminal-log-line is-entering';
+      if (!options.entering) article.classList.remove('is-entering');
       article.dataset.chatStage = String(event.stageId);
       article.dataset.stageFilter = `stage-${event.stageId}`;
       article.dataset.eventKind = event.type || 'EVENT';
       article.dataset.eventIndex = String(index);
+      const progressKey = getProgressRowKey(event);
+      if (progressKey) article.dataset.progressKey = progressKey;
+      else delete article.dataset.progressKey;
       if (event.skill) {
         article.dataset.skillRef = event.skill;
         article.title = `Skill event: ${event.skill}`;
+      } else {
+        delete article.dataset.skillRef;
+        article.removeAttribute('title');
       }
+      article.replaceChildren();
+
+      const structuredLog = createStructuredLogText(event);
 
       const time = document.createElement('span');
       time.className = 'event-time';
@@ -3824,16 +4539,55 @@
 
       const text = document.createElement('p');
       text.className = 'event-text';
-      appendMentionedText(text, event.text || '');
+      if (structuredLog) {
+        article.classList.add('is-structured');
+        appendStructuredLog(text, event);
+      } else {
+        appendMentionedText(text, event.text || '');
+      }
 
-      article.append(time, badge, text);
+      if (structuredLog) {
+        article.append(text);
+      } else {
+        article.append(time, badge, text);
+      }
+      return article;
+    }
+
+    function createChatMessage(event, index) {
+      const article = document.createElement('article');
+      populateChatMessage(article, event, index, { entering: true });
       article.addEventListener('animationend', () => article.classList.remove('is-entering'), { once: true });
       setTimeout(() => article.classList.remove('is-entering'), 320);
       return article;
     }
 
-    function scrollChatToBottom(index) {
-      chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior: index === 0 ? 'auto' : 'smooth' });
+    function isLogNearBottom() {
+      if (!chatFeed) return true;
+      const distance = chatFeed.scrollHeight - chatFeed.clientHeight - chatFeed.scrollTop;
+      return distance <= LOG_FOLLOW_THRESHOLD;
+    }
+
+    function scrollChatToBottom(index, options = {}) {
+      if (!options.force && !shouldFollowLog) return;
+      lockAutoScrollSync();
+      shouldFollowLog = true;
+      const behavior = index === 0 || options.instant ? 'auto' : 'smooth';
+      chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior });
+      if (options.force || options.instant) {
+        const pinToBottom = () => {
+          chatFeed.style.scrollBehavior = 'auto';
+          chatFeed.scrollTop = chatFeed.scrollHeight;
+          chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior: 'auto' });
+          requestAnimationFrame(() => {
+            chatFeed.style.scrollBehavior = '';
+          });
+        };
+        pinToBottom();
+        requestAnimationFrame(pinToBottom);
+        setTimeout(pinToBottom, 80);
+        setTimeout(pinToBottom, 220);
+      }
     }
 
     function lockAutoScrollSync() {
@@ -3843,14 +4597,88 @@
     }
 
     function stopAutoPlay(update = true) {
+      const wasHolding = isKeyframeHolding;
       clearTimeout(autoPlayTimer);
+      cancelAnimationFrame(autoPlayFrame);
+      clearTimeout(keyframeHoldTimer);
       autoPlayTimer = null;
+      autoPlayFrame = null;
+      keyframeHoldTimer = null;
       isAutoPlaying = false;
+      isKeyframeHolding = false;
+      worldVideo?.pause();
+      if (wasHolding) collapseFrameworkAfterHold();
       if (update) updatePlaybackControls();
     }
 
     function clamp(value, min, max) {
       return Math.min(Math.max(value, min), max);
+    }
+
+    function getPanelResizeBounds() {
+      if (!appShell) return { min: LOG_BOARD_MIN_WIDTH, max: LOG_BOARD_MAX_WIDTH };
+      const style = getComputedStyle(appShell);
+      const gap = Number.parseFloat(style.columnGap || style.gap || '0') || 0;
+      const paddingLeft = Number.parseFloat(style.paddingLeft || '0') || 0;
+      const paddingRight = Number.parseFloat(style.paddingRight || '0') || 0;
+      const resizerWidth = appResizer?.getBoundingClientRect().width || 0;
+      const contentWidth = appShell.clientWidth - paddingLeft - paddingRight;
+      const availableMax = contentWidth - (gap * 2) - resizerWidth - STATUS_MIN_WIDTH;
+      const max = Math.max(LOG_BOARD_MIN_WIDTH, Math.min(LOG_BOARD_MAX_WIDTH, availableMax));
+      return { min: LOG_BOARD_MIN_WIDTH, max };
+    }
+
+    function setLogBoardWidth(width) {
+      if (!appShell || !appResizer || window.innerWidth <= COMPACT_BREAKPOINT) return;
+      const bounds = getPanelResizeBounds();
+      const next = Math.round(clamp(width, bounds.min, bounds.max));
+      appShell.style.setProperty('--log-board-width', `${next}px`);
+      appResizer.setAttribute('aria-valuemin', String(bounds.min));
+      appResizer.setAttribute('aria-valuemax', String(Math.round(bounds.max)));
+      appResizer.setAttribute('aria-valuenow', String(next));
+    }
+
+    function syncPanelWidthToCurrentLayout() {
+      if (!logBoard || window.innerWidth <= COMPACT_BREAKPOINT) return;
+      setLogBoardWidth(logBoard.getBoundingClientRect().width);
+    }
+
+    function getRightPanelWidthFromPointer(event) {
+      if (!appShell) return logBoard?.getBoundingClientRect().width || LOG_BOARD_MIN_WIDTH;
+      const style = getComputedStyle(appShell);
+      const gap = Number.parseFloat(style.columnGap || style.gap || '0') || 0;
+      const paddingRight = Number.parseFloat(style.paddingRight || '0') || 0;
+      const appRect = appShell.getBoundingClientRect();
+      const contentRight = appRect.right - paddingRight;
+      return contentRight - event.clientX - gap;
+    }
+
+    function startPanelResize(event) {
+      if (!appResizer || event.button !== 0 || window.innerWidth <= COMPACT_BREAKPOINT) return;
+      event.preventDefault();
+      appShell?.classList.add('is-resizing');
+      appResizer.setPointerCapture?.(event.pointerId);
+      setLogBoardWidth(getRightPanelWidthFromPointer(event));
+    }
+
+    function movePanelResize(event) {
+      if (!appShell?.classList.contains('is-resizing')) return;
+      event.preventDefault();
+      setLogBoardWidth(getRightPanelWidthFromPointer(event));
+    }
+
+    function endPanelResize(event) {
+      if (!appShell?.classList.contains('is-resizing')) return;
+      appShell.classList.remove('is-resizing');
+      appResizer?.releasePointerCapture?.(event.pointerId);
+    }
+
+    function handlePanelResizeKey(event) {
+      if (!appResizer || !logBoard || window.innerWidth <= COMPACT_BREAKPOINT) return;
+      const direction = event.key === 'ArrowLeft' ? 1 : (event.key === 'ArrowRight' ? -1 : 0);
+      if (!direction) return;
+      event.preventDefault();
+      setLogBoardWidth(logBoard.getBoundingClientRect().width + (direction * 24));
     }
 
     function getReadableText(message = {}) {
@@ -3873,85 +4701,141 @@
       return clamp(520 + (units * AUTO_PLAY_MS_PER_WORD), AUTO_PLAY_MIN_DELAY, AUTO_PLAY_MAX_DELAY) / playbackSpeed;
     }
 
+    function getCurrentAutoDemoSeconds(now = performance.now()) {
+      if (!isAutoPlaying) return getDemoSecondsForEventCount(playbackCursor);
+      return clamp(autoPlayClockStartSeconds, 0, getPresentationTotalSeconds());
+    }
+
+    function setTimelineReadout(seconds = 0) {
+      const safeSeconds = clamp(Number(seconds) || 0, 0, getPresentationTotalSeconds());
+      const total = getPresentationTotalSeconds();
+      const ratio = total > 0 ? clamp(safeSeconds / total, 0, 1) : 0;
+      const progressValue = `${Math.round(ratio * 100)}%`;
+      const elapsedTime = formatTimelineTime(safeSeconds);
+      if (consoleProgressValue) consoleProgressValue.textContent = progressValue;
+      if (consoleElapsedValue) consoleElapsedValue.textContent = elapsedTime;
+      if (consoleProgressBar) consoleProgressBar.style.width = progressValue;
+      if (consoleElapsedBar) consoleElapsedBar.style.width = progressValue;
+      consoleMeters.forEach((node) => { node.style.setProperty('--value', progressValue); });
+      buildTimeline?.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+      buildTimeline?.setAttribute('aria-valuetext', elapsedTime);
+      updateTimelineMarkerState(safeSeconds);
+    }
+
+    function renderPlaybackUntilLive(targetCount) {
+      const total = playbackEvents.length;
+      const count = clamp(Math.round(Number(targetCount) || 0), 0, total);
+      if (count <= playbackCursor) {
+        updatePlaybackControls();
+        return;
+      }
+
+      chatFeed.querySelector('.chat-placeholder')?.remove();
+      const shouldStickToBottom = shouldFollowLog || isLogNearBottom();
+      let last = null;
+      for (let index = playbackCursor; index < count; index += 1) {
+        last = appendEventInstantly(playbackEvents[index], index) || last;
+      }
+
+      chatMessages = [...document.querySelectorAll('.event-row[data-chat-stage]')];
+      playbackCursor = count;
+      applyRoomVisibility();
+      if (last) {
+        setStage(last.stageId, last.node, last.event);
+        shouldFollowLog = shouldStickToBottom;
+        scrollChatToBottom(count, { instant: true });
+      }
+      if (playbackCursor >= total) stopAutoPlay(false);
+      updatePlaybackControls();
+    }
+
+    function renderPlaybackToDemoSeconds(seconds = 0, options = {}) {
+      const safeSeconds = clamp(Number(seconds) || 0, 0, getPresentationTotalSeconds());
+      renderPlaybackUntilLive(getEventCountForDemoSeconds(safeSeconds));
+      setTimelineReadout(safeSeconds);
+      if (options.syncVideo !== false) {
+        updateVideoForDemoSeconds(safeSeconds, { noSeek: options.noSeek === true });
+      }
+    }
+
+    function getNextPendingKeyframeBySeconds(seconds = 0) {
+      return TIMELINE_KEYFRAMES.find((keyframe) => !heldKeyframes.has(keyframe.id) && Number(seconds) >= Number(keyframe.demoSeconds) - 0.015);
+    }
+
+    function runAutoPlayFrame(now = performance.now()) {
+      autoPlayFrame = null;
+      autoPlayTimer = null;
+      if (!isAutoPlaying || isKeyframeHolding) return;
+
+      const tickSeconds = Math.min(Math.max((now - autoPlayClockStartedAt) / 1000, 0), 0.16) * playbackSpeed;
+      autoPlayClockStartedAt = now;
+      autoPlayClockStartSeconds = clamp(autoPlayClockStartSeconds + tickSeconds, 0, getPresentationTotalSeconds());
+      let demoSeconds = autoPlayClockStartSeconds;
+      const keyframe = getNextPendingKeyframeBySeconds(demoSeconds);
+      if (keyframe) {
+        demoSeconds = keyframe.demoSeconds;
+        autoPlayClockStartSeconds = demoSeconds;
+      }
+
+      renderPlaybackToDemoSeconds(demoSeconds, { noSeek: true });
+
+      if (keyframe && beginKeyframeHold(keyframe)) return;
+      if (demoSeconds >= getPresentationTotalSeconds() || playbackCursor >= playbackEvents.length) {
+        renderPlaybackToDemoSeconds(getPresentationTotalSeconds(), { noSeek: true });
+        stopAutoPlay();
+        return;
+      }
+
+      autoPlayTimer = setTimeout(() => runAutoPlayFrame(performance.now()), 80);
+    }
+
+    function startAutoPlayLoop(startSeconds = getDemoSecondsForEventCount(playbackCursor)) {
+      cancelAnimationFrame(autoPlayFrame);
+      clearTimeout(autoPlayTimer);
+      autoPlayTimer = null;
+      autoPlayClockStartSeconds = clamp(Number(startSeconds) || 0, 0, getPresentationTotalSeconds());
+      autoPlayClockStartedAt = performance.now();
+      autoPlayTimer = setTimeout(() => runAutoPlayFrame(performance.now()), 0);
+    }
+
     function buildMilestoneNodes() {
-      const stageById = new Map([...stages, ...groupRooms].map((stage) => [Number(stage.id), stage]));
-      const summaryOf = (stageId, fallback) => stageById.get(Number(stageId))?.summary || stageById.get(Number(stageId))?.system || fallback;
+      const stageNodes = stages.map((stage, index) => {
+        const label = String(stage.label || `Phase ${stage.id}`).replace(/^\d+\s+/, '');
+        return {
+          id: `phase-${stage.id}`,
+          startStage: Number(stage.id),
+          endStage: Number(stage.id),
+          code: `[${String(stage.id).padStart(2, '0')}]`,
+          label,
+          role: stage.metrics?.[2] || 'phase milestone',
+          summary: stage.summary || stage.system || '',
+          prefix: index <= 3 ? 'prep' : (index <= 6 ? 'run' : 'done'),
+          parallel: index >= 3 && index <= 6,
+          children: (stage.children || []).map((child) => ({
+            id: `phase-${stage.id}-${child.id}`,
+            startStage: Number(stage.id),
+            endStage: Number(stage.id),
+            code: String(child.id || '').replace(/^\d+\./, ''),
+            label: child.label || child.id || 'substep',
+            role: 'child milestone',
+            summary: child.summary || '',
+            prefix: 'sub'
+          }))
+        };
+      });
       return [
         {
           id: 'pm-terminal',
-          startStage: 0,
-          endStage: 5,
+          startStage: stages[0]?.id ?? 0,
+          endStage: stages.at(-1)?.id ?? 0,
           code: '[PM]',
-          label: 'PM Control',
-          command: 'pm-orchestrator boot --session cs-704e',
-          role: 'root process supervising every sub terminal',
-          summary: 'Project Manager owns the full run and spawns sub terminals as needed.',
-          level: 0,
+          label: 'ProjectManager Control',
+          role: '1 PM · 5 logical Foremen · 100 Workers',
+          summary: 'Runtime evolves from tool-heavy execution into shared Skills during the build.',
           prefix: 'pm',
           root: true
         },
-        {
-          id: 'initialize',
-          startStage: 0,
-          endStage: 1,
-          code: '[01]',
-          label: 'Initialize',
-          command: 'system ingest request --attach source.png',
-          role: 'request parsed, run context opened',
-          summary: summaryOf(0, 'System opens the run and Project Manager prepares orchestration.'),
-          level: 1,
-          prefix: 'job'
-        },
-        {
-          id: 'design-blueprint',
-          startStage: 2,
-          endStage: 2,
-          code: '[02]',
-          label: 'Blueprint',
-          command: 'designer scan image --emit build_spec',
-          role: 'design terminal creates structure plan',
-          summary: summaryOf(2, 'Designer converts the image into blueprint artifacts.'),
-          level: 1,
-          prefix: 'job'
-        },
-        {
-          id: 'foreman-dispatch',
-          startStage: 3,
-          endStage: 3,
-          code: '[03]',
-          label: 'Dispatch',
-          command: 'pm split work --lanes A,B,C,D,E',
-          role: 'packets routed to foreman terminals',
-          summary: summaryOf(3, 'PM splits packets and starts five Foreman worker-pool rooms.'),
-          level: 1,
-          prefix: 'job'
-        },
-        {
-          id: 'parallel-build',
-          startStage: 4,
-          endStage: 4,
-          code: '[04]',
-          label: 'Parallel Build',
-          command: 'foremen run --parallel --share-skill-cache',
-          role: '5 live panes place, remove, replace blocks',
-          summary: 'Keeps Foreman-A through Foreman-E working in parallel and coordinates shared SKILLs.',
-          level: 1,
-          prefix: 'fork',
-          parallel: true,
-          workers: ['A', 'B', 'C', 'D', 'E']
-        },
-        {
-          id: 'return',
-          startStage: 5,
-          endStage: 5,
-          code: '[05]',
-          label: 'Verify & Pack',
-          command: 'pm merge outputs --audit --package',
-          role: 'final world, reports, logs returned',
-          summary: summaryOf(5, 'PM verifies the merged build and returns final artifacts.'),
-          level: 1,
-          prefix: 'ret'
-        }
+        ...stageNodes
       ];
     }
 
@@ -3967,7 +4851,7 @@
       item.className = `milestone-item is-${state}${node.root ? ' is-root' : ''}${node.parallel ? ' is-parallel' : ''}${options.worker ? ' is-worker' : ''}`;
       item.dataset.stage = String(node.startStage);
       item.dataset.milestoneId = node.id;
-      const loadMarkup = options.worker ? `<span class="milestone-load" style="--worker-load: ${options.load || 70}%" aria-hidden="true"></span>` : '';
+      const loadMarkup = options.load ? `<span class="milestone-load" style="--worker-load: ${options.load || 70}%" aria-hidden="true"></span>` : '';
       item.innerHTML = `
         <span class="milestone-body">
           <span class="milestone-branch" aria-hidden="true">${escapeHtml(node.prefix || 'sub')}</span>
@@ -3983,27 +4867,14 @@
       return item;
     }
 
-    function createWorkerTree(parentNode, state) {
-      if (!parentNode.workers?.length) return null;
-      const workerTree = document.createElement('ol');
-      workerTree.className = 'milestone-children milestone-worker-tree';
-      parentNode.workers.forEach((worker, index) => {
-        const workerNode = {
-          id: `${parentNode.id}-foreman-${worker}`,
-          startStage: parentNode.startStage,
-          endStage: parentNode.endStage,
-          code: `F-${worker}`,
-          label: `Foreman ${worker}`,
-          command: `lane-${worker.toLowerCase()} stream patch`,
-          role: `sub terminal lane ${worker}`,
-          prefix: 'tty'
-        };
-        workerTree.append(createMilestoneItem(workerNode, state, {
-          worker: true,
-          load: 72 + (index * 5)
-        }));
+    function createMilestoneChildTree(parentNode, state) {
+      if (!parentNode.children?.length) return null;
+      const childTree = document.createElement('ol');
+      childTree.className = 'milestone-children milestone-worker-tree';
+      parentNode.children.forEach((child) => {
+        childTree.append(createMilestoneItem(child, state, { worker: true }));
       });
-      return workerTree;
+      return childTree;
     }
 
     function renderMilestones(currentStageId = stages[0]?.id ?? 0) {
@@ -4033,29 +4904,20 @@
       visibleChildren.forEach((node) => {
         const state = getMilestoneState(node, currentId, isComplete);
         const item = createMilestoneItem(node, state);
-        const workerTree = createWorkerTree(node, state);
-        if (workerTree) item.append(workerTree);
+        const childTreeForNode = createMilestoneChildTree(node, state);
+        if (childTreeForNode) item.append(childTreeForNode);
         childTree.append(item);
       });
 
       if (visibleChildren.length) rootItem.append(childTree);
       milestoneList.append(rootItem);
+      const runningItem = milestoneList.querySelector('.milestone-children > .milestone-item.is-running');
+      runningItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
 
     function scheduleAutoPlay() {
-      if (!isAutoPlaying) return;
-      clearTimeout(autoPlayTimer);
-      const previousEvent = playbackEvents[Math.max(playbackCursor - 1, 0)];
-      const delay = getAutoPlayDelay(previousEvent);
-      autoPlayTimer = setTimeout(() => {
-        autoPlayTimer = null;
-        if (!isAutoPlaying) return;
-        if (playbackCursor >= playbackEvents.length) {
-          stopAutoPlay();
-          return;
-        }
-        advancePlayback({ fromAuto: true });
-      }, delay);
+      if (!isAutoPlaying || isKeyframeHolding) return;
+      startAutoPlayLoop(getDemoSecondsForEventCount(playbackCursor));
     }
 
     function updatePlaybackControls() {
@@ -4068,7 +4930,7 @@
       if (playbackPrev) playbackPrev.disabled = isMessagePending || isAutoPlaying || shown <= 0;
       if (playbackAuto) {
         playbackAuto.disabled = total === 0;
-        playbackAuto.textContent = isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play');
+        playbackAuto.textContent = isKeyframeHolding ? 'Hold' : (isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play'));
       }
       if (playbackSpeedToggle) {
         playbackSpeedToggle.textContent = `${playbackSpeed}x`;
@@ -4115,19 +4977,31 @@
         return;
       }
 
-      const article = createChatMessage(event, index);
-      chatFeed.append(article);
+      const progressKey = getProgressRowKey(event);
+      const shouldStickToBottom = shouldFollowLog || isLogNearBottom();
+      let article = progressKey ? progressRows.get(progressKey) : null;
+      appendStageDividerIfNeeded(event);
+      if (article) {
+        populateChatMessage(article, event, index, { entering: false });
+        if (shouldStickToBottom) chatFeed.append(article);
+        article.classList.add('active');
+      } else {
+        article = createChatMessage(event, index);
+        chatFeed.append(article);
+        if (progressKey) progressRows.set(progressKey, article);
+      }
 
       if (event.skill) updateSkillStateFromEvent(event, index);
       chatMessages = [...document.querySelectorAll('.event-row[data-chat-stage]')];
       applyRoomVisibility();
       setStage(event.stageId, article, event);
-      lockAutoScrollSync();
+      shouldFollowLog = shouldStickToBottom;
       scrollChatToBottom(index);
       playbackCursor = index + 1;
       isMessagePending = false;
       if (playbackCursor >= playbackEvents.length) stopAutoPlay(false);
       updatePlaybackControls();
+      if (isAutoPlaying && beginKeyframeHold(getNextPendingKeyframe())) return;
       scheduleAutoPlay();
     }
 
@@ -4136,20 +5010,28 @@
       clearTimeout(logRevealTimer);
       clearTimeout(autoScrollRelease);
       clearTimeout(autoPlayTimer);
+      clearTimeout(frameworkCollapseTimer);
       autoPlayTimer = null;
+      frameworkCollapseTimer = null;
       logRevealTimer = null;
       isAutoScrolling = false;
+      shouldFollowLog = true;
       playbackCursor = 0;
       isMessagePending = false;
+      heldKeyframes = new Set();
+      isKeyframeHolding = false;
       renderedStageIds = new Set();
+      progressRows = new Map();
       milestoneRenderKey = '';
       resetSkillState();
       skillLibrary?.classList.add('is-visible');
+      setFrameworkExpanded(false);
+      updateVideoForDemoSeconds(0, { force: true });
       chatFeed.replaceChildren();
       chatMessages = [];
 
       if (!events?.length) {
-        chatFeed.insertAdjacentHTML('beforeend', '<div class="log-error">No run events found in <code>data/run-events.json</code>.</div>');
+        chatFeed.insertAdjacentHTML('beforeend', '<div class="log-error">No run events found in <code>data/demo-log/manifest.json</code>.</div>');
         applyRoomVisibility();
         updatePlaybackControls();
         return;
@@ -4161,10 +5043,20 @@
     }
 
     function appendEventInstantly(event, index) {
-      const node = createChatMessage(event, index);
+      const progressKey = getProgressRowKey(event);
+      let node = progressKey ? progressRows.get(progressKey) : null;
+      appendStageDividerIfNeeded(event);
+      if (node) {
+        populateChatMessage(node, event, index, { entering: false });
+        chatFeed.append(node);
+      } else {
+        node = createChatMessage(event, index);
+        node.classList.remove('is-entering');
+        chatFeed.append(node);
+        if (progressKey) progressRows.set(progressKey, node);
+      }
       if (event.skill) updateSkillStateFromEvent(event, index);
       node.classList.remove('is-entering');
-      chatFeed.append(node);
       return { node, stageId: event.stageId, event };
     }
 
@@ -4174,14 +5066,17 @@
       clearTimeout(autoScrollRelease);
       logRevealTimer = null;
       isAutoScrolling = false;
+      shouldFollowLog = true;
       isMessagePending = false;
       renderedStageIds = new Set();
+      progressRows = new Map();
       milestoneRenderKey = '';
       resetSkillState();
       skillLibrary?.classList.add('is-visible');
 
       const total = playbackEvents.length;
       const count = Math.min(Math.max(Number(targetCount) || 0, 0), total);
+      if (count === 0) heldKeyframes = new Set();
       chatFeed.replaceChildren();
       chatMessages = [];
 
@@ -4196,8 +5091,7 @@
       if (last) {
         applyRoomVisibility();
         setStage(last.stageId, last.node, last.event);
-        lockAutoScrollSync();
-        chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior: 'auto' });
+        scrollChatToBottom(count, { force: true, instant: true });
       } else {
         chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Console armed</strong>Press <span class="mono">Play</span> to stream the run log.</div>');
         applyRoomVisibility();
@@ -4227,19 +5121,338 @@
       if (playbackCursor >= playbackEvents.length) renderPlaybackUntil(0);
       isAutoPlaying = true;
       updatePlaybackControls();
-      if (!isMessagePending) advancePlayback({ fromAuto: true });
+      startAutoPlayLoop(getDemoSecondsForEventCount(playbackCursor));
     }
 
     function togglePlaybackSpeed() {
+      const currentSeconds = getCurrentAutoDemoSeconds();
       playbackSpeed = playbackSpeed === 1 ? 2 : 1;
       updatePlaybackControls();
-      if (isAutoPlaying && !isMessagePending) scheduleAutoPlay();
+      if (isAutoPlaying && !isKeyframeHolding) startAutoPlayLoop(currentSeconds);
+    }
+
+    function formatTimelineTime(seconds = 0) {
+      const safeSeconds = Math.max(0, Number(seconds) || 0);
+      const minutes = Math.floor(safeSeconds / 60);
+      const remaining = safeSeconds - (minutes * 60);
+      return `${String(minutes).padStart(2, '0')}:${remaining.toFixed(1).padStart(4, '0')}`;
+    }
+
+    function getPresentationTotalSeconds() {
+      return Math.max(INTRO_ARCHITECTURE_SECONDS + demoVideoSeconds, TIMELINE_KEYFRAMES.at(-1)?.demoSeconds || 1, 1);
+    }
+
+    function findEventCountForKeyframe(keyframe, previousCount = 0) {
+      if (!playbackEvents.length) return 0;
+      const minCount = Math.max(0, Number(previousCount) || 0);
+      let index = -1;
+      if (keyframe.skill) {
+        index = playbackEvents.findIndex((event, eventIndex) => eventIndex + 1 > minCount && event.skill === keyframe.skill);
+      } else if (Number.isFinite(Number(keyframe.stageId))) {
+        for (let eventIndex = playbackEvents.length - 1; eventIndex >= 0; eventIndex -= 1) {
+          if (Number(playbackEvents[eventIndex].stageId) === Number(keyframe.stageId)) {
+            index = eventIndex;
+            break;
+          }
+        }
+      }
+      if (index < 0) {
+        const fallbackSeconds = keyframe.demoSeconds / getPresentationTotalSeconds() * getPlaybackTotalSeconds();
+        index = playbackEvents.findIndex((event) => event.seconds >= fallbackSeconds);
+      }
+      return clamp((index < 0 ? playbackEvents.length : index + 1), minCount, playbackEvents.length);
+    }
+
+    function rebuildTimelineAnchors() {
+      let previousCount = 0;
+      const anchors = [{ count: 0, seconds: 0, id: 'start' }];
+      TIMELINE_KEYFRAMES.forEach((keyframe) => {
+        const count = findEventCountForKeyframe(keyframe, previousCount);
+        keyframe.targetCount = count;
+        anchors.push({ count, seconds: keyframe.demoSeconds, id: keyframe.id });
+        previousCount = count;
+      });
+      anchors.push({ count: playbackEvents.length, seconds: getPresentationTotalSeconds(), id: 'complete' });
+      timelineAnchors = anchors
+        .sort((a, b) => a.seconds - b.seconds || a.count - b.count)
+        .filter((anchor, index, list) => index === 0 || anchor.seconds > list[index - 1].seconds || anchor.count > list[index - 1].count);
+      renderTimelineMarkers();
+    }
+
+    function getTimelineAnchorPairByCount(count = 0) {
+      const safeCount = clamp(Number(count) || 0, 0, playbackEvents.length);
+      const anchors = timelineAnchors.length ? timelineAnchors : [{ count: 0, seconds: 0 }, { count: playbackEvents.length, seconds: getPresentationTotalSeconds() }];
+      for (let index = 1; index < anchors.length; index += 1) {
+        if (safeCount <= anchors[index].count) return [anchors[index - 1], anchors[index]];
+      }
+      return [anchors[Math.max(0, anchors.length - 2)], anchors[anchors.length - 1]];
+    }
+
+    function getTimelineAnchorPairBySeconds(seconds = 0) {
+      const safeSeconds = clamp(Number(seconds) || 0, 0, getPresentationTotalSeconds());
+      const anchors = timelineAnchors.length ? timelineAnchors : [{ count: 0, seconds: 0 }, { count: playbackEvents.length, seconds: getPresentationTotalSeconds() }];
+      for (let index = 1; index < anchors.length; index += 1) {
+        if (safeSeconds <= anchors[index].seconds) return [anchors[index - 1], anchors[index]];
+      }
+      return [anchors[Math.max(0, anchors.length - 2)], anchors[anchors.length - 1]];
+    }
+
+    function getDemoSecondsForEventCount(count = playbackCursor) {
+      const [start, end] = getTimelineAnchorPairByCount(count);
+      const span = Math.max(1, end.count - start.count);
+      const ratio = clamp(((Number(count) || 0) - start.count) / span, 0, 1);
+      return start.seconds + ((end.seconds - start.seconds) * ratio);
+    }
+
+    function getEventCountForDemoSeconds(seconds = 0) {
+      const [start, end] = getTimelineAnchorPairBySeconds(seconds);
+      const span = Math.max(0.001, end.seconds - start.seconds);
+      const ratio = clamp(((Number(seconds) || 0) - start.seconds) / span, 0, 1);
+      return Math.round(start.count + ((end.count - start.count) * ratio));
     }
 
     function getPlaybackTotalSeconds() {
-      const eventTotal = playbackEvents.at(-1)?.seconds;
-      const stageTotal = parseTimelineTime(stages.at(-1)?.metrics?.[1] || '00:00.0');
-      return Math.max(eventTotal || 0, stageTotal || 0, 1);
+      return getPresentationTotalSeconds();
+    }
+
+    function getEventCountForTimelineRatio(ratio = 0) {
+      if (!playbackEvents.length) return 0;
+      const targetSeconds = clamp(ratio, 0, 1) * getPresentationTotalSeconds();
+      return getEventCountForDemoSeconds(targetSeconds);
+    }
+
+    function updateVideoForDemoSeconds(seconds = 0, options = {}) {
+      if (!worldVideo) return;
+      const safeSeconds = clamp(Number(seconds) || 0, 0, getPresentationTotalSeconds());
+      const isIntro = safeSeconds < INTRO_ARCHITECTURE_SECONDS;
+      timelineIntro?.classList.toggle('is-visible', isIntro);
+      const targetVideoTime = clamp(safeSeconds - INTRO_ARCHITECTURE_SECONDS, 0, Math.max(demoVideoSeconds, 0));
+      const duration = Number.isFinite(worldVideo.duration) && worldVideo.duration > 0 ? worldVideo.duration : demoVideoSeconds;
+      const shouldSeek = !options.noSeek && (options.force || !isAutoPlaying || isKeyframeHolding || playbackCursor >= playbackEvents.length || isIntro);
+      try {
+        const clampedVideoTime = clamp(targetVideoTime, 0, duration);
+        if (options.force && !isAutoPlaying && clampedVideoTime <= 0.05) {
+          worldVideo.pause();
+          worldVideo.currentTime = 0;
+          worldVideo.load?.();
+          return;
+        }
+        if (shouldSeek && Math.abs((worldVideo.currentTime || 0) - clampedVideoTime) > 0.08) {
+          try {
+            worldVideo.currentTime = clampedVideoTime;
+          } catch (seekError) {
+            worldVideo.fastSeek?.(clampedVideoTime);
+          }
+        }
+      } catch (error) {
+        // Some browsers can briefly reject seeking while metadata is loading.
+      }
+      if (isIntro || !isAutoPlaying || isKeyframeHolding || playbackCursor >= playbackEvents.length) {
+        if (!worldVideo.paused) worldVideo.pause();
+      } else if (worldVideo.paused) {
+        worldVideo.play?.().catch(() => {});
+      }
+    }
+
+    function updateVideoForTimelineRatio(ratio = 0, options = {}) {
+      updateVideoForDemoSeconds(clamp(ratio, 0, 1) * getPresentationTotalSeconds(), options);
+    }
+
+    function pauseVideoAtCurrentFrame() {
+      if (!worldVideo) return;
+      frozenVideoTime = Number.isFinite(worldVideo.currentTime) ? worldVideo.currentTime : 0;
+      if (!worldVideo.paused) worldVideo.pause();
+    }
+
+    function resumeVideoFromCurrentFrame() {
+      if (!worldVideo) return;
+      if (playbackCursor >= playbackEvents.length) return;
+      const demoSeconds = getDemoSecondsForEventCount(playbackCursor);
+      timelineIntro?.classList.toggle('is-visible', demoSeconds < INTRO_ARCHITECTURE_SECONDS);
+      if (demoSeconds >= INTRO_ARCHITECTURE_SECONDS) {
+        const playFromFrozenFrame = () => worldVideo.play?.().catch(() => {});
+        playFromFrozenFrame();
+        setTimeout(() => {
+          if (isAutoPlaying && !isKeyframeHolding && worldVideo.paused) playFromFrozenFrame();
+        }, 120);
+      }
+    }
+
+    function syncTimelineOverlayOnly(seconds = 0) {
+      timelineIntro?.classList.toggle('is-visible', Number(seconds) < INTRO_ARCHITECTURE_SECONDS);
+    }
+
+    function previewTimelineRatio(ratio = 0) {
+      const safeRatio = clamp(ratio, 0, 1);
+      const progressValue = `${Math.round(safeRatio * 100)}%`;
+      const elapsedSeconds = safeRatio * getPresentationTotalSeconds();
+      const elapsedTime = formatTimelineTime(elapsedSeconds);
+      if (consoleProgressValue) consoleProgressValue.textContent = progressValue;
+      if (consoleElapsedValue) consoleElapsedValue.textContent = elapsedTime;
+      if (consoleProgressBar) consoleProgressBar.style.width = progressValue;
+      if (consoleElapsedBar) consoleElapsedBar.style.width = progressValue;
+      consoleMeters.forEach((node) => { node.style.setProperty('--value', progressValue); });
+      buildTimeline?.setAttribute('aria-valuenow', String(Math.round(safeRatio * 100)));
+      buildTimeline?.setAttribute('aria-valuetext', elapsedTime);
+      updateVideoForDemoSeconds(elapsedSeconds, { force: true });
+      updateTimelineMarkerState(elapsedSeconds);
+    }
+
+    function renderTimelineMarkers() {
+      if (!timelineMarkers) return;
+      const total = getPresentationTotalSeconds();
+      timelineMarkers.replaceChildren(...TIMELINE_KEYFRAMES.map((keyframe) => {
+        const marker = document.createElement('button');
+        marker.className = 'timeline-marker';
+        marker.type = 'button';
+        marker.dataset.keyframeId = keyframe.id;
+        marker.dataset.targetCount = String(keyframe.targetCount || 0);
+        marker.style.setProperty('--marker-left', `${clamp((keyframe.demoSeconds / total) * 100, 0, 100)}%`);
+        marker.setAttribute('aria-label', keyframe.label);
+        marker.title = `${keyframe.label} · ${formatTimelineTime(keyframe.demoSeconds)}`;
+        marker.addEventListener('pointerdown', (event) => event.stopPropagation());
+        marker.addEventListener('click', (event) => {
+          event.stopPropagation();
+          stopAutoPlay();
+          seekTimelineToKeyframe(keyframe, { expandFramework: true });
+        });
+        return marker;
+      }));
+      updateTimelineMarkerState(getDemoSecondsForEventCount(playbackCursor));
+    }
+
+    function updateTimelineMarkerState(seconds = 0) {
+      if (!timelineMarkers) return;
+      const active = [...TIMELINE_KEYFRAMES]
+        .filter((keyframe) => Number(keyframe.demoSeconds) <= Number(seconds) + 0.35)
+        .at(-1);
+      timelineMarkers.querySelectorAll('.timeline-marker').forEach((marker) => {
+        marker.classList.toggle('is-active', marker.dataset.keyframeId === active?.id);
+      });
+    }
+
+    function seekTimelineToKeyframe(keyframe, options = {}) {
+      if (!keyframe) return;
+      const count = clamp(keyframe.targetCount || getEventCountForDemoSeconds(keyframe.demoSeconds), 0, playbackEvents.length);
+      renderPlaybackUntil(count);
+      previewTimelineRatio(keyframe.demoSeconds / getPresentationTotalSeconds());
+      updateVideoForDemoSeconds(keyframe.demoSeconds, { force: true });
+      if (options.expandFramework) {
+        setFrameworkExpanded(true);
+        collapseFrameworkAfterHold();
+      }
+    }
+
+    function getNextPendingKeyframe() {
+      return TIMELINE_KEYFRAMES.find((keyframe) => !heldKeyframes.has(keyframe.id) && playbackCursor >= (keyframe.targetCount || Infinity));
+    }
+
+    function beginKeyframeHold(keyframe) {
+      if (!keyframe || heldKeyframes.has(keyframe.id)) return false;
+      heldKeyframes.add(keyframe.id);
+      isKeyframeHolding = true;
+      setFrameworkExpanded(true);
+      timelineIntro?.classList.toggle('is-visible', keyframe.demoSeconds < INTRO_ARCHITECTURE_SECONDS);
+      pauseVideoAtCurrentFrame();
+      updatePlaybackControls();
+      clearTimeout(keyframeHoldTimer);
+      clearTimeout(frameworkCollapseTimer);
+      frameworkCollapseTimer = null;
+      keyframeHoldTimer = setTimeout(() => {
+        keyframeHoldTimer = null;
+        if (!isAutoPlaying) {
+          isKeyframeHolding = false;
+          setFrameworkExpanded(false);
+          updatePlaybackControls();
+          return;
+        }
+        isKeyframeHolding = false;
+        setFrameworkExpanded(false);
+        resumeVideoFromCurrentFrame();
+        updatePlaybackControls();
+        startAutoPlayLoop(keyframe.demoSeconds);
+      }, KEYFRAME_HOLD_MS);
+      return true;
+    }
+
+    function getTimelineRatioFromPointer(event) {
+      const rect = buildTimelineRail?.getBoundingClientRect();
+      if (!rect?.width) return 0;
+      return clamp((event.clientX - rect.left) / rect.width, 0, 1);
+    }
+
+    function seekTimelineToRatio(ratio = 0, options = {}) {
+      const count = getEventCountForTimelineRatio(ratio);
+      renderPlaybackUntil(count);
+      previewTimelineRatio(ratio);
+      if (!options.keepPaused && isAutoPlaying) scheduleAutoPlay();
+    }
+
+    function queueTimelineSeek(event, commit = false) {
+      const ratio = getTimelineRatioFromPointer(event);
+      previewTimelineRatio(ratio);
+      if (!commit) {
+        cancelAnimationFrame(scrubFrame);
+        scrubFrame = null;
+        return;
+      }
+      cancelAnimationFrame(scrubFrame);
+      scrubFrame = null;
+      seekTimelineToRatio(ratio, { keepPaused: true });
+    }
+
+    function startTimelineScrub(event) {
+      if (!buildTimelineRail || !playbackEvents.length) return;
+      event.preventDefault();
+      stopAutoPlay();
+      isScrubbingTimeline = true;
+      shouldFollowLog = true;
+      buildTimeline?.classList.add('is-scrubbing');
+      buildTimeline?.setPointerCapture?.(event.pointerId);
+      queueTimelineSeek(event);
+    }
+
+    function moveTimelineScrub(event) {
+      if (!isScrubbingTimeline) return;
+      event.preventDefault();
+      queueTimelineSeek(event);
+    }
+
+    function endTimelineScrub(event) {
+      if (!isScrubbingTimeline) return;
+      event.preventDefault();
+      isScrubbingTimeline = false;
+      buildTimeline?.classList.remove('is-scrubbing');
+      buildTimeline?.releasePointerCapture?.(event.pointerId);
+      queueTimelineSeek(event, true);
+    }
+
+    function handleTimelineKeydown(event) {
+      if (!playbackEvents.length) return;
+      const total = getPresentationTotalSeconds();
+      const currentRatio = clamp(getDemoSecondsForEventCount(playbackCursor) / total, 0, 1);
+      const smallStep = 8 / Math.max(total, 1);
+      const largeStep = 40 / Math.max(total, 1);
+      let nextRatio = currentRatio;
+      if (event.key === 'ArrowLeft') nextRatio -= smallStep;
+      else if (event.key === 'ArrowRight') nextRatio += smallStep;
+      else if (event.key === 'PageUp') nextRatio += largeStep;
+      else if (event.key === 'PageDown') nextRatio -= largeStep;
+      else if (event.key === 'Home') nextRatio = 0;
+      else if (event.key === 'End') nextRatio = 1;
+      else return;
+      event.preventDefault();
+      stopAutoPlay();
+      shouldFollowLog = true;
+      seekTimelineToRatio(clamp(nextRatio, 0, 1), { keepPaused: true });
+    }
+
+    function handleTimelineClick(event) {
+      if (!playbackEvents.length || isScrubbingTimeline) return;
+      event.preventDefault();
+      stopAutoPlay();
+      shouldFollowLog = true;
+      seekTimelineToRatio(getTimelineRatioFromPointer(event), { keepPaused: true });
     }
 
     function setStage(stageId, activeMessage = null, activeEvent = null) {
@@ -4252,16 +5465,25 @@
 
       const eventIndex = Number(activeMessage?.dataset.eventIndex);
       const focusedEvent = activeEvent || (Number.isFinite(eventIndex) ? playbackEvents[eventIndex] : null);
-      const fallbackTime = playbackCursor === 0 && !focusedEvent ? '00:00.0' : stage.metrics?.[1] || '00:00.0';
-      const elapsedTime = focusedEvent?.time || fallbackTime;
-      const elapsedSeconds = focusedEvent ? focusedEvent.seconds : parseTimelineTime(elapsedTime);
-      const progressValue = `${Math.round(clamp((elapsedSeconds / getPlaybackTotalSeconds()) * 100, 0, 100))}%`;
+      const focusedPlaybackIndex = Number.isFinite(eventIndex) ? eventIndex : (focusedEvent ? playbackEvents.indexOf(focusedEvent) : -1);
+      const focusedCount = focusedPlaybackIndex >= 0 ? focusedPlaybackIndex + 1 : playbackCursor;
+      const elapsedSeconds = getDemoSecondsForEventCount(focusedCount);
+      const elapsedTime = formatTimelineTime(elapsedSeconds);
+      const progressValue = `${Math.round(clamp((elapsedSeconds / getPresentationTotalSeconds()) * 100, 0, 100))}%`;
 
       if (consoleProgressValue) consoleProgressValue.textContent = progressValue;
       if (consoleElapsedValue) consoleElapsedValue.textContent = elapsedTime;
       if (consoleProgressBar) consoleProgressBar.style.width = progressValue;
       if (consoleElapsedBar) consoleElapsedBar.style.width = progressValue;
       consoleMeters.forEach((node) => { node.style.setProperty('--value', progressValue); });
+      buildTimeline?.setAttribute('aria-valuenow', String(Math.round(clamp((elapsedSeconds / getPresentationTotalSeconds()) * 100, 0, 100))));
+      buildTimeline?.setAttribute('aria-valuetext', elapsedTime);
+      if (isAutoPlaying) {
+        syncTimelineOverlayOnly(elapsedSeconds);
+      } else {
+        updateVideoForDemoSeconds(elapsedSeconds);
+      }
+      updateTimelineMarkerState(elapsedSeconds);
       renderMilestones(stage.id);
 
       const fallbackMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === Number(stage.id));
@@ -4341,6 +5563,14 @@
       frameworkToggle?.setAttribute('aria-expanded', String(isExpanded));
     }
 
+    function collapseFrameworkAfterHold() {
+      clearTimeout(frameworkCollapseTimer);
+      frameworkCollapseTimer = setTimeout(() => {
+        frameworkCollapseTimer = null;
+        setFrameworkExpanded(false);
+      }, KEYFRAME_HOLD_MS);
+    }
+
     function openFrameworkLightbox() {
       if (!frameworkLightbox) return;
       frameworkLightbox.hidden = false;
@@ -4365,10 +5595,80 @@
     pageBaseUrl.hash = '';
     const siteAssetUrl = (path) => new URL(path, pageBaseUrl).toString();
 
-    async function loadRunEvents() {
-      const response = await fetch(siteAssetUrl('data/run-events.json'), { cache: 'no-store' });
+    const RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
+
+    async function loadJsonAsset(path) {
+      const response = await fetch(siteAssetUrl(path), { cache: 'no-store' });
       if (!response.ok) throw new Error(`Run events HTTP ${response.status}`);
       return response.json();
+    }
+
+    async function loadSplitRunEvents() {
+      const manifest = await loadJsonAsset(RUN_EVENTS_MANIFEST_PATH);
+      const phaseLogs = await Promise.all((manifest.timeline || []).map(async (phase) => {
+        const phaseLog = await loadJsonAsset(`data/demo-log/${phase.file}`);
+        return { phase, phaseLog };
+      }));
+      let seq = 1;
+      const stages = phaseLogs.map(({ phase, phaseLog }) => {
+        const stage = phaseLog.stage || {};
+        const events = (phaseLog.events || []).map((event) => normalizeRunEvent(event, seq++));
+        return {
+          ...stage,
+          id: stage.id ?? phase.id,
+          label: stage.label || phase.label,
+          summary: stage.summary || phase.summary || '',
+          system: stage.system || stage.summary || phase.summary || '',
+          metrics: stage.metrics || phase.metrics || [],
+          events
+        };
+      });
+      return {
+        title: manifest.title,
+        intro: manifest.intro,
+        meta: {
+          ...manifest.meta,
+          eventCount: stages.reduce((total, stage) => total + (stage.events?.length || 0), 0)
+        },
+        stages
+      };
+    }
+
+    async function loadRunEvents() {
+      return loadSplitRunEvents();
+    }
+
+    function formatRunTimecode(time = '00:00.0') {
+      const seconds = parseTimelineTime(time);
+      return `T+${seconds.toFixed(2).padStart(6, '0')}`;
+    }
+
+    function normalizeRunEvent(event = {}, seq = 0) {
+      const display = event.display || {};
+      const time = event.time || event.at || '00:00.0';
+      const actor = event.actor || display.actor || 'System';
+      const kind = String(event.kind || event.type || display.kind || 'LOG').replace(/▶/g, '');
+      const action = event.action || display.action || String(event.text || '').replace(/^\[T\+[^\]]+\]\s+\[[^\]]+\]\s+\[[^\]]+\]\s*/, '');
+      const sublines = event.sublines || display.sublines || [];
+      const timecode = event.timecode || display.timecode || formatRunTimecode(time);
+      const line = event.line || `[${timecode}] [${actor}] [${kind}] ${action}`;
+      return {
+        ...event,
+        time,
+        type: kind,
+        text: event.text || line,
+        line,
+        lines: event.lines || [line],
+        seq: event.seq || seq,
+        display: {
+          ...display,
+          timecode,
+          actor,
+          kind,
+          action,
+          sublines
+        }
+      };
     }
 
     async function bootLog() {
@@ -4378,6 +5678,7 @@
         groupRooms = runLog.stages || [];
         buildMentionIndex([]);
         playbackEvents = buildPlaybackEvents(groupRooms);
+        rebuildTimelineAnchors();
         activeRoom = 'all';
 
         const runId = runLog.meta?.runId || (runLog.intro || runLog.meta?.systemIntro || '').match(/tiantan_build_\d+/)?.[0] || 'run-current';
@@ -4391,7 +5692,7 @@
         setStage(stages[0]?.id ?? 0, chatMessages[0]);
         toggleAutoPlay();
       } catch (error) {
-        chatFeed.innerHTML = `<div class="log-error">Could not load run event data. Serve this folder with <code>python main.py</code> or another static server. ${escapeHtml(error.message)}</div>`;
+        chatFeed.innerHTML = `<div class="log-error">Could not load run event data from <code>${escapeHtml(RUN_EVENTS_MANIFEST_PATH)}</code>. Serve this folder with <code>python main.py</code> or another static server. ${escapeHtml(error.message)}</div>`;
         console.error(error);
       }
     }
@@ -4399,6 +5700,7 @@
     let scrollFrame = null;
     chatFeed.addEventListener('scroll', () => {
       if (isAutoScrolling) return;
+      shouldFollowLog = isLogNearBottom();
       if (scrollFrame) return;
       scrollFrame = requestAnimationFrame(() => {
         scrollFrame = null;
@@ -4410,6 +5712,27 @@
     playbackNext?.addEventListener('click', () => advancePlayback());
     playbackAuto?.addEventListener('click', toggleAutoPlay);
     playbackSpeedToggle?.addEventListener('click', togglePlaybackSpeed);
+    buildTimeline?.addEventListener('pointerdown', startTimelineScrub);
+    buildTimeline?.addEventListener('pointermove', moveTimelineScrub);
+    buildTimeline?.addEventListener('pointerup', endTimelineScrub);
+    buildTimeline?.addEventListener('pointercancel', endTimelineScrub);
+    buildTimeline?.addEventListener('click', handleTimelineClick);
+    buildTimeline?.addEventListener('keydown', handleTimelineKeydown);
+    worldVideo?.addEventListener('loadedmetadata', () => {
+      if (Number.isFinite(worldVideo.duration) && worldVideo.duration > 0) {
+        demoVideoSeconds = worldVideo.duration;
+        rebuildTimelineAnchors();
+        updateVideoForDemoSeconds(getDemoSecondsForEventCount(playbackCursor), { force: true, noSeek: isAutoPlaying });
+      }
+    });
+    appResizer?.addEventListener('pointerdown', startPanelResize);
+    appResizer?.addEventListener('pointermove', movePanelResize);
+    appResizer?.addEventListener('pointerup', endPanelResize);
+    appResizer?.addEventListener('pointercancel', endPanelResize);
+    appResizer?.addEventListener('keydown', handlePanelResizeKey);
+    window.addEventListener('pointermove', movePanelResize);
+    window.addEventListener('pointerup', endPanelResize);
+    window.addEventListener('pointercancel', endPanelResize);
     frameworkToggle?.addEventListener('click', () => {
       setFrameworkExpanded(!terminalConsole?.classList.contains('is-framework-expanded'));
     });
@@ -4432,8 +5755,11 @@
     });
 
     updateUiScale();
+    syncPanelWidthToCurrentLayout();
     window.addEventListener('resize', updateUiScale, { passive: true });
+    window.addEventListener('resize', syncPanelWidthToCurrentLayout, { passive: true });
     window.visualViewport?.addEventListener('resize', updateUiScale, { passive: true });
+    window.visualViewport?.addEventListener('resize', syncPanelWidthToCurrentLayout, { passive: true });
 
     window.addEventListener('pointermove', (event) => {
       const x = event.clientX / window.innerWidth - 0.5;
