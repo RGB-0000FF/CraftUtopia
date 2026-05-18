@@ -16,7 +16,8 @@ def main() -> None:
     handler = lambda *args, **kwargs: CraftDemoHandler(*args, directory=root, **kwargs)
 
     with ThreadingHTTPServer((host, port), handler) as server:
-        print(f"CraftUtopia demo: http://{host}:{port}/index.html")
+        print(f"CraftUtopia demo gallery: http://{host}:{port}/index.html")
+        print(f"Runtime demo: http://{host}:{port}/demos/craftutopia-build/")
         print("Edit data/demo-log/manifest.json and the phase files in data/demo-log/ for the right-side log.")
         server.serve_forever()
 

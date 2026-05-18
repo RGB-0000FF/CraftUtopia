@@ -6,7 +6,9 @@ Run a local static server so the browser can load the editable JSON log:
 python3 main.py
 ```
 
-Open `http://127.0.0.1:8000/index.html`.
+Open `http://127.0.0.1:8000/index.html` for the demo gallery.
+
+The full runtime demo now lives at `http://127.0.0.1:8000/demos/craftutopia-build/`.
 
 ## Editable Run Log
 
