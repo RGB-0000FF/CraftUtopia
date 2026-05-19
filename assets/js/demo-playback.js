@@ -153,7 +153,7 @@ function renderPlaybackUntilLive(targetCount) {
     shouldFollowLog = shouldStickToBottom;
     scrollChatToBottom(count, { instant: true });
   }
-  if (playbackCursor >= total) stopAutoPlay(false);
+  if (playbackCursor >= total && !isVideoOnlyMode) stopAutoPlay(false);
   updatePlaybackControls();
 }
 
@@ -170,6 +170,42 @@ function getNextPendingKeyframeBySeconds(seconds = 0) {
   return timelineKeyframes.find((keyframe) => !heldKeyframes.has(keyframe.id) && Number(seconds) >= Number(keyframe.demoSeconds) - 0.015);
 }
 
+function restartVideoOnlyPlayback() {
+  if (!isVideoOnlyMode || !playbackEvents.length) return;
+  clearTimeout(autoPlayTimer);
+  cancelAnimationFrame(autoPlayFrame);
+  clearTimeout(keyframeHoldTimer);
+  autoPlayTimer = null;
+  autoPlayFrame = null;
+  keyframeHoldTimer = null;
+  isKeyframeHolding = false;
+  setFrameworkExpanded(false);
+  playbackCursor = 0;
+  isMessagePending = false;
+  renderedStageIds = new Set();
+  progressRows = new Map();
+  milestoneRenderKey = '';
+  heldKeyframes = new Set();
+  resetSkillState();
+  chatFeed.replaceChildren();
+  chatMessages = [];
+  chatFeed.insertAdjacentHTML('beforeend', '<div class="chat-placeholder"><strong>Console armed</strong>Press <span class="mono">Play</span> to stream the run log.</div>');
+  applyRoomVisibility();
+  renderMilestones(stages[0]?.id ?? 0);
+  isAutoPlaying = true;
+  updateVideoForDemoSeconds(0, { force: true });
+  updatePlaybackControls();
+  startAutoPlayLoop(0);
+  [120, 600, 1600, 3200].forEach((delay) => {
+    setTimeout(() => {
+      if (!isVideoOnlyMode || isAutoPlaying || isMessagePending) return;
+      isAutoPlaying = true;
+      updatePlaybackControls();
+      startAutoPlayLoop(getDemoSecondsForEventCount(playbackCursor));
+    }, delay);
+  });
+}
+
 function runAutoPlayFrame(now = performance.now()) {
   autoPlayFrame = null;
   autoPlayTimer = null;
@@ -179,7 +215,7 @@ function runAutoPlayFrame(now = performance.now()) {
   autoPlayClockStartedAt = now;
   autoPlayClockStartSeconds = clamp(autoPlayClockStartSeconds + tickSeconds, 0, getPresentationTotalSeconds());
   let demoSeconds = autoPlayClockStartSeconds;
-  const keyframe = getNextPendingKeyframeBySeconds(demoSeconds);
+  const keyframe = isVideoOnlyMode ? null : getNextPendingKeyframeBySeconds(demoSeconds);
   if (keyframe) {
     demoSeconds = keyframe.demoSeconds;
     autoPlayClockStartSeconds = demoSeconds;
@@ -189,6 +225,10 @@ function runAutoPlayFrame(now = performance.now()) {
 
   if (keyframe && beginKeyframeHold(keyframe)) return;
   if (demoSeconds >= getPresentationTotalSeconds() || playbackCursor >= playbackEvents.length) {
+    if (isVideoOnlyMode) {
+      restartVideoOnlyPlayback();
+      return;
+    }
     renderPlaybackToDemoSeconds(getPresentationTotalSeconds(), { noSeek: true });
     stopAutoPlay();
     return;
@@ -340,6 +380,10 @@ function updatePlaybackControls() {
     playbackAuto.disabled = total === 0;
     playbackAuto.textContent = isKeyframeHolding ? 'Hold' : (isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play'));
   }
+  if (videoOnlyPlay) {
+    videoOnlyPlay.disabled = total === 0;
+    videoOnlyPlay.textContent = isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play');
+  }
   if (playbackSpeedToggle) {
     playbackSpeedToggle.textContent = formatPlaybackSpeed();
     playbackSpeedToggle.setAttribute('aria-label', `Playback speed: ${formatPlaybackSpeed()}. Click to reset to 1x.`);
@@ -347,13 +391,28 @@ function updatePlaybackControls() {
     playbackSpeedToggle.classList.toggle('is-fast', playbackSpeed > 1);
     playbackSpeedToggle.classList.toggle('is-slow', playbackSpeed < 1);
   }
+  if (videoOnlySpeed) {
+    videoOnlySpeed.textContent = formatPlaybackSpeed();
+    videoOnlySpeed.setAttribute('aria-label', `Playback speed: ${formatPlaybackSpeed()}. Click to reset to 1x.`);
+    videoOnlySpeed.setAttribute('aria-pressed', String(playbackSpeed !== 1));
+    videoOnlySpeed.classList.toggle('is-fast', playbackSpeed > 1);
+    videoOnlySpeed.classList.toggle('is-slow', playbackSpeed < 1);
+  }
   if (playbackSlower) {
     playbackSlower.disabled = playbackSpeed <= PLAYBACK_SPEED_STEPS[0];
     playbackSlower.setAttribute('aria-label', `Slow down playback from ${formatPlaybackSpeed()}`);
   }
+  if (videoOnlySlower) {
+    videoOnlySlower.disabled = playbackSpeed <= PLAYBACK_SPEED_STEPS[0];
+    videoOnlySlower.setAttribute('aria-label', `Slow down playback from ${formatPlaybackSpeed()}`);
+  }
   if (playbackFaster) {
     playbackFaster.disabled = playbackSpeed >= PLAYBACK_SPEED_STEPS.at(-1);
     playbackFaster.setAttribute('aria-label', `Speed up playback from ${formatPlaybackSpeed()}`);
+  }
+  if (videoOnlyFaster) {
+    videoOnlyFaster.disabled = playbackSpeed >= PLAYBACK_SPEED_STEPS.at(-1);
+    videoOnlyFaster.setAttribute('aria-label', `Speed up playback from ${formatPlaybackSpeed()}`);
   }
   if (playbackStep) {
     playbackStep.max = String(total);
@@ -416,9 +475,9 @@ function revealChatMessage(index = 0) {
   scrollChatToBottom(index);
   playbackCursor = index + 1;
   isMessagePending = false;
-  if (playbackCursor >= playbackEvents.length) stopAutoPlay(false);
+  if (playbackCursor >= playbackEvents.length && !isVideoOnlyMode) stopAutoPlay(false);
   updatePlaybackControls();
-  if (isAutoPlaying && beginKeyframeHold(getNextPendingKeyframe())) return;
+  if (!isVideoOnlyMode && isAutoPlaying && beginKeyframeHold(getNextPendingKeyframe())) return;
   scheduleAutoPlay();
 }
 
@@ -759,6 +818,10 @@ function renderTimelineMarkers() {
         suppressNextTimelineClick = false;
         return;
       }
+      if (isVideoOnlyMode) {
+        seekTimelineToKeyframe(keyframe, { expandFramework: false });
+        return;
+      }
       holdTimelineAtKeyframe(keyframe, { resumeAfterHold: isAutoPlaying });
     });
     return marker;
@@ -791,6 +854,10 @@ function seekTimelineToKeyframe(keyframe, options = {}) {
 
 function holdTimelineAtKeyframe(keyframe, options = {}) {
   if (!keyframe) return false;
+  if (isVideoOnlyMode) {
+    seekTimelineToKeyframe(keyframe, { expandFramework: false });
+    return false;
+  }
   const shouldResume = options.resumeAfterHold === true;
 
   clearTimeout(autoPlayTimer);
@@ -828,6 +895,7 @@ function getNextPendingKeyframe() {
 }
 
 function beginKeyframeHold(keyframe) {
+  if (isVideoOnlyMode) return false;
   if (!keyframe || heldKeyframes.has(keyframe.id)) return false;
   heldKeyframes.add(keyframe.id);
   isKeyframeHolding = true;
@@ -853,6 +921,28 @@ function beginKeyframeHold(keyframe) {
     startAutoPlayLoop(keyframe.demoSeconds);
   }, KEYFRAME_HOLD_MS);
   return true;
+}
+
+function setVideoOnlyMode(isEnabled) {
+  isVideoOnlyMode = Boolean(isEnabled);
+  appShell?.classList.toggle('is-video-only', isVideoOnlyMode);
+  videoOnlyToggle?.setAttribute('aria-pressed', String(isVideoOnlyMode));
+  videoOnlyToggle?.setAttribute('aria-label', isVideoOnlyMode ? 'Show full demo console' : 'Show video only');
+  if (videoOnlyToggle) videoOnlyToggle.textContent = isVideoOnlyMode ? '▣' : '□';
+
+  if (isVideoOnlyMode) {
+    clearTimeout(keyframeHoldTimer);
+    clearTimeout(frameworkCollapseTimer);
+    keyframeHoldTimer = null;
+    frameworkCollapseTimer = null;
+    isKeyframeHolding = false;
+    setFrameworkExpanded(false);
+    closeFrameworkLightbox();
+    syncHeldKeyframesForSeconds(getDemoSecondsForEventCount(playbackCursor));
+    if (isAutoPlaying) startAutoPlayLoop(getDemoSecondsForEventCount(playbackCursor));
+  }
+
+  updatePlaybackControls();
 }
 
 function getTimelineRatioFromPointer(event) {

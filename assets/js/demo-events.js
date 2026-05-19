@@ -16,6 +16,11 @@ playbackAuto?.addEventListener('click', toggleAutoPlay);
 playbackSpeedToggle?.addEventListener('click', resetPlaybackSpeed);
 playbackSlower?.addEventListener('click', () => stepPlaybackSpeed(-1));
 playbackFaster?.addEventListener('click', () => stepPlaybackSpeed(1));
+videoOnlyToggle?.addEventListener('click', () => setVideoOnlyMode(!isVideoOnlyMode));
+videoOnlyPlay?.addEventListener('click', toggleAutoPlay);
+videoOnlySpeed?.addEventListener('click', resetPlaybackSpeed);
+videoOnlySlower?.addEventListener('click', () => stepPlaybackSpeed(-1));
+videoOnlyFaster?.addEventListener('click', () => stepPlaybackSpeed(1));
 buildTimeline?.addEventListener('pointerdown', startTimelineScrub);
 buildTimeline?.addEventListener('pointermove', moveTimelineScrub);
 buildTimeline?.addEventListener('pointerup', endTimelineScrub);
@@ -31,6 +36,10 @@ worldVideo?.addEventListener('loadedmetadata', () => {
 });
 worldVideo?.addEventListener('ended', () => {
   if (!isAutoPlaying) return;
+  if (isVideoOnlyMode) {
+    restartVideoOnlyPlayback();
+    return;
+  }
   renderPlaybackToDemoSeconds(getPresentationTotalSeconds(), { syncVideo: false });
   setTimelineReadout(getPresentationTotalSeconds());
   stopAutoPlay();

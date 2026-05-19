@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="../../">
   <title>CraftUtopia Demo Viewer</title>
-  <link rel="stylesheet" href="assets/styles/demo.css?v=20260519-video-ended">
+  <link rel="stylesheet" href="assets/styles/demo.css?v=20260519-button-style1">
 </head>
 <body>
   <a class="demo-home-button" href="./" aria-label="Back to demo gallery">&larr;</a>
+  <button class="demo-video-button" id="video-only-toggle" type="button" aria-label="Show video only" aria-pressed="false">□</button>
   <main class="app" aria-label="CraftUtopia live multi-agent demonstration">
     <section class="status" aria-label="CraftUtopia runtime viewer">
       <header class="topline">
@@ -35,6 +36,12 @@
             <span id="console-elapsed-bar"></span>
             <div class="timeline-markers" id="timeline-markers" aria-hidden="false"></div>
           </div>
+        </div>
+        <div class="video-only-controls" aria-label="Video playback controls">
+          <button class="video-control video-control-play" id="video-only-play" type="button">Play</button>
+          <button class="video-control video-control-step" id="video-only-slower" type="button" aria-label="Slow down playback">-</button>
+          <button class="video-control video-control-speed" id="video-only-speed" type="button" aria-label="Playback speed: 1x">1x</button>
+          <button class="video-control video-control-step" id="video-only-faster" type="button" aria-label="Speed up playback">+</button>
         </div>
       </div>
     </section>
@@ -101,11 +108,11 @@
     </figure>
   </div>
 
-  <script src="assets/js/demo-config.js?v=20260519-video-ended"></script>
-  <script src="assets/js/demo-utils.js?v=20260519-video-ended"></script>
-  <script src="assets/js/demo-render.js?v=20260519-video-ended"></script>
-  <script src="assets/js/demo-playback.js?v=20260519-video-ended"></script>
-  <script src="assets/js/demo-data.js?v=20260519-video-ended"></script>
-  <script src="assets/js/demo-events.js?v=20260519-video-ended"></script>
+  <script src="assets/js/demo-config.js?v=20260519-button-style1"></script>
+  <script src="assets/js/demo-utils.js?v=20260519-button-style1"></script>
+  <script src="assets/js/demo-render.js?v=20260519-button-style1"></script>
+  <script src="assets/js/demo-playback.js?v=20260519-button-style1"></script>
+  <script src="assets/js/demo-data.js?v=20260519-button-style1"></script>
+  <script src="assets/js/demo-events.js?v=20260519-button-style1"></script>
 </body>
 </html>
