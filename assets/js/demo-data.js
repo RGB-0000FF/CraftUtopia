@@ -134,7 +134,53 @@ pageBaseUrl.search = '';
 pageBaseUrl.hash = '';
 const siteAssetUrl = (path) => new URL(path, pageBaseUrl).toString();
 
-const RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
+let RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
+const DEFAULT_DEMO_ID = 'sydney-opera-house';
+
+function getRequestedDemoId() {
+  const params = new URLSearchParams(window.location.search);
+  const requested = params.get('demo') || DEFAULT_DEMO_ID;
+  return String(requested).trim().toLowerCase().replace(/[^a-z0-9-]/g, '') || DEFAULT_DEMO_ID;
+}
+
+async function loadDemoProfile() {
+  const demoId = getRequestedDemoId();
+  try {
+    return await loadJsonAsset(`data/demos/${demoId}/demo.json`);
+  } catch (error) {
+    if (demoId === DEFAULT_DEMO_ID) throw error;
+    return loadJsonAsset(`data/demos/${DEFAULT_DEMO_ID}/demo.json`);
+  }
+}
+
+function setImageSource(selector, source, alt = '') {
+  if (!source) return;
+  document.querySelectorAll(selector).forEach((image) => {
+    image.src = siteAssetUrl(source);
+    if (alt) image.alt = alt;
+  });
+}
+
+function applyDemoProfile(profile = {}) {
+  activeDemoProfile = profile || {};
+  document.title = profile.pageTitle || profile.taskTitle || 'CraftUtopia Demo Viewer';
+  if (profile.logManifest) RUN_EVENTS_MANIFEST_PATH = profile.logManifest;
+  if (Number.isFinite(Number(profile.fallbackVideoSeconds))) {
+    demoVideoSeconds = Number(profile.fallbackVideoSeconds);
+  }
+  if (Array.isArray(profile.timelineKeyframes) && profile.timelineKeyframes.length) {
+    timelineKeyframes = profile.timelineKeyframes.map((keyframe) => ({ ...keyframe }));
+    heldKeyframes.clear();
+  } else {
+    timelineKeyframes = DEFAULT_TIMELINE_KEYFRAMES.map((keyframe) => ({ ...keyframe }));
+  }
+  if (worldVideo && profile.video) {
+    worldVideo.src = siteAssetUrl(profile.video);
+    worldVideo.load?.();
+  }
+  setImageSource('#timeline-intro img', profile.introImage, '');
+  setImageSource('.framework-preview img, .framework-lightbox img', profile.frameworkImage, 'CraftUtopia execution framework architecture');
+}
 
 async function loadJsonAsset(path) {
   const response = await fetch(siteAssetUrl(path), { cache: 'no-store' });
@@ -144,8 +190,13 @@ async function loadJsonAsset(path) {
 
 async function loadSplitRunEvents() {
   const manifest = await loadJsonAsset(RUN_EVENTS_MANIFEST_PATH);
+  const manifestBasePath = RUN_EVENTS_MANIFEST_PATH.split('/').slice(0, -1).join('/');
   const phaseLogs = await Promise.all((manifest.timeline || []).map(async (phase) => {
-    const phaseLog = await loadJsonAsset(`data/demo-log/${phase.file}`);
+    const phaseFile = phase.file || '';
+    const phasePath = phaseFile.startsWith('/') || phaseFile.startsWith('http')
+      ? phaseFile
+      : `${manifestBasePath}/${phaseFile}`.replace(/^\//, '');
+    const phaseLog = await loadJsonAsset(phasePath);
     return { phase, phaseLog };
   }));
   let seq = 1;
@@ -212,6 +263,8 @@ function normalizeRunEvent(event = {}, seq = 0) {
 
 async function bootLog() {
   try {
+    const profile = await loadDemoProfile();
+    applyDemoProfile(profile);
     const runLog = await loadRunEvents();
     stages = runLog.stages || [];
     groupRooms = runLog.stages || [];
@@ -221,7 +274,7 @@ async function bootLog() {
     activeRoom = 'all';
 
     const runId = runLog.meta?.runId || (runLog.intro || runLog.meta?.systemIntro || '').match(/tiantan_build_\d+/)?.[0] || 'run-current';
-    renderConsoleTitle(runLog.meta?.taskTitle || 'CraftUtopia Build with 100 Agents');
+    renderConsoleTitle(profile.taskTitle || runLog.meta?.taskTitle || 'CraftUtopia Build with 100 Agents');
     if (consoleRunId) consoleRunId.textContent = `run ${runId}`;
     if (logKicker) logKicker.textContent = runLog.title || runLog.meta?.kicker || logKicker.textContent;
     if (systemLine) appendMentionedText(systemLine, runLog.intro || runLog.meta?.systemIntro || systemLine.textContent);

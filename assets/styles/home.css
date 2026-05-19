@@ -216,6 +216,25 @@ a {
   border-color: rgba(85, 255, 164, 0.52);
 }
 
+.demo-card.is-pending {
+  border-color: rgba(243, 229, 195, 0.14);
+  cursor: default;
+}
+
+.demo-card.is-pending img {
+  filter: saturate(0.45) contrast(0.92) brightness(0.72);
+}
+
+.demo-card.is-pending .demo-index {
+  color: rgba(243, 229, 195, 0.72);
+  border-color: rgba(243, 229, 195, 0.24);
+}
+
+.demo-card.is-pending strong,
+.demo-card.is-pending small {
+  color: rgba(243, 229, 195, 0.78);
+}
+
 @media (max-width: 1180px) {
   .demo-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

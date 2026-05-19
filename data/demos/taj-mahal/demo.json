@@ -1,0 +1,17 @@
+{
+  "id": "taj-mahal",
+  "pageTitle": "Taj Mahal Demo",
+  "taskTitle": "Taj Mahal with 100 Agents",
+  "video": "assets/replay_videos_mp4/build-process-2026-05-18-web.mp4",
+  "introImage": "assets/images/architecture.jpg",
+  "frameworkImage": "assets/images/architecture.jpg",
+  "logManifest": "data/demo-log/manifest.json",
+  "fallbackVideoSeconds": 89.767,
+  "timelineKeyframes": [
+    { "id": "blueprint-ready", "label": "Blueprint Ready", "demoSeconds": 10, "stageId": 1 },
+    { "id": "build-region", "label": "Build Region", "demoSeconds": 17, "skill": "build_region" },
+    { "id": "scaffold", "label": "Scaffold", "demoSeconds": 28, "skill": "scaffold" },
+    { "id": "replace-region", "label": "Replace Region", "demoSeconds": 38, "skill": "replace_region" },
+    { "id": "clean-region", "label": "Clean Region", "demoSeconds": 50, "skill": "clean_region" }
+  ]
+}

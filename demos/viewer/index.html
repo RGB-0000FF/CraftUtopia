@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="../../">
+  <title>CraftUtopia Demo Viewer</title>
+  <link rel="stylesheet" href="assets/styles/demo.css?v=20260519-video-ended">
+</head>
+<body>
+  <a class="demo-home-button" href="./" aria-label="Back to demo gallery">&larr;</a>
+  <main class="app" aria-label="CraftUtopia live multi-agent demonstration">
+    <section class="status" aria-label="CraftUtopia runtime viewer">
+      <header class="topline">
+        <div class="brand">
+          <div class="mark" aria-hidden="true"></div>
+          <div>
+            <p class="kicker">CraftUtopia Runtime</p>
+          </div>
+        </div>
+      </header>
+
+      <div class="visual-wrap">
+        <div class="gif-stage" aria-label="Minecraft replay preview" tabindex="0">
+          <video class="world-video" muted playsinline preload="metadata" aria-label="Minecraft build replay"></video>
+          <div class="timeline-intro is-visible" id="timeline-intro" aria-hidden="true">
+            <img src="assets/images/architecture.jpg" alt="">
+          </div>
+        </div>
+        <div class="build-timeline" role="slider" tabindex="0" aria-label="Elapsed build timeline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="00:00.0">
+          <div class="build-timeline-head">
+            <strong id="console-elapsed-value">00:00.0</strong>
+          </div>
+          <div class="build-timeline-rail">
+            <span id="console-elapsed-bar"></span>
+            <div class="timeline-markers" id="timeline-markers" aria-hidden="false"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="app-resizer" id="app-resizer" role="separator" tabindex="0" aria-label="Resize terminal console" aria-orientation="vertical" aria-valuemin="420" aria-valuemax="720" aria-valuenow="560"></div>
+
+    <aside class="log-board" aria-label="Terminal task console">
+      <div class="chat-shell terminal-console">
+        <header class="console-header">
+          <div class="console-title-group">
+            <h2 id="console-task-title">CraftUtopia Build<span class="console-title-break">with <span class="console-title-scale">100</span> Agents</span></h2>
+          </div>
+          <div class="console-header-spacer" aria-hidden="true"></div>
+          <div class="console-control-group">
+            <div class="header-progress console-meter" style="--value: 0%" aria-label="Build progress">
+              <span id="console-progress-value">0%</span>
+              <i aria-hidden="true"><b id="console-progress-bar"></b></i>
+            </div>
+            <button class="console-play" id="playback-auto" type="button">Play</button>
+            <div class="console-speed-group" aria-label="Playback speed controls">
+              <button class="console-speed console-speed-step" id="playback-slower" type="button" aria-label="Slow down playback">-</button>
+              <button class="console-speed console-speed-value" id="playback-speed" type="button" aria-label="Playback speed: 1x">1x</button>
+              <button class="console-speed console-speed-step" id="playback-faster" type="button" aria-label="Speed up playback">+</button>
+            </div>
+          </div>
+        </header>
+
+        <section class="console-milestones" aria-label="Run milestones">
+          <div class="console-section-title">
+            <span>Milestones</span>
+          </div>
+          <ol class="milestone-list" id="milestone-list"></ol>
+        </section>
+
+        <section class="console-framework" aria-label="Execution framework">
+          <div class="console-section-title framework-toggle" id="framework-toggle" role="button" tabindex="0" aria-expanded="false">
+            <span>Execution Framework</span>
+            <span class="framework-hint" id="framework-hint">Click to view details</span>
+            <span class="framework-arrows" id="framework-arrows" aria-hidden="true"></span>
+          </div>
+          <div class="framework-preview">
+            <button class="framework-preview-button" id="framework-open" type="button" aria-label="Open execution framework image">
+              <img src="assets/images/architecture.jpg" alt="CraftUtopia execution framework architecture">
+            </button>
+          </div>
+        </section>
+
+        <section class="console-log" aria-label="Detailed terminal log">
+          <div class="console-section-title">
+            <span>Detailed Log</span>
+          </div>
+          <div class="chat-feed" id="chat-feed" aria-label="Execution event stream">
+            <div class="log-loading">Loading execution log...</div>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </main>
+
+  <div class="framework-lightbox" id="framework-lightbox" role="dialog" aria-modal="true" aria-label="Execution framework preview" hidden>
+    <figure class="framework-lightbox-figure">
+      <button class="framework-lightbox-close" id="framework-close" type="button" aria-label="Close execution framework preview">x</button>
+      <img src="assets/images/architecture.jpg" alt="CraftUtopia execution framework architecture">
+    </figure>
+  </div>
+
+  <script src="assets/js/demo-config.js?v=20260519-video-ended"></script>
+  <script src="assets/js/demo-utils.js?v=20260519-video-ended"></script>
+  <script src="assets/js/demo-render.js?v=20260519-video-ended"></script>
+  <script src="assets/js/demo-playback.js?v=20260519-video-ended"></script>
+  <script src="assets/js/demo-data.js?v=20260519-video-ended"></script>
+  <script src="assets/js/demo-events.js?v=20260519-video-ended"></script>
+</body>
+</html>

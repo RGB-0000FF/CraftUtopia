@@ -167,7 +167,7 @@ function renderPlaybackToDemoSeconds(seconds = 0, options = {}) {
 }
 
 function getNextPendingKeyframeBySeconds(seconds = 0) {
-  return TIMELINE_KEYFRAMES.find((keyframe) => !heldKeyframes.has(keyframe.id) && Number(seconds) >= Number(keyframe.demoSeconds) - 0.015);
+  return timelineKeyframes.find((keyframe) => !heldKeyframes.has(keyframe.id) && Number(seconds) >= Number(keyframe.demoSeconds) - 0.015);
 }
 
 function runAutoPlayFrame(now = performance.now()) {
@@ -570,7 +570,7 @@ function formatTimelineTime(seconds = 0) {
 }
 
 function getPresentationTotalSeconds() {
-  return Math.max(INTRO_ARCHITECTURE_SECONDS + demoVideoSeconds, TIMELINE_KEYFRAMES.at(-1)?.demoSeconds || 1, 1);
+  return Math.max(INTRO_ARCHITECTURE_SECONDS + demoVideoSeconds, timelineKeyframes.at(-1)?.demoSeconds || 1, 1);
 }
 
 function findEventCountForKeyframe(keyframe, previousCount = 0) {
@@ -597,7 +597,7 @@ function findEventCountForKeyframe(keyframe, previousCount = 0) {
 function rebuildTimelineAnchors() {
   let previousCount = 0;
   const anchors = [{ count: 0, seconds: 0, id: 'start' }];
-  TIMELINE_KEYFRAMES.forEach((keyframe) => {
+  timelineKeyframes.forEach((keyframe) => {
     const count = findEventCountForKeyframe(keyframe, previousCount);
     keyframe.targetCount = count;
     anchors.push({ count, seconds: keyframe.demoSeconds, id: keyframe.id });
@@ -626,6 +626,15 @@ function getTimelineAnchorPairBySeconds(seconds = 0) {
     if (safeSeconds <= anchors[index].seconds) return [anchors[index - 1], anchors[index]];
   }
   return [anchors[Math.max(0, anchors.length - 2)], anchors[anchors.length - 1]];
+}
+
+function syncHeldKeyframesForSeconds(seconds = 0) {
+  const safeSeconds = Number(seconds) || 0;
+  heldKeyframes = new Set(
+    timelineKeyframes
+      .filter((keyframe) => Number(keyframe.demoSeconds) <= safeSeconds + 0.015)
+      .map((keyframe) => keyframe.id)
+  );
 }
 
 function getDemoSecondsForEventCount(count = playbackCursor) {
@@ -660,9 +669,10 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
   timelineIntro?.classList.toggle('is-visible', isIntro);
   const targetVideoTime = clamp(safeSeconds - INTRO_ARCHITECTURE_SECONDS, 0, Math.max(demoVideoSeconds, 0));
   const duration = Number.isFinite(worldVideo.duration) && worldVideo.duration > 0 ? worldVideo.duration : demoVideoSeconds;
+  const clampedVideoTime = clamp(targetVideoTime, 0, duration);
+  const isVideoTargetComplete = !isIntro && duration > 0 && clampedVideoTime >= duration - 0.08;
   const shouldSeek = !options.noSeek && (options.force || !isAutoPlaying || isKeyframeHolding || playbackCursor >= playbackEvents.length || isIntro);
   try {
-    const clampedVideoTime = clamp(targetVideoTime, 0, duration);
     if (options.force && !isAutoPlaying && clampedVideoTime <= 0.05) {
       worldVideo.pause();
       worldVideo.currentTime = 0;
@@ -679,9 +689,9 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
   } catch (error) {
     // Some browsers can briefly reject seeking while metadata is loading.
   }
-  if (isIntro || !isAutoPlaying || isKeyframeHolding || playbackCursor >= playbackEvents.length) {
+  if (isIntro || !isAutoPlaying || isKeyframeHolding || playbackCursor >= playbackEvents.length || isVideoTargetComplete) {
     if (!worldVideo.paused) worldVideo.pause();
-  } else if (worldVideo.paused) {
+  } else if (worldVideo.paused && !worldVideo.ended) {
     worldVideo.play?.().catch(() => {});
   }
 }
@@ -733,7 +743,7 @@ function previewTimelineRatio(ratio = 0) {
 function renderTimelineMarkers() {
   if (!timelineMarkers) return;
   const total = getPresentationTotalSeconds();
-  timelineMarkers.replaceChildren(...TIMELINE_KEYFRAMES.map((keyframe) => {
+  timelineMarkers.replaceChildren(...timelineKeyframes.map((keyframe) => {
     const marker = document.createElement('button');
     marker.className = 'timeline-marker';
     marker.type = 'button';
@@ -742,9 +752,13 @@ function renderTimelineMarkers() {
     marker.style.setProperty('--marker-left', `${clamp((keyframe.demoSeconds / total) * 100, 0, 100)}%`);
     marker.setAttribute('aria-label', keyframe.label);
     marker.title = `${keyframe.label} · ${formatTimelineTime(keyframe.demoSeconds)}`;
-    marker.addEventListener('pointerdown', (event) => event.stopPropagation());
     marker.addEventListener('click', (event) => {
       event.stopPropagation();
+      if (suppressNextTimelineClick) {
+        event.preventDefault();
+        suppressNextTimelineClick = false;
+        return;
+      }
       holdTimelineAtKeyframe(keyframe, { resumeAfterHold: isAutoPlaying });
     });
     return marker;
@@ -754,7 +768,7 @@ function renderTimelineMarkers() {
 
 function updateTimelineMarkerState(seconds = 0) {
   if (!timelineMarkers) return;
-  const active = [...TIMELINE_KEYFRAMES]
+  const active = [...timelineKeyframes]
     .filter((keyframe) => Number(keyframe.demoSeconds) <= Number(seconds) + 0.35)
     .at(-1);
   timelineMarkers.querySelectorAll('.timeline-marker').forEach((marker) => {
@@ -765,6 +779,7 @@ function updateTimelineMarkerState(seconds = 0) {
 function seekTimelineToKeyframe(keyframe, options = {}) {
   if (!keyframe) return;
   const count = clamp(keyframe.targetCount || getEventCountForDemoSeconds(keyframe.demoSeconds), 0, playbackEvents.length);
+  syncHeldKeyframesForSeconds(keyframe.demoSeconds);
   renderPlaybackUntil(count);
   previewTimelineRatio(keyframe.demoSeconds / getPresentationTotalSeconds());
   updateVideoForDemoSeconds(keyframe.demoSeconds, { force: true });
@@ -809,7 +824,7 @@ function holdTimelineAtKeyframe(keyframe, options = {}) {
 }
 
 function getNextPendingKeyframe() {
-  return TIMELINE_KEYFRAMES.find((keyframe) => !heldKeyframes.has(keyframe.id) && playbackCursor >= (keyframe.targetCount || Infinity));
+  return timelineKeyframes.find((keyframe) => !heldKeyframes.has(keyframe.id) && playbackCursor >= (keyframe.targetCount || Infinity));
 }
 
 function beginKeyframeHold(keyframe) {
@@ -847,9 +862,12 @@ function getTimelineRatioFromPointer(event) {
 }
 
 function seekTimelineToRatio(ratio = 0, options = {}) {
-  const count = getEventCountForTimelineRatio(ratio);
+  const safeRatio = clamp(ratio, 0, 1);
+  const seconds = safeRatio * getPresentationTotalSeconds();
+  const count = getEventCountForTimelineRatio(safeRatio);
+  syncHeldKeyframesForSeconds(seconds);
   renderPlaybackUntil(count);
-  previewTimelineRatio(ratio);
+  previewTimelineRatio(safeRatio);
   if (!options.keepPaused && isAutoPlaying) scheduleAutoPlay();
 }
 
@@ -871,6 +889,9 @@ function startTimelineScrub(event) {
   event.preventDefault();
   stopAutoPlay();
   isScrubbingTimeline = true;
+  timelineScrubStartX = Number(event.clientX) || 0;
+  timelineScrubStartY = Number(event.clientY) || 0;
+  timelineDidDrag = false;
   shouldFollowLog = true;
   buildTimeline?.classList.add('is-scrubbing');
   buildTimeline?.setPointerCapture?.(event.pointerId);
@@ -880,6 +901,9 @@ function startTimelineScrub(event) {
 function moveTimelineScrub(event) {
   if (!isScrubbingTimeline) return;
   event.preventDefault();
+  const deltaX = (Number(event.clientX) || 0) - timelineScrubStartX;
+  const deltaY = (Number(event.clientY) || 0) - timelineScrubStartY;
+  if (Math.hypot(deltaX, deltaY) > 4) timelineDidDrag = true;
   queueTimelineSeek(event);
 }
 
@@ -890,6 +914,10 @@ function endTimelineScrub(event) {
   buildTimeline?.classList.remove('is-scrubbing');
   buildTimeline?.releasePointerCapture?.(event.pointerId);
   queueTimelineSeek(event, true);
+  if (timelineDidDrag) {
+    suppressNextTimelineClick = true;
+    setTimeout(() => { suppressNextTimelineClick = false; }, 0);
+  }
 }
 
 function handleTimelineKeydown(event) {
@@ -913,6 +941,11 @@ function handleTimelineKeydown(event) {
 }
 
 function handleTimelineClick(event) {
+  if (suppressNextTimelineClick) {
+    event.preventDefault();
+    suppressNextTimelineClick = false;
+    return;
+  }
   if (!playbackEvents.length || isScrubbingTimeline) return;
   event.preventDefault();
   stopAutoPlay();

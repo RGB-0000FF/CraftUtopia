@@ -29,6 +29,12 @@ worldVideo?.addEventListener('loadedmetadata', () => {
     updateVideoForDemoSeconds(getDemoSecondsForEventCount(playbackCursor), { force: true, noSeek: isAutoPlaying });
   }
 });
+worldVideo?.addEventListener('ended', () => {
+  if (!isAutoPlaying) return;
+  renderPlaybackToDemoSeconds(getPresentationTotalSeconds(), { syncVideo: false });
+  setTimelineReadout(getPresentationTotalSeconds());
+  stopAutoPlay();
+});
 appResizer?.addEventListener('pointerdown', startPanelResize);
 appResizer?.addEventListener('pointermove', movePanelResize);
 appResizer?.addEventListener('pointerup', endPanelResize);

@@ -7,7 +7,7 @@ const INTRO_ARCHITECTURE_SECONDS = 10;
 const DEMO_FALLBACK_VIDEO_SECONDS = 89.767;
 const KEYFRAME_HOLD_MS = 5000;
 const PLAYBACK_SPEED_STEPS = [0.5, 1, 1.5, 2, 4];
-const TIMELINE_KEYFRAMES = [
+const DEFAULT_TIMELINE_KEYFRAMES = [
   { id: 'blueprint-ready', label: 'Blueprint Ready', demoSeconds: 10, stageId: 1 },
   { id: 'build-region', label: 'Build Region', demoSeconds: 17, skill: 'build_region' },
   { id: 'scaffold', label: 'Scaffold', demoSeconds: 28, skill: 'scaffold' },
@@ -38,6 +38,8 @@ let autoPlayClockStartedAt = 0;
 let isAutoPlaying = false;
 let playbackSpeed = 1;
 let demoVideoSeconds = DEMO_FALLBACK_VIDEO_SECONDS;
+let activeDemoProfile = {};
+let timelineKeyframes = DEFAULT_TIMELINE_KEYFRAMES.map((keyframe) => ({ ...keyframe }));
 let timelineAnchors = [];
 let keyframeHoldTimer = null;
 let frameworkCollapseTimer = null;
@@ -52,6 +54,10 @@ let skillState = new Map();
 let mentionRegex = null;
 let isScrubbingTimeline = false;
 let scrubFrame = null;
+let timelineScrubStartX = 0;
+let timelineScrubStartY = 0;
+let timelineDidDrag = false;
+let suppressNextTimelineClick = false;
 const mentionAccentByTerm = new Map();
 const SKILL_REGISTRY = {
   build_region: {
