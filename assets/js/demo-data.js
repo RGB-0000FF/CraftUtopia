@@ -161,6 +161,12 @@ function setImageSource(selector, source, alt = '') {
   });
 }
 
+function formatBlockCount(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return String(value || '95,151');
+  return new Intl.NumberFormat('en-US').format(number);
+}
+
 function applyDemoProfile(profile = {}) {
   activeDemoProfile = profile || {};
   document.title = profile.pageTitle || profile.taskTitle || 'CraftUtopia Demo Viewer';
@@ -180,6 +186,9 @@ function applyDemoProfile(profile = {}) {
   }
   setImageSource('#timeline-intro img', profile.introImage, '');
   setImageSource('.framework-preview img, .framework-lightbox img', profile.frameworkImage, 'CraftUtopia execution framework architecture');
+  setImageSource('#blueprint-cover-image', profile.coverImage || profile.introImage, `${profile.taskTitle || 'Blueprint'} cover preview`);
+  if (blueprintBlockCountValue) blueprintBlockCountValue.textContent = formatBlockCount(profile.blockCount || '95,151');
+  if (blueprintBlockCount) blueprintBlockCount.setAttribute('aria-label', `Blueprint block count: ${blueprintBlockCountValue?.textContent || '95,151'} blocks`);
 }
 
 async function loadJsonAsset(path) {

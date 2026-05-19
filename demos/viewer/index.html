@@ -5,11 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="../../">
   <title>CraftUtopia Demo Viewer</title>
-  <link rel="stylesheet" href="assets/styles/demo.css?v=20260519-button-style1">
+  <link rel="stylesheet" href="assets/styles/demo.css?v=20260520-blueprint-hud1">
 </head>
 <body>
-  <a class="demo-home-button" href="./" aria-label="Back to demo gallery">&larr;</a>
-  <button class="demo-video-button" id="video-only-toggle" type="button" aria-label="Show video only" aria-pressed="false">□</button>
+  <a class="demo-home-button" href="./" aria-label="Back to demo gallery">
+    <i data-lucide="arrow-left" aria-hidden="true"></i>
+  </a>
+  <button class="demo-video-button" id="video-only-toggle" type="button" aria-label="Show video only" aria-pressed="false">
+    <i data-lucide="panel-right-close" aria-hidden="true"></i>
+  </button>
   <main class="app" aria-label="CraftUtopia live multi-agent demonstration">
     <section class="status" aria-label="CraftUtopia runtime viewer">
       <header class="topline">
@@ -39,9 +43,24 @@
         </div>
         <div class="video-only-controls" aria-label="Video playback controls">
           <button class="video-control video-control-play" id="video-only-play" type="button">Play</button>
-          <button class="video-control video-control-step" id="video-only-slower" type="button" aria-label="Slow down playback">-</button>
+          <button class="video-control video-control-step" id="video-only-slower" type="button" aria-label="Slow down playback">
+            <i data-lucide="minus" aria-hidden="true"></i>
+          </button>
           <button class="video-control video-control-speed" id="video-only-speed" type="button" aria-label="Playback speed: 1x">1x</button>
-          <button class="video-control video-control-step" id="video-only-faster" type="button" aria-label="Speed up playback">+</button>
+          <button class="video-control video-control-step" id="video-only-faster" type="button" aria-label="Speed up playback">
+            <i data-lucide="plus" aria-hidden="true"></i>
+          </button>
+        </div>
+        <button class="blueprint-cover-card" id="blueprint-cover-toggle" type="button" aria-label="Expand blueprint cover preview" aria-expanded="false">
+          <img id="blueprint-cover-image" src="assets/images/stage-preview.jpg" alt="Blueprint cover preview">
+          <span class="cover-card-label">
+            <i data-lucide="scan-search" aria-hidden="true"></i>
+            <span>Cover</span>
+          </span>
+        </button>
+        <div class="blueprint-block-count" id="blueprint-block-count" aria-label="Blueprint block count">
+          <span>Blocks</span>
+          <strong id="blueprint-block-count-value">95,151</strong>
         </div>
       </div>
     </section>
@@ -62,9 +81,13 @@
             </div>
             <button class="console-play" id="playback-auto" type="button">Play</button>
             <div class="console-speed-group" aria-label="Playback speed controls">
-              <button class="console-speed console-speed-step" id="playback-slower" type="button" aria-label="Slow down playback">-</button>
+              <button class="console-speed console-speed-step" id="playback-slower" type="button" aria-label="Slow down playback">
+                <i data-lucide="minus" aria-hidden="true"></i>
+              </button>
               <button class="console-speed console-speed-value" id="playback-speed" type="button" aria-label="Playback speed: 1x">1x</button>
-              <button class="console-speed console-speed-step" id="playback-faster" type="button" aria-label="Speed up playback">+</button>
+              <button class="console-speed console-speed-step" id="playback-faster" type="button" aria-label="Speed up playback">
+                <i data-lucide="plus" aria-hidden="true"></i>
+              </button>
             </div>
           </div>
         </header>
@@ -108,11 +131,12 @@
     </figure>
   </div>
 
-  <script src="assets/js/demo-config.js?v=20260519-button-style1"></script>
-  <script src="assets/js/demo-utils.js?v=20260519-button-style1"></script>
-  <script src="assets/js/demo-render.js?v=20260519-button-style1"></script>
-  <script src="assets/js/demo-playback.js?v=20260519-button-style1"></script>
-  <script src="assets/js/demo-data.js?v=20260519-button-style1"></script>
-  <script src="assets/js/demo-events.js?v=20260519-button-style1"></script>
+  <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
+  <script src="assets/js/demo-config.js?v=20260520-blueprint-hud1"></script>
+  <script src="assets/js/demo-utils.js?v=20260520-blueprint-hud1"></script>
+  <script src="assets/js/demo-render.js?v=20260520-blueprint-hud1"></script>
+  <script src="assets/js/demo-playback.js?v=20260520-blueprint-hud1"></script>
+  <script src="assets/js/demo-data.js?v=20260520-blueprint-hud1"></script>
+  <script src="assets/js/demo-events.js?v=20260520-blueprint-hud1"></script>
 </body>
 </html>

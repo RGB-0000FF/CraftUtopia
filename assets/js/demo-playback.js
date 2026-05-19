@@ -114,6 +114,37 @@ function formatPlaybackSpeed(speed = playbackSpeed) {
   return `${Number(speed).toFixed(1).replace(/\.0$/, '')}x`;
 }
 
+function refreshLucideIcons(root = document) {
+  if (!window.lucide?.createIcons) return;
+  window.lucide.createIcons({
+    attrs: {
+      'stroke-width': 2.25,
+      'aria-hidden': 'true'
+    },
+    root
+  });
+}
+
+function setLucideButtonIcon(button, iconName) {
+  if (!button) return;
+  const currentIcon = button.querySelector('.lucide, [data-lucide]');
+  const currentName = currentIcon?.getAttribute('data-lucide') || currentIcon?.getAttribute('data-icon');
+  if (currentName === iconName) return;
+  button.innerHTML = `<i data-lucide="${iconName}" data-icon="${iconName}" aria-hidden="true"></i>`;
+  refreshLucideIcons(button);
+}
+
+function setActionButtonLabel(button, label, iconName) {
+  if (!button) return;
+  const currentLabel = button.dataset.label || '';
+  const currentIcon = button.dataset.icon || '';
+  if (currentLabel === label && currentIcon === iconName) return;
+  button.dataset.label = label;
+  button.dataset.icon = iconName;
+  button.innerHTML = `<i data-lucide="${iconName}" aria-hidden="true"></i><span>${label}</span>`;
+  refreshLucideIcons(button);
+}
+
 function setTimelineReadout(seconds = 0) {
   const safeSeconds = clamp(Number(seconds) || 0, 0, getPresentationTotalSeconds());
   const total = getPresentationTotalSeconds();
@@ -378,11 +409,15 @@ function updatePlaybackControls() {
   if (playbackPrev) playbackPrev.disabled = isMessagePending || isAutoPlaying || shown <= 0;
   if (playbackAuto) {
     playbackAuto.disabled = total === 0;
-    playbackAuto.textContent = isKeyframeHolding ? 'Hold' : (isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play'));
+    const label = isKeyframeHolding ? 'Hold' : (isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play'));
+    const icon = isKeyframeHolding ? 'hourglass' : (isAutoPlaying ? 'pause' : (isComplete ? 'rotate-ccw' : 'play'));
+    setActionButtonLabel(playbackAuto, label, icon);
   }
   if (videoOnlyPlay) {
     videoOnlyPlay.disabled = total === 0;
-    videoOnlyPlay.textContent = isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play');
+    const label = isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play');
+    const icon = isAutoPlaying ? 'pause' : (isComplete ? 'rotate-ccw' : 'play');
+    setActionButtonLabel(videoOnlyPlay, label, icon);
   }
   if (playbackSpeedToggle) {
     playbackSpeedToggle.textContent = formatPlaybackSpeed();
@@ -928,7 +963,7 @@ function setVideoOnlyMode(isEnabled) {
   appShell?.classList.toggle('is-video-only', isVideoOnlyMode);
   videoOnlyToggle?.setAttribute('aria-pressed', String(isVideoOnlyMode));
   videoOnlyToggle?.setAttribute('aria-label', isVideoOnlyMode ? 'Show full demo console' : 'Show video only');
-  if (videoOnlyToggle) videoOnlyToggle.textContent = isVideoOnlyMode ? '▣' : '□';
+  setLucideButtonIcon(videoOnlyToggle, isVideoOnlyMode ? 'panel-right-open' : 'panel-right-close');
 
   if (isVideoOnlyMode) {
     clearTimeout(keyframeHoldTimer);

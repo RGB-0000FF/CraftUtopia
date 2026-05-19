@@ -21,6 +21,12 @@ videoOnlyPlay?.addEventListener('click', toggleAutoPlay);
 videoOnlySpeed?.addEventListener('click', resetPlaybackSpeed);
 videoOnlySlower?.addEventListener('click', () => stepPlaybackSpeed(-1));
 videoOnlyFaster?.addEventListener('click', () => stepPlaybackSpeed(1));
+blueprintCoverToggle?.addEventListener('click', () => {
+  const isExpanded = !blueprintCoverToggle.classList.contains('is-expanded');
+  blueprintCoverToggle.classList.toggle('is-expanded', isExpanded);
+  blueprintCoverToggle.setAttribute('aria-expanded', String(isExpanded));
+  blueprintCoverToggle.setAttribute('aria-label', isExpanded ? 'Collapse blueprint cover preview' : 'Expand blueprint cover preview');
+});
 buildTimeline?.addEventListener('pointerdown', startTimelineScrub);
 buildTimeline?.addEventListener('pointermove', moveTimelineScrub);
 buildTimeline?.addEventListener('pointerup', endTimelineScrub);
@@ -80,4 +86,5 @@ window.addEventListener('resize', syncPanelWidthToCurrentLayout, { passive: true
 window.visualViewport?.addEventListener('resize', updateUiScale, { passive: true });
 window.visualViewport?.addEventListener('resize', syncPanelWidthToCurrentLayout, { passive: true });
 
+refreshLucideIcons();
 bootLog();
