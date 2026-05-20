@@ -2,11 +2,20 @@
 function stopAutoPlay(update = true) {
   const wasHolding = isKeyframeHolding;
   clearTimeout(autoPlayTimer);
+  clearTimeout(videoWaitGuardTimer);
+  clearTimeout(videoWaitPauseTimer);
+  clearTimeout(videoWaitResumeTimer);
   cancelAnimationFrame(autoPlayFrame);
   clearTimeout(keyframeHoldTimer);
   autoPlayTimer = null;
   autoPlayFrame = null;
   keyframeHoldTimer = null;
+  videoWaitGuardTimer = null;
+  videoWaitPauseTimer = null;
+  videoWaitResumeTimer = null;
+  shouldPauseTimelineOnVideoWait = false;
+  isTimelineWaitingForVideo = false;
+  videoWaitGuardStartedAt = 0;
   isAutoPlaying = false;
   isKeyframeHolding = false;
   worldVideo?.pause();
@@ -108,6 +117,116 @@ function getCurrentAutoDemoSeconds(now = performance.now()) {
   if (!isAutoPlaying) return getDemoSecondsForEventCount(playbackCursor);
   const elapsed = Math.max((now - autoPlayClockStartedAt) / 1000, 0) * playbackSpeed;
   return clamp(autoPlayClockStartSeconds + elapsed, 0, getPresentationTotalSeconds());
+}
+
+function armVideoWaitGuard() {
+  shouldPauseTimelineOnVideoWait = true;
+  videoWaitGuardStartedAt = performance.now();
+  clearTimeout(videoWaitGuardTimer);
+  clearTimeout(videoWaitPauseTimer);
+  clearTimeout(videoWaitResumeTimer);
+  videoWaitPauseTimer = null;
+  videoWaitResumeTimer = null;
+  isTimelineWaitingForVideo = false;
+  videoWaitGuardTimer = setTimeout(() => {
+    videoWaitGuardTimer = null;
+    if (!isTimelineWaitingForVideo) {
+      shouldPauseTimelineOnVideoWait = false;
+      videoWaitGuardStartedAt = 0;
+    }
+  }, 3200);
+}
+
+function getVideoWaitGuardElapsed() {
+  return videoWaitGuardStartedAt ? performance.now() - videoWaitGuardStartedAt : 0;
+}
+
+function shouldGateTimelineForVideo(demoSeconds = getDemoSecondsForEventCount(playbackCursor)) {
+  return (shouldPauseTimelineOnVideoWait || isTimelineWaitingForVideo)
+    && worldVideo
+    && isAutoPlaying
+    && !isKeyframeHolding
+    && Number(demoSeconds) >= introArchitectureSeconds
+    && playbackCursor < playbackEvents.length;
+}
+
+function clearVideoWaitState() {
+  clearTimeout(videoWaitGuardTimer);
+  clearTimeout(videoWaitPauseTimer);
+  clearTimeout(videoWaitResumeTimer);
+  videoWaitGuardTimer = null;
+  videoWaitPauseTimer = null;
+  videoWaitResumeTimer = null;
+  shouldPauseTimelineOnVideoWait = false;
+  isTimelineWaitingForVideo = false;
+  videoWaitGuardStartedAt = 0;
+}
+
+function resumeTimelineAfterVideoWait() {
+  if (!isTimelineWaitingForVideo) return;
+  clearTimeout(videoWaitResumeTimer);
+  videoWaitResumeTimer = null;
+  const waitSeconds = autoPlayClockStartSeconds;
+  if (!shouldGateTimelineForVideo(waitSeconds)) {
+    clearVideoWaitState();
+    return;
+  }
+  if (worldVideo?.paused && !worldVideo.ended) {
+    worldVideo.play?.().catch(() => {});
+  }
+  if (isVideoWaitingForDemoSeconds(waitSeconds)) {
+    scheduleResumeTimelineAfterVideoWait();
+    return;
+  }
+  clearVideoWaitState();
+  startAutoPlayLoop(waitSeconds);
+}
+
+function scheduleResumeTimelineAfterVideoWait() {
+  if (!isTimelineWaitingForVideo) return;
+  clearTimeout(videoWaitResumeTimer);
+  videoWaitResumeTimer = setTimeout(resumeTimelineAfterVideoWait, 120);
+}
+
+function pauseTimelineForVideoWait(demoSeconds = getDemoSecondsForEventCount(playbackCursor)) {
+  if (!shouldGateTimelineForVideo(demoSeconds)) return;
+  clearTimeout(autoPlayTimer);
+  cancelAnimationFrame(autoPlayFrame);
+  clearTimeout(videoWaitPauseTimer);
+  autoPlayTimer = null;
+  autoPlayFrame = null;
+  videoWaitPauseTimer = null;
+  isTimelineWaitingForVideo = true;
+  shouldPauseTimelineOnVideoWait = true;
+  autoPlayClockStartSeconds = clamp(Number(demoSeconds) || 0, 0, getPresentationTotalSeconds());
+  autoPlayClockStartedAt = performance.now();
+  if (worldVideo?.paused && !worldVideo.ended) {
+    worldVideo.play?.().catch(() => {});
+  }
+  updatePlaybackControls();
+  scheduleResumeTimelineAfterVideoWait();
+}
+
+function schedulePauseTimelineForVideoWait() {
+  if (!shouldGateTimelineForVideo()) return;
+  clearTimeout(videoWaitPauseTimer);
+  videoWaitPauseTimer = setTimeout(() => {
+    videoWaitPauseTimer = null;
+    const demoSeconds = getDemoSecondsForEventCount(playbackCursor);
+    if (isVideoWaitingForDemoSeconds(demoSeconds)) {
+      pauseTimelineForVideoWait(demoSeconds);
+    }
+  }, 420);
+}
+
+function isVideoWaitingForDemoSeconds(demoSeconds = 0) {
+  if (!shouldGateTimelineForVideo(demoSeconds)) return false;
+  if (!isTimelineWaitingForVideo && getVideoWaitGuardElapsed() < 420) return false;
+  if (worldVideo.paused || worldVideo.ended) return true;
+  if (worldVideo.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return true;
+  const targetVideoTime = clamp(Number(demoSeconds) - introArchitectureSeconds, 0, Math.max(demoVideoSeconds, 0));
+  if (Math.abs((worldVideo.currentTime || 0) - targetVideoTime) > 0.85) return true;
+  return false;
 }
 
 function formatPlaybackSpeed(speed = playbackSpeed) {
@@ -241,6 +360,11 @@ function runAutoPlayFrame(now = performance.now()) {
   autoPlayFrame = null;
   autoPlayTimer = null;
   if (!isAutoPlaying || isKeyframeHolding) return;
+  const currentSeconds = getDemoSecondsForEventCount(playbackCursor);
+  if (isVideoWaitingForDemoSeconds(currentSeconds)) {
+    pauseTimelineForVideoWait(currentSeconds);
+    return;
+  }
 
   const tickSeconds = Math.min(Math.max((now - autoPlayClockStartedAt) / 1000, 0), 0.16) * playbackSpeed;
   autoPlayClockStartedAt = now;
@@ -250,6 +374,10 @@ function runAutoPlayFrame(now = performance.now()) {
   if (keyframe) {
     demoSeconds = keyframe.demoSeconds;
     autoPlayClockStartSeconds = demoSeconds;
+  }
+  if (isVideoWaitingForDemoSeconds(demoSeconds)) {
+    pauseTimelineForVideoWait(currentSeconds);
+    return;
   }
 
   renderPlaybackToDemoSeconds(demoSeconds, { noSeek: true });
@@ -894,36 +1022,25 @@ function holdTimelineAtKeyframe(keyframe, options = {}) {
     seekTimelineToKeyframe(keyframe, { expandFramework: false });
     return false;
   }
-  const shouldResume = options.resumeAfterHold === true;
 
-  clearTimeout(autoPlayTimer);
-  cancelAnimationFrame(autoPlayFrame);
   clearTimeout(keyframeHoldTimer);
   clearTimeout(frameworkCollapseTimer);
-  autoPlayTimer = null;
-  autoPlayFrame = null;
   keyframeHoldTimer = null;
   frameworkCollapseTimer = null;
 
   seekTimelineToKeyframe(keyframe, { expandFramework: false });
-  isAutoPlaying = shouldResume;
-  isKeyframeHolding = true;
+  isKeyframeHolding = false;
   setFrameworkExpanded(true);
   timelineIntro?.classList.toggle('is-visible', keyframe.demoSeconds < introArchitectureSeconds);
-  pauseVideoAtCurrentFrame();
   updatePlaybackControls();
 
-  keyframeHoldTimer = setTimeout(() => {
-    keyframeHoldTimer = null;
-    isKeyframeHolding = false;
+  frameworkCollapseTimer = setTimeout(() => {
+    frameworkCollapseTimer = null;
     setFrameworkExpanded(false);
     updatePlaybackControls();
-    if (!shouldResume) return;
-    resumeVideoFromCurrentFrame();
-    startAutoPlayLoop(keyframe.demoSeconds);
   }, KEYFRAME_HOLD_MS);
 
-  return true;
+  return false;
 }
 
 function getNextPendingKeyframe() {
@@ -934,29 +1051,20 @@ function beginKeyframeHold(keyframe) {
   if (isVideoOnlyMode) return false;
   if (!keyframe || heldKeyframes.has(keyframe.id)) return false;
   heldKeyframes.add(keyframe.id);
-  isKeyframeHolding = true;
+  isKeyframeHolding = false;
   setFrameworkExpanded(true);
   timelineIntro?.classList.toggle('is-visible', keyframe.demoSeconds < introArchitectureSeconds);
-  pauseVideoAtCurrentFrame();
   updatePlaybackControls();
   clearTimeout(keyframeHoldTimer);
   clearTimeout(frameworkCollapseTimer);
+  keyframeHoldTimer = null;
   frameworkCollapseTimer = null;
-  keyframeHoldTimer = setTimeout(() => {
-    keyframeHoldTimer = null;
-    if (!isAutoPlaying) {
-      isKeyframeHolding = false;
-      setFrameworkExpanded(false);
-      updatePlaybackControls();
-      return;
-    }
-    isKeyframeHolding = false;
+  frameworkCollapseTimer = setTimeout(() => {
+    frameworkCollapseTimer = null;
     setFrameworkExpanded(false);
-    resumeVideoFromCurrentFrame();
     updatePlaybackControls();
-    startAutoPlayLoop(keyframe.demoSeconds);
   }, KEYFRAME_HOLD_MS);
-  return true;
+  return false;
 }
 
 function setVideoOnlyMode(isEnabled) {
@@ -1000,6 +1108,7 @@ function seekTimelineToRatio(ratio = 0, options = {}) {
   isKeyframeHolding = false;
   updateVideoForDemoSeconds(seconds, { force: true });
   updatePlaybackControls();
+  armVideoWaitGuard();
   startAutoPlayLoop(seconds);
 }
 

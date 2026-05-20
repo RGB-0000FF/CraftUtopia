@@ -50,6 +50,12 @@ worldVideo?.addEventListener('ended', () => {
   setTimelineReadout(getPresentationTotalSeconds());
   stopAutoPlay();
 });
+worldVideo?.addEventListener('waiting', schedulePauseTimelineForVideoWait);
+worldVideo?.addEventListener('stalled', schedulePauseTimelineForVideoWait);
+worldVideo?.addEventListener('canplay', scheduleResumeTimelineAfterVideoWait);
+worldVideo?.addEventListener('playing', scheduleResumeTimelineAfterVideoWait);
+worldVideo?.addEventListener('seeked', scheduleResumeTimelineAfterVideoWait);
+worldVideo?.addEventListener('timeupdate', scheduleResumeTimelineAfterVideoWait);
 appResizer?.addEventListener('pointerdown', startPanelResize);
 appResizer?.addEventListener('pointermove', movePanelResize);
 appResizer?.addEventListener('pointerup', endPanelResize);

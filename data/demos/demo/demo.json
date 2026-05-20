@@ -2,7 +2,7 @@
   "id": "demo",
   "pageTitle": "Architecture Overview",
   "taskTitle": "Architecture Overview",
-  "video": "assets/videos/demo.mp4",
+  "video": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/demo/master.m3u8",
   "introImage": "assets/images/architecture.jpg",
   "coverImage": "assets/images/CraftUtopia.png",
   "videoFit": "contain",

@@ -1,45 +1,45 @@
 {
-  "version": "20260520-r2-video-cache-v1",
+  "version": "20260520-r2-hls-v1",
   "videos": [
     {
       "id": "demo",
       "title": "Overview",
-      "url": "assets/videos/demo.mp4"
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/demo/master.m3u8"
     },
     {
       "id": "colosseum",
       "title": "Colosseum",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/doushouchang.mp4"
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/colosseum/master.m3u8"
     },
     {
       "id": "lamborghini",
       "title": "Lamborghini",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/lanbo-build-clean-web.mp4"
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/lamborghini/master.m3u8"
     },
     {
       "id": "pyramid",
       "title": "Pyramid",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/jinzita_3.00.mp4"
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/pyramid/master.m3u8"
     },
     {
       "id": "sydney-opera-house",
       "title": "Sydney Opera House",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/xini-build-clean-web.mp4"
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/sydney-opera-house/master.m3u8"
     },
     {
       "id": "taj-mahal",
       "title": "Taj Mahal",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/taijiling-build-clean-web.mp4"
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/taj-mahal/master.m3u8"
     },
     {
       "id": "united-states-capitol",
       "title": "United States Capitol",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/guohui-build-clean-web.mp4"
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/united-states-capitol/master.m3u8"
     },
     {
       "id": "xian-bell-tower",
       "title": "Xi'an Bell Tower",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/zhonglou_3.0.mp4"
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/xian-bell-tower/master.m3u8"
     }
   ]
 }

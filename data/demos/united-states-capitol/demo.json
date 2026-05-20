@@ -2,7 +2,7 @@
   "id": "united-states-capitol",
   "pageTitle": "United States Capitol Demo",
   "taskTitle": "United States Capitol with 100 Agents",
-  "video": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/guohui-build-clean-web.mp4",
+  "video": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/united-states-capitol/master.m3u8",
   "coverImage": "assets/guohui/guohui.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",

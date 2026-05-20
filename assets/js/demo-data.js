@@ -133,6 +133,13 @@ const pageBaseUrl = new URL(document.baseURI || window.location.href);
 pageBaseUrl.search = '';
 pageBaseUrl.hash = '';
 const siteAssetUrl = (path) => new URL(path, pageBaseUrl).toString();
+const HLS_MANIFEST_PATTERN = /\.m3u8(?:[?#]|$)/i;
+const HLS_PLAYBACK_CONFIG = {
+  startFragPrefetch: true,
+  maxBufferLength: 20,
+  maxMaxBufferLength: 40,
+  backBufferLength: 30
+};
 
 let RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
@@ -167,6 +174,50 @@ function formatBlockCount(value) {
   return new Intl.NumberFormat('en-US').format(number);
 }
 
+function destroyActiveHlsController() {
+  if (!activeHlsController) return;
+  activeHlsController.destroy();
+  activeHlsController = null;
+}
+
+function loadWorldVideoSource(videoPath) {
+  if (!worldVideo || !videoPath) return;
+  const sourceUrl = siteAssetUrl(videoPath);
+  const isHlsSource = HLS_MANIFEST_PATTERN.test(sourceUrl);
+  const isCrossOrigin = new URL(sourceUrl).origin !== window.location.origin;
+
+  destroyActiveHlsController();
+  if (isCrossOrigin) {
+    worldVideo.crossOrigin = 'anonymous';
+  } else {
+    worldVideo.removeAttribute('crossorigin');
+  }
+
+  if (!isHlsSource) {
+    worldVideo.src = sourceUrl;
+    window.CraftUtopiaVideoCache?.cacheCurrentVideo?.(videoPath);
+    worldVideo.load?.();
+    return;
+  }
+
+  worldVideo.removeAttribute('src');
+  if (worldVideo.canPlayType('application/vnd.apple.mpegurl')) {
+    worldVideo.src = sourceUrl;
+    worldVideo.load?.();
+    return;
+  }
+
+  if (window.Hls?.isSupported?.()) {
+    activeHlsController = new window.Hls(HLS_PLAYBACK_CONFIG);
+    activeHlsController.loadSource(sourceUrl);
+    activeHlsController.attachMedia(worldVideo);
+    return;
+  }
+
+  worldVideo.src = sourceUrl;
+  worldVideo.load?.();
+}
+
 function applyDemoProfile(profile = {}) {
   activeDemoProfile = profile || {};
   document.title = profile.pageTitle || profile.taskTitle || 'CraftUtopia Demo Viewer';
@@ -181,11 +232,7 @@ function applyDemoProfile(profile = {}) {
   } else {
     timelineKeyframes = DEFAULT_TIMELINE_KEYFRAMES.map((keyframe) => ({ ...keyframe }));
   }
-  if (worldVideo && profile.video) {
-    worldVideo.src = siteAssetUrl(profile.video);
-    window.CraftUtopiaVideoCache?.cacheCurrentVideo?.(profile.video);
-    worldVideo.load?.();
-  }
+  if (worldVideo && profile.video) loadWorldVideoSource(profile.video);
   setImageSource('#timeline-intro img', profile.introImage, '');
   setImageSource('.framework-preview img, .framework-lightbox img', profile.frameworkImage, 'CraftUtopia execution framework architecture');
   document.body.classList.toggle('is-cover-hidden', profile.showCover === false);

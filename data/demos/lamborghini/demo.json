@@ -2,7 +2,7 @@
   "id": "lamborghini",
   "pageTitle": "Lamborghini Demo",
   "taskTitle": "Lamborghini with 100 Agents",
-  "video": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/lanbo-build-clean-web.mp4",
+  "video": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/lamborghini/master.m3u8",
   "coverImage": "assets/lanbo/lanbo.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",
