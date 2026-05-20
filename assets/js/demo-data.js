@@ -183,6 +183,7 @@ function applyDemoProfile(profile = {}) {
   }
   if (worldVideo && profile.video) {
     worldVideo.src = siteAssetUrl(profile.video);
+    window.CraftUtopiaVideoCache?.cacheCurrentVideo?.(profile.video);
     worldVideo.load?.();
   }
   setImageSource('#timeline-intro img', profile.introImage, '');

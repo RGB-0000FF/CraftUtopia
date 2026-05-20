@@ -2,7 +2,7 @@
   "id": "sydney-opera-house",
   "pageTitle": "Sydney Opera House Demo",
   "taskTitle": "Sydney Opera House with 100 Agents",
-  "video": "assets/xini/xini-build-clean-web.mp4",
+  "video": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/xini-build-clean-web.mp4",
   "coverImage": "assets/xini/xini.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",

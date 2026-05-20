@@ -1,0 +1,45 @@
+{
+  "version": "20260520-r2-video-cache-v1",
+  "videos": [
+    {
+      "id": "demo",
+      "title": "Overview",
+      "url": "assets/videos/demo.mp4"
+    },
+    {
+      "id": "colosseum",
+      "title": "Colosseum",
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/doushouchang.mp4"
+    },
+    {
+      "id": "lamborghini",
+      "title": "Lamborghini",
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/lanbo-build-clean-web.mp4"
+    },
+    {
+      "id": "pyramid",
+      "title": "Pyramid",
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/jinzita_3.00.mp4"
+    },
+    {
+      "id": "sydney-opera-house",
+      "title": "Sydney Opera House",
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/xini-build-clean-web.mp4"
+    },
+    {
+      "id": "taj-mahal",
+      "title": "Taj Mahal",
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/taijiling-build-clean-web.mp4"
+    },
+    {
+      "id": "united-states-capitol",
+      "title": "United States Capitol",
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/guohui-build-clean-web.mp4"
+    },
+    {
+      "id": "xian-bell-tower",
+      "title": "Xi'an Bell Tower",
+      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/zhonglou_3.0.mp4"
+    }
+  ]
+}
