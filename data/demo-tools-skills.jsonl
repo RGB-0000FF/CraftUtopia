@@ -1,4 +1,4 @@
-{"kind":"meta","id":"demo_tool_skill_inventory","version":1,"source":"Prepared from data/system.log for the 5-logical-foreman demo.","vocabulary":{"taskUnit":"subtask","avoidTerms":["bounty"]}}
+{"kind":"meta","id":"demo_tool_skill_inventory","version":1,"source":"Prepared for the 5-logical-foreman demo.","vocabulary":{"taskUnit":"subtask","avoidTerms":["bounty"]}}
 {"kind":"tool","scope":"pm","id":"pm_read_blueprint","name":"Read Blueprint","description":"Read the full construction blueprint, including block count, bounds, active levels, and main materials.","internalTools":["get_construction_blueprint"]}
 {"kind":"tool","scope":"pm","id":"pm_split_blueprint","name":"Split Blueprint","description":"Divide the full blueprint into five logical Foreman regions for the demo.","internalTools":["phased_split_blueprint"],"demoOnly":true}
 {"kind":"tool","scope":"pm","id":"pm_dispatch_regions","name":"Dispatch Regions","description":"Send each Foreman its assigned region, worker pool, and construction constraints.","internalTools":["send_agent_message"]}

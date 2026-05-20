@@ -59,6 +59,7 @@ let timelineScrubStartX = 0;
 let timelineScrubStartY = 0;
 let timelineDidDrag = false;
 let suppressNextTimelineClick = false;
+let shouldResumeAfterTimelineSeek = false;
 let isVideoOnlyMode = false;
 const mentionAccentByTerm = new Map();
 const SKILL_REGISTRY = {

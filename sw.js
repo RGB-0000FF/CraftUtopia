@@ -1,5 +1,5 @@
 const VIDEO_CACHE_PREFIX = 'craftutopia-video-cache-';
-const DEFAULT_VIDEO_CACHE_VERSION = '20260520-video-cache-v1';
+const DEFAULT_VIDEO_CACHE_VERSION = '20260520-video-cache-v2';
 let activeVideoCacheName = `${VIDEO_CACHE_PREFIX}${DEFAULT_VIDEO_CACHE_VERSION}`;
 
 function getVideoCacheName(version = DEFAULT_VIDEO_CACHE_VERSION) {
@@ -46,6 +46,16 @@ async function cacheVideo(url) {
   return { url, status: 'stored' };
 }
 
+async function fetchAndStoreVideo(request) {
+  const cache = await caches.open(activeVideoCacheName);
+  const url = new URL(request.url);
+  const cacheRequest = getCacheRequest(url.href);
+  const response = await fetch(cacheRequest);
+  if (!response.ok || response.status === 206) return response;
+  await cache.put(cacheRequest, response.clone());
+  return response;
+}
+
 function parseRange(rangeHeader, size) {
   const match = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader || '');
   if (!match) return null;
@@ -70,9 +80,10 @@ function parseRange(rangeHeader, size) {
 
 async function handleVideoRangeRequest(request) {
   const cached = await getCachedVideo(request);
-  if (!cached) return fetch(request);
+  const source = cached || await fetchAndStoreVideo(request);
+  if (!source.ok || source.status === 206) return source;
 
-  const buffer = await cached.arrayBuffer();
+  const buffer = await source.arrayBuffer();
   const range = parseRange(request.headers.get('range'), buffer.byteLength);
   if (!range) {
     return new Response(null, {
@@ -93,8 +104,8 @@ async function handleVideoRangeRequest(request) {
       'Accept-Ranges': 'bytes',
       'Content-Length': String(chunk.byteLength),
       'Content-Range': `bytes ${range.start}-${range.end}/${buffer.byteLength}`,
-      'Content-Type': cached.headers.get('Content-Type') || 'video/mp4',
-      'Cache-Control': cached.headers.get('Cache-Control') || 'public, max-age=31536000'
+      'Content-Type': source.headers.get('Content-Type') || 'video/mp4',
+      'Cache-Control': source.headers.get('Cache-Control') || 'public, max-age=31536000'
     }
   });
 }

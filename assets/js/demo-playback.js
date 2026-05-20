@@ -767,10 +767,11 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
   const isVideoTargetComplete = !isIntro && duration > 0 && clampedVideoTime >= duration - 0.08;
   const shouldSeek = !options.noSeek && (options.force || !isAutoPlaying || isKeyframeHolding || playbackCursor >= playbackEvents.length || isIntro);
   try {
-    if (options.force && !isAutoPlaying && clampedVideoTime <= 0.05) {
+    if (options.force && !options.noSeek && !isAutoPlaying && clampedVideoTime <= 0.05) {
       worldVideo.pause();
-      worldVideo.currentTime = 0;
-      worldVideo.load?.();
+      if (Math.abs((worldVideo.currentTime || 0) - clampedVideoTime) > 0.08) {
+        worldVideo.currentTime = clampedVideoTime;
+      }
       return;
     }
     if (shouldSeek && Math.abs((worldVideo.currentTime || 0) - clampedVideoTime) > 0.08) {
@@ -990,13 +991,19 @@ function seekTimelineToRatio(ratio = 0, options = {}) {
   const safeRatio = clamp(ratio, 0, 1);
   const seconds = safeRatio * getPresentationTotalSeconds();
   const count = getEventCountForTimelineRatio(safeRatio);
+  const shouldResume = options.resume === true && count < playbackEvents.length;
   syncHeldKeyframesForSeconds(seconds);
   renderPlaybackUntil(count);
   previewTimelineRatio(safeRatio);
-  if (!options.keepPaused && isAutoPlaying) scheduleAutoPlay();
+  if (!shouldResume) return;
+  isAutoPlaying = true;
+  isKeyframeHolding = false;
+  updateVideoForDemoSeconds(seconds, { force: true });
+  updatePlaybackControls();
+  startAutoPlayLoop(seconds);
 }
 
-function queueTimelineSeek(event, commit = false) {
+function queueTimelineSeek(event, commit = false, options = {}) {
   const ratio = getTimelineRatioFromPointer(event);
   previewTimelineRatio(ratio);
   if (!commit) {
@@ -1006,13 +1013,14 @@ function queueTimelineSeek(event, commit = false) {
   }
   cancelAnimationFrame(scrubFrame);
   scrubFrame = null;
-  seekTimelineToRatio(ratio, { keepPaused: true });
+  seekTimelineToRatio(ratio, { keepPaused: true, resume: options.resume === true });
 }
 
 function startTimelineScrub(event) {
   if (!buildTimelineRail || !playbackEvents.length) return;
   event.preventDefault();
-  stopAutoPlay();
+  shouldResumeAfterTimelineSeek = isAutoPlaying;
+  stopAutoPlay(!shouldResumeAfterTimelineSeek);
   isScrubbingTimeline = true;
   timelineScrubStartX = Number(event.clientX) || 0;
   timelineScrubStartY = Number(event.clientY) || 0;
@@ -1038,7 +1046,8 @@ function endTimelineScrub(event) {
   isScrubbingTimeline = false;
   buildTimeline?.classList.remove('is-scrubbing');
   buildTimeline?.releasePointerCapture?.(event.pointerId);
-  queueTimelineSeek(event, true);
+  queueTimelineSeek(event, true, { resume: shouldResumeAfterTimelineSeek });
+  shouldResumeAfterTimelineSeek = false;
   if (timelineDidDrag) {
     suppressNextTimelineClick = true;
     setTimeout(() => { suppressNextTimelineClick = false; }, 0);
@@ -1060,9 +1069,10 @@ function handleTimelineKeydown(event) {
   else if (event.key === 'End') nextRatio = 1;
   else return;
   event.preventDefault();
+  const shouldResume = isAutoPlaying;
   stopAutoPlay();
   shouldFollowLog = true;
-  seekTimelineToRatio(clamp(nextRatio, 0, 1), { keepPaused: true });
+  seekTimelineToRatio(clamp(nextRatio, 0, 1), { keepPaused: true, resume: shouldResume });
 }
 
 function handleTimelineClick(event) {
@@ -1073,7 +1083,8 @@ function handleTimelineClick(event) {
   }
   if (!playbackEvents.length || isScrubbingTimeline) return;
   event.preventDefault();
+  const shouldResume = isAutoPlaying;
   stopAutoPlay();
   shouldFollowLog = true;
-  seekTimelineToRatio(getTimelineRatioFromPointer(event), { keepPaused: true });
+  seekTimelineToRatio(getTimelineRatioFromPointer(event), { keepPaused: true, resume: shouldResume });
 }
