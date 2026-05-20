@@ -1,5 +1,6 @@
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.mov filter=lfs diff=lfs merge=lfs -text
+assets/videos/demo.mp4 -filter -diff -merge -text
 assets/replay_videos_mp4/*.mp4 -filter -diff -merge -text
 assets/guohui/*.mp4 -filter -diff -merge -text
 assets/xini/*.mp4 -filter -diff -merge -text
