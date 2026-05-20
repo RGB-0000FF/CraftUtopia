@@ -3,7 +3,9 @@
 
   const MANIFEST_URL = 'data/video-cache-manifest.json';
   const SEGMENTS_PER_INTENT = 2;
+  const INITIAL_VIEWER_SEGMENTS = 8;
   const MAX_CONCURRENT_PRELOADS = 2;
+  const VIEWER_BATCH_DELAY_MS = 250;
   const CARD_SELECTOR = 'a.demo-card[href*="?demo="]';
 
   const videoManifestById = new Map();
@@ -11,6 +13,7 @@
   const preloadPromises = new Map();
   const fetchedUrls = new Set();
   const intentWarmedDemos = new Set();
+  const viewerWarmups = new Map();
   const queue = [];
 
   let activeCount = 0;
@@ -182,6 +185,25 @@
     return playlistData;
   }
 
+  async function getPlaylistDataForUrl(playlistUrl) {
+    if (!playlistUrl) {
+      return null;
+    }
+
+    if (playlistCache.has(playlistUrl)) {
+      return playlistCache.get(playlistUrl);
+    }
+
+    const text = await enqueueUrl(playlistUrl, 'text');
+    if (!text) {
+      return null;
+    }
+
+    const playlistData = parsePlaylist(text, playlistUrl);
+    playlistCache.set(playlistUrl, playlistData);
+    return playlistData;
+  }
+
   async function warmPlaylistAndInit(demoId) {
     const playlistData = await getPlaylistData(demoId);
     if (playlistData && playlistData.initUrl) {
@@ -207,6 +229,108 @@
     }
   }
 
+  function delay(ms) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
+  }
+
+  async function warmSegmentList(urls, state, delayMs) {
+    const pending = [];
+
+    for (const url of urls) {
+      if (state.cancelled) {
+        break;
+      }
+
+      if (isPageHidden()) {
+        await new Promise((resolve) => {
+          const resume = () => {
+            if (!isPageHidden()) {
+              document.removeEventListener('visibilitychange', resume);
+              resolve();
+            }
+          };
+          document.addEventListener('visibilitychange', resume);
+        });
+      }
+
+      if (state.cancelled) {
+        break;
+      }
+
+      pending.push(enqueueUrl(url, 'arrayBuffer'));
+      if (delayMs > 0) {
+        await delay(delayMs);
+      }
+    }
+
+    await Promise.all(pending);
+  }
+
+  async function warmCurrentDemo(playlistUrl, options = {}) {
+    if (!playlistUrl || shouldSkipSegmentPreload()) {
+      return null;
+    }
+
+    const absolutePlaylistUrl = new URL(playlistUrl, window.location.href).href;
+    const existing = viewerWarmups.get(absolutePlaylistUrl);
+    if (existing) {
+      return existing.promise;
+    }
+
+    const state = { cancelled: false };
+    const initialSegmentCount = Number.isFinite(Number(options.initialSegmentCount))
+      ? Math.max(0, Number(options.initialSegmentCount))
+      : INITIAL_VIEWER_SEGMENTS;
+    const delayMs = Number.isFinite(Number(options.delayMs))
+      ? Math.max(0, Number(options.delayMs))
+      : VIEWER_BATCH_DELAY_MS;
+
+    const promise = (async () => {
+      const playlistData = await getPlaylistDataForUrl(absolutePlaylistUrl);
+      if (!playlistData || state.cancelled) {
+        return null;
+      }
+
+      if (playlistData.initUrl) {
+        await enqueueUrl(playlistData.initUrl, 'arrayBuffer');
+      }
+
+      const initialUrls = playlistData.segmentUrls.slice(0, initialSegmentCount);
+      const remainingUrls = playlistData.segmentUrls.slice(initialSegmentCount);
+      await warmSegmentList(initialUrls, state, 0);
+      await warmSegmentList(remainingUrls, state, delayMs);
+      return {
+        playlistUrl: absolutePlaylistUrl,
+        segmentCount: playlistData.segmentUrls.length
+      };
+    })().finally(() => {
+      viewerWarmups.delete(absolutePlaylistUrl);
+    });
+
+    viewerWarmups.set(absolutePlaylistUrl, {
+      promise,
+      cancel: () => {
+        state.cancelled = true;
+      }
+    });
+
+    return promise;
+  }
+
+  function cancelCurrentDemoWarmup(playlistUrl) {
+    if (!playlistUrl) {
+      for (const warmup of viewerWarmups.values()) {
+        warmup.cancel();
+      }
+      viewerWarmups.clear();
+      return;
+    }
+
+    const absolutePlaylistUrl = new URL(playlistUrl, window.location.href).href;
+    viewerWarmups.get(absolutePlaylistUrl)?.cancel();
+    viewerWarmups.delete(absolutePlaylistUrl);
+  }
+
   function getDemoIdFromCard(card) {
     try {
       const url = new URL(card.getAttribute('href'), window.location.href);
@@ -218,6 +342,9 @@
 
   function bindIntentPreload() {
     const cards = document.querySelectorAll(CARD_SELECTOR);
+    if (!cards.length) {
+      return false;
+    }
 
     for (const card of cards) {
       const warmCard = () => warmIntentSegments(getDemoIdFromCard(card));
@@ -227,6 +354,8 @@
       card.addEventListener('touchstart', warmCard, { passive: true });
       card.addEventListener('mousedown', warmCard, { passive: true });
     }
+
+    return true;
   }
 
   async function warmAllPlaylistsAndInit() {
@@ -242,8 +371,9 @@
   }
 
   function start() {
-    bindIntentPreload();
-    scheduleIdle(warmAllPlaylistsAndInit);
+    if (bindIntentPreload()) {
+      scheduleIdle(warmAllPlaylistsAndInit);
+    }
   }
 
   document.addEventListener('visibilitychange', () => {
@@ -260,6 +390,8 @@
 
   window.CraftUtopiaHlsPreload = {
     warmPlaylistAndInit,
-    warmIntentSegments
+    warmIntentSegments,
+    warmCurrentDemo,
+    cancelCurrentDemoWarmup
   };
 })();

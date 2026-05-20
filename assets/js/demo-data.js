@@ -136,8 +136,8 @@ const siteAssetUrl = (path) => new URL(path, pageBaseUrl).toString();
 const HLS_MANIFEST_PATTERN = /\.m3u8(?:[?#]|$)/i;
 const HLS_PLAYBACK_CONFIG = {
   startFragPrefetch: true,
-  maxBufferLength: 20,
-  maxMaxBufferLength: 40,
+  maxBufferLength: 45,
+  maxMaxBufferLength: 90,
   backBufferLength: 30
 };
 
@@ -178,6 +178,7 @@ function destroyActiveHlsController() {
   if (!activeHlsController) return;
   activeHlsController.destroy();
   activeHlsController = null;
+  window.CraftUtopiaHlsPreload?.cancelCurrentDemoWarmup?.();
 }
 
 function loadWorldVideoSource(videoPath) {
@@ -195,10 +196,14 @@ function loadWorldVideoSource(videoPath) {
 
   if (!isHlsSource) {
     worldVideo.src = sourceUrl;
-    window.CraftUtopiaVideoCache?.cacheCurrentVideo?.(videoPath);
     worldVideo.load?.();
     return;
   }
+
+  window.CraftUtopiaHlsPreload?.warmCurrentDemo?.(sourceUrl, {
+    initialSegmentCount: 8,
+    delayMs: 250
+  });
 
   worldVideo.removeAttribute('src');
   if (worldVideo.canPlayType('application/vnd.apple.mpegurl')) {
