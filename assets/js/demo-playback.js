@@ -664,7 +664,7 @@ function formatTimelineTime(seconds = 0) {
 }
 
 function getPresentationTotalSeconds() {
-  return Math.max(INTRO_ARCHITECTURE_SECONDS + demoVideoSeconds, timelineKeyframes.at(-1)?.demoSeconds || 1, 1);
+  return Math.max(introArchitectureSeconds + demoVideoSeconds, timelineKeyframes.at(-1)?.demoSeconds || 1, 1);
 }
 
 function findEventCountForKeyframe(keyframe, previousCount = 0) {
@@ -759,9 +759,9 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
   if (!worldVideo) return;
   if (worldVideo.playbackRate !== playbackSpeed) worldVideo.playbackRate = playbackSpeed;
   const safeSeconds = clamp(Number(seconds) || 0, 0, getPresentationTotalSeconds());
-  const isIntro = safeSeconds < INTRO_ARCHITECTURE_SECONDS;
+  const isIntro = safeSeconds < introArchitectureSeconds;
   timelineIntro?.classList.toggle('is-visible', isIntro);
-  const targetVideoTime = clamp(safeSeconds - INTRO_ARCHITECTURE_SECONDS, 0, Math.max(demoVideoSeconds, 0));
+  const targetVideoTime = clamp(safeSeconds - introArchitectureSeconds, 0, Math.max(demoVideoSeconds, 0));
   const duration = Number.isFinite(worldVideo.duration) && worldVideo.duration > 0 ? worldVideo.duration : demoVideoSeconds;
   const clampedVideoTime = clamp(targetVideoTime, 0, duration);
   const isVideoTargetComplete = !isIntro && duration > 0 && clampedVideoTime >= duration - 0.08;
@@ -804,8 +804,8 @@ function resumeVideoFromCurrentFrame() {
   if (!worldVideo) return;
   if (playbackCursor >= playbackEvents.length) return;
   const demoSeconds = getDemoSecondsForEventCount(playbackCursor);
-  timelineIntro?.classList.toggle('is-visible', demoSeconds < INTRO_ARCHITECTURE_SECONDS);
-  if (demoSeconds >= INTRO_ARCHITECTURE_SECONDS) {
+  timelineIntro?.classList.toggle('is-visible', demoSeconds < introArchitectureSeconds);
+  if (demoSeconds >= introArchitectureSeconds) {
     const playFromFrozenFrame = () => worldVideo.play?.().catch(() => {});
     playFromFrozenFrame();
     setTimeout(() => {
@@ -815,7 +815,7 @@ function resumeVideoFromCurrentFrame() {
 }
 
 function syncTimelineOverlayOnly(seconds = 0) {
-  timelineIntro?.classList.toggle('is-visible', Number(seconds) < INTRO_ARCHITECTURE_SECONDS);
+  timelineIntro?.classList.toggle('is-visible', Number(seconds) < introArchitectureSeconds);
 }
 
 function previewTimelineRatio(ratio = 0) {
@@ -908,7 +908,7 @@ function holdTimelineAtKeyframe(keyframe, options = {}) {
   isAutoPlaying = shouldResume;
   isKeyframeHolding = true;
   setFrameworkExpanded(true);
-  timelineIntro?.classList.toggle('is-visible', keyframe.demoSeconds < INTRO_ARCHITECTURE_SECONDS);
+  timelineIntro?.classList.toggle('is-visible', keyframe.demoSeconds < introArchitectureSeconds);
   pauseVideoAtCurrentFrame();
   updatePlaybackControls();
 
@@ -935,7 +935,7 @@ function beginKeyframeHold(keyframe) {
   heldKeyframes.add(keyframe.id);
   isKeyframeHolding = true;
   setFrameworkExpanded(true);
-  timelineIntro?.classList.toggle('is-visible', keyframe.demoSeconds < INTRO_ARCHITECTURE_SECONDS);
+  timelineIntro?.classList.toggle('is-visible', keyframe.demoSeconds < introArchitectureSeconds);
   pauseVideoAtCurrentFrame();
   updatePlaybackControls();
   clearTimeout(keyframeHoldTimer);

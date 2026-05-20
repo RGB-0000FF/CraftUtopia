@@ -28,3 +28,6 @@ assets/videos_1080p/
 
 # Local backup of the previous oversized Git history.
 .git_backup_with_videos_*/
+
+# Local runtime logs.
+data/system.log

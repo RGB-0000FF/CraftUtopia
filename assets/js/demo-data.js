@@ -171,10 +171,11 @@ function applyDemoProfile(profile = {}) {
   activeDemoProfile = profile || {};
   document.title = profile.pageTitle || profile.taskTitle || 'CraftUtopia Demo Viewer';
   if (profile.logManifest) RUN_EVENTS_MANIFEST_PATH = profile.logManifest;
+  introArchitectureSeconds = Number.isFinite(Number(profile.introSeconds)) ? Math.max(0, Number(profile.introSeconds)) : INTRO_ARCHITECTURE_SECONDS;
   if (Number.isFinite(Number(profile.fallbackVideoSeconds))) {
     demoVideoSeconds = Number(profile.fallbackVideoSeconds);
   }
-  if (Array.isArray(profile.timelineKeyframes) && profile.timelineKeyframes.length) {
+  if (Array.isArray(profile.timelineKeyframes)) {
     timelineKeyframes = profile.timelineKeyframes.map((keyframe) => ({ ...keyframe }));
     heldKeyframes.clear();
   } else {
@@ -186,9 +187,14 @@ function applyDemoProfile(profile = {}) {
   }
   setImageSource('#timeline-intro img', profile.introImage, '');
   setImageSource('.framework-preview img, .framework-lightbox img', profile.frameworkImage, 'CraftUtopia execution framework architecture');
-  setImageSource('#blueprint-cover-image', profile.coverImage || profile.introImage, `${profile.taskTitle || 'Blueprint'} cover preview`);
+  document.body.classList.toggle('is-cover-hidden', profile.showCover === false);
+  document.body.classList.toggle('is-block-count-hidden', profile.showBlockCount === false);
+  document.body.classList.toggle('is-video-only-locked', Boolean(profile.lockVideoOnly || profile.videoOnly));
+  document.body.classList.toggle('is-video-fit-contain', profile.videoFit === 'contain');
+  if (profile.showCover !== false) setImageSource('#blueprint-cover-image', profile.coverImage || profile.introImage, `${profile.taskTitle || 'Blueprint'} cover preview`);
   if (blueprintBlockCountValue) blueprintBlockCountValue.textContent = formatBlockCount(profile.blockCount || '95,151');
   if (blueprintBlockCount) blueprintBlockCount.setAttribute('aria-label', `Blueprint block count: ${blueprintBlockCountValue?.textContent || '95,151'} blocks`);
+  if (profile.videoOnly) setVideoOnlyMode(true);
 }
 
 async function loadJsonAsset(path) {

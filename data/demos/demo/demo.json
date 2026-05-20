@@ -1,0 +1,17 @@
+{
+  "id": "demo",
+  "pageTitle": "Architecture Overview",
+  "taskTitle": "Architecture Overview",
+  "video": "assets/videos/demo.mp4",
+  "introImage": "assets/images/architecture.jpg",
+  "coverImage": "assets/images/CraftUtopia.png",
+  "videoFit": "contain",
+  "videoOnly": true,
+  "lockVideoOnly": true,
+  "showCover": false,
+  "showBlockCount": false,
+  "introSeconds": 0,
+  "logManifest": "data/demo-log/manifest.json",
+  "fallbackVideoSeconds": 180,
+  "timelineKeyframes": []
+}

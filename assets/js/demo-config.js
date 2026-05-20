@@ -38,6 +38,7 @@ let autoPlayClockStartedAt = 0;
 let isAutoPlaying = false;
 let playbackSpeed = 1;
 let demoVideoSeconds = DEMO_FALLBACK_VIDEO_SECONDS;
+let introArchitectureSeconds = INTRO_ARCHITECTURE_SECONDS;
 let activeDemoProfile = {};
 let timelineKeyframes = DEFAULT_TIMELINE_KEYFRAMES.map((keyframe) => ({ ...keyframe }));
 let timelineAnchors = [];
