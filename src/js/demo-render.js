@@ -231,9 +231,9 @@ function getStructuredFollowupMeta(followup = {}, event = {}, log = {}) {
 }
 
 function getStructuredLogGroupKey(event = {}) {
-  const log = createStructuredLogText(event);
-  if (!log?.actor) return '';
-  return `${event.stageId ?? ''}::${log.actor}`;
+  const groupKey = event.logGroup || event.display?.logGroup || '';
+  if (!groupKey) return '';
+  return `${event.stageId ?? ''}::${groupKey}`;
 }
 
 function appendStructuredLogEntry(node, event, options = {}) {

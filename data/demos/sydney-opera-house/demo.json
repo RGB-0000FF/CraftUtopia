@@ -18,7 +18,7 @@
     { "id": "blueprint-split", "label": "Blueprint split", "timeRange": [20, 32] },
     {
       "id": "regions-build",
-      "label": "Build",
+      "label": "Build Region",
       "timeRange": [32, 90],
       "segments": [
         { "id": "region-a", "label": "A", "timeRange": [32, 90] },

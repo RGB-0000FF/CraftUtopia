@@ -104,11 +104,18 @@ function getEventSearchText(event = {}, display = {}) {
   ].filter(Boolean).join(' ');
 }
 
+function hasStructuredSublineType(value, typeNames = []) {
+  if (!Array.isArray(value)) return false;
+  return value.some((item) => item && typeof item === 'object' && typeNames.some((name) => item[name] !== undefined));
+}
+
 function inferSkillRefFromEvent(event = {}, display = {}) {
   if (event.skill || display.skill) return event.skill || display.skill;
   const tool = String(event.tool || display.tool || '').trim().toLowerCase();
-  if (tool !== 'create skill' && tool !== 'use skill') return '';
   const text = getEventSearchText(event, display).toLowerCase();
+  const hasSkillSubline = hasStructuredSublineType(event.sublines, ['skills', 'skill'])
+    || hasStructuredSublineType(display.sublines, ['skills', 'skill']);
+  if (tool !== 'create skill' && tool !== 'use skill' && !hasSkillSubline && !/\b(?:create|use) skill\b/.test(text)) return '';
   const aliases = [
     { ref: 'build_region', labels: ['learned region placement', 'region placement'] },
     { ref: 'replace_region', labels: ['learned region replacement', 'region replacement'] },
@@ -123,6 +130,9 @@ function inferSkillEventKind(event = {}, display = {}) {
   const tool = String(event.tool || display.tool || '').trim().toLowerCase();
   if (tool === 'create skill') return 'skill-detection';
   if (tool === 'use skill') return 'skill-use';
+  const text = getEventSearchText(event, display).toLowerCase();
+  if (/\btool call\s+create skill\b/.test(text) || /\bcreate skill\b/.test(text)) return 'skill-detection';
+  if (/\btool call\s+use skill\b/.test(text) || /\buse skill\b/.test(text)) return 'skill-use';
   return '';
 }
 
@@ -198,7 +208,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260522-hls-root-fix2';
+const DATA_ASSET_VERSION = '20260522-linear-events';
 
 let RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
@@ -368,8 +378,28 @@ async function loadJsonAsset(path) {
   return response.json();
 }
 
+function normalizeRunEvents(events = [], seqRef) {
+  return events.flatMap((event, groupIndex) => {
+    if (!Array.isArray(event.entries) || !event.entries.length) {
+      return [normalizeRunEvent(event, seqRef.value++)];
+    }
+
+    const { entries, ...group } = event;
+    const logGroup = group.groupId || `${group.actor || 'log'}-${group.time || seqRef.value}-${groupIndex}`;
+    return entries.map((entry, entryIndex) => normalizeRunEvent({
+      ...group,
+      ...entry,
+      actor: entry.actor || group.actor,
+      time: entry.time || group.time,
+      logGroup: entry.logGroup || logGroup,
+      groupEntryIndex: entry.groupEntryIndex ?? entryIndex,
+      groupEntryCount: entries.length
+    }, seqRef.value++));
+  });
+}
+
 function createMilestoneStage(milestone = {}, seqRef) {
-  const events = (milestone.events || []).map((event) => normalizeRunEvent(event, seqRef.value++));
+  const events = normalizeRunEvents(milestone.events || [], seqRef);
   return {
     id: milestone.stageId ?? milestone.id,
     label: milestone.label || String(milestone.id || 'Milestone'),
@@ -380,27 +410,9 @@ function createMilestoneStage(milestone = {}, seqRef) {
   };
 }
 
-function createRegionStage(region = {}, milestone = {}, seqRef) {
-  const events = (region.events || []).map((event) => normalizeRunEvent(event, seqRef.value++));
-  const regionLabel = region.id ? `Region ${region.id}` : 'Region build';
-  return {
-    id: region.stageId ?? region.id,
-    label: `${regionLabel} build`,
-    summary: milestone.focus || '',
-    system: `${regionLabel}: ${milestone.focus || 'Build region'}`,
-    metrics: region.timeRange || milestone.timeRange || [],
-    events
-  };
-}
-
 function buildMilestoneRunLog(manifest = {}) {
   const seqRef = { value: 1 };
-  const stages = (manifest.milestones || []).flatMap((milestone) => {
-    if (Array.isArray(milestone.regions) && milestone.regions.length) {
-      return milestone.regions.map((region) => createRegionStage(region, milestone, seqRef));
-    }
-    return [createMilestoneStage(milestone, seqRef)];
-  });
+  const stages = (manifest.milestones || []).map((milestone) => createMilestoneStage(milestone, seqRef));
   return {
     title: manifest.title,
     intro: manifest.intro || manifest.title || '',
@@ -503,6 +515,7 @@ function normalizeRunEvent(event = {}, seq = 0) {
       skills,
       results,
       notes,
+      logGroup: event.logGroup || display.logGroup || '',
       highlights: highlights.map((highlight) => String(highlight)).filter(Boolean)
     }
   };
