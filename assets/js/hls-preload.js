@@ -7,6 +7,7 @@
   const MAX_CONCURRENT_PRELOADS = 2;
   const VIEWER_BATCH_DELAY_MS = 250;
   const CARD_SELECTOR = 'a.demo-card[href*="?demo="]';
+  const CARD_IMAGE_SELECTOR = `${CARD_SELECTOR} img[src]`;
 
   const videoManifestById = new Map();
   const playlistCache = new Map();
@@ -30,6 +31,10 @@
     }
 
     return connection.saveData === true || connection.effectiveType === '2g' || connection.effectiveType === 'slow-2g';
+  }
+
+  function shouldSkipExtraPreload() {
+    return shouldSkipSegmentPreload();
   }
 
   function createFetchOptions() {
@@ -229,6 +234,27 @@
     }
   }
 
+  function normalizeUrl(url) {
+    if (!url) {
+      return null;
+    }
+
+    try {
+      return new URL(url, window.location.href).href;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async function warmImageUrls(urls = []) {
+    if (shouldSkipExtraPreload()) {
+      return [];
+    }
+
+    const uniqueUrls = [...new Set(urls.map(normalizeUrl).filter(Boolean))];
+    return Promise.all(uniqueUrls.map((url) => enqueueUrl(url, 'arrayBuffer')));
+  }
+
   function delay(ms) {
     return new Promise((resolve) => window.setTimeout(resolve, ms));
   }
@@ -370,9 +396,16 @@
     }
   }
 
+  function warmHomeCardImages() {
+    const urls = [...document.querySelectorAll(CARD_IMAGE_SELECTOR)]
+      .map((image) => image.currentSrc || image.getAttribute('src'));
+    warmImageUrls(urls);
+  }
+
   function start() {
     if (bindIntentPreload()) {
       scheduleIdle(warmAllPlaylistsAndInit);
+      scheduleIdle(warmHomeCardImages);
     }
   }
 
@@ -391,6 +424,7 @@
   window.CraftUtopiaHlsPreload = {
     warmPlaylistAndInit,
     warmIntentSegments,
+    warmImageUrls,
     warmCurrentDemo,
     cancelCurrentDemoWarmup
   };

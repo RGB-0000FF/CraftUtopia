@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="../../">
   <title>CraftUtopia Demo Viewer</title>
-  <link rel="stylesheet" href="assets/styles/demo.css?v=20260520-control-center6">
+  <link rel="stylesheet" href="assets/styles/demo.css?v=20260521-video-controls1">
 </head>
 <body>
   <a class="demo-home-button" href="./" aria-label="Back to demo gallery">
@@ -54,8 +54,8 @@
         <button class="blueprint-cover-card" id="blueprint-cover-toggle" type="button" aria-label="Expand blueprint cover preview" aria-expanded="false">
           <img id="blueprint-cover-image" src="assets/images/stage-preview.jpg" alt="Blueprint cover preview">
           <span class="cover-card-label">
-            <i data-lucide="scan-search" aria-hidden="true"></i>
-            <span>Cover</span>
+            <i class="cover-card-icon cover-card-icon-zoom-in" data-lucide="zoom-in" aria-hidden="true"></i>
+            <i class="cover-card-icon cover-card-icon-zoom-out" data-lucide="zoom-out" aria-hidden="true"></i>
           </span>
         </button>
         <div class="blueprint-block-count" id="blueprint-block-count" aria-label="Blueprint block count">
@@ -133,12 +133,12 @@
 
   <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.16/dist/hls.min.js"></script>
-  <script src="assets/js/hls-preload.js?v=20260520-current-demo-cache1"></script>
+  <script src="assets/js/hls-preload.js?v=20260520-image-preload1"></script>
   <script src="assets/js/demo-config.js?v=20260520-hls1"></script>
   <script src="assets/js/demo-utils.js?v=20260520-transparent-hud1"></script>
   <script src="assets/js/demo-render.js?v=20260520-transparent-hud1"></script>
   <script src="assets/js/demo-playback.js?v=20260520-framework-reveal1"></script>
-  <script src="assets/js/demo-data.js?v=20260520-current-demo-cache1"></script>
+  <script src="assets/js/demo-data.js?v=20260520-image-preload1"></script>
   <script src="assets/js/demo-events.js?v=20260520-video-gate2"></script>
 </body>
 </html>

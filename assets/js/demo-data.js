@@ -245,13 +245,18 @@ function applyDemoProfile(profile = {}) {
   document.body.classList.toggle('is-video-only-locked', Boolean(profile.lockVideoOnly || profile.videoOnly));
   document.body.classList.toggle('is-video-fit-contain', profile.videoFit === 'contain');
   if (profile.showCover !== false) setImageSource('#blueprint-cover-image', profile.coverImage || profile.introImage, `${profile.taskTitle || 'Blueprint'} cover preview`);
+  window.CraftUtopiaHlsPreload?.warmImageUrls?.([
+    profile.coverImage || profile.introImage,
+    profile.introImage,
+    profile.frameworkImage
+  ].map((source) => source ? siteAssetUrl(source) : null));
   if (blueprintBlockCountValue) blueprintBlockCountValue.textContent = formatBlockCount(profile.blockCount || '95,151');
   if (blueprintBlockCount) blueprintBlockCount.setAttribute('aria-label', `Blueprint block count: ${blueprintBlockCountValue?.textContent || '95,151'} blocks`);
   if (profile.videoOnly) setVideoOnlyMode(true);
 }
 
 async function loadJsonAsset(path) {
-  const response = await fetch(siteAssetUrl(path), { cache: 'no-store' });
+  const response = await fetch(siteAssetUrl(path), { cache: 'force-cache' });
   if (!response.ok) throw new Error(`Run events HTTP ${response.status}`);
   return response.json();
 }

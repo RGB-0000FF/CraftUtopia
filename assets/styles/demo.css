@@ -543,7 +543,7 @@ body.is-video-fit-contain .world-video {
 
 .app.is-video-only .build-timeline {
   left: clamp(58px, calc(76px * var(--ui-scale)), 92px);
-  right: clamp(184px, calc(204px * var(--ui-scale)), 224px);
+  right: clamp(220px, calc(238px * var(--ui-scale)), 268px);
   bottom: clamp(11px, calc(15px * var(--ui-scale)), 18px);
   grid-template-columns: 54px minmax(0, 1fr);
   gap: 8px;
@@ -613,7 +613,7 @@ body.is-video-fit-contain .world-video {
 .blueprint-cover-card {
   position: absolute;
   left: clamp(16px, calc(24px * var(--ui-scale)), 30px);
-  bottom: clamp(72px, calc(88px * var(--ui-scale)), 104px);
+  bottom: clamp(90px, calc(108px * var(--ui-scale)), 126px);
   z-index: 6;
   width: clamp(120px, calc(148px * var(--ui-scale)), 166px);
   max-height: clamp(110px, calc(142px * var(--ui-scale)), 170px);
@@ -649,30 +649,40 @@ body.is-video-fit-contain .world-video {
 .cover-card-label {
   position: absolute;
   left: 0;
-  bottom: -20px;
+  bottom: -18px;
   z-index: 1;
-  display: inline-grid;
-  grid-auto-flow: column;
-  align-items: center;
-  gap: 5px;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  color: rgba(244,232,196,0.94);
-  background: transparent;
-  box-shadow: none;
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(242,216,151,0.5);
+  border-radius: 999px;
+  color: rgba(244,232,196,0.96);
+  background: rgba(4,17,10,0.76);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    0 0 12px rgba(255,217,135,0.14);
   line-height: 1;
-  text-transform: uppercase;
-  text-shadow: 0 0 8px rgba(0,0,0,0.72), 0 0 12px rgba(255,217,135,0.18);
+  backdrop-filter: blur(8px);
+  text-shadow: 0 0 8px rgba(0,0,0,0.72);
 }
 
-.cover-card-label svg {
+.cover-card-icon {
+  grid-area: 1 / 1;
   width: 11px;
   height: 11px;
+}
+
+.cover-card-icon-zoom-out {
+  display: none;
+}
+
+.blueprint-cover-card.is-expanded .cover-card-icon-zoom-in {
+  display: none;
+}
+
+.blueprint-cover-card.is-expanded .cover-card-icon-zoom-out {
+  display: block;
 }
 
 .blueprint-cover-card:hover,
@@ -737,7 +747,7 @@ body.is-video-fit-contain .world-video {
 }
 
 .app.is-video-only .blueprint-cover-card {
-  bottom: clamp(54px, calc(62px * var(--ui-scale)), 72px);
+  bottom: clamp(86px, calc(96px * var(--ui-scale)), 112px);
   width: clamp(108px, calc(128px * var(--ui-scale)), 148px);
   max-height: clamp(92px, calc(118px * var(--ui-scale)), 142px);
 }
@@ -4042,8 +4052,53 @@ body.is-block-count-hidden .blueprint-block-count {
 }
 
 @media (max-width: 760px) {
+  .app.is-video-only .build-timeline {
+    right: clamp(58px, calc(76px * var(--ui-scale)), 92px);
+  }
+
+  .app.is-video-only .video-only-controls {
+    bottom: clamp(48px, calc(56px * var(--ui-scale)), 64px);
+  }
+
+  .app.is-video-only .video-control {
+    min-width: 22px;
+    height: 22px;
+  }
+
+  .app.is-video-only .video-control-play {
+    width: 68px;
+    min-width: 68px;
+  }
+
+  .app.is-video-only .video-control-speed {
+    min-width: 29px;
+  }
+
   .structured-main {
     font-size: 0.92em;
+  }
+}
+
+@media (max-width: 520px) {
+  .app.is-video-only .video-only-controls {
+    right: 10px;
+    gap: 3px;
+    padding: 3px 4px;
+  }
+
+  .app.is-video-only .build-timeline {
+    left: 48px;
+    right: 48px;
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .app.is-video-only .build-timeline-head {
+    min-width: 42px;
+  }
+
+  .app.is-video-only .video-control-play {
+    width: 62px;
+    min-width: 62px;
   }
 }
 
