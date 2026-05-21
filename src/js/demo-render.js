@@ -141,6 +141,9 @@ function getSkillRefForStructuredSubline(line = '', event = {}, log = {}) {
 
 function getStructuredSublineMeta(line = '', event = {}, log = {}) {
   const text = String(line || '');
+  if (/^\s*result\b/i.test(text)) {
+    return { className: 'is-result', accent: '#8ba0ad', label: 'Result' };
+  }
   const skillRef = getSkillRefForStructuredSubline(text, event, log);
   const hasSkillLanguage = /\bskill\b/i.test(text) || (skillRef && text.toLowerCase().includes(String(SKILL_REGISTRY[skillRef]?.name || '').toLowerCase()));
   if (skillRef && (event.skill || event.message?.skillRef || hasSkillLanguage)) {
@@ -153,54 +156,72 @@ function getStructuredSublineMeta(line = '', event = {}, log = {}) {
   if (/^\s*(?:tool call|send message)\b/i.test(text)) {
     return { className: 'is-tool-call', accent: '#9fb0bd', label: 'Tool call' };
   }
-  if (/^\s*result\b/i.test(text)) {
-    return { className: 'is-result', accent: '#8ba0ad', label: 'Result' };
-  }
   return { className: 'is-note', accent: '#80918b', label: 'Detail' };
 }
 
-function appendStructuredLog(node, event) {
+function getStructuredLogGroupKey(event = {}) {
+  const log = createStructuredLogText(event);
+  if (!log?.actor) return '';
+  return `${event.stageId ?? ''}::${log.actor}`;
+}
+
+function appendStructuredLogEntry(node, event, options = {}) {
   const log = createStructuredLogText(event);
   if (!log) return false;
-
-  node.replaceChildren();
-
+  const showHeader = options.showHeader !== false;
+  const entry = document.createElement('span');
+  entry.className = `structured-entry${showHeader ? '' : ' is-continuation'}`;
+  if (options.animate) {
+    entry.classList.add('is-entry-entering');
+    entry.addEventListener('animationend', () => entry.classList.remove('is-entry-entering'), { once: true });
+    setTimeout(() => entry.classList.remove('is-entry-entering'), 320);
+  }
   const main = document.createElement('span');
   main.className = 'structured-main';
 
-  const timecode = document.createElement('span');
-  timecode.className = 'structured-time';
-  timecode.textContent = `[${log.timecode}]`;
+  if (showHeader) {
+    const timecode = document.createElement('span');
+    timecode.className = 'structured-time';
+    timecode.textContent = `[${log.timecode}]`;
 
-  const actor = document.createElement('span');
-  actor.className = 'structured-actor';
-  actor.style.setProperty('--actor-color', getActorColor(log.actor));
-  actor.textContent = `[${log.actor}]`;
+    const actor = document.createElement('span');
+    actor.className = 'structured-actor';
+    actor.style.setProperty('--actor-color', getActorColor(log.actor));
+    actor.textContent = `[${log.actor}]`;
+    main.append(timecode, actor);
+  }
 
   const action = document.createElement('span');
   action.className = 'structured-action';
   appendHighlightedText(action, log.action, log.highlights);
+  main.append(action);
 
   if (log.result) {
     const result = document.createElement('span');
     result.className = 'structured-result';
     result.textContent = `→ ${log.result}`;
-    main.append(timecode, actor, action, result);
-  } else {
-    main.append(timecode, actor, action);
+    main.append(result);
   }
 
   const progress = createStructuredProgress(log.progress);
   if (progress) {
     main.append(progress);
   }
-  node.append(main);
+  entry.append(main);
 
   if (log.sublines?.length) {
-    const sublines = document.createElement('span');
-    sublines.className = 'structured-sublines';
+    const followups = document.createElement('span');
+    followups.className = 'structured-sublines';
     log.sublines.forEach((line) => {
       const meta = getStructuredSublineMeta(line, event, log);
+      if (meta.className !== 'is-skill' && meta.className !== 'is-tool-call') {
+        const detail = document.createElement('span');
+        detail.className = `structured-detail ${meta.className}`;
+        detail.title = meta.label;
+        appendHighlightedText(detail, line, log.highlights);
+        followups.append(detail);
+        return;
+      }
       const subline = document.createElement('span');
       subline.className = `structured-subline ${meta.className}`;
       subline.style.setProperty('--subline-accent', meta.accent);
@@ -211,20 +232,37 @@ function appendStructuredLog(node, event) {
       const body = document.createElement('span');
       body.className = 'structured-subline-body';
       appendHighlightedText(body, line, log.highlights);
-      if (meta.className === 'is-skill' || meta.className === 'is-tool-call') {
-        subline.classList.add('has-prefix');
-        const prefix = document.createElement('span');
-        prefix.className = 'structured-subline-prefix';
-        prefix.textContent = meta.className === 'is-skill' ? 'SKILL' : 'TOOL';
-        subline.append(arrow, prefix, body);
-      } else {
-        subline.append(arrow, body);
-      }
-      sublines.append(subline);
+      subline.classList.add('has-prefix');
+      const prefix = document.createElement('span');
+      prefix.className = 'structured-subline-prefix';
+      prefix.textContent = meta.className === 'is-skill' ? 'SKILL' : 'TOOL';
+      subline.append(arrow, prefix, body);
+      followups.append(subline);
     });
-    node.append(sublines);
+    if (followups.children.length) entry.append(followups);
   }
+  node.append(entry);
   return true;
+}
+
+function appendStructuredLog(node, event) {
+  const log = createStructuredLogText(event);
+  if (!log) return false;
+  node.replaceChildren();
+  return appendStructuredLogEntry(node, event, { showHeader: true });
+}
+
+function canAppendToStructuredLogGroup(article, event) {
+  const groupKey = getStructuredLogGroupKey(event);
+  if (!groupKey || !article?.classList?.contains('is-structured')) return false;
+  return article.dataset.logGroupKey === groupKey && Boolean(article.querySelector('.event-text'));
+}
+
+function appendStructuredEventToChatMessage(article, event, index, options = {}) {
+  const text = article?.querySelector('.event-text');
+  if (!text || !appendStructuredLogEntry(text, event, { showHeader: false, animate: options.animate === true })) return null;
+  updateChatMessageMetadata(article, event, index);
+  return article;
 }
 
 function ensureSkillState(skillRef = '') {
@@ -553,13 +591,14 @@ function getProgressRowKey(event = {}) {
   return `${event.stageId}:${progress.label}`;
 }
 
-function populateChatMessage(article, event, index, options = {}) {
-  article.className = 'event-row terminal-log-line is-entering';
-  if (!options.entering) article.classList.remove('is-entering');
+function updateChatMessageMetadata(article, event, index) {
   article.dataset.chatStage = String(event.stageId);
   article.dataset.stageFilter = `stage-${event.stageId}`;
   article.dataset.eventKind = event.type || 'EVENT';
   article.dataset.eventIndex = String(index);
+  const groupKey = getStructuredLogGroupKey(event);
+  if (groupKey) article.dataset.logGroupKey = groupKey;
+  else delete article.dataset.logGroupKey;
   const progressKey = getProgressRowKey(event);
   if (progressKey) article.dataset.progressKey = progressKey;
   else delete article.dataset.progressKey;
@@ -570,6 +609,12 @@ function populateChatMessage(article, event, index, options = {}) {
     delete article.dataset.skillRef;
     article.removeAttribute('title');
   }
+}
+
+function populateChatMessage(article, event, index, options = {}) {
+  article.className = 'event-row terminal-log-line is-entering';
+  if (!options.entering) article.classList.remove('is-entering');
+  updateChatMessageMetadata(article, event, index);
   article.replaceChildren();
 
   const structuredLog = createStructuredLogText(event);

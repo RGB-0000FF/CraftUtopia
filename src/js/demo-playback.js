@@ -289,7 +289,9 @@ function setTimelineReadout(seconds = 0) {
 
 function renderPlaybackUntilLive(targetCount) {
   const total = playbackEvents.length;
-  const count = clamp(Math.round(Number(targetCount) || 0), 0, total);
+  const requestedCount = clamp(Math.round(Number(targetCount) || 0), 0, total);
+  const count = clamp(Math.min(requestedCount, playbackCursor + 1), 0, total);
+  isLiveLogRevealLimited = requestedCount > count;
   if (count <= playbackCursor) {
     updatePlaybackControls();
     return;
@@ -299,7 +301,7 @@ function renderPlaybackUntilLive(targetCount) {
   const shouldStickToBottom = shouldFollowLog || isLogNearBottom();
   let last = null;
   for (let index = playbackCursor; index < count; index += 1) {
-    last = appendEventInstantly(playbackEvents[index], index) || last;
+    last = appendEventInstantly(playbackEvents[index], index, { animateEntry: true }) || last;
   }
 
   chatMessages = [...document.querySelectorAll('.event-row[data-chat-stage]')];
@@ -341,6 +343,7 @@ function restartVideoOnlyPlayback() {
   isMessagePending = false;
   renderedStageIds = new Set();
   progressRows = new Map();
+  activeLogGroupNode = null;
   milestoneRenderKey = '';
   topMilestoneRenderKey = '';
   heldKeyframes = new Set();
@@ -390,7 +393,7 @@ function runAutoPlayFrame(now = performance.now()) {
 
   renderPlaybackToDemoSeconds(demoSeconds, { noSeek: true });
 
-  if (keyframe && beginKeyframeHold(keyframe)) return;
+  if (keyframe && playbackCursor >= (keyframe.targetCount || Infinity) && beginKeyframeHold(keyframe)) return;
   if (demoSeconds >= getPresentationTotalSeconds() || playbackCursor >= playbackEvents.length) {
     if (isVideoOnlyMode) {
       restartVideoOnlyPlayback();
@@ -401,7 +404,7 @@ function runAutoPlayFrame(now = performance.now()) {
     return;
   }
 
-  autoPlayTimer = setTimeout(() => runAutoPlayFrame(performance.now()), 80);
+  autoPlayTimer = setTimeout(() => runAutoPlayFrame(performance.now()), isLiveLogRevealLimited ? 360 : 80);
 }
 
 function startAutoPlayLoop(startSeconds = getDemoSecondsForEventCount(playbackCursor)) {
@@ -822,11 +825,16 @@ function revealChatMessage(index = 0) {
     populateChatMessage(article, event, index, { entering: false });
     if (shouldStickToBottom) chatFeed.append(article);
     article.classList.add('active');
+  } else if (canAppendToStructuredLogGroup(activeLogGroupNode, event)) {
+    article = appendStructuredEventToChatMessage(activeLogGroupNode, event, index, { animate: true });
+    if (shouldStickToBottom) chatFeed.append(article);
+    article.classList.add('active');
   } else {
     article = createChatMessage(event, index);
     chatFeed.append(article);
     if (progressKey) progressRows.set(progressKey, article);
   }
+  activeLogGroupNode = progressKey ? null : article;
 
   if (event.skill) updateSkillStateFromEvent(event, index);
   chatMessages = [...document.querySelectorAll('.event-row[data-chat-stage]')];
@@ -859,6 +867,7 @@ function renderChat(events) {
   isKeyframeHolding = false;
   renderedStageIds = new Set();
   progressRows = new Map();
+  activeLogGroupNode = null;
   milestoneRenderKey = '';
   topMilestoneRenderKey = '';
   resetSkillState();
@@ -880,12 +889,15 @@ function renderChat(events) {
   updatePlaybackControls();
 }
 
-function appendEventInstantly(event, index) {
+function appendEventInstantly(event, index, options = {}) {
   const progressKey = getProgressRowKey(event);
   let node = progressKey ? progressRows.get(progressKey) : null;
   appendStageDividerIfNeeded(event);
   if (node) {
     populateChatMessage(node, event, index, { entering: false });
+    chatFeed.append(node);
+  } else if (canAppendToStructuredLogGroup(activeLogGroupNode, event)) {
+    node = appendStructuredEventToChatMessage(activeLogGroupNode, event, index, { animate: options.animateEntry === true });
     chatFeed.append(node);
   } else {
     node = createChatMessage(event, index);
@@ -893,6 +905,7 @@ function appendEventInstantly(event, index) {
     chatFeed.append(node);
     if (progressKey) progressRows.set(progressKey, node);
   }
+  activeLogGroupNode = progressKey ? null : node;
   if (event.skill) updateSkillStateFromEvent(event, index);
   node.classList.remove('is-entering');
   return { node, stageId: event.stageId, event };
@@ -908,6 +921,7 @@ function renderPlaybackUntil(targetCount) {
   isMessagePending = false;
   renderedStageIds = new Set();
   progressRows = new Map();
+  activeLogGroupNode = null;
   milestoneRenderKey = '';
   topMilestoneRenderKey = '';
   resetSkillState();
