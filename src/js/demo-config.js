@@ -56,6 +56,7 @@ let focusedSkillRef = '';
 let skillState = new Map();
 let mentionRegex = null;
 let isScrubbingTimeline = false;
+let isTimelineScrubberActive = false;
 let scrubFrame = null;
 let timelineScrubStartX = 0;
 let timelineScrubStartY = 0;
@@ -64,6 +65,7 @@ let suppressNextTimelineClick = false;
 let shouldResumeAfterTimelineSeek = false;
 let shouldPauseTimelineOnVideoWait = false;
 let isTimelineWaitingForVideo = false;
+let videoSyncBlockedUntil = 0;
 let videoWaitGuardTimer = null;
 let videoWaitPauseTimer = null;
 let videoWaitResumeTimer = null;
@@ -73,7 +75,7 @@ const mentionAccentByTerm = new Map();
 const SKILL_REGISTRY = {
   build_region: {
     name: 'Learned Region Placement',
-    icon: 'assets/icons/skills/learned-region-placement.svg',
+    icon: 'assets/icons/skills/learned-region-placement.png',
     notificationDescription: 'Reads the subplan, checks inventory, and places the required blocks in the target region.',
     summary: 'Reusable bounded placement loop learned after many Workers repeat read, script, run, verify, submit.',
     learnedLabel: 'Foreman-A Build',
@@ -82,7 +84,7 @@ const SKILL_REGISTRY = {
   },
   replace_region: {
     name: 'Learned Region Replacement',
-    icon: 'assets/icons/skills/learned-region-replacement.svg',
+    icon: 'assets/icons/skills/learned-region-replacement.png',
     notificationDescription: 'Finds wrong or missing blocks, removes incorrect blocks, and rebuilds the region to match the blueprint.',
     summary: 'Wrong-block and missing-block repair pattern learned when mid-build repair pressure increases.',
     learnedLabel: 'Foreman-B Build',
@@ -91,7 +93,7 @@ const SKILL_REGISTRY = {
   },
   scaffold: {
     name: 'Learned Scaffold Construction',
-    icon: 'assets/icons/skills/learned-scaffold-construction.svg',
+    icon: 'assets/icons/skills/learned-scaffold-construction.png',
     notificationDescription: 'Builds temporary support structures so workers can safely handle high or complex sections.',
     summary: 'Temporary support placement with cleanup markers learned from awkward high-region builds.',
     learnedLabel: 'Foreman-C Build',
@@ -100,7 +102,7 @@ const SKILL_REGISTRY = {
   },
   clean_region: {
     name: 'Learned Region Cleaning',
-    icon: 'assets/icons/skills/learned-region-cleaning.svg',
+    icon: 'assets/icons/skills/learned-region-cleaning.png',
     notificationDescription: 'Removes scaffold and extra blocks while preserving the structure required by the blueprint.',
     summary: 'Final cleanup pass for scaffold and leftover blocks while preserving valid blueprint blocks.',
     learnedLabel: 'Foreman-E Build',
@@ -135,6 +137,7 @@ const consoleProgressBar = document.querySelector('#console-progress-bar');
 const consoleElapsedBar = document.querySelector('#console-elapsed-bar');
 const buildTimeline = document.querySelector('.build-timeline');
 const buildTimelineRail = document.querySelector('.build-timeline-rail');
+const timelineScrubber = document.querySelector('#timeline-scrubber');
 const timelineControlSlot = document.querySelector('#timeline-control-slot');
 const consoleControlAnchor = document.querySelector('#console-control-anchor');
 const consoleControlGroup = document.querySelector('.console-control-group');

@@ -1121,7 +1121,7 @@ body.is-block-count-hidden .blueprint-block-count {
 
 .build-timeline-rail {
   position: relative;
-  height: 6px;
+  height: 14px;
   overflow: visible;
   border: 0;
   border-radius: 999px;
@@ -1141,8 +1141,8 @@ body.is-block-count-hidden .blueprint-block-count {
   content: "";
   position: absolute;
   top: 50%;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 999px;
   transform: translateY(-50%);
   z-index: 2;
@@ -1200,6 +1200,24 @@ body.is-block-count-hidden .blueprint-block-count {
   transform: translate(-50%, -50%);
   background: transparent;
   cursor: pointer;
+}
+
+.timeline-scrubber {
+  position: absolute;
+  inset: -9px 0;
+  z-index: 7;
+  display: block;
+  width: 100%;
+  height: calc(100% + 18px);
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.timeline-scrubber:active {
+  cursor: grabbing;
 }
 
 .timeline-markers {
@@ -1699,19 +1717,22 @@ body.is-block-count-hidden .blueprint-block-count {
   position: relative;
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 38px;
-  border: 1px solid rgba(255,217,135,0.13);
+  width: 54px;
+  height: 46px;
+  padding: 3px;
+  border: 1px solid rgba(255,255,255,0.74);
   border-radius: 9px;
-  background: rgba(0,0,0,0.22);
+  background: #fff;
   overflow: hidden;
 }
 
 .skill-icon img {
-  width: 36px;
-  height: 36px;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   display: block;
-  image-rendering: pixelated;
+  object-fit: contain;
   filter: drop-shadow(0 5px 7px rgba(0,0,0,0.34));
 }
 
@@ -2712,8 +2733,8 @@ body.is-block-count-hidden .blueprint-block-count {
   .skill-list { gap: 5px; }
   .skill-library .skill-list { display: none; }
   .skill-card { min-height: 60px; padding: 5px 7px; border-radius: 10px; }
-  .skill-icon { width: 34px; height: 31px; }
-  .skill-icon img { width: 30px; height: 30px; }
+  .skill-icon { width: 44px; height: 36px; }
+  .skill-icon img { max-width: 100%; max-height: 100%; width: auto; height: auto; }
   .skill-name { font-size: 0.62rem; }
   .skill-status { padding: 3px 6px; font-size: 0.50rem; }
   .log-board { padding: 16px; border-radius: 22px; }
@@ -3948,7 +3969,7 @@ body.is-block-count-hidden .blueprint-block-count {
   --skill-accent: #72ffd1;
   position: relative;
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr);
   align-items: start;
   gap: 8px;
   min-width: 0;
@@ -3982,18 +4003,22 @@ body.is-block-count-hidden .blueprint-block-count {
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
-  border: 1px solid color-mix(in srgb, var(--skill-accent) 36%, transparent);
+  width: 48px;
+  height: 38px;
+  padding: 2px;
+  border: 1px solid rgba(255,255,255,0.78);
   border-radius: 5px;
-  background: rgba(0,0,0,0.24);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06), 0 5px 12px rgba(0,0,0,0.24);
 }
 
 .skill-notification-icon img {
-  width: 20px;
-  height: 20px;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   display: block;
-  image-rendering: pixelated;
+  object-fit: contain;
 }
 
 .skill-notification-body {
@@ -4089,7 +4114,7 @@ body.is-block-count-hidden .blueprint-block-count {
   margin: 0;
   padding: 4px 2px 9px;
   border: 0;
-  border-bottom: 1px dashed rgba(143,255,194,0.34);
+  border-bottom: 2px dashed rgba(143,255,194,0.48);
   border-radius: 0;
   color: rgba(207,255,222,0.74);
   background: transparent;
@@ -4241,11 +4266,12 @@ body.is-block-count-hidden .blueprint-block-count {
 }
 
 .structured-sublines {
-  display: block;
-  margin-top: 2px;
+  display: grid;
+  gap: 5px;
+  margin-top: 7px;
   color: rgba(182,255,209,0.72);
   font-family: var(--font-mono);
-  font-size: 0.88em;
+  font-size: 0.84em;
   font-weight: 620;
   line-height: 1.32;
   white-space: normal;
@@ -4253,26 +4279,94 @@ body.is-block-count-hidden .blueprint-block-count {
 }
 
 .structured-subline {
-  display: block;
+  --subline-accent: #9fb0bd;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 6px;
   min-width: 0;
-  margin: 1px 0 0;
-  padding: 0;
+  margin: 0;
+  padding: 5px 7px;
+  border: 1px solid rgba(164,180,190,0.20);
+  border-radius: 6px;
+  background:
+    linear-gradient(90deg, rgba(172,190,202,0.12), rgba(255,255,255,0.018)),
+    rgba(6,12,14,0.56);
+  box-shadow: inset 0 1px rgba(255,255,255,0.045);
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+.structured-subline.has-prefix {
+  grid-template-columns: auto auto minmax(0, 1fr);
+}
+
+.structured-subline-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.1em;
+  color: rgba(255,217,135,0.74);
+  font-weight: 900;
+  line-height: 1.35;
 }
 
 .structured-subline-prefix {
-  display: inline;
-  margin-right: 1.35ch;
-  color: rgba(255,217,135,0.74);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  padding: 1px 5px;
+  border: 1px solid rgba(190,205,214,0.22);
+  border-radius: 999px;
+  color: rgba(230,238,242,0.74);
+  background: rgba(185,200,210,0.08);
+  font-size: 0.72em;
   font-weight: 900;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
 }
 
 .structured-subline-body {
-  display: inline;
+  display: block;
   min-width: 0;
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+.structured-subline.is-skill {
+  border-color: color-mix(in srgb, var(--subline-accent) 46%, transparent);
+  color: rgba(245,255,250,0.92);
+  padding-left: 11px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--subline-accent) 22%, transparent), rgba(255,255,255,0.025)),
+    rgba(4,13,9,0.72);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--subline-accent) 12%, transparent), inset 0 1px rgba(255,255,255,0.055);
+}
+
+.structured-subline.is-skill::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  border-radius: 6px 0 0 6px;
+  background: var(--subline-accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--subline-accent) 68%, transparent);
+}
+
+.structured-subline.is-skill .structured-subline-prefix {
+  border-color: color-mix(in srgb, var(--subline-accent) 56%, transparent);
+  color: color-mix(in srgb, var(--subline-accent) 78%, white);
+  background: color-mix(in srgb, var(--subline-accent) 16%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--subline-accent) 28%, transparent);
+}
+
+.structured-subline.is-result {
+  padding: 2px 0;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
 }
 
 .structured-progress {

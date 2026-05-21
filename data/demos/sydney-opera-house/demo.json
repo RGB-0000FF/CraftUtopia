@@ -10,6 +10,7 @@
   "introSeconds": 0,
   "frameworkImage": "assets/images/architecture.jpg",
   "logManifest": "data/demos/sydney-opera-house/milestone-log-preview.json",
+  "alignTimelineToLogTime": true,
   "topMilestoneMode": true,
   "topMilestoneStartAtVideoStart": true,
   "topMilestones": [
@@ -33,8 +34,8 @@
   "fallbackVideoSeconds": 133,
   "timelineKeyframes": [
     { "id": "region-placement", "label": "Region Placement", "demoSeconds": 36, "skill": "build_region" },
-    { "id": "scaffold-construction", "label": "Scaffold Construction", "demoSeconds": 67, "skill": "scaffold" },
-    { "id": "region-replace", "label": "Region Replace", "demoSeconds": 85, "skill": "replace_region" },
-    { "id": "region-clean", "label": "Region Clean", "demoSeconds": 95, "skill": "clean_region" }
+    { "id": "region-replace", "label": "Region Replace", "demoSeconds": 67, "skill": "replace_region" },
+    { "id": "scaffold-construction", "label": "Scaffold Construction", "demoSeconds": 85, "skill": "scaffold" },
+    { "id": "region-clean", "label": "Region Clean", "demoSeconds": 98, "skill": "clean_region" }
   ]
 }

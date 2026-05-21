@@ -33,6 +33,37 @@ buildTimeline?.addEventListener('pointerup', endTimelineScrub);
 buildTimeline?.addEventListener('pointercancel', endTimelineScrub);
 buildTimeline?.addEventListener('click', handleTimelineClick);
 buildTimeline?.addEventListener('keydown', handleTimelineKeydown);
+timelineScrubber?.addEventListener('pointerdown', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  beginTimelineScrubberInput(event);
+});
+timelineScrubber?.addEventListener('input', moveTimelineScrubberInput);
+timelineScrubber?.addEventListener('change', endTimelineScrubberInput);
+timelineScrubber?.addEventListener('pointerup', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  endTimelineScrubberInput(event);
+});
+timelineScrubber?.addEventListener('pointercancel', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  endTimelineScrubberInput(event);
+});
+timelineScrubber?.addEventListener('pointermove', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  moveTimelineScrubberInput(event);
+});
+timelineScrubber?.addEventListener('click', (event) => {
+  event.stopPropagation();
+});
+window.addEventListener('pointermove', moveTimelineScrub);
+window.addEventListener('pointerup', endTimelineScrub);
+window.addEventListener('pointercancel', endTimelineScrub);
+window.addEventListener('pointermove', moveTimelineScrubberInput);
+window.addEventListener('pointerup', endTimelineScrubberInput);
+window.addEventListener('pointercancel', endTimelineScrubberInput);
 ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'click'].forEach((eventName) => {
   timelineControlSlot?.addEventListener(eventName, (event) => {
     event.stopPropagation();

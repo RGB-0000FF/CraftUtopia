@@ -128,6 +128,37 @@ function createStructuredProgress(progress) {
   return wrap;
 }
 
+function getSkillRefForStructuredSubline(line = '', event = {}, log = {}) {
+  if (event.skill || event.message?.skillRef) return event.skill || event.message?.skillRef;
+  const text = [
+    line,
+    log.action,
+    ...(Array.isArray(log.highlights) ? log.highlights : [])
+  ].join(' ').toLowerCase();
+  return Object.entries(SKILL_REGISTRY)
+    .find(([, skill]) => text.includes(String(skill.name || '').toLowerCase()))?.[0] || '';
+}
+
+function getStructuredSublineMeta(line = '', event = {}, log = {}) {
+  const text = String(line || '');
+  const skillRef = getSkillRefForStructuredSubline(text, event, log);
+  const hasSkillLanguage = /\bskill\b/i.test(text) || (skillRef && text.toLowerCase().includes(String(SKILL_REGISTRY[skillRef]?.name || '').toLowerCase()));
+  if (skillRef && (event.skill || event.message?.skillRef || hasSkillLanguage)) {
+    return {
+      className: 'is-skill',
+      accent: SKILL_REGISTRY[skillRef]?.accent || '#72ffd1',
+      label: SKILL_REGISTRY[skillRef]?.name || 'Skill'
+    };
+  }
+  if (/^\s*(?:tool call|send message)\b/i.test(text)) {
+    return { className: 'is-tool-call', accent: '#9fb0bd', label: 'Tool call' };
+  }
+  if (/^\s*result\b/i.test(text)) {
+    return { className: 'is-result', accent: '#8ba0ad', label: 'Result' };
+  }
+  return { className: 'is-note', accent: '#80918b', label: 'Detail' };
+}
+
 function appendStructuredLog(node, event) {
   const log = createStructuredLogText(event);
   if (!log) return false;
@@ -146,10 +177,6 @@ function appendStructuredLog(node, event) {
   actor.style.setProperty('--actor-color', getActorColor(log.actor));
   actor.textContent = `[${log.actor}]`;
 
-  const kind = document.createElement('span');
-  kind.className = 'structured-kind';
-  kind.textContent = `[${log.kind}]`;
-
   const action = document.createElement('span');
   action.className = 'structured-action';
   appendHighlightedText(action, log.action, log.highlights);
@@ -158,11 +185,9 @@ function appendStructuredLog(node, event) {
     const result = document.createElement('span');
     result.className = 'structured-result';
     result.textContent = `→ ${log.result}`;
-    if (log.kind === 'LOG') main.append(timecode, actor, action, result);
-    else main.append(timecode, actor, kind, action, result);
+    main.append(timecode, actor, action, result);
   } else {
-    if (log.kind === 'LOG') main.append(timecode, actor, action);
-    else main.append(timecode, actor, kind, action);
+    main.append(timecode, actor, action);
   }
 
   const progress = createStructuredProgress(log.progress);
@@ -175,15 +200,26 @@ function appendStructuredLog(node, event) {
     const sublines = document.createElement('span');
     sublines.className = 'structured-sublines';
     log.sublines.forEach((line) => {
+      const meta = getStructuredSublineMeta(line, event, log);
       const subline = document.createElement('span');
-      subline.className = 'structured-subline';
-      const prefix = document.createElement('span');
-      prefix.className = 'structured-subline-prefix';
-      prefix.textContent = '↳';
+      subline.className = `structured-subline ${meta.className}`;
+      subline.style.setProperty('--subline-accent', meta.accent);
+      subline.title = meta.label;
+      const arrow = document.createElement('span');
+      arrow.className = 'structured-subline-arrow';
+      arrow.textContent = '↳';
       const body = document.createElement('span');
       body.className = 'structured-subline-body';
       appendHighlightedText(body, line, log.highlights);
-      subline.append(prefix, body);
+      if (meta.className === 'is-skill' || meta.className === 'is-tool-call') {
+        subline.classList.add('has-prefix');
+        const prefix = document.createElement('span');
+        prefix.className = 'structured-subline-prefix';
+        prefix.textContent = meta.className === 'is-skill' ? 'SKILL' : 'TOOL';
+        subline.append(arrow, prefix, body);
+      } else {
+        subline.append(arrow, body);
+      }
       sublines.append(subline);
     });
     node.append(sublines);

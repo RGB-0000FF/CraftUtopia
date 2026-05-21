@@ -19,6 +19,7 @@ function setStage(stageId, activeMessage = null, activeEvent = null) {
   if (consoleElapsedValue) consoleElapsedValue.textContent = elapsedTime;
   if (consoleProgressBar) consoleProgressBar.style.width = progressValue;
   if (consoleElapsedBar) consoleElapsedBar.style.width = progressValue;
+  if (timelineScrubber) timelineScrubber.value = String(Math.round(clamp((elapsedSeconds / getPresentationTotalSeconds()) * 1000, 0, 1000)));
   consoleMeters.forEach((node) => { node.style.setProperty('--value', progressValue); });
   buildTimeline?.setAttribute('aria-valuenow', String(Math.round(clamp((elapsedSeconds / getPresentationTotalSeconds()) * 100, 0, 100))));
   buildTimeline?.setAttribute('aria-valuetext', elapsedTime);
@@ -179,7 +180,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260522-demo-css1';
+const DATA_ASSET_VERSION = '20260522-log-cards7';
 
 let RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';

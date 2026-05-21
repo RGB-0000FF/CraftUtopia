@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preload" as="image" href="assets/ui/craftutopia-logo-tight-260.png">
-  <link rel="stylesheet" href="src/styles/demo.css?v=20260522-demo-css1">
+  <link rel="stylesheet" href="src/styles/demo.css?v=20260522-log-cards7">
   <link rel="stylesheet" id="demo-profile-stylesheet" disabled>
 </head>
 <body>
@@ -33,7 +33,7 @@
       <div class="visual-wrap">
         <section class="top-milestone-strip" id="top-milestone-strip" aria-label="Build milestones"></section>
         <div class="gif-stage" aria-label="Minecraft replay preview" tabindex="0">
-          <video class="world-video" muted playsinline preload="metadata" aria-label="Minecraft build replay"></video>
+          <video class="world-video" muted playsinline preload="auto" aria-label="Minecraft build replay"></video>
           <div class="timeline-intro is-visible" id="timeline-intro" aria-hidden="true">
             <img src="assets/images/architecture.jpg" alt="">
           </div>
@@ -46,6 +46,7 @@
           <div class="build-timeline-rail">
             <span id="console-elapsed-bar"></span>
             <div class="timeline-markers" id="timeline-markers" aria-hidden="false"></div>
+            <input id="timeline-scrubber" class="timeline-scrubber" type="range" min="0" max="1000" step="1" value="0" aria-label="Scrub build timeline">
           </div>
         </div>
         <div class="video-only-controls" aria-label="Video playback controls">
@@ -149,12 +150,12 @@
 
   <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.16/dist/hls.min.js"></script>
-  <script src="src/js/hls-preload.js?v=20260522-demo-css1"></script>
-  <script src="src/js/demo-config.js?v=20260522-demo-css1"></script>
-  <script src="src/js/demo-utils.js?v=20260522-demo-css1"></script>
-  <script src="src/js/demo-render.js?v=20260522-demo-css1"></script>
-  <script src="src/js/demo-playback.js?v=20260522-demo-css1"></script>
-  <script src="src/js/demo-data.js?v=20260522-demo-css1"></script>
-  <script src="src/js/demo-events.js?v=20260522-demo-css1"></script>
+  <script src="src/js/hls-preload.js?v=20260522-log-cards7"></script>
+  <script src="src/js/demo-config.js?v=20260522-log-cards7"></script>
+  <script src="src/js/demo-utils.js?v=20260522-log-cards7"></script>
+  <script src="src/js/demo-render.js?v=20260522-log-cards7"></script>
+  <script src="src/js/demo-playback.js?v=20260522-log-cards7"></script>
+  <script src="src/js/demo-data.js?v=20260522-log-cards7"></script>
+  <script src="src/js/demo-events.js?v=20260522-log-cards7"></script>
 </body>
 </html>

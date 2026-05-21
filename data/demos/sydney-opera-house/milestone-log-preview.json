@@ -25,7 +25,7 @@
           ]
         },
         {
-          "time": "00:05.0",
+          "time": "00:06.0",
           "actor": "Designer",
           "kind": "TOOL",
           "action": "I need to convert the PNG into a usable blueprint. First, I need to reconstruct the image as a coarse 3D structure.",
@@ -39,7 +39,7 @@
           ]
         },
         {
-          "time": "00:09.0",
+          "time": "00:10.0",
           "actor": "Designer",
           "kind": "TOOL",
           "action": "Now I have the 3D structure. I need to convert it into a Minecraft object file.",
@@ -53,7 +53,7 @@
           ]
         },
         {
-          "time": "00:14.0",
+          "time": "00:15.0",
           "actor": "Designer",
           "kind": "TOOL",
           "action": "Finally, I have the Minecraft object, but it is too large to load directly in Minecraft. I need to compress it into a smaller blueprint file.",
@@ -67,7 +67,7 @@
           ]
         },
         {
-          "time": "00:19.0",
+          "time": "00:16.0",
           "actor": "Designer",
           "kind": "LOG",
           "action": "Done. The PNG has been converted into a blueprint.",
