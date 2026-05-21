@@ -207,6 +207,7 @@ function ensureSkillState(skillRef = '') {
       learned: false,
       published: false,
       learnedRoom: '',
+      learnedIndex: Number.POSITIVE_INFINITY,
       usedRooms: new Set(),
       events: []
     });
@@ -220,6 +221,7 @@ function resetSkillState() {
   focusedSkillRef = Object.keys(SKILL_REGISTRY)[0] || '';
   skillLibraryUnlocked = false;
   renderSkillLibrary();
+  renderSkillNotifications();
 }
 
 function getSkillEventLabel(kind = '') {
@@ -240,16 +242,17 @@ function updateSkillStateFromEvent(event, index = -1) {
   const skill = ensureSkillState(skillRef);
   if (!skill) return;
 
-  const kind = event.message?.kind || event.type || 'skill-event';
+  const kind = event.skillEvent || event.message?.kind || event.type || 'skill-event';
   const stageTitle = event.group?.title || event.stageLabel || 'Build Pools';
-  if (String(kind).includes('SKILL◆')) {
+  const wasLearned = skill.learned;
+  if (kind === 'skill-detection' || String(kind).includes('SKILL◆')) {
     skill.learned = true;
     skill.learnedRoom = stageTitle;
-  } else if (String(kind).includes('SKILL↗')) {
+  } else if (kind === 'skill-broadcast' || String(kind).includes('SKILL↗')) {
     skill.learned = true;
     skill.published = true;
     if (!skill.learnedRoom) skill.learnedRoom = stageTitle;
-  } else if (String(kind).includes('SKILL')) {
+  } else if (kind === 'skill-use' || String(kind).includes('SKILL')) {
     skill.learned = true;
     skill.published = true;
     if (!skill.learnedRoom) skill.learnedRoom = skill.learnedLabel || stageTitle;
@@ -258,10 +261,12 @@ function updateSkillStateFromEvent(event, index = -1) {
     skill.learned = true;
     if (!skill.learnedRoom) skill.learnedRoom = stageTitle;
   }
+  if (!wasLearned && skill.learned) skill.learnedIndex = Number.isFinite(index) ? index : skill.events.length;
   focusedSkillRef = skill.ref;
   skill.events.push({ index, kind, room: event.group?.id || `stage-${event.stageId}`, title: stageTitle });
   skillLibraryUnlocked = true;
   renderSkillLibrary(skill.ref);
+  renderSkillNotifications(skill.ref);
 }
 
 function getSkillStatus(skill) {
@@ -292,56 +297,10 @@ function activateSkillCard(skillRef) {
 }
 
 function getSkillIconMarkup(skillRef = '') {
-  const icons = {
-    build_region: `
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <rect x="12" y="10" width="24" height="8" fill="#7cc85f"/>
-        <rect x="8" y="18" width="32" height="18" fill="#8b5a2b"/>
-        <rect x="12" y="18" width="8" height="18" fill="#a96d34"/>
-        <rect x="28" y="18" width="8" height="18" fill="#6f4523"/>
-        <rect x="8" y="18" width="32" height="4" fill="#5fae4c"/>
-        <rect x="14" y="24" width="5" height="5" fill="#6b3d1f"/>
-        <rect x="25" y="29" width="6" height="4" fill="#5a331b"/>
-        <rect x="10" y="36" width="28" height="4" fill="#3b2415"/>
-      </svg>`,
-    clean_region: `
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <rect x="10" y="12" width="28" height="26" fill="#7f8b91"/>
-        <rect x="14" y="16" width="8" height="8" fill="#aab5b8"/>
-        <rect x="26" y="16" width="8" height="8" fill="#66747b"/>
-        <rect x="14" y="28" width="8" height="6" fill="#5e6a70"/>
-        <rect x="25" y="27" width="9" height="7" fill="#9da8ac"/>
-        <rect x="12" y="11" width="28" height="4" fill="#c4cccf"/>
-        <rect x="6" y="21" width="36" height="7" fill="#ff6961"/>
-        <rect x="10" y="23" width="28" height="3" fill="#ffd0cc"/>
-      </svg>`,
-    replace_region: `
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <rect x="7" y="21" width="15" height="15" fill="#8b5a2b"/>
-        <rect x="7" y="17" width="15" height="5" fill="#7cc85f"/>
-        <rect x="26" y="12" width="15" height="15" fill="#66747b"/>
-        <rect x="26" y="12" width="15" height="5" fill="#aab5b8"/>
-        <rect x="20" y="28" width="11" height="4" fill="#ffd987"/>
-        <rect x="28" y="24" width="4" height="12" fill="#ffd987"/>
-        <rect x="32" y="27" width="5" height="6" fill="#ffd987"/>
-        <rect x="10" y="36" width="28" height="3" fill="#3b2415"/>
-      </svg>`,
-    scaffold: `
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <rect x="12" y="34" width="24" height="5" fill="#8b5a2b"/>
-        <rect x="15" y="15" width="4" height="22" fill="#ffd987"/>
-        <rect x="29" y="15" width="4" height="22" fill="#ffd987"/>
-        <rect x="10" y="20" width="28" height="4" fill="#74d6c4"/>
-        <rect x="10" y="28" width="28" height="4" fill="#74d6c4"/>
-        <path d="M16 34 L32 20" stroke="#0d1c16" stroke-width="3"/>
-        <path d="M16 20 L32 34" stroke="#0d1c16" stroke-width="3"/>
-      </svg>`
-  };
-  return icons[skillRef] || `
-    <svg viewBox="0 0 48 48" aria-hidden="true">
-      <rect x="12" y="12" width="24" height="24" fill="#74d6c4"/>
-      <rect x="16" y="16" width="16" height="16" fill="#0d1c16"/>
-    </svg>`;
+  const skill = SKILL_REGISTRY[skillRef] || {};
+  const src = skill.icon || 'assets/icons/skills/skill-fallback.svg';
+  const alt = skill.name ? `${skill.name} icon` : 'Skill icon';
+  return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async">`;
 }
 
 function renderSkillLibrary(activeRef = focusedSkillRef) {
@@ -403,6 +362,35 @@ function renderSkillLibrary(activeRef = focusedSkillRef) {
     node.title = item.label;
     return node;
   }));
+}
+
+function renderSkillNotifications(activeRef = focusedSkillRef) {
+  if (!skillNotificationStack) return;
+  const learnedSkills = [...skillState.values()]
+    .filter((skill) => skill.learned)
+    .sort((a, b) => (a.learnedIndex || 0) - (b.learnedIndex || 0) || a.name.localeCompare(b.name));
+
+  skillNotificationStack.replaceChildren();
+  skillNotificationStack.hidden = learnedSkills.length === 0;
+  if (!learnedSkills.length) return;
+
+  learnedSkills.forEach((skill) => {
+    const item = document.createElement('article');
+    item.className = `skill-notification${skill.ref === activeRef ? ' is-current' : ''}`;
+    item.dataset.skillRef = skill.ref;
+    item.style.setProperty('--skill-accent', skill.accent || '#72ffd1');
+    const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Build Pools';
+    const notificationDescription = skill.notificationDescription || skill.summary || '';
+    item.title = `${skill.name}. ${notificationDescription} ${learnedFrom}`;
+    item.innerHTML = `
+      <span class="skill-notification-icon">${getSkillIconMarkup(skill.ref)}</span>
+      <span class="skill-notification-body">
+        <b>${escapeHtml(skill.name)}</b>
+        <small>${escapeHtml(notificationDescription)}</small>
+      </span>
+    `;
+    skillNotificationStack.append(item);
+  });
 }
 
 function accessoryMarkup(kind, trim, dark) {

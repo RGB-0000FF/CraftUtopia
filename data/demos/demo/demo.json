@@ -4,7 +4,7 @@
   "taskTitle": "Architecture Overview",
   "video": "hls-primer/demo/master.m3u8",
   "introImage": "assets/images/architecture.jpg",
-  "coverImage": "assets/viewer-images/demo.png",
+  "coverImage": "data/demos/demo/cover.png",
   "videoFit": "contain",
   "videoOnly": true,
   "lockVideoOnly": true,

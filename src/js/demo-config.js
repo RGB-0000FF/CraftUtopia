@@ -72,28 +72,36 @@ let isVideoOnlyMode = false;
 const mentionAccentByTerm = new Map();
 const SKILL_REGISTRY = {
   build_region: {
-    name: 'Build Region',
+    name: 'Learned Region Placement',
+    icon: 'assets/icons/skills/learned-region-placement.svg',
+    notificationDescription: 'Reads the subplan, checks inventory, and places the required blocks in the target region.',
     summary: 'Reusable bounded placement loop learned after many Workers repeat read, script, run, verify, submit.',
     learnedLabel: 'Foreman-A Build',
     sharedTo: 'Foreman-A..Foreman-E',
     accent: '#72ffd1'
   },
   replace_region: {
-    name: 'Replace Region',
+    name: 'Learned Region Replacement',
+    icon: 'assets/icons/skills/learned-region-replacement.svg',
+    notificationDescription: 'Finds wrong or missing blocks, removes incorrect blocks, and rebuilds the region to match the blueprint.',
     summary: 'Wrong-block and missing-block repair pattern learned when mid-build repair pressure increases.',
     learnedLabel: 'Foreman-B Build',
     sharedTo: 'Foreman-A..Foreman-E',
     accent: '#f06f9f'
   },
   scaffold: {
-    name: 'Scaffold',
+    name: 'Learned Scaffold Construction',
+    icon: 'assets/icons/skills/learned-scaffold-construction.svg',
+    notificationDescription: 'Builds temporary support structures so workers can safely handle high or complex sections.',
     summary: 'Temporary support placement with cleanup markers learned from awkward high-region builds.',
     learnedLabel: 'Foreman-C Build',
     sharedTo: 'Foreman-A..Foreman-E',
     accent: '#ffd987'
   },
   clean_region: {
-    name: 'Clean Region',
+    name: 'Learned Region Cleaning',
+    icon: 'assets/icons/skills/learned-region-cleaning.svg',
+    notificationDescription: 'Removes scaffold and extra blocks while preserving the structure required by the blueprint.',
     summary: 'Final cleanup pass for scaffold and leftover blocks while preserving valid blueprint blocks.',
     learnedLabel: 'Foreman-E Build',
     sharedTo: 'Foreman-A..Foreman-E',
@@ -110,6 +118,7 @@ const STATUS_MIN_WIDTH = 360;
 const roomList = document.querySelector('#room-list');
 let roomTabs = [];
 const chatFeed = document.querySelector('#chat-feed');
+const skillNotificationStack = document.querySelector('#skill-notification-stack');
 const systemLine = document.querySelector('#system-line');
 const skillLibrary = document.querySelector('#skill-library');
 const skillList = document.querySelector('#skill-list');
@@ -157,3 +166,4 @@ const videoOnlyFaster = document.querySelector('#video-only-faster');
 const playbackStep = document.querySelector('#playback-step');
 const playbackJump = document.querySelector('#playback-jump');
 const playbackCounter = document.querySelector('#playback-counter');
+const demoProfileStylesheet = document.querySelector('#demo-profile-stylesheet');

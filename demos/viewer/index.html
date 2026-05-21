@@ -9,7 +9,8 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preload" as="image" href="assets/ui/craftutopia-logo-tight-260.png">
-  <link rel="stylesheet" href="assets/styles/demo.css?v=20260521-sydney-green-highlight1">
+  <link rel="stylesheet" href="src/styles/demo.css?v=20260522-demo-css1">
+  <link rel="stylesheet" id="demo-profile-stylesheet" disabled>
 </head>
 <body>
   <a class="demo-home-button" href="./" aria-label="Back to demo gallery">
@@ -125,6 +126,7 @@
             <div class="console-section-title">
               <span>Detailed Log</span>
             </div>
+            <div class="skill-notification-stack" id="skill-notification-stack" aria-live="polite" hidden></div>
             <div class="chat-feed" id="chat-feed" aria-label="Execution event stream">
               <div class="log-loading">Loading execution log...</div>
             </div>
@@ -147,12 +149,12 @@
 
   <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.16/dist/hls.min.js"></script>
-  <script src="assets/js/hls-preload.js?v=20260521-sydney-mp4-1"></script>
-  <script src="assets/js/demo-config.js?v=20260521-sydney-timeline-controls1"></script>
-  <script src="assets/js/demo-utils.js?v=20260520-transparent-hud1"></script>
-  <script src="assets/js/demo-render.js?v=20260521-sydney-worker-purple1"></script>
-  <script src="assets/js/demo-playback.js?v=20260522-sydney-video-sync1"></script>
-  <script src="assets/js/demo-data.js?v=20260521-sydney-log-times1"></script>
-  <script src="assets/js/demo-events.js?v=20260522-sydney-video-sync1"></script>
+  <script src="src/js/hls-preload.js?v=20260522-demo-css1"></script>
+  <script src="src/js/demo-config.js?v=20260522-demo-css1"></script>
+  <script src="src/js/demo-utils.js?v=20260522-demo-css1"></script>
+  <script src="src/js/demo-render.js?v=20260522-demo-css1"></script>
+  <script src="src/js/demo-playback.js?v=20260522-demo-css1"></script>
+  <script src="src/js/demo-data.js?v=20260522-demo-css1"></script>
+  <script src="src/js/demo-events.js?v=20260522-demo-css1"></script>
 </body>
 </html>

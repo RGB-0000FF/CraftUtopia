@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const MANIFEST_URL = 'data/video-cache-manifest.json?v=20260521-sydney-mp4-1';
+  const MANIFEST_URL = 'data/video-cache-manifest.json?v=20260522-guohui-zhonglou-r2-1';
   const SEGMENTS_PER_INTENT = 2;
   const INITIAL_VIEWER_SEGMENTS = 8;
   const MAX_CONCURRENT_PRELOADS = 2;

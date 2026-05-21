@@ -62,11 +62,49 @@ function buildPlaybackEvents(runStages = []) {
       group: { id: `stage-${stage.id}`, title: stage.label },
       message: {
         text: event.text,
-        kind: event.type,
+        kind: event.skillEvent || event.type,
         skillRef: event.skill
       }
     })))
     .sort((a, b) => a.seconds - b.seconds || a.stageIndex - b.stageIndex || a.eventIndex - b.eventIndex);
+}
+
+function getEventSearchText(event = {}, display = {}) {
+  return [
+    event.skill,
+    event.action,
+    event.text,
+    event.line,
+    event.tool,
+    display.action,
+    display.text,
+    ...(Array.isArray(event.sublines) ? event.sublines : []),
+    ...(Array.isArray(display.sublines) ? display.sublines : []),
+    ...(Array.isArray(event.highlights) ? event.highlights : []),
+    ...(Array.isArray(display.highlights) ? display.highlights : [])
+  ].filter(Boolean).join(' ');
+}
+
+function inferSkillRefFromEvent(event = {}, display = {}) {
+  if (event.skill || display.skill) return event.skill || display.skill;
+  const tool = String(event.tool || display.tool || '').trim().toLowerCase();
+  if (tool !== 'create skill' && tool !== 'use skill') return '';
+  const text = getEventSearchText(event, display).toLowerCase();
+  const aliases = [
+    { ref: 'build_region', labels: ['learned region placement', 'region placement'] },
+    { ref: 'replace_region', labels: ['learned region replacement', 'region replacement'] },
+    { ref: 'scaffold', labels: ['learned scaffold construction', 'scaffold construction'] },
+    { ref: 'clean_region', labels: ['learned region cleaning', 'region cleaning'] }
+  ];
+  return aliases.find((skill) => skill.labels.some((label) => text.includes(label)))?.ref || '';
+}
+
+function inferSkillEventKind(event = {}, display = {}) {
+  if (event.skillEvent || display.skillEvent) return event.skillEvent || display.skillEvent;
+  const tool = String(event.tool || display.tool || '').trim().toLowerCase();
+  if (tool === 'create skill') return 'skill-detection';
+  if (tool === 'use skill') return 'skill-use';
+  return '';
 }
 
 function renderConsoleTitle(title = 'CraftUtopia Build with 100 Agents') {
@@ -141,7 +179,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260521-sydney-log-times1';
+const DATA_ASSET_VERSION = '20260522-demo-css1';
 
 let RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
@@ -247,6 +285,15 @@ function loadWorldVideoSource(videoPath) {
 function applyDemoProfile(profile = {}) {
   activeDemoProfile = profile || {};
   document.title = profile.pageTitle || profile.taskTitle || 'CraftUtopia Demo Viewer';
+  if (demoProfileStylesheet) {
+    if (profile.stylesheet) {
+      demoProfileStylesheet.href = siteAssetUrl(profile.stylesheet);
+      demoProfileStylesheet.disabled = false;
+    } else {
+      demoProfileStylesheet.removeAttribute('href');
+      demoProfileStylesheet.disabled = true;
+    }
+  }
   if (profile.logManifest) RUN_EVENTS_MANIFEST_PATH = profile.logManifest;
   introArchitectureSeconds = Number.isFinite(Number(profile.introSeconds)) ? Math.max(0, Number(profile.introSeconds)) : INTRO_ARCHITECTURE_SECONDS;
   if (Number.isFinite(Number(profile.fallbackVideoSeconds))) {
@@ -410,7 +457,9 @@ function normalizeRunEvent(event = {}, seq = 0) {
     : (Array.isArray(display.highlights) ? display.highlights : []);
   const timecode = event.timecode || display.timecode || formatRunTimecode(time);
   const line = event.line || `[${timecode}] [${actor}] [${kind}] ${action}`;
-  return {
+  const skill = inferSkillRefFromEvent({ ...event, action, sublines, highlights, line }, display);
+  const skillEvent = skill ? inferSkillEventKind(event, display) : '';
+  const normalized = {
     ...event,
     time,
     type: kind,
@@ -428,6 +477,9 @@ function normalizeRunEvent(event = {}, seq = 0) {
       highlights: highlights.map((highlight) => String(highlight)).filter(Boolean)
     }
   };
+  if (skill) normalized.skill = skill;
+  if (skillEvent) normalized.skillEvent = skillEvent;
+  return normalized;
 }
 
 async function bootLog() {

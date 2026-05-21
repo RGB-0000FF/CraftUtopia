@@ -16,4 +16,12 @@ Demo-specific material lives under `data/demos/<demo-id>/`.
 - `data/demos/pyramid/`: Pyramid config.
 - `data/demos/xian-bell-tower/`: Xi'an Bell Tower config.
 
-Shared images, videos, styles, scripts, and editable logs stay in `assets/` and `data/` until a demo needs private assets.
+Each demo folder can contain:
+
+- `demo.json` - viewer config.
+- `demo.css` - optional demo-specific layout and visual overrides, loaded when `demo.json` sets `stylesheet`.
+- `cover.png` - viewer cover/reference image.
+- `thumbnail.jpg` - gallery card thumbnail.
+- `source.png` - original input/reference image when available.
+
+Shared UI images, videos, styles, scripts, and editable logs stay in `assets/` and `data/` until a demo needs private assets.

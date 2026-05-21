@@ -3,7 +3,7 @@
   "pageTitle": "Taj Mahal Demo",
   "taskTitle": "Taj Mahal with 100 Agents",
   "video": "hls-primer/taj-mahal/master.m3u8",
-  "coverImage": "assets/viewer-images/taj-mahal.png",
+  "coverImage": "data/demos/taj-mahal/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",
   "frameworkImage": "assets/images/architecture.jpg",
