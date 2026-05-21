@@ -76,6 +76,8 @@ worldVideo?.addEventListener('loadedmetadata', () => {
     updateVideoForDemoSeconds(getDemoSecondsForEventCount(playbackCursor), { force: true, noSeek: isAutoPlaying });
   }
 });
+worldVideo?.addEventListener('pointerdown', keepVideoSurfacePassive);
+worldVideo?.addEventListener('click', keepVideoSurfacePassive);
 worldVideo?.addEventListener('ended', () => {
   if (!isAutoPlaying) return;
   if (isVideoOnlyMode) {

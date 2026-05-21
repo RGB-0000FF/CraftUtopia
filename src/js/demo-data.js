@@ -70,6 +70,14 @@ function buildPlaybackEvents(runStages = []) {
     .sort((a, b) => a.seconds - b.seconds || a.stageIndex - b.stageIndex || a.eventIndex - b.eventIndex);
 }
 
+function getSearchTextValues(value) {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== 'object') return [String(item || '')];
+    return Object.values(item).flatMap((entry) => Array.isArray(entry) ? entry.map((line) => String(line)) : [String(entry || '')]);
+  }).filter(Boolean);
+}
+
 function getEventSearchText(event = {}, display = {}) {
   return [
     event.skill,
@@ -77,10 +85,20 @@ function getEventSearchText(event = {}, display = {}) {
     event.text,
     event.line,
     event.tool,
+    ...(Array.isArray(event.tools) ? event.tools : []),
+    ...(Array.isArray(display.tools) ? display.tools : []),
+    ...(Array.isArray(event.messages) ? event.messages : []),
+    ...(Array.isArray(display.messages) ? display.messages : []),
+    ...(Array.isArray(event.skills) ? event.skills : []),
+    ...(Array.isArray(display.skills) ? display.skills : []),
+    ...(Array.isArray(event.results) ? event.results : []),
+    ...(Array.isArray(display.results) ? display.results : []),
+    ...(Array.isArray(event.notes) ? event.notes : []),
+    ...(Array.isArray(display.notes) ? display.notes : []),
     display.action,
     display.text,
-    ...(Array.isArray(event.sublines) ? event.sublines : []),
-    ...(Array.isArray(display.sublines) ? display.sublines : []),
+    ...getSearchTextValues(event.sublines),
+    ...getSearchTextValues(display.sublines),
     ...(Array.isArray(event.highlights) ? event.highlights : []),
     ...(Array.isArray(display.highlights) ? display.highlights : [])
   ].filter(Boolean).join(' ');
@@ -180,7 +198,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260522-log-cards13';
+const DATA_ASSET_VERSION = '20260522-hls-root-fix2';
 
 let RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
@@ -453,6 +471,11 @@ function normalizeRunEvent(event = {}, seq = 0) {
   const kind = String(event.kind || event.type || display.kind || 'LOG').replace(/▶/g, '');
   const action = event.action || display.action || String(event.text || '').replace(/^\[T\+[^\]]+\]\s+\[[^\]]+\]\s+\[[^\]]+\]\s*/, '');
   const sublines = event.sublines || display.sublines || [];
+  const tools = event.tools || display.tools || [];
+  const messages = event.messages || display.messages || [];
+  const skills = event.skills || display.skills || [];
+  const results = event.results || display.results || [];
+  const notes = event.notes || display.notes || [];
   const highlights = Array.isArray(event.highlights)
     ? event.highlights
     : (Array.isArray(display.highlights) ? display.highlights : []);
@@ -475,6 +498,11 @@ function normalizeRunEvent(event = {}, seq = 0) {
       kind,
       action,
       sublines,
+      tools,
+      messages,
+      skills,
+      results,
+      notes,
       highlights: highlights.map((highlight) => String(highlight)).filter(Boolean)
     }
   };

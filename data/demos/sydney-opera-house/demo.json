@@ -3,7 +3,7 @@
   "pageTitle": "Sydney Opera House Demo",
   "taskTitle": "Sydney Opera House with 100 Agents",
   "stylesheet": "data/demos/sydney-opera-house/demo.css",
-  "video": "assets/replay_videos_mp4/sydney-opera-house.mp4",
+  "video": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/sydney-opera-house/master.m3u8",
   "coverImage": "data/demos/sydney-opera-house/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",

@@ -9,6 +9,7 @@ function createStructuredLogText(event) {
       action: String(display.action || ''),
       result: display.result ? String(display.result) : '',
       sublines: Array.isArray(display.sublines) ? display.sublines.map((line) => String(line)) : [],
+      followups: createStructuredFollowups(event, display),
       highlights: Array.isArray(display.highlights) ? display.highlights.map((term) => String(term)).filter(Boolean) : [],
       progress: event.progress || display.progress || null
     };
@@ -28,6 +29,7 @@ function createStructuredLogText(event) {
       action: bracketMatch[4].trim(),
       result: resultMatch ? resultMatch[1].trim() : '',
       sublines: Array.isArray(event.sublines) ? event.sublines.map((line) => String(line)) : [],
+      followups: createStructuredFollowups(event),
       highlights: Array.isArray(event.highlights) ? event.highlights.map((term) => String(term)).filter(Boolean) : [],
       progress: event.progress || null
     };
@@ -42,9 +44,59 @@ function createStructuredLogText(event) {
     action: match[4].trim(),
     result: resultMatch ? resultMatch[1].trim() : '',
     sublines: Array.isArray(event.sublines) ? event.sublines.map((line) => String(line)) : [],
+    followups: createStructuredFollowups(event),
     highlights: Array.isArray(event.highlights) ? event.highlights.map((term) => String(term)).filter(Boolean) : [],
     progress: event.progress || null
   };
+}
+
+function normalizeStructuredField(value) {
+  if (Array.isArray(value)) return value.filter((item) => item !== undefined && item !== null && item !== '');
+  return value ? [value] : [];
+}
+
+function createStructuredFollowupsFromSublines(sublines) {
+  return normalizeStructuredField(sublines).flatMap((item) => {
+    if (!item || typeof item !== 'object') return [{ text: String(item || '') }];
+    const key = ['tools', 'tool', 'messages', 'message', 'skills', 'skill', 'results', 'result', 'notes', 'note']
+      .find((name) => item[name] !== undefined);
+    if (!key) return [];
+    const typeMap = {
+      tools: 'tool',
+      tool: 'tool',
+      messages: 'tool',
+      message: 'tool',
+      skills: 'skill',
+      skill: 'skill',
+      results: 'result',
+      result: 'result',
+      notes: 'note',
+      note: 'note'
+    };
+    return normalizeStructuredField(item[key]).map((text) => ({
+      type: typeMap[key],
+      text: String(text),
+      label: typeMap[key] === 'skill' ? 'Skill' : typeMap[key] === 'result' ? 'Result' : typeMap[key] === 'note' ? 'Detail' : 'Tool call'
+    }));
+  });
+}
+
+function createStructuredFollowups(event = {}, display = {}) {
+  const sublineFollowups = createStructuredFollowupsFromSublines(event.sublines || display.sublines);
+  if (sublineFollowups.length) return sublineFollowups;
+  const tools = normalizeStructuredField(event.tools || display.tools)
+    .map((text) => ({ type: 'tool', text: String(text), label: 'Tool call' }));
+  const messages = normalizeStructuredField(event.messages || display.messages)
+    .map((text) => ({ type: 'tool', text: String(text), label: 'Tool call' }));
+  const skills = normalizeStructuredField(event.skills || display.skills)
+    .map((text) => ({ type: 'skill', text: String(text), label: 'Skill' }));
+  const results = normalizeStructuredField(event.results || display.results)
+    .map((text) => ({ type: 'result', text: String(text), label: 'Result' }));
+  const notes = normalizeStructuredField(event.notes || display.notes)
+    .map((text) => ({ type: 'note', text: String(text), label: 'Detail' }));
+  const structured = [...tools, ...messages, ...skills, ...results, ...notes];
+  if (structured.length) return structured;
+  return normalizeStructuredField(event.sublines || display.sublines).map((text) => ({ text }));
 }
 
 function appendHighlightedText(node, value = '', highlights = []) {
@@ -159,6 +211,25 @@ function getStructuredSublineMeta(line = '', event = {}, log = {}) {
   return { className: 'is-note', accent: '#80918b', label: 'Detail' };
 }
 
+function getStructuredFollowupMeta(followup = {}, event = {}, log = {}) {
+  if (!followup?.type) return getStructuredSublineMeta(followup?.text || '', event, log);
+  if (followup.type === 'tool' || followup.type === 'message') {
+    return { className: 'is-tool-call', accent: '#9fb0bd', label: followup.label || 'Tool call' };
+  }
+  if (followup.type === 'skill') {
+    const skillRef = getSkillRefForStructuredSubline(followup.text || '', event, log);
+    return {
+      className: 'is-skill',
+      accent: SKILL_REGISTRY[skillRef]?.accent || '#72ffd1',
+      label: SKILL_REGISTRY[skillRef]?.name || followup.label || 'Skill'
+    };
+  }
+  if (followup.type === 'result') {
+    return { className: 'is-result', accent: '#8ba0ad', label: followup.label || 'Result' };
+  }
+  return { className: 'is-note', accent: '#80918b', label: followup.label || 'Detail' };
+}
+
 function getStructuredLogGroupKey(event = {}) {
   const log = createStructuredLogText(event);
   if (!log?.actor) return '';
@@ -209,11 +280,12 @@ function appendStructuredLogEntry(node, event, options = {}) {
   }
   entry.append(main);
 
-  if (log.sublines?.length) {
+  if (log.followups?.length) {
     const followups = document.createElement('span');
     followups.className = 'structured-sublines';
-    log.sublines.forEach((line) => {
-      const meta = getStructuredSublineMeta(line, event, log);
+    log.followups.forEach((followup) => {
+      const line = followup.text || '';
+      const meta = getStructuredFollowupMeta(followup, event, log);
       if (meta.className !== 'is-skill' && meta.className !== 'is-tool-call') {
         const detail = document.createElement('span');
         detail.className = `structured-detail ${meta.className}`;

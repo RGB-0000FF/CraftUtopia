@@ -1175,6 +1175,14 @@ function syncTimelineFromVideoPlayback() {
   startAutoPlayLoop(demoSeconds);
 }
 
+function keepVideoSurfacePassive(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  if (isAutoPlaying && worldVideo?.paused && !worldVideo.ended && !isKeyframeHolding) {
+    worldVideo.play?.().catch(() => {});
+  }
+}
+
 function updateVideoForTimelineRatio(ratio = 0, options = {}) {
   updateVideoForDemoSeconds(clamp(ratio, 0, 1) * getPresentationTotalSeconds(), options);
 }
