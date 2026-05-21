@@ -9,6 +9,7 @@ function createStructuredLogText(event) {
       action: String(display.action || ''),
       result: display.result ? String(display.result) : '',
       sublines: Array.isArray(display.sublines) ? display.sublines.map((line) => String(line)) : [],
+      highlights: Array.isArray(display.highlights) ? display.highlights.map((term) => String(term)).filter(Boolean) : [],
       progress: event.progress || display.progress || null
     };
   }
@@ -27,6 +28,7 @@ function createStructuredLogText(event) {
       action: bracketMatch[4].trim(),
       result: resultMatch ? resultMatch[1].trim() : '',
       sublines: Array.isArray(event.sublines) ? event.sublines.map((line) => String(line)) : [],
+      highlights: Array.isArray(event.highlights) ? event.highlights.map((term) => String(term)).filter(Boolean) : [],
       progress: event.progress || null
     };
   }
@@ -40,8 +42,63 @@ function createStructuredLogText(event) {
     action: match[4].trim(),
     result: resultMatch ? resultMatch[1].trim() : '',
     sublines: Array.isArray(event.sublines) ? event.sublines.map((line) => String(line)) : [],
+    highlights: Array.isArray(event.highlights) ? event.highlights.map((term) => String(term)).filter(Boolean) : [],
     progress: event.progress || null
   };
+}
+
+function appendHighlightedText(node, value = '', highlights = []) {
+  const text = String(value || '');
+  const terms = [...new Set((highlights || [])
+    .map((term) => String(term || '').trim())
+    .filter(Boolean))]
+    .sort((a, b) => b.length - a.length);
+  if (!terms.length) {
+    node.textContent = text;
+    return;
+  }
+
+  const regex = new RegExp(terms.map(escapeRegExp).join('|'), 'gi');
+  let cursor = 0;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > cursor) node.append(document.createTextNode(text.slice(cursor, match.index)));
+    const mark = document.createElement('span');
+    mark.className = 'structured-highlight';
+    mark.textContent = match[0];
+    node.append(mark);
+    cursor = match.index + match[0].length;
+  }
+  if (cursor < text.length) node.append(document.createTextNode(text.slice(cursor)));
+}
+
+const ACTOR_COLOR_MAP = {
+  ProjectManager: '#ffe04b',
+  Designer: '#35c9ff',
+  Foreman: '#ff3f7f',
+  Worker: '#c084ff',
+  System: '#f0fff6'
+};
+
+const ACTOR_COLOR_POOL = [
+  '#ffe04b',
+  '#35c9ff',
+  '#ff3f7f',
+  '#c084ff',
+  '#f0fff6'
+];
+
+function getActorColor(actor = '') {
+  const actorName = String(actor || '').trim();
+  if (ACTOR_COLOR_MAP[actorName]) return ACTOR_COLOR_MAP[actorName];
+  if (/^Foreman(?:-|$)/i.test(actorName)) return ACTOR_COLOR_MAP.Foreman;
+  if (/^Worker(?:-|$)/i.test(actorName)) return ACTOR_COLOR_MAP.Worker;
+  let hash = 0;
+  for (let i = 0; i < actorName.length; i += 1) {
+    hash = ((hash << 5) - hash) + actorName.charCodeAt(i);
+    hash |= 0;
+  }
+  return ACTOR_COLOR_POOL[Math.abs(hash) % ACTOR_COLOR_POOL.length];
 }
 
 function createStructuredProgress(progress) {
@@ -86,6 +143,7 @@ function appendStructuredLog(node, event) {
 
   const actor = document.createElement('span');
   actor.className = 'structured-actor';
+  actor.style.setProperty('--actor-color', getActorColor(log.actor));
   actor.textContent = `[${log.actor}]`;
 
   const kind = document.createElement('span');
@@ -94,7 +152,7 @@ function appendStructuredLog(node, event) {
 
   const action = document.createElement('span');
   action.className = 'structured-action';
-  action.textContent = log.action;
+  appendHighlightedText(action, log.action, log.highlights);
 
   if (log.result) {
     const result = document.createElement('span');
@@ -124,7 +182,7 @@ function appendStructuredLog(node, event) {
       prefix.textContent = '↳';
       const body = document.createElement('span');
       body.className = 'structured-subline-body';
-      body.textContent = line;
+      appendHighlightedText(body, line, log.highlights);
       subline.append(prefix, body);
       sublines.append(subline);
     });

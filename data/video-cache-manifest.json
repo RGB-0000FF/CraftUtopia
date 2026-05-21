@@ -1,45 +1,45 @@
 {
-  "version": "20260520-r2-hls-v1",
+  "version": "20260521-xini-r2-1",
   "videos": [
     {
       "id": "demo",
       "title": "Overview",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/demo/master.m3u8"
+      "url": "hls-primer/demo/master.m3u8"
     },
     {
       "id": "colosseum",
       "title": "Colosseum",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/colosseum/master.m3u8"
+      "url": "hls-primer/colosseum/master.m3u8"
     },
     {
       "id": "lamborghini",
       "title": "Lamborghini",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/lamborghini/master.m3u8"
+      "url": "hls-primer/lamborghini/master.m3u8"
     },
     {
       "id": "pyramid",
       "title": "Pyramid",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/pyramid/master.m3u8"
+      "url": "hls-primer/pyramid/master.m3u8"
     },
     {
       "id": "sydney-opera-house",
       "title": "Sydney Opera House",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/sydney-opera-house/master.m3u8"
+      "url": "assets/replay_videos_mp4/sydney-opera-house.mp4"
     },
     {
       "id": "taj-mahal",
       "title": "Taj Mahal",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/taj-mahal/master.m3u8"
+      "url": "hls-primer/taj-mahal/master.m3u8"
     },
     {
       "id": "united-states-capitol",
       "title": "United States Capitol",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/united-states-capitol/master.m3u8"
+      "url": "hls-primer/united-states-capitol/master.m3u8"
     },
     {
       "id": "xian-bell-tower",
       "title": "Xi'an Bell Tower",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/xian-bell-tower/master.m3u8"
+      "url": "hls-primer/xian-bell-tower/master.m3u8"
     }
   ]
 }

@@ -2,18 +2,38 @@
   "id": "sydney-opera-house",
   "pageTitle": "Sydney Opera House Demo",
   "taskTitle": "Sydney Opera House with 100 Agents",
-  "video": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/sydney-opera-house/master.m3u8",
-  "coverImage": "assets/xini/xini.png",
+  "video": "assets/replay_videos_mp4/sydney-opera-house.mp4",
+  "coverImage": "assets/viewer-images/sydney-opera-house.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",
+  "introSeconds": 0,
   "frameworkImage": "assets/images/architecture.jpg",
-  "logManifest": "data/demo-log/manifest.json",
-  "fallbackVideoSeconds": 180,
+  "logManifest": "data/demos/sydney-opera-house/milestone-log-preview.json",
+  "topMilestoneMode": true,
+  "topMilestoneStartAtVideoStart": true,
+  "topMilestones": [
+    { "id": "transfer-blueprint", "label": "Transfer png to blueprint", "timeRange": [0, 20] },
+    { "id": "blueprint-split", "label": "Blueprint split", "timeRange": [20, 32] },
+    {
+      "id": "regions-build",
+      "label": "Build",
+      "timeRange": [32, 90],
+      "segments": [
+        { "id": "region-a", "label": "A", "timeRange": [32, 90] },
+        { "id": "region-b", "label": "B", "timeRange": [32, 90] },
+        { "id": "region-c", "label": "C", "timeRange": [32, 90] },
+        { "id": "region-d", "label": "D", "timeRange": [32, 90] },
+        { "id": "region-e", "label": "E", "timeRange": [32, 90] }
+      ]
+    },
+    { "id": "verified-cleanup", "label": "Verified and CleanUp", "timeRange": [90, 133] },
+    { "id": "complete", "label": "Complete", "timeRange": [133, 133], "noProgress": true }
+  ],
+  "fallbackVideoSeconds": 133,
   "timelineKeyframes": [
-    { "id": "blueprint-ready", "label": "Blueprint Ready", "demoSeconds": 10, "stageId": 1 },
-    { "id": "build-region", "label": "Build Region", "demoSeconds": 17, "skill": "build_region" },
-    { "id": "scaffold", "label": "Scaffold", "demoSeconds": 28, "skill": "scaffold" },
-    { "id": "replace-region", "label": "Replace Region", "demoSeconds": 38, "skill": "replace_region" },
-    { "id": "clean-region", "label": "Clean Region", "demoSeconds": 50, "skill": "clean_region" }
+    { "id": "region-placement", "label": "Region Placement", "demoSeconds": 36, "skill": "build_region" },
+    { "id": "scaffold-construction", "label": "Scaffold Construction", "demoSeconds": 67, "skill": "scaffold" },
+    { "id": "region-replace", "label": "Region Replace", "demoSeconds": 85, "skill": "replace_region" },
+    { "id": "region-clean", "label": "Region Clean", "demoSeconds": 95, "skill": "clean_region" }
   ]
 }

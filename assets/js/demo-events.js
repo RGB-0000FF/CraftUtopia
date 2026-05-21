@@ -33,6 +33,11 @@ buildTimeline?.addEventListener('pointerup', endTimelineScrub);
 buildTimeline?.addEventListener('pointercancel', endTimelineScrub);
 buildTimeline?.addEventListener('click', handleTimelineClick);
 buildTimeline?.addEventListener('keydown', handleTimelineKeydown);
+['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'click'].forEach((eventName) => {
+  timelineControlSlot?.addEventListener(eventName, (event) => {
+    event.stopPropagation();
+  });
+});
 worldVideo?.addEventListener('loadedmetadata', () => {
   if (Number.isFinite(worldVideo.duration) && worldVideo.duration > 0) {
     demoVideoSeconds = worldVideo.duration;
@@ -53,9 +58,18 @@ worldVideo?.addEventListener('ended', () => {
 worldVideo?.addEventListener('waiting', schedulePauseTimelineForVideoWait);
 worldVideo?.addEventListener('stalled', schedulePauseTimelineForVideoWait);
 worldVideo?.addEventListener('canplay', scheduleResumeTimelineAfterVideoWait);
-worldVideo?.addEventListener('playing', scheduleResumeTimelineAfterVideoWait);
-worldVideo?.addEventListener('seeked', scheduleResumeTimelineAfterVideoWait);
-worldVideo?.addEventListener('timeupdate', scheduleResumeTimelineAfterVideoWait);
+worldVideo?.addEventListener('playing', () => {
+  scheduleResumeTimelineAfterVideoWait();
+  syncTimelineFromVideoPlayback();
+});
+worldVideo?.addEventListener('seeked', () => {
+  scheduleResumeTimelineAfterVideoWait();
+  syncTimelineFromVideoPlayback();
+});
+worldVideo?.addEventListener('timeupdate', () => {
+  scheduleResumeTimelineAfterVideoWait();
+  syncTimelineFromVideoPlayback();
+});
 appResizer?.addEventListener('pointerdown', startPanelResize);
 appResizer?.addEventListener('pointermove', movePanelResize);
 appResizer?.addEventListener('pointerup', endPanelResize);

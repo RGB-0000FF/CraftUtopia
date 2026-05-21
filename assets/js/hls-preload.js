@@ -1,11 +1,12 @@
 (function () {
   'use strict';
 
-  const MANIFEST_URL = 'data/video-cache-manifest.json';
+  const MANIFEST_URL = 'data/video-cache-manifest.json?v=20260521-sydney-mp4-1';
   const SEGMENTS_PER_INTENT = 2;
   const INITIAL_VIEWER_SEGMENTS = 8;
   const MAX_CONCURRENT_PRELOADS = 2;
   const VIEWER_BATCH_DELAY_MS = 250;
+  const DEFAULT_PAUSE_MS = 4000;
   const CARD_SELECTOR = 'a.demo-card[href*="?demo="]';
   const CARD_IMAGE_SELECTOR = `${CARD_SELECTOR} img[src]`;
 
@@ -19,6 +20,8 @@
 
   let activeCount = 0;
   let manifestReady = null;
+  let preloadPausedUntil = 0;
+  let preloadResumeTimer = null;
 
   function getConnectionInfo() {
     return navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
@@ -45,8 +48,42 @@
     };
   }
 
+  function resolveUrl(url) {
+    try {
+      return new URL(url, document.baseURI || window.location.href).href;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function isHlsManifestUrl(url) {
+    return /\.m3u8(?:[?#]|$)/i.test(String(url || ''));
+  }
+
   function isPageHidden() {
     return document.visibilityState === 'hidden';
+  }
+
+  function isPreloadPaused() {
+    return Date.now() < preloadPausedUntil;
+  }
+
+  function schedulePreloadResume() {
+    if (preloadResumeTimer) {
+      window.clearTimeout(preloadResumeTimer);
+      preloadResumeTimer = null;
+    }
+
+    const delayMs = Math.max(0, preloadPausedUntil - Date.now());
+    if (delayMs <= 0) {
+      pumpQueue();
+      return;
+    }
+
+    preloadResumeTimer = window.setTimeout(() => {
+      preloadResumeTimer = null;
+      pumpQueue();
+    }, delayMs);
   }
 
   function enqueueUrl(url, responseType) {
@@ -74,7 +111,10 @@
   }
 
   function pumpQueue() {
-    if (isPageHidden()) {
+    if (isPageHidden() || isPreloadPaused()) {
+      if (isPreloadPaused()) {
+        schedulePreloadResume();
+      }
       return;
     }
 
@@ -143,7 +183,9 @@
       return manifestReady;
     }
 
-    manifestReady = fetch(MANIFEST_URL, { cache: 'force-cache' })
+    const manifestUrl = resolveUrl(MANIFEST_URL) || MANIFEST_URL;
+
+    manifestReady = fetch(manifestUrl, { cache: 'force-cache' })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Video manifest failed: ${response.status}`);
@@ -157,7 +199,10 @@
 
         for (const video of manifest.videos) {
           if (video && video.id && video.url) {
-            videoManifestById.set(video.id, video.url);
+            const playlistUrl = resolveUrl(video.url);
+            if (playlistUrl && isHlsManifestUrl(playlistUrl)) {
+              videoManifestById.set(video.id, playlistUrl);
+            }
           }
         }
 
@@ -191,7 +236,7 @@
   }
 
   async function getPlaylistDataForUrl(playlistUrl) {
-    if (!playlistUrl) {
+    if (!playlistUrl || !isHlsManifestUrl(playlistUrl)) {
       return null;
     }
 
@@ -259,6 +304,21 @@
     return new Promise((resolve) => window.setTimeout(resolve, ms));
   }
 
+  function pausePreloading(durationMs = DEFAULT_PAUSE_MS) {
+    const safeDuration = Number.isFinite(Number(durationMs)) ? Math.max(0, Number(durationMs)) : DEFAULT_PAUSE_MS;
+    preloadPausedUntil = Math.max(preloadPausedUntil, Date.now() + safeDuration);
+    schedulePreloadResume();
+  }
+
+  function resumePreloading() {
+    preloadPausedUntil = 0;
+    if (preloadResumeTimer) {
+      window.clearTimeout(preloadResumeTimer);
+      preloadResumeTimer = null;
+    }
+    pumpQueue();
+  }
+
   async function warmSegmentList(urls, state, delayMs) {
     const pending = [];
 
@@ -276,6 +336,17 @@
             }
           };
           document.addEventListener('visibilitychange', resume);
+        });
+      }
+
+      if (state.cancelled) {
+        break;
+      }
+
+      if (isPreloadPaused()) {
+        await new Promise((resolve) => {
+          const waitMs = Math.max(0, preloadPausedUntil - Date.now());
+          window.setTimeout(resolve, waitMs);
         });
       }
 
@@ -426,6 +497,8 @@
     warmIntentSegments,
     warmImageUrls,
     warmCurrentDemo,
-    cancelCurrentDemoWarmup
+    cancelCurrentDemoWarmup,
+    pausePreloading,
+    resumePreloading
   };
 })();

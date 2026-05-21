@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="../../">
   <title>CraftUtopia Demo Viewer</title>
-  <link rel="stylesheet" href="assets/styles/demo.css?v=20260521-video-controls1">
+  <link rel="preconnect" href="https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preload" as="image" href="assets/ui/craftutopia-logo-tight-260.png">
+  <link rel="stylesheet" href="assets/styles/demo.css?v=20260521-sydney-green-highlight1">
 </head>
 <body>
   <a class="demo-home-button" href="./" aria-label="Back to demo gallery">
@@ -26,6 +30,7 @@
       </header>
 
       <div class="visual-wrap">
+        <section class="top-milestone-strip" id="top-milestone-strip" aria-label="Build milestones"></section>
         <div class="gif-stage" aria-label="Minecraft replay preview" tabindex="0">
           <video class="world-video" muted playsinline preload="metadata" aria-label="Minecraft build replay"></video>
           <div class="timeline-intro is-visible" id="timeline-intro" aria-hidden="true">
@@ -33,6 +38,7 @@
           </div>
         </div>
         <div class="build-timeline" role="slider" tabindex="0" aria-label="Elapsed build timeline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="00:00.0">
+          <div class="timeline-control-slot" id="timeline-control-slot" aria-label="Playback controls"></div>
           <div class="build-timeline-head">
             <strong id="console-elapsed-value">00:00.0</strong>
           </div>
@@ -67,61 +73,69 @@
 
     <div class="app-resizer" id="app-resizer" role="separator" tabindex="0" aria-label="Resize terminal console" aria-orientation="vertical" aria-valuemin="420" aria-valuemax="720" aria-valuenow="560"></div>
 
-    <aside class="log-board" aria-label="Terminal task console">
-      <div class="chat-shell terminal-console">
-        <header class="console-header">
-          <div class="console-title-group">
-            <h2 id="console-task-title">CraftUtopia Build<span class="console-title-break">with <span class="console-title-scale">100</span> Agents</span></h2>
-          </div>
-          <div class="console-header-spacer" aria-hidden="true"></div>
-          <div class="console-control-group">
-            <div class="header-progress console-meter" style="--value: 0%" aria-label="Build progress">
-              <span id="console-progress-value">0%</span>
-              <i aria-hidden="true"><b id="console-progress-bar"></b></i>
+    <div class="right-rail">
+      <aside class="log-board" aria-label="Terminal task console">
+        <div class="chat-shell terminal-console">
+          <header class="console-header">
+            <div class="console-title-group">
+              <img class="console-title-logo" src="assets/ui/craftutopia-logo-tight-260.png" alt="CraftUtopia" width="260" height="138">
+              <h2 id="console-task-title">CraftUtopia Build <span class="console-title-break">with <span class="console-title-scale">100</span> Agents</span></h2>
             </div>
-            <button class="console-play" id="playback-auto" type="button">Play</button>
-            <div class="console-speed-group" aria-label="Playback speed controls">
-              <button class="console-speed console-speed-step" id="playback-slower" type="button" aria-label="Slow down playback">
-                <i data-lucide="minus" aria-hidden="true"></i>
-              </button>
-              <button class="console-speed console-speed-value" id="playback-speed" type="button" aria-label="Playback speed: 1x">1x</button>
-              <button class="console-speed console-speed-step" id="playback-faster" type="button" aria-label="Speed up playback">
-                <i data-lucide="plus" aria-hidden="true"></i>
+            <div class="console-header-spacer" aria-hidden="true"></div>
+            <span class="console-control-anchor" id="console-control-anchor" hidden></span>
+            <div class="console-control-group">
+              <div class="header-progress console-meter" style="--value: 0%" aria-label="Build progress">
+                <span id="console-progress-value">0%</span>
+                <i aria-hidden="true"><b id="console-progress-bar"></b></i>
+              </div>
+              <button class="console-play" id="playback-auto" type="button">Play</button>
+              <div class="console-speed-group" aria-label="Playback speed controls">
+                <button class="console-speed console-speed-step" id="playback-slower" type="button" aria-label="Slow down playback">
+                  <i data-lucide="minus" aria-hidden="true"></i>
+                </button>
+                <button class="console-speed console-speed-value" id="playback-speed" type="button" aria-label="Playback speed: 1x">1x</button>
+                <button class="console-speed console-speed-step" id="playback-faster" type="button" aria-label="Speed up playback">
+                  <i data-lucide="plus" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <section class="console-milestones" aria-label="Run milestones">
+            <div class="console-section-title">
+              <span>Milestones</span>
+            </div>
+            <ol class="milestone-list" id="milestone-list"></ol>
+          </section>
+
+          <section class="console-framework" aria-label="Execution framework">
+            <div class="console-section-title framework-toggle" id="framework-toggle" role="button" tabindex="0" aria-expanded="false">
+              <span>Execution Framework</span>
+              <span class="framework-hint" id="framework-hint">Click to view details</span>
+              <span class="framework-arrows" id="framework-arrows" aria-hidden="true"></span>
+            </div>
+            <div class="framework-preview">
+              <button class="framework-preview-button" id="framework-open" type="button" aria-label="Open execution framework image">
+                <img src="assets/images/architecture.jpg" alt="CraftUtopia execution framework architecture">
               </button>
             </div>
-          </div>
-        </header>
+          </section>
 
-        <section class="console-milestones" aria-label="Run milestones">
-          <div class="console-section-title">
-            <span>Milestones</span>
-          </div>
-          <ol class="milestone-list" id="milestone-list"></ol>
-        </section>
-
-        <section class="console-framework" aria-label="Execution framework">
-          <div class="console-section-title framework-toggle" id="framework-toggle" role="button" tabindex="0" aria-expanded="false">
-            <span>Execution Framework</span>
-            <span class="framework-hint" id="framework-hint">Click to view details</span>
-            <span class="framework-arrows" id="framework-arrows" aria-hidden="true"></span>
-          </div>
-          <div class="framework-preview">
-            <button class="framework-preview-button" id="framework-open" type="button" aria-label="Open execution framework image">
-              <img src="assets/images/architecture.jpg" alt="CraftUtopia execution framework architecture">
-            </button>
-          </div>
-        </section>
-
-        <section class="console-log" aria-label="Detailed terminal log">
-          <div class="console-section-title">
-            <span>Detailed Log</span>
-          </div>
-          <div class="chat-feed" id="chat-feed" aria-label="Execution event stream">
-            <div class="log-loading">Loading execution log...</div>
-          </div>
-        </section>
-      </div>
-    </aside>
+          <section class="console-log" aria-label="Detailed terminal log">
+            <div class="console-section-title">
+              <span>Detailed Log</span>
+            </div>
+            <div class="chat-feed" id="chat-feed" aria-label="Execution event stream">
+              <div class="log-loading">Loading execution log...</div>
+            </div>
+          </section>
+        </div>
+      </aside>
+      <section class="vote-card" aria-label="Vote for CraftUtopia">
+        <span>Vote for us!</span>
+        <strong>dm 45: CraftUtopia</strong>
+      </section>
+    </div>
   </main>
 
   <div class="framework-lightbox" id="framework-lightbox" role="dialog" aria-modal="true" aria-label="Execution framework preview" hidden>
@@ -133,12 +147,12 @@
 
   <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.16/dist/hls.min.js"></script>
-  <script src="assets/js/hls-preload.js?v=20260520-image-preload1"></script>
-  <script src="assets/js/demo-config.js?v=20260520-hls1"></script>
+  <script src="assets/js/hls-preload.js?v=20260521-sydney-mp4-1"></script>
+  <script src="assets/js/demo-config.js?v=20260521-sydney-timeline-controls1"></script>
   <script src="assets/js/demo-utils.js?v=20260520-transparent-hud1"></script>
-  <script src="assets/js/demo-render.js?v=20260520-transparent-hud1"></script>
-  <script src="assets/js/demo-playback.js?v=20260520-framework-reveal1"></script>
-  <script src="assets/js/demo-data.js?v=20260520-image-preload1"></script>
-  <script src="assets/js/demo-events.js?v=20260520-video-gate2"></script>
+  <script src="assets/js/demo-render.js?v=20260521-sydney-worker-purple1"></script>
+  <script src="assets/js/demo-playback.js?v=20260522-sydney-video-sync1"></script>
+  <script src="assets/js/demo-data.js?v=20260521-sydney-log-times1"></script>
+  <script src="assets/js/demo-events.js?v=20260522-sydney-video-sync1"></script>
 </body>
 </html>

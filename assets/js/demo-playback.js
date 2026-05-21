@@ -278,6 +278,7 @@ function setTimelineReadout(seconds = 0) {
   buildTimeline?.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
   buildTimeline?.setAttribute('aria-valuetext', elapsedTime);
   updateTimelineMarkerState(safeSeconds);
+  renderTopMilestones(undefined, safeSeconds);
 }
 
 function renderPlaybackUntilLive(targetCount) {
@@ -335,6 +336,7 @@ function restartVideoOnlyPlayback() {
   renderedStageIds = new Set();
   progressRows = new Map();
   milestoneRenderKey = '';
+  topMilestoneRenderKey = '';
   heldKeyframes = new Set();
   resetSkillState();
   chatFeed.replaceChildren();
@@ -405,45 +407,57 @@ function startAutoPlayLoop(startSeconds = getDemoSecondsForEventCount(playbackCu
   autoPlayTimer = setTimeout(() => runAutoPlayFrame(performance.now()), 0);
 }
 
+const MAX_MILESTONES = 10;
+const MILESTONE_EVENT_LABELS = {
+  0: 'Minecraft environment started',
+  1: 'Input image became a blueprint',
+  2: 'Blueprint split into five build regions',
+  3: 'Region A build began',
+  4: 'Region B build began',
+  5: 'Region C build began',
+  6: 'Region D build began',
+  7: 'Region E build began',
+  8: 'Build verified and cleaned up'
+};
+
+function formatMilestoneRange(metrics = []) {
+  const start = metrics[0] || '';
+  const end = metrics[1] || '';
+  const detail = metrics[2] || '';
+  const range = start && end ? `${start}-${end}` : (start || end);
+  return [range, detail].filter(Boolean).join(' · ');
+}
+
 function buildMilestoneNodes() {
-  const stageNodes = stages.map((stage, index) => {
-    const label = String(stage.label || `Phase ${stage.id}`).replace(/^\d+\s+/, '');
+  const stageNodes = stages.map((stage) => {
+    const stageId = Number(stage.id);
+    const fallbackLabel = String(stage.label || `Phase ${stage.id}`)
+      .replace(/^\d+\s+/, '')
+      .replace(/([a-z])([A-Z])/g, '$1 $2');
     return {
       id: `phase-${stage.id}`,
-      startStage: Number(stage.id),
-      endStage: Number(stage.id),
+      startStage: stageId,
+      endStage: stageId,
       code: `[${String(stage.id).padStart(2, '0')}]`,
-      label,
-      role: stage.metrics?.[2] || 'phase milestone',
+      label: MILESTONE_EVENT_LABELS[stageId] || fallbackLabel,
+      role: formatMilestoneRange(stage.metrics || []),
       summary: stage.summary || stage.system || '',
-      prefix: index <= 3 ? 'prep' : (index <= 6 ? 'run' : 'done'),
-      parallel: index >= 3 && index <= 6,
-      children: (stage.children || []).map((child) => ({
-        id: `phase-${stage.id}-${child.id}`,
-        startStage: Number(stage.id),
-        endStage: Number(stage.id),
-        code: String(child.id || '').replace(/^\d+\./, ''),
-        label: child.label || child.id || 'substep',
-        role: 'child milestone',
-        summary: child.summary || '',
-        prefix: 'sub'
-      }))
+      prefix: 'event'
     };
   });
   return [
     {
-      id: 'pm-terminal',
+      id: 'run-started',
       startStage: stages[0]?.id ?? 0,
-      endStage: stages.at(-1)?.id ?? 0,
-      code: '[PM]',
-      label: 'ProjectManager Control',
-      role: '1 PM · 5 logical Foremen · 100 Workers',
-      summary: 'Runtime evolves from tool-heavy execution into shared Skills during the build.',
-      prefix: 'pm',
-      root: true
+      endStage: stages[0]?.id ?? 0,
+      code: '[RUN]',
+      label: 'Project run started',
+      role: 'ProjectManager · Designer · 5 Foremen · 100 Workers',
+      summary: 'The run opens with the full build team online.',
+      prefix: 'event'
     },
     ...stageNodes
-  ];
+  ].slice(0, MAX_MILESTONES);
 }
 
 function getMilestoneState(node, currentId, isComplete) {
@@ -452,10 +466,200 @@ function getMilestoneState(node, currentId, isComplete) {
   return 'pending';
 }
 
+function normalizeTopMilestone(node = {}) {
+  const segmentStages = Array.isArray(node.segments)
+    ? node.segments.map((segment) => Number(segment.stageId)).filter(Number.isFinite)
+    : [];
+  const stageStart = Number.isFinite(Number(node.stageStart))
+    ? Number(node.stageStart)
+    : (Number.isFinite(Number(node.stageId)) ? Number(node.stageId) : Math.min(...segmentStages));
+  const stageEnd = Number.isFinite(Number(node.stageEnd))
+    ? Number(node.stageEnd)
+    : (Number.isFinite(Number(node.stageId)) ? Number(node.stageId) : Math.max(...segmentStages));
+  return {
+    ...node,
+    stageStart,
+    stageEnd
+  };
+}
+
+function parseTopMilestoneSeconds(value) {
+  if (Number.isFinite(Number(value))) return Math.max(0, Number(value));
+  const parts = String(value || '').split(':').map(Number);
+  if (parts.length === 1) return Number.isFinite(parts[0]) ? Math.max(0, parts[0]) : null;
+  const seconds = parts.reduce((total, part) => (total * 60) + (Number.isFinite(part) ? part : 0), 0);
+  return Number.isFinite(seconds) ? Math.max(0, seconds) : null;
+}
+
+function getExplicitTopMilestoneRange(node = {}) {
+  const range = Array.isArray(node.timeRange) ? node.timeRange : null;
+  const startValue = node.startSeconds ?? node.timeStart ?? node.start ?? range?.[0];
+  const endValue = node.endSeconds ?? node.timeEnd ?? node.end ?? range?.[1];
+  const start = parseTopMilestoneSeconds(startValue);
+  const end = parseTopMilestoneSeconds(endValue);
+  if (start === null || end === null) return null;
+  return { start, end: Math.max(end, start + 0.001) };
+}
+
+function getTopMilestoneState(node, currentId, isComplete) {
+  if (isComplete || currentId > Number(node.stageEnd)) return 'complete';
+  if (currentId >= Number(node.stageStart) && currentId <= Number(node.stageEnd)) return 'running';
+  return 'pending';
+}
+
+function getStageSecondsRange(stageStart, stageEnd = stageStart) {
+  const startId = Number(stageStart);
+  const endId = Number(stageEnd);
+  if (!Number.isFinite(startId) || !Number.isFinite(endId) || !playbackEvents.length) {
+    return { start: 0, end: getPresentationTotalSeconds() };
+  }
+
+  const startEvent = playbackEvents.find((event) => Number(event.stageId) >= startId);
+  const endEvent = playbackEvents.find((event) => Number(event.stageId) > endId);
+  const offset = activeDemoProfile.topMilestoneStartAtVideoStart && Number.isFinite(Number(playbackEvents[0]?.seconds))
+    ? Number(playbackEvents[0].seconds)
+    : 0;
+  const start = Number.isFinite(Number(startEvent?.seconds)) ? Math.max(Number(startEvent.seconds) - offset, 0) : 0;
+  const end = Number.isFinite(Number(endEvent?.seconds))
+    ? Math.max(Number(endEvent.seconds) - offset, 0)
+    : getPresentationTotalSeconds();
+  return { start, end: Math.max(end, start + 0.001) };
+}
+
+function getTopMilestoneSecondsRange(node = {}) {
+  return getExplicitTopMilestoneRange(node) || getStageSecondsRange(node.stageStart, node.stageEnd);
+}
+
+function getRangeProgress(seconds = 0, range = {}) {
+  const start = Number(range.start) || 0;
+  const end = Number(range.end) || start + 0.001;
+  return clamp(((Number(seconds) || 0) - start) / Math.max(end - start, 0.001), 0, 1);
+}
+
+function formatTopMilestoneLabel(label = '') {
+  return String(label || '').replace(/^\s*\d+\.\s*/, '');
+}
+
+function getTopMilestoneStateBySeconds(node, seconds, isComplete) {
+  if (isComplete) return 'complete';
+  const range = getTopMilestoneSecondsRange(node);
+  if (seconds >= range.end) return 'complete';
+  if (seconds >= range.start) return 'running';
+  return 'pending';
+}
+
+function createTopMilestoneItem(node, state, currentSeconds, isComplete) {
+  const item = document.createElement('article');
+  const noProgress = Boolean(node.noProgress);
+  item.className = `top-milestone-item is-${state}${noProgress ? ' is-no-progress' : ''}`;
+  item.dataset.milestoneId = node.id || node.label || '';
+  item.dataset.stageStart = String(node.stageStart);
+  item.dataset.stageEnd = String(node.stageEnd);
+  const itemRange = getTopMilestoneSecondsRange(node);
+  item.dataset.rangeStart = String(itemRange.start);
+  item.dataset.rangeEnd = String(itemRange.end);
+  item.style.setProperty('--milestone-progress', noProgress || state !== 'complete' ? '0%' : '100%');
+  item.style.setProperty('--milestone-ratio', noProgress || state !== 'complete' ? '0' : '1');
+
+  const visibleSegments = Array.isArray(node.segments)
+    ? node.segments.filter((segment) => {
+      const range = getExplicitTopMilestoneRange(segment) || getStageSecondsRange(segment.stageId, segment.stageId);
+      return isComplete || currentSeconds >= range.start;
+    })
+    : [];
+  const segmentMarkup = visibleSegments.length ? `
+    <div class="top-milestone-segments" aria-label="${escapeHtml(formatTopMilestoneLabel(node.label) || 'Region milestones')} regions">
+      ${visibleSegments.map((segment) => {
+        const segmentStage = Number(segment.stageId);
+        const segmentNoProgress = Boolean(segment.noProgress);
+        const segmentRange = getExplicitTopMilestoneRange(segment) || getStageSecondsRange(segmentStage, segmentStage);
+        const segmentState = isComplete || currentSeconds >= segmentRange.end ? 'complete' : (currentSeconds >= segmentRange.start ? 'running' : 'pending');
+        const segmentProgress = segmentNoProgress || segmentState !== 'complete' ? '0%' : '100%';
+        const segmentRatio = segmentNoProgress || segmentState !== 'complete' ? '0' : '1';
+        return `<span class="top-milestone-segment is-${segmentState}${segmentNoProgress ? ' is-no-progress' : ''}" data-stage-start="${segmentStage}" data-stage-end="${segmentStage}" data-range-start="${segmentRange.start}" data-range-end="${segmentRange.end}" style="--milestone-progress: ${segmentProgress}; --milestone-ratio: ${segmentRatio}">${escapeHtml(segment.label || '')}</span>`;
+      }).join('')}
+    </div>
+  ` : '';
+
+  item.innerHTML = `
+    <span class="top-milestone-label">${escapeHtml(formatTopMilestoneLabel(node.label))}</span>
+    ${segmentMarkup}
+  `;
+  return item;
+}
+
+function updateTopMilestoneProgress(seconds = getDemoSecondsForEventCount(playbackCursor)) {
+  if (!topMilestoneStrip || !activeDemoProfile.topMilestoneMode) return;
+  topMilestoneStrip
+    .querySelectorAll('.top-milestone-item.is-running, .top-milestone-segment.is-running')
+    .forEach((node) => {
+      if (node.classList.contains('is-no-progress')) return;
+      const explicitStart = parseTopMilestoneSeconds(node.dataset.rangeStart);
+      const explicitEnd = parseTopMilestoneSeconds(node.dataset.rangeEnd);
+      const range = explicitStart !== null && explicitEnd !== null
+        ? { start: explicitStart, end: Math.max(explicitEnd, explicitStart + 0.001) }
+        : getStageSecondsRange(node.dataset.stageStart, node.dataset.stageEnd);
+      const progress = getRangeProgress(seconds, range);
+      node.style.setProperty('--milestone-progress', `${Math.round(progress * 1000) / 10}%`);
+      node.style.setProperty('--milestone-ratio', String(Math.round(progress * 1000) / 1000));
+    });
+}
+
+function renderTopMilestones(currentStageId = stages[0]?.id ?? 0, currentSecondsOverride) {
+  if (!topMilestoneStrip) return;
+  const milestones = Array.isArray(activeDemoProfile.topMilestones)
+    ? activeDemoProfile.topMilestones.map(normalizeTopMilestone)
+    : [];
+  const isEnabled = Boolean(activeDemoProfile.topMilestoneMode && milestones.length);
+  if (!isEnabled) {
+    if (topMilestoneRenderKey !== 'off') {
+      topMilestoneStrip.replaceChildren();
+      topMilestoneRenderKey = 'off';
+    }
+    return;
+  }
+
+  const total = playbackEvents.length;
+  const isComplete = total > 0 && playbackCursor >= total;
+  const currentSeconds = Number.isFinite(Number(currentSecondsOverride))
+    ? Number(currentSecondsOverride)
+    : getDemoSecondsForEventCount(playbackCursor);
+  const currentId = Number(currentStageId);
+  const visibleMilestones = milestones.filter((node) => {
+    const range = getTopMilestoneSecondsRange(node);
+    return isComplete || currentSeconds >= range.start;
+  });
+  const renderKey = `${currentId}:${isComplete}:${visibleMilestones.map((node) => {
+    const visibleSegments = Array.isArray(node.segments)
+      ? node.segments
+        .filter((segment) => {
+          const range = getExplicitTopMilestoneRange(segment) || getStageSecondsRange(segment.stageId, segment.stageId);
+          return isComplete || currentSeconds >= range.start;
+        })
+        .map((segment) => segment.label)
+        .join(',')
+      : '';
+    return `${node.id || node.label}:${getTopMilestoneStateBySeconds(node, currentSeconds, isComplete)}:${visibleSegments}`;
+  }).join('|')}`;
+  if (renderKey === topMilestoneRenderKey) {
+    updateTopMilestoneProgress(currentSeconds);
+    return;
+  }
+  topMilestoneRenderKey = renderKey;
+
+  topMilestoneStrip.replaceChildren(...visibleMilestones.map((node) => {
+    const state = getTopMilestoneStateBySeconds(node, currentSeconds, isComplete);
+    return createTopMilestoneItem(node, state, currentSeconds, isComplete);
+  }));
+  updateTopMilestoneProgress(currentSeconds);
+  topMilestoneStrip.querySelector('.top-milestone-item.is-running, .top-milestone-segment.is-running')
+    ?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+}
+
 function createMilestoneItem(node, state, options = {}) {
   const item = document.createElement('li');
   const stateLabel = state === 'running' ? 'executing' : (state === 'complete' ? 'complete' : 'pending');
-  item.className = `milestone-item is-${state}${node.root ? ' is-root' : ''}${node.parallel ? ' is-parallel' : ''}${options.worker ? ' is-worker' : ''}`;
+  item.className = `milestone-item is-${state}${options.worker ? ' is-worker' : ''}`;
   item.dataset.stage = String(node.startStage);
   item.dataset.milestoneId = node.id;
   const loadMarkup = options.load ? `<span class="milestone-load" style="--worker-load: ${options.load || 70}%" aria-hidden="true"></span>` : '';
@@ -485,40 +689,28 @@ function createMilestoneChildTree(parentNode, state) {
 }
 
 function renderMilestones(currentStageId = stages[0]?.id ?? 0) {
+  renderTopMilestones(currentStageId);
   if (!milestoneList) return;
   const total = playbackEvents.length;
   const isComplete = total > 0 && playbackCursor >= total;
   const currentId = Number(currentStageId);
   const sourceNodes = buildMilestoneNodes();
-  const rootNode = sourceNodes.find((node) => node.root) || sourceNodes[0];
-  const childNodes = sourceNodes.filter((node) => node !== rootNode);
-  const visibleChildren = childNodes.filter((node) => isComplete || Number(node.startStage) <= currentId);
-  const visibleCount = (rootNode ? 1 : 0) + visibleChildren.length;
+  const visibleNodes = sourceNodes.filter((node) => isComplete || Number(node.startStage) <= currentId);
+  const visibleCount = visibleNodes.length;
   const renderKey = `${currentId}:${isComplete}:${visibleCount}:${sourceNodes.length}`;
   if (renderKey === milestoneRenderKey && milestoneList.children.length) {
     return;
   }
   milestoneRenderKey = renderKey;
   milestoneList.replaceChildren();
-  if (milestoneCount) milestoneCount.textContent = `${visibleCount}/${sourceNodes.length} shown`;
+  if (milestoneCount) milestoneCount.textContent = `${visibleCount}/${sourceNodes.length} events`;
 
-  if (!rootNode) return;
-  const rootState = getMilestoneState(rootNode, currentId, isComplete);
-  const rootItem = createMilestoneItem(rootNode, rootState);
-  const childTree = document.createElement('ol');
-  childTree.className = 'milestone-children';
-
-  visibleChildren.forEach((node) => {
+  visibleNodes.forEach((node) => {
     const state = getMilestoneState(node, currentId, isComplete);
-    const item = createMilestoneItem(node, state);
-    const childTreeForNode = createMilestoneChildTree(node, state);
-    if (childTreeForNode) item.append(childTreeForNode);
-    childTree.append(item);
+    milestoneList.append(createMilestoneItem(node, state));
   });
 
-  if (visibleChildren.length) rootItem.append(childTree);
-  milestoneList.append(rootItem);
-  const runningItem = milestoneList.querySelector('.milestone-children > .milestone-item.is-running');
+  const runningItem = milestoneList.querySelector('.milestone-item.is-running');
   runningItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
 
@@ -662,6 +854,7 @@ function renderChat(events) {
   renderedStageIds = new Set();
   progressRows = new Map();
   milestoneRenderKey = '';
+  topMilestoneRenderKey = '';
   resetSkillState();
   skillLibrary?.classList.add('is-visible');
   setFrameworkExpanded(false);
@@ -710,6 +903,7 @@ function renderPlaybackUntil(targetCount) {
   renderedStageIds = new Set();
   progressRows = new Map();
   milestoneRenderKey = '';
+  topMilestoneRenderKey = '';
   resetSkillState();
   skillLibrary?.classList.add('is-visible');
 
@@ -919,6 +1113,20 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
   }
 }
 
+function syncTimelineFromVideoPlayback() {
+  if (!worldVideo || !isAutoPlaying || isKeyframeHolding || isScrubbingTimeline) return;
+  if (worldVideo.paused || worldVideo.ended) return;
+  const videoSeconds = Number(worldVideo.currentTime);
+  if (!Number.isFinite(videoSeconds)) return;
+  const demoSeconds = clamp(introArchitectureSeconds + videoSeconds, 0, getPresentationTotalSeconds());
+  const renderedSeconds = getDemoSecondsForEventCount(playbackCursor);
+  if (!isTimelineWaitingForVideo && Math.abs(demoSeconds - renderedSeconds) < 0.85) return;
+
+  clearVideoWaitState();
+  renderPlaybackToDemoSeconds(demoSeconds, { syncVideo: false });
+  startAutoPlayLoop(demoSeconds);
+}
+
 function updateVideoForTimelineRatio(ratio = 0, options = {}) {
   updateVideoForDemoSeconds(clamp(ratio, 0, 1) * getPresentationTotalSeconds(), options);
 }
@@ -1095,6 +1303,10 @@ function getTimelineRatioFromPointer(event) {
   return clamp((event.clientX - rect.left) / rect.width, 0, 1);
 }
 
+function isPassiveTimelineTarget(event) {
+  return Boolean(event?.target?.closest?.('.build-timeline-head, .timeline-control-slot'));
+}
+
 function seekTimelineToRatio(ratio = 0, options = {}) {
   const safeRatio = clamp(ratio, 0, 1);
   const seconds = safeRatio * getPresentationTotalSeconds();
@@ -1127,6 +1339,7 @@ function queueTimelineSeek(event, commit = false, options = {}) {
 
 function startTimelineScrub(event) {
   if (!buildTimelineRail || !playbackEvents.length) return;
+  if (isPassiveTimelineTarget(event)) return;
   event.preventDefault();
   shouldResumeAfterTimelineSeek = isAutoPlaying;
   stopAutoPlay(!shouldResumeAfterTimelineSeek);
@@ -1191,6 +1404,7 @@ function handleTimelineClick(event) {
     return;
   }
   if (!playbackEvents.length || isScrubbingTimeline) return;
+  if (isPassiveTimelineTarget(event)) return;
   event.preventDefault();
   const shouldResume = isAutoPlaying;
   stopAutoPlay();

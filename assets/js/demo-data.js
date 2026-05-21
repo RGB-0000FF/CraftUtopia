@@ -97,6 +97,7 @@ function renderConsoleTitle(title = 'CraftUtopia Build with 100 Agents') {
 
   consoleTaskTitle.replaceChildren(
     document.createTextNode(safeTitle.slice(0, breakIndex)),
+    document.createTextNode(' '),
     secondLine
   );
 }
@@ -140,9 +141,11 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
+const DATA_ASSET_VERSION = '20260521-sydney-log-times1';
 
 let RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
+let hlsPreloadThrottleBound = false;
 
 function getRequestedDemoId() {
   const params = new URLSearchParams(window.location.search);
@@ -181,6 +184,23 @@ function destroyActiveHlsController() {
   window.CraftUtopiaHlsPreload?.cancelCurrentDemoWarmup?.();
 }
 
+function bindHlsPreloadThrottle() {
+  if (!worldVideo || hlsPreloadThrottleBound) return;
+  hlsPreloadThrottleBound = true;
+
+  const pauseBackgroundPreload = () => {
+    window.CraftUtopiaHlsPreload?.pausePreloading?.(4000);
+  };
+  const resumeBackgroundPreload = () => {
+    window.CraftUtopiaHlsPreload?.resumePreloading?.();
+  };
+
+  worldVideo.addEventListener('waiting', pauseBackgroundPreload);
+  worldVideo.addEventListener('stalled', pauseBackgroundPreload);
+  worldVideo.addEventListener('canplay', resumeBackgroundPreload);
+  worldVideo.addEventListener('playing', resumeBackgroundPreload);
+}
+
 function loadWorldVideoSource(videoPath) {
   if (!worldVideo || !videoPath) return;
   const sourceUrl = siteAssetUrl(videoPath);
@@ -204,6 +224,7 @@ function loadWorldVideoSource(videoPath) {
     initialSegmentCount: 8,
     delayMs: 250
   });
+  bindHlsPreloadThrottle();
 
   worldVideo.removeAttribute('src');
   if (worldVideo.canPlayType('application/vnd.apple.mpegurl')) {
@@ -244,6 +265,11 @@ function applyDemoProfile(profile = {}) {
   document.body.classList.toggle('is-block-count-hidden', profile.showBlockCount === false);
   document.body.classList.toggle('is-video-only-locked', Boolean(profile.lockVideoOnly || profile.videoOnly));
   document.body.classList.toggle('is-video-fit-contain', profile.videoFit === 'contain');
+  document.body.classList.toggle('is-sydney-top-milestones', Boolean(profile.topMilestoneMode));
+  document.body.classList.toggle('is-timeline-playback-controls', Boolean(profile.topMilestoneMode));
+  positionPlaybackControls(Boolean(profile.topMilestoneMode));
+  topMilestoneRenderKey = '';
+  renderTopMilestones(stages[0]?.id ?? 0);
   if (profile.showCover !== false) setImageSource('#blueprint-cover-image', profile.coverImage || profile.introImage, `${profile.taskTitle || 'Blueprint'} cover preview`);
   window.CraftUtopiaHlsPreload?.warmImageUrls?.([
     profile.coverImage || profile.introImage,
@@ -255,14 +281,80 @@ function applyDemoProfile(profile = {}) {
   if (profile.videoOnly) setVideoOnlyMode(true);
 }
 
+function positionPlaybackControls(useTimelineSlot = false) {
+  if (!consoleControlGroup) return;
+  if (useTimelineSlot && timelineControlSlot) {
+    if (consoleControlGroup.parentNode !== timelineControlSlot) {
+      timelineControlSlot.append(consoleControlGroup);
+    }
+    return;
+  }
+  if (consoleControlAnchor?.parentNode && consoleControlGroup.parentNode !== consoleControlAnchor.parentNode) {
+    consoleControlAnchor.after(consoleControlGroup);
+  }
+}
+
 async function loadJsonAsset(path) {
-  const response = await fetch(siteAssetUrl(path), { cache: 'force-cache' });
+  const assetUrl = new URL(siteAssetUrl(path));
+  assetUrl.searchParams.set('v', DATA_ASSET_VERSION);
+  const response = await fetch(assetUrl.href, { cache: 'force-cache' });
   if (!response.ok) throw new Error(`Run events HTTP ${response.status}`);
   return response.json();
 }
 
+function createMilestoneStage(milestone = {}, seqRef) {
+  const events = (milestone.events || []).map((event) => normalizeRunEvent(event, seqRef.value++));
+  return {
+    id: milestone.stageId ?? milestone.id,
+    label: milestone.label || String(milestone.id || 'Milestone'),
+    summary: milestone.focus || '',
+    system: milestone.focus || milestone.label || '',
+    metrics: milestone.timeRange || [],
+    events
+  };
+}
+
+function createRegionStage(region = {}, milestone = {}, seqRef) {
+  const events = (region.events || []).map((event) => normalizeRunEvent(event, seqRef.value++));
+  const regionLabel = region.id ? `Region ${region.id}` : 'Region build';
+  return {
+    id: region.stageId ?? region.id,
+    label: `${regionLabel} build`,
+    summary: milestone.focus || '',
+    system: `${regionLabel}: ${milestone.focus || 'Build region'}`,
+    metrics: region.timeRange || milestone.timeRange || [],
+    events
+  };
+}
+
+function buildMilestoneRunLog(manifest = {}) {
+  const seqRef = { value: 1 };
+  const stages = (manifest.milestones || []).flatMap((milestone) => {
+    if (Array.isArray(milestone.regions) && milestone.regions.length) {
+      return milestone.regions.map((region) => createRegionStage(region, milestone, seqRef));
+    }
+    return [createMilestoneStage(milestone, seqRef)];
+  });
+  return {
+    title: manifest.title,
+    intro: manifest.intro || manifest.title || '',
+    meta: {
+      ...(manifest.meta || {}),
+      runId: manifest.meta?.runId || manifest.version || 'sydney-milestone-log',
+      taskTitle: manifest.title,
+      eventCount: stages.reduce((total, stage) => total + (stage.events?.length || 0), 0),
+      phaseCount: stages.length
+    },
+    stages
+  };
+}
+
 async function loadSplitRunEvents() {
   const manifest = await loadJsonAsset(RUN_EVENTS_MANIFEST_PATH);
+  if (Array.isArray(manifest.milestones)) {
+    return buildMilestoneRunLog(manifest);
+  }
+
   const manifestBasePath = RUN_EVENTS_MANIFEST_PATH.split('/').slice(0, -1).join('/');
   const phaseLogs = await Promise.all((manifest.timeline || []).map(async (phase) => {
     const phaseFile = phase.file || '';
@@ -313,6 +405,9 @@ function normalizeRunEvent(event = {}, seq = 0) {
   const kind = String(event.kind || event.type || display.kind || 'LOG').replace(/▶/g, '');
   const action = event.action || display.action || String(event.text || '').replace(/^\[T\+[^\]]+\]\s+\[[^\]]+\]\s+\[[^\]]+\]\s*/, '');
   const sublines = event.sublines || display.sublines || [];
+  const highlights = Array.isArray(event.highlights)
+    ? event.highlights
+    : (Array.isArray(display.highlights) ? display.highlights : []);
   const timecode = event.timecode || display.timecode || formatRunTimecode(time);
   const line = event.line || `[${timecode}] [${actor}] [${kind}] ${action}`;
   return {
@@ -329,7 +424,8 @@ function normalizeRunEvent(event = {}, seq = 0) {
       actor,
       kind,
       action,
-      sublines
+      sublines,
+      highlights: highlights.map((highlight) => String(highlight)).filter(Boolean)
     }
   };
 }
