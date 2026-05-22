@@ -527,11 +527,12 @@ function renderSkillNotifications(activeRef = focusedSkillRef) {
     item.style.setProperty('--skill-accent', skill.accent || '#72ffd1');
     const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Build Pools';
     const notificationDescription = skill.notificationDescription || skill.summary || '';
-    item.title = `${skill.name}. ${notificationDescription} ${learnedFrom}`;
+    const notificationName = String(skill.name || 'Skill').replace(/^Learned\s+/i, '');
+    item.title = `${notificationName}. ${notificationDescription} ${learnedFrom}`;
     item.innerHTML = `
       <span class="skill-notification-icon">${getSkillIconMarkup(skill.ref)}</span>
       <span class="skill-notification-body">
-        <b>${escapeHtml(skill.name)}</b>
+        <b><span>SKILL:</span> ${escapeHtml(notificationName)}</b>
         <small>${escapeHtml(notificationDescription)}</small>
       </span>
     `;

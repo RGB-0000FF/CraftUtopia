@@ -552,6 +552,7 @@ function formatTopMilestoneLabel(label = '') {
 function getTopMilestoneStateBySeconds(node, seconds, isComplete) {
   if (isComplete) return 'complete';
   const range = getTopMilestoneSecondsRange(node);
+  if (node.noProgress && seconds >= range.start) return 'complete';
   if (seconds >= range.end) return 'complete';
   if (seconds >= range.start) return 'running';
   return 'pending';
@@ -629,10 +630,12 @@ function renderTopMilestones(currentStageId = stages[0]?.id ?? 0, currentSeconds
   }
 
   const total = playbackEvents.length;
-  const isComplete = total > 0 && playbackCursor >= total;
   const currentSeconds = Number.isFinite(Number(currentSecondsOverride))
     ? Number(currentSecondsOverride)
     : getDemoSecondsForEventCount(playbackCursor);
+  const finalMilestoneRange = milestones.length ? getTopMilestoneSecondsRange(milestones.at(-1)) : null;
+  const isComplete = (total > 0 && playbackCursor >= total)
+    || (finalMilestoneRange && currentSeconds >= finalMilestoneRange.start);
   const currentId = Number(currentStageId);
   const visibleMilestones = milestones.filter((node) => {
     const range = getTopMilestoneSecondsRange(node);
@@ -661,8 +664,9 @@ function renderTopMilestones(currentStageId = stages[0]?.id ?? 0, currentSeconds
     return createTopMilestoneItem(node, state, currentSeconds, isComplete);
   }));
   updateTopMilestoneProgress(currentSeconds);
-  topMilestoneStrip.querySelector('.top-milestone-item.is-running, .top-milestone-segment.is-running')
-    ?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  const focusedMilestone = topMilestoneStrip.querySelector('.top-milestone-item.is-running, .top-milestone-segment.is-running')
+    || topMilestoneStrip.querySelector('.top-milestone-item:last-child');
+  focusedMilestone?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
 }
 
 function createMilestoneItem(node, state, options = {}) {

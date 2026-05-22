@@ -208,7 +208,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260522-github-pages-cleanup';
+const DATA_ASSET_VERSION = '20260522-milestone-complete';
 const DEFAULT_LOG_MANIFEST_PATH = 'data/demo-log/manifest.json';
 
 let runEventsManifestPath = DEFAULT_LOG_MANIFEST_PATH;

@@ -2,7 +2,7 @@
   'use strict';
 
   const scriptUrl = new URL(document.currentScript?.src || document.baseURI, document.baseURI);
-  const assetVersion = scriptUrl.searchParams.get('v') || '20260522-github-pages-cleanup';
+  const assetVersion = scriptUrl.searchParams.get('v') || '20260522-milestone-complete';
   const MANIFEST_URL = `data/video-cache-manifest.json?v=${encodeURIComponent(assetVersion)}`;
   const SEGMENTS_PER_INTENT = 2;
   const INITIAL_VIEWER_SEGMENTS = 8;

@@ -85,15 +85,15 @@
       "label": "Verified and CleanUp",
       "timeRange": [
         90,
-        133
+        126
       ]
     },
     {
       "id": "complete",
       "label": "Complete",
       "timeRange": [
-        133,
-        133
+        126,
+        126
       ],
       "noProgress": true
     }

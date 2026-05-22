@@ -4033,24 +4033,26 @@ body.is-block-count-hidden .blueprint-block-count {
 
 .skill-notification-body b {
   min-width: 0;
-  overflow: hidden;
   color: color-mix(in srgb, var(--skill-accent) 84%, #ffffff);
   font-size: 0.72rem;
   font-weight: 950;
   letter-spacing: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.skill-notification-body b span {
+  color: rgba(234,255,239,0.76);
 }
 
 .skill-notification-body small {
   min-width: 0;
-  overflow: hidden;
   color: rgba(205,255,223,0.60);
   font-size: 0.58rem;
   font-weight: 680;
   line-height: 1.24;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .console-log .chat-feed,

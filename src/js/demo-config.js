@@ -78,7 +78,7 @@ const SKILL_REGISTRY = {
   build_region: {
     name: 'Learned Region Placement',
     icon: 'assets/icons/skills/learned-region-placement.png',
-    notificationDescription: 'Reads the subplan, checks inventory, and places the required blocks in the target region.',
+    notificationDescription: 'Places blueprint blocks inside a target region.',
     summary: 'Reusable bounded placement loop learned after many Workers repeat read, script, run, verify, submit.',
     learnedLabel: 'Foreman-A Build',
     sharedTo: 'Foreman-A..Foreman-E',
@@ -87,7 +87,7 @@ const SKILL_REGISTRY = {
   replace_region: {
     name: 'Learned Region Replacement',
     icon: 'assets/icons/skills/learned-region-replacement.png',
-    notificationDescription: 'Finds wrong or missing blocks, removes incorrect blocks, and rebuilds the region to match the blueprint.',
+    notificationDescription: 'Fixes wrong or missing blocks in a region.',
     summary: 'Wrong-block and missing-block repair pattern learned when mid-build repair pressure increases.',
     learnedLabel: 'Foreman-B Build',
     sharedTo: 'Foreman-A..Foreman-E',
@@ -96,7 +96,7 @@ const SKILL_REGISTRY = {
   scaffold: {
     name: 'Learned Scaffold Construction',
     icon: 'assets/icons/skills/learned-scaffold-construction.png',
-    notificationDescription: 'Builds temporary support structures so workers can safely handle high or complex sections.',
+    notificationDescription: 'Builds temporary supports for hard-to-reach areas.',
     summary: 'Temporary support placement with cleanup markers learned from awkward high-region builds.',
     learnedLabel: 'Foreman-C Build',
     sharedTo: 'Foreman-A..Foreman-E',
@@ -105,7 +105,7 @@ const SKILL_REGISTRY = {
   clean_region: {
     name: 'Learned Region Cleaning',
     icon: 'assets/icons/skills/learned-region-cleaning.png',
-    notificationDescription: 'Removes scaffold and extra blocks while preserving the structure required by the blueprint.',
+    notificationDescription: 'Removes leftover blocks after construction.',
     summary: 'Final cleanup pass for scaffold and leftover blocks while preserving valid blueprint blocks.',
     learnedLabel: 'Foreman-E Build',
     sharedTo: 'Foreman-A..Foreman-E',
