@@ -1,7 +1,9 @@
 (function () {
   'use strict';
 
-  const MANIFEST_URL = 'data/video-cache-manifest.json?v=20260522-guohui-zhonglou-r2-1';
+  const scriptUrl = new URL(document.currentScript?.src || document.baseURI, document.baseURI);
+  const assetVersion = scriptUrl.searchParams.get('v') || '20260522-github-pages-cleanup';
+  const MANIFEST_URL = `data/video-cache-manifest.json?v=${encodeURIComponent(assetVersion)}`;
   const SEGMENTS_PER_INTENT = 2;
   const INITIAL_VIEWER_SEGMENTS = 8;
   const MAX_CONCURRENT_PRELOADS = 2;
@@ -43,7 +45,6 @@
   function createFetchOptions() {
     return {
       mode: 'cors',
-      cache: 'force-cache',
       priority: 'low'
     };
   }
@@ -185,7 +186,7 @@
 
     const manifestUrl = resolveUrl(MANIFEST_URL) || MANIFEST_URL;
 
-    manifestReady = fetch(manifestUrl, { cache: 'force-cache' })
+    manifestReady = fetch(manifestUrl)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Video manifest failed: ${response.status}`);

@@ -3,7 +3,10 @@
 - `icons/skills/` - editable Skill icons used in the viewer skill notifications and skill cards.
 - `ui/` - shared UI branding assets, such as CraftUtopia logos.
 - `images/` - shared viewer framework and static page images.
-- `replay_videos_mp4/` - MP4 replay videos.
+
+Runtime replay videos are HLS manifests referenced from each demo profile. Keep those
+under `hls-primer/<demo-id>/` when they must be served by GitHub Pages; use remote
+HLS URLs in `data/demos/<demo-id>/demo.json` when the video is hosted elsewhere.
 
 Application code lives in `src/`, not `assets/`:
 

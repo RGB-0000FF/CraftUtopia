@@ -9,18 +9,12 @@ wheels/
 # Virtual environments
 .venv
 
-# Large media are hosted outside the Git repo / GitHub Pages build.
-# Use lightweight GIFs/posters in the site instead.
+# Large source media are hosted outside the Git repo / GitHub Pages build.
+# Commit only the HLS primer assets that demo profiles reference.
 assets/videos/
-!assets/videos/
-assets/videos/*
-!assets/videos/demo.mp4
 assets/videos_faststart/
 assets/videos_1080p/
 *.mp4
-!assets/videos/demo.mp4
-!assets/replay_videos_mp4/
-!assets/replay_videos_mp4/*.mp4
 *.mov
 *.mkv
 *.webm

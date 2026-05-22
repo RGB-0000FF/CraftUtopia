@@ -14,28 +14,115 @@
   "topMilestoneMode": true,
   "topMilestoneStartAtVideoStart": true,
   "topMilestones": [
-    { "id": "transfer-blueprint", "label": "Transfer png to blueprint", "timeRange": [0, 20] },
-    { "id": "blueprint-split", "label": "Blueprint split", "timeRange": [20, 32] },
+    {
+      "id": "transfer-blueprint",
+      "label": "Transfer png to blueprint",
+      "timeRange": [
+        0,
+        20
+      ]
+    },
+    {
+      "id": "blueprint-split",
+      "label": "Blueprint split",
+      "timeRange": [
+        20,
+        32
+      ]
+    },
     {
       "id": "regions-build",
       "label": "Build Region",
-      "timeRange": [32, 90],
+      "timeRange": [
+        32,
+        90
+      ],
       "segments": [
-        { "id": "region-a", "label": "A", "timeRange": [32, 90] },
-        { "id": "region-b", "label": "B", "timeRange": [32, 90] },
-        { "id": "region-c", "label": "C", "timeRange": [32, 90] },
-        { "id": "region-d", "label": "D", "timeRange": [32, 90] },
-        { "id": "region-e", "label": "E", "timeRange": [32, 90] }
+        {
+          "id": "region-a",
+          "label": "A",
+          "timeRange": [
+            32,
+            90
+          ]
+        },
+        {
+          "id": "region-b",
+          "label": "B",
+          "timeRange": [
+            32,
+            90
+          ]
+        },
+        {
+          "id": "region-c",
+          "label": "C",
+          "timeRange": [
+            32,
+            90
+          ]
+        },
+        {
+          "id": "region-d",
+          "label": "D",
+          "timeRange": [
+            32,
+            90
+          ]
+        },
+        {
+          "id": "region-e",
+          "label": "E",
+          "timeRange": [
+            32,
+            90
+          ]
+        }
       ]
     },
-    { "id": "verified-cleanup", "label": "Verified and CleanUp", "timeRange": [90, 133] },
-    { "id": "complete", "label": "Complete", "timeRange": [133, 133], "noProgress": true }
+    {
+      "id": "verified-cleanup",
+      "label": "Verified and CleanUp",
+      "timeRange": [
+        90,
+        133
+      ]
+    },
+    {
+      "id": "complete",
+      "label": "Complete",
+      "timeRange": [
+        133,
+        133
+      ],
+      "noProgress": true
+    }
   ],
-  "fallbackVideoSeconds": 133,
   "timelineKeyframes": [
-    { "id": "region-placement", "label": "Region Placement", "demoSeconds": 36, "skill": "build_region" },
-    { "id": "region-replace", "label": "Region Replace", "demoSeconds": 67, "skill": "replace_region" },
-    { "id": "scaffold-construction", "label": "Scaffold Construction", "demoSeconds": 85, "skill": "scaffold" },
-    { "id": "region-clean", "label": "Region Clean", "demoSeconds": 98, "skill": "clean_region" }
-  ]
+    {
+      "id": "region-placement",
+      "label": "Region Placement",
+      "demoSeconds": 36,
+      "skill": "build_region"
+    },
+    {
+      "id": "region-replace",
+      "label": "Region Replace",
+      "demoSeconds": 67,
+      "skill": "replace_region"
+    },
+    {
+      "id": "scaffold-construction",
+      "label": "Scaffold Construction",
+      "demoSeconds": 85,
+      "skill": "scaffold"
+    },
+    {
+      "id": "region-clean",
+      "label": "Region Clean",
+      "demoSeconds": 98,
+      "skill": "clean_region"
+    }
+  ],
+  "durationSeconds": 133
 }

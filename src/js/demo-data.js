@@ -208,16 +208,24 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260522-linear-events';
+const DATA_ASSET_VERSION = '20260522-github-pages-cleanup';
+const DEFAULT_LOG_MANIFEST_PATH = 'data/demo-log/manifest.json';
 
-let RUN_EVENTS_MANIFEST_PATH = 'data/demo-log/manifest.json';
+let runEventsManifestPath = DEFAULT_LOG_MANIFEST_PATH;
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;
 
-function getRequestedDemoId() {
+function getRequestedDemoParam() {
   const params = new URLSearchParams(window.location.search);
-  const requested = params.get('demo') || DEFAULT_DEMO_ID;
-  return String(requested).trim().toLowerCase().replace(/[^a-z0-9-]/g, '') || DEFAULT_DEMO_ID;
+  return params.get('demo');
+}
+
+function normalizeDemoId(value) {
+  return String(value || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+}
+
+function getRequestedDemoId() {
+  return normalizeDemoId(getRequestedDemoParam()) || DEFAULT_DEMO_ID;
 }
 
 async function loadDemoProfile() {
@@ -225,8 +233,9 @@ async function loadDemoProfile() {
   try {
     return await loadJsonAsset(`data/demos/${demoId}/demo.json`);
   } catch (error) {
-    if (demoId === DEFAULT_DEMO_ID) throw error;
-    return loadJsonAsset(`data/demos/${DEFAULT_DEMO_ID}/demo.json`);
+    const requested = normalizeDemoId(getRequestedDemoParam());
+    if (!requested || requested === DEFAULT_DEMO_ID) throw error;
+    throw new Error(`Unknown demo "${demoId}". Check data/demos/${demoId}/demo.json on GitHub Pages.`);
   }
 }
 
@@ -323,10 +332,10 @@ function applyDemoProfile(profile = {}) {
       demoProfileStylesheet.disabled = true;
     }
   }
-  if (profile.logManifest) RUN_EVENTS_MANIFEST_PATH = profile.logManifest;
+  runEventsManifestPath = profile.logManifest || DEFAULT_LOG_MANIFEST_PATH;
   introArchitectureSeconds = Number.isFinite(Number(profile.introSeconds)) ? Math.max(0, Number(profile.introSeconds)) : INTRO_ARCHITECTURE_SECONDS;
-  if (Number.isFinite(Number(profile.fallbackVideoSeconds))) {
-    demoVideoSeconds = Number(profile.fallbackVideoSeconds);
+  if (Number.isFinite(Number(profile.durationSeconds))) {
+    demoVideoSeconds = Number(profile.durationSeconds);
   }
   if (Array.isArray(profile.timelineKeyframes)) {
     timelineKeyframes = profile.timelineKeyframes.map((keyframe) => ({ ...keyframe }));
@@ -373,7 +382,7 @@ function positionPlaybackControls(useTimelineSlot = false) {
 async function loadJsonAsset(path) {
   const assetUrl = new URL(siteAssetUrl(path));
   assetUrl.searchParams.set('v', DATA_ASSET_VERSION);
-  const response = await fetch(assetUrl.href, { cache: 'force-cache' });
+  const response = await fetch(assetUrl.href);
   if (!response.ok) throw new Error(`Run events HTTP ${response.status}`);
   return response.json();
 }
@@ -427,13 +436,13 @@ function buildMilestoneRunLog(manifest = {}) {
   };
 }
 
-async function loadSplitRunEvents() {
-  const manifest = await loadJsonAsset(RUN_EVENTS_MANIFEST_PATH);
+async function loadRunEventsManifest() {
+  const manifest = await loadJsonAsset(runEventsManifestPath);
   if (Array.isArray(manifest.milestones)) {
     return buildMilestoneRunLog(manifest);
   }
 
-  const manifestBasePath = RUN_EVENTS_MANIFEST_PATH.split('/').slice(0, -1).join('/');
+  const manifestBasePath = runEventsManifestPath.split('/').slice(0, -1).join('/');
   const phaseLogs = await Promise.all((manifest.timeline || []).map(async (phase) => {
     const phaseFile = phase.file || '';
     const phasePath = phaseFile.startsWith('/') || phaseFile.startsWith('http')
@@ -468,7 +477,7 @@ async function loadSplitRunEvents() {
 }
 
 async function loadRunEvents() {
-  return loadSplitRunEvents();
+  return loadRunEventsManifest();
 }
 
 function formatRunTimecode(time = '00:00.0') {
@@ -547,7 +556,7 @@ async function bootLog() {
     setStage(stages[0]?.id ?? 0, chatMessages[0]);
     toggleAutoPlay();
   } catch (error) {
-    chatFeed.innerHTML = `<div class="log-error">Could not load run event data from <code>${escapeHtml(RUN_EVENTS_MANIFEST_PATH)}</code>. Serve this folder with <code>python main.py</code> or another static server. ${escapeHtml(error.message)}</div>`;
+    chatFeed.innerHTML = `<div class="log-error">Could not load run event data from <code>${escapeHtml(runEventsManifestPath)}</code>. Check that the demo profile, log manifest, and media paths are published on GitHub Pages. ${escapeHtml(error.message)}</div>`;
     console.error(error);
   }
 }

@@ -12,6 +12,6 @@
   "showBlockCount": false,
   "introSeconds": 0,
   "logManifest": "data/demo-log/manifest.json",
-  "fallbackVideoSeconds": 180,
-  "timelineKeyframes": []
+  "timelineKeyframes": [],
+  "durationSeconds": 180
 }
