@@ -202,7 +202,8 @@ function getStructuredSublineMeta(line = '', event = {}, log = {}) {
     return {
       className: 'is-skill',
       accent: SKILL_REGISTRY[skillRef]?.accent || '#72ffd1',
-      label: SKILL_REGISTRY[skillRef]?.name || 'Skill'
+      label: SKILL_REGISTRY[skillRef]?.name || 'Skill',
+      skillRef
     };
   }
   if (/^\s*(?:tool call|send message)\b/i.test(text)) {
@@ -221,7 +222,8 @@ function getStructuredFollowupMeta(followup = {}, event = {}, log = {}) {
     return {
       className: 'is-skill',
       accent: SKILL_REGISTRY[skillRef]?.accent || '#72ffd1',
-      label: SKILL_REGISTRY[skillRef]?.name || followup.label || 'Skill'
+      label: SKILL_REGISTRY[skillRef]?.name || followup.label || 'Skill',
+      skillRef
     };
   }
   if (followup.type === 'result') {
@@ -308,7 +310,15 @@ function appendStructuredLogEntry(node, event, options = {}) {
       const prefix = document.createElement('span');
       prefix.className = 'structured-subline-prefix';
       prefix.textContent = meta.className === 'is-skill' ? 'SKILL' : 'TOOL';
-      subline.append(arrow, prefix, body);
+      if (meta.className === 'is-skill' && meta.skillRef) {
+        const icon = document.createElement('span');
+        icon.className = 'structured-subline-icon';
+        icon.innerHTML = getSkillIconMarkup(meta.skillRef);
+        subline.classList.add('has-icon');
+        subline.append(arrow, prefix, icon, body);
+      } else {
+        subline.append(arrow, prefix, body);
+      }
       followups.append(subline);
     });
     if (followups.children.length) entry.append(followups);

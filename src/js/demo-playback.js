@@ -2,7 +2,6 @@
 function stopAutoPlay(update = true) {
   const wasHolding = isKeyframeHolding;
   clearTimeout(autoPlayTimer);
-  clearTimeout(videoWaitGuardTimer);
   clearTimeout(videoWaitPauseTimer);
   clearTimeout(videoWaitResumeTimer);
   cancelAnimationFrame(autoPlayFrame);
@@ -10,12 +9,9 @@ function stopAutoPlay(update = true) {
   autoPlayTimer = null;
   autoPlayFrame = null;
   keyframeHoldTimer = null;
-  videoWaitGuardTimer = null;
   videoWaitPauseTimer = null;
   videoWaitResumeTimer = null;
-  shouldPauseTimelineOnVideoWait = false;
   isTimelineWaitingForVideo = false;
-  videoWaitGuardStartedAt = 0;
   videoSyncBlockedUntil = 0;
   isAutoPlaying = false;
   isKeyframeHolding = false;
@@ -114,53 +110,59 @@ function getAutoPlayDelay(event) {
   return clamp(520 + (units * AUTO_PLAY_MS_PER_WORD), AUTO_PLAY_MIN_DELAY, AUTO_PLAY_MAX_DELAY) / playbackSpeed;
 }
 
-function getCurrentAutoDemoSeconds(now = performance.now()) {
-  if (!isAutoPlaying) return getDemoSecondsForEventCount(playbackCursor);
-  const elapsed = Math.max((now - autoPlayClockStartedAt) / 1000, 0) * playbackSpeed;
+function getVideoTimelineEndSeconds() {
+  return introArchitectureSeconds + Math.max(demoVideoSeconds, 0);
+}
+
+function isVideoClockRange(seconds = autoPlayClockStartSeconds) {
+  return Boolean(worldVideo)
+    && Number(seconds) >= introArchitectureSeconds
+    && Number(seconds) < getVideoTimelineEndSeconds() - 0.08;
+}
+
+function getVideoDemoSeconds() {
+  if (!worldVideo) return null;
+  const videoSeconds = Number(worldVideo.currentTime);
+  if (!Number.isFinite(videoSeconds)) return null;
+  return clamp(introArchitectureSeconds + videoSeconds, 0, getPresentationTotalSeconds());
+}
+
+function getInternalAutoDemoSeconds(now = performance.now()) {
+  const elapsed = Math.min(Math.max((now - autoPlayClockStartedAt) / 1000, 0), 0.16) * playbackSpeed;
   return clamp(autoPlayClockStartSeconds + elapsed, 0, getPresentationTotalSeconds());
 }
 
-function armVideoWaitGuard() {
-  shouldPauseTimelineOnVideoWait = true;
-  videoWaitGuardStartedAt = performance.now();
-  clearTimeout(videoWaitGuardTimer);
-  clearTimeout(videoWaitPauseTimer);
-  clearTimeout(videoWaitResumeTimer);
-  videoWaitPauseTimer = null;
-  videoWaitResumeTimer = null;
-  isTimelineWaitingForVideo = false;
-  videoWaitGuardTimer = setTimeout(() => {
-    videoWaitGuardTimer = null;
-    if (!isTimelineWaitingForVideo) {
-      shouldPauseTimelineOnVideoWait = false;
-      videoWaitGuardStartedAt = 0;
-    }
-  }, 3200);
+function getCurrentAutoDemoSeconds(now = performance.now()) {
+  if (!isAutoPlaying) return getDemoSecondsForEventCount(playbackCursor);
+  const internalSeconds = getInternalAutoDemoSeconds(now);
+  if (isVideoClockRange(internalSeconds) || isVideoClockRange(autoPlayClockStartSeconds)) {
+    if (performance.now() < videoSyncBlockedUntil) return internalSeconds;
+    const videoSeconds = getVideoDemoSeconds();
+    if (videoSeconds !== null) return videoSeconds;
+  }
+  return internalSeconds;
 }
 
-function getVideoWaitGuardElapsed() {
-  return videoWaitGuardStartedAt ? performance.now() - videoWaitGuardStartedAt : 0;
+function setAutoPlayClock(seconds = getDemoSecondsForEventCount(playbackCursor), now = performance.now()) {
+  autoPlayClockStartSeconds = clamp(Number(seconds) || 0, 0, getPresentationTotalSeconds());
+  autoPlayClockStartedAt = now;
 }
 
 function shouldGateTimelineForVideo(demoSeconds = getDemoSecondsForEventCount(playbackCursor)) {
-  return (shouldPauseTimelineOnVideoWait || isTimelineWaitingForVideo)
-    && worldVideo
+  return worldVideo
     && isAutoPlaying
     && !isKeyframeHolding
-    && Number(demoSeconds) >= introArchitectureSeconds
+    && !isScrubbingTimeline
+    && isVideoClockRange(Number(demoSeconds) || 0)
     && playbackCursor < playbackEvents.length;
 }
 
 function clearVideoWaitState() {
-  clearTimeout(videoWaitGuardTimer);
   clearTimeout(videoWaitPauseTimer);
   clearTimeout(videoWaitResumeTimer);
-  videoWaitGuardTimer = null;
   videoWaitPauseTimer = null;
   videoWaitResumeTimer = null;
-  shouldPauseTimelineOnVideoWait = false;
   isTimelineWaitingForVideo = false;
-  videoWaitGuardStartedAt = 0;
 }
 
 function blockVideoTimelineSync(durationMs = 1800) {
@@ -171,7 +173,7 @@ function resumeTimelineAfterVideoWait() {
   if (!isTimelineWaitingForVideo) return;
   clearTimeout(videoWaitResumeTimer);
   videoWaitResumeTimer = null;
-  const waitSeconds = autoPlayClockStartSeconds;
+  const waitSeconds = getVideoDemoSeconds() ?? autoPlayClockStartSeconds;
   if (!shouldGateTimelineForVideo(waitSeconds)) {
     clearVideoWaitState();
     return;
@@ -202,31 +204,30 @@ function pauseTimelineForVideoWait(demoSeconds = getDemoSecondsForEventCount(pla
   autoPlayFrame = null;
   videoWaitPauseTimer = null;
   isTimelineWaitingForVideo = true;
-  shouldPauseTimelineOnVideoWait = true;
-  autoPlayClockStartSeconds = clamp(Number(demoSeconds) || 0, 0, getPresentationTotalSeconds());
-  autoPlayClockStartedAt = performance.now();
+  setAutoPlayClock(demoSeconds);
   if (worldVideo?.paused && !worldVideo.ended) {
     worldVideo.play?.().catch(() => {});
   }
+  renderPlaybackToDemoSeconds(autoPlayClockStartSeconds, { noSeek: true });
   updatePlaybackControls();
   scheduleResumeTimelineAfterVideoWait();
 }
 
 function schedulePauseTimelineForVideoWait() {
-  if (!shouldGateTimelineForVideo()) return;
+  if (!isAutoPlaying || isKeyframeHolding || isScrubbingTimeline) return;
   clearTimeout(videoWaitPauseTimer);
   videoWaitPauseTimer = setTimeout(() => {
     videoWaitPauseTimer = null;
-    const demoSeconds = getDemoSecondsForEventCount(playbackCursor);
+    const demoSeconds = getCurrentAutoDemoSeconds();
     if (isVideoWaitingForDemoSeconds(demoSeconds)) {
       pauseTimelineForVideoWait(demoSeconds);
     }
-  }, 420);
+  }, 80);
 }
 
 function isVideoWaitingForDemoSeconds(demoSeconds = 0) {
   if (!shouldGateTimelineForVideo(demoSeconds)) return false;
-  if (!isTimelineWaitingForVideo && getVideoWaitGuardElapsed() < 420) return false;
+  if (worldVideo.seeking) return true;
   if (worldVideo.paused || worldVideo.ended) return true;
   if (worldVideo.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) return true;
   const targetVideoTime = clamp(Number(demoSeconds) - introArchitectureSeconds, 0, Math.max(demoVideoSeconds, 0));
@@ -371,23 +372,22 @@ function runAutoPlayFrame(now = performance.now()) {
   autoPlayFrame = null;
   autoPlayTimer = null;
   if (!isAutoPlaying || isKeyframeHolding) return;
-  const currentSeconds = getDemoSecondsForEventCount(playbackCursor);
-  if (isVideoWaitingForDemoSeconds(currentSeconds)) {
-    pauseTimelineForVideoWait(currentSeconds);
+  let demoSeconds = getCurrentAutoDemoSeconds(now);
+  setAutoPlayClock(demoSeconds, now);
+  updateVideoForDemoSeconds(demoSeconds, { noSeek: true });
+
+  if (isVideoWaitingForDemoSeconds(demoSeconds)) {
+    pauseTimelineForVideoWait(demoSeconds);
     return;
   }
 
-  const tickSeconds = Math.min(Math.max((now - autoPlayClockStartedAt) / 1000, 0), 0.16) * playbackSpeed;
-  autoPlayClockStartedAt = now;
-  autoPlayClockStartSeconds = clamp(autoPlayClockStartSeconds + tickSeconds, 0, getPresentationTotalSeconds());
-  let demoSeconds = autoPlayClockStartSeconds;
   const keyframe = isVideoOnlyMode ? null : getNextPendingKeyframeBySeconds(demoSeconds);
   if (keyframe) {
     demoSeconds = keyframe.demoSeconds;
-    autoPlayClockStartSeconds = demoSeconds;
+    setAutoPlayClock(demoSeconds, now);
   }
   if (isVideoWaitingForDemoSeconds(demoSeconds)) {
-    pauseTimelineForVideoWait(currentSeconds);
+    pauseTimelineForVideoWait(demoSeconds);
     return;
   }
 
@@ -411,8 +411,7 @@ function startAutoPlayLoop(startSeconds = getDemoSecondsForEventCount(playbackCu
   cancelAnimationFrame(autoPlayFrame);
   clearTimeout(autoPlayTimer);
   autoPlayTimer = null;
-  autoPlayClockStartSeconds = clamp(Number(startSeconds) || 0, 0, getPresentationTotalSeconds());
-  autoPlayClockStartedAt = performance.now();
+  setAutoPlayClock(startSeconds);
   autoPlayTimer = setTimeout(() => runAutoPlayFrame(performance.now()), 0);
 }
 
@@ -1163,16 +1162,11 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
 }
 
 function syncTimelineFromVideoPlayback() {
-  if (!worldVideo || !isAutoPlaying || isKeyframeHolding || isScrubbingTimeline) return;
+  if (!worldVideo || !isAutoPlaying || isKeyframeHolding || isScrubbingTimeline || !isTimelineWaitingForVideo) return;
   if (performance.now() < videoSyncBlockedUntil) return;
   videoSyncBlockedUntil = 0;
-  if (worldVideo.paused || worldVideo.ended) return;
-  const videoSeconds = Number(worldVideo.currentTime);
-  if (!Number.isFinite(videoSeconds)) return;
-  const demoSeconds = clamp(introArchitectureSeconds + videoSeconds, 0, getPresentationTotalSeconds());
-  const renderedSeconds = getDemoSecondsForEventCount(playbackCursor);
-  if (demoSeconds < renderedSeconds - 0.85) return;
-  if (!isTimelineWaitingForVideo && Math.abs(demoSeconds - renderedSeconds) < 0.85) return;
+  const demoSeconds = getVideoDemoSeconds();
+  if (demoSeconds === null || isVideoWaitingForDemoSeconds(demoSeconds)) return;
 
   clearVideoWaitState();
   renderPlaybackToDemoSeconds(demoSeconds, { syncVideo: false });

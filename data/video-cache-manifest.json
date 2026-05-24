@@ -1,5 +1,5 @@
 {
-  "version": "20260522-milestone-complete",
+  "version": "20260522-icon-order",
   "videos": [
     {
       "id": "demo",
@@ -24,7 +24,7 @@
     {
       "id": "sydney-opera-house",
       "title": "Sydney Opera House",
-      "url": "https://pub-64261b1ecf154ce6ae3ea315ada673fe.r2.dev/hls/sydney-opera-house/master.m3u8"
+      "url": "hls-primer/sydney-opera-house/master.m3u8"
     },
     {
       "id": "taj-mahal",
