@@ -25,6 +25,7 @@ assets/videos_1080p/
 
 # Local runtime logs.
 data/system.log
+.wrangler/
 
 # macOS folder metadata.
 .DS_Store

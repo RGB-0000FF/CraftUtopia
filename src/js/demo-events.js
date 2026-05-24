@@ -1,13 +1,7 @@
 // CraftUtopia demo events.
-let scrollFrame = null;
 chatFeed.addEventListener('scroll', () => {
   if (isAutoScrolling) return;
   shouldFollowLog = isLogNearBottom();
-  if (scrollFrame) return;
-  scrollFrame = requestAnimationFrame(() => {
-    scrollFrame = null;
-    syncTimelineFromLog();
-  });
 }, { passive: true });
 
 playbackPrev?.addEventListener('click', () => jumpPlaybackBy(-1));

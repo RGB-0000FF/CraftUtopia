@@ -36,14 +36,6 @@ function setStage(stageId, activeMessage = null, activeEvent = null) {
   chatMessages.forEach((node) => node.classList.toggle('active', node === focusedMessage));
 }
 
-function syncTimelineFromLog() {
-  if (!chatMessages.length) return;
-  const latestMessage = chatMessages[chatMessages.length - 1];
-  if (!latestMessage) return;
-  const eventIndex = Number(latestMessage.dataset.eventIndex);
-  setStage(Number(latestMessage.dataset.chatStage), latestMessage, playbackEvents[eventIndex]);
-}
-
 function parseTimelineTime(time = '00:00.0') {
   const parts = String(time).split(':').map(Number);
   if (parts.length === 1) return parts[0] || 0;
