@@ -3,7 +3,7 @@
   "pageTitle": "Colosseum Demo",
   "taskTitle": "Colosseum with 100 Agents",
   "stylesheet": "data/demos/sydney-opera-house/demo.css",
-  "video": "hls-primer/colosseum/master.m3u8",
+  "video": "hls-primer/colosseum/master.m3u8?v=20260525-ts-hls",
   "coverImage": "data/demos/colosseum/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",

@@ -3,7 +3,7 @@
   "pageTitle": "Xi'an Bell Tower Demo",
   "taskTitle": "Xi'an Bell Tower with 100 Agents",
   "stylesheet": "data/demos/sydney-opera-house/demo.css",
-  "video": "hls-primer/xian-bell-tower/master.m3u8",
+  "video": "hls-primer/xian-bell-tower/master.m3u8?v=20260525-ts-hls",
   "coverImage": "data/demos/xian-bell-tower/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",

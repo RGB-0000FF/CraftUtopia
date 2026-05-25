@@ -153,7 +153,6 @@
   }
 
   function parsePlaylist(text, playlistUrl) {
-    const initMatch = text.match(/#EXT-X-MAP:.*?URI="([^"]+)"/);
     const segmentUrls = [];
     const lines = text.split(/\r?\n/);
     let nextMediaLineIsSegment = false;
@@ -176,7 +175,6 @@
     }
 
     return {
-      initUrl: initMatch ? new URL(initMatch[1], playlistUrl).href : null,
       segmentUrls
     };
   }
@@ -255,13 +253,6 @@
     const playlistData = parsePlaylist(text, playlistUrl);
     playlistCache.set(playlistUrl, playlistData);
     return playlistData;
-  }
-
-  async function warmPlaylistAndInit(demoId) {
-    const playlistData = await getPlaylistData(demoId);
-    if (playlistData && playlistData.initUrl) {
-      await enqueueUrl(playlistData.initUrl, 'arrayBuffer');
-    }
   }
 
   async function warmIntentSegments(demoId) {
@@ -391,10 +382,6 @@
         return null;
       }
 
-      if (playlistData.initUrl) {
-        await enqueueUrl(playlistData.initUrl, 'arrayBuffer');
-      }
-
       const initialUrls = playlistData.segmentUrls.slice(0, initialSegmentCount);
       const remainingUrls = playlistData.segmentUrls.slice(initialSegmentCount);
       await warmSegmentList(initialUrls, state, 0);
@@ -458,7 +445,7 @@
     return true;
   }
 
-  async function warmAllPlaylistsAndInit() {
+  async function warmAllPlaylists() {
     await loadPreloadManifest();
 
     for (const demoId of videoManifestById.keys()) {
@@ -466,7 +453,7 @@
         return;
       }
 
-      warmPlaylistAndInit(demoId);
+      getPlaylistData(demoId);
     }
   }
 
@@ -478,7 +465,7 @@
 
   function start() {
     if (bindIntentPreload()) {
-      scheduleIdle(warmAllPlaylistsAndInit);
+      scheduleIdle(warmAllPlaylists);
       scheduleIdle(warmHomeCardImages);
     }
   }
@@ -496,7 +483,6 @@
   }
 
   window.CraftUtopiaHlsPreload = {
-    warmPlaylistAndInit,
     warmIntentSegments,
     warmImageUrls,
     warmCurrentDemo,

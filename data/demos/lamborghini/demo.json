@@ -3,7 +3,7 @@
   "pageTitle": "Lamborghini Demo",
   "taskTitle": "Lamborghini with 100 Agents",
   "stylesheet": "data/demos/sydney-opera-house/demo.css",
-  "video": "hls-primer/lamborghini/master.m3u8",
+  "video": "hls-primer/lamborghini/master.m3u8?v=20260525-ts-hls",
   "coverImage": "data/demos/lamborghini/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",

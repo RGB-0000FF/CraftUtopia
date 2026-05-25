@@ -3,7 +3,7 @@
   "pageTitle": "Pyramid Demo",
   "taskTitle": "Pyramid with 100 Agents",
   "stylesheet": "data/demos/sydney-opera-house/demo.css",
-  "video": "hls-primer/pyramid/master.m3u8",
+  "video": "hls-primer/pyramid/master.m3u8?v=20260525-ts-hls",
   "coverImage": "data/demos/pyramid/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",
