@@ -106,5 +106,11 @@
       "skill": "build_region"
     }
   ],
-  "durationSeconds": 239.6
+  "durationSeconds": 239.6,
+  "skillLearningRanges": {
+    "build_region": [
+      49,
+      64
+    ]
+  }
 }
