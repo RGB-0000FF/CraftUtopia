@@ -1,6 +1,21 @@
 // CraftUtopia demo events.
+function markUserLogScrollIntent() {
+  isUserScrollingLog = true;
+  clearTimeout(logUserScrollTimer);
+  logUserScrollTimer = setTimeout(() => { isUserScrollingLog = false; }, 900);
+}
+
+chatFeed.addEventListener('wheel', markUserLogScrollIntent, { passive: true });
+chatFeed.addEventListener('touchstart', markUserLogScrollIntent, { passive: true });
+chatFeed.addEventListener('pointerdown', markUserLogScrollIntent);
+chatFeed.addEventListener('keydown', (event) => {
+  if (!['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) return;
+  markUserLogScrollIntent();
+});
+
 chatFeed.addEventListener('scroll', () => {
   if (isAutoScrolling) return;
+  if (!isUserScrollingLog) return;
   shouldFollowLog = isLogNearBottom();
 }, { passive: true });
 

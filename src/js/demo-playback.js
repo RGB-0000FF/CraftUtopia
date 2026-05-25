@@ -877,6 +877,8 @@ function renderChat(events) {
   frameworkCollapseTimer = null;
   logRevealTimer = null;
   isAutoScrolling = false;
+  isUserScrollingLog = false;
+  clearTimeout(logUserScrollTimer);
   shouldFollowLog = true;
   playbackCursor = 0;
   isMessagePending = false;
@@ -937,6 +939,8 @@ function renderPlaybackUntil(targetCount) {
   clearTimeout(autoScrollRelease);
   logRevealTimer = null;
   isAutoScrolling = false;
+  isUserScrollingLog = false;
+  clearTimeout(logUserScrollTimer);
   shouldFollowLog = true;
   isMessagePending = false;
   renderedStageIds = new Set();

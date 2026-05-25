@@ -14,7 +14,6 @@
       "events": [
         {
           "time": "00:00.8",
-          "actor": "ProjectManager",
           "entries": [
             {
               "time": "00:00.8",
@@ -27,13 +26,13 @@
                 {
                   "tools": "Send message to Designer: Convert the relevant PNG into a blueprint."
                 }
-              ]
+              ],
+              "actor": "ProjectManager"
             }
           ]
         },
         {
           "time": "00:06.0",
-          "actor": "Designer",
           "entries": [
             {
               "time": "00:06.0",
@@ -47,7 +46,8 @@
                 {
                   "tools": "Tool call TRELLIS.2: Reconstruct the image into a coarse 3D structure."
                 }
-              ]
+              ],
+              "actor": "Designer"
             },
             {
               "time": "00:10.0",
@@ -60,7 +60,8 @@
                 {
                   "tools": "Tool call ObjToSchematic: Convert the 3D structure into a Minecraft object file."
                 }
-              ]
+              ],
+              "actor": "Designer"
             },
             {
               "time": "00:15.0",
@@ -73,7 +74,8 @@
                 {
                   "tools": "Tool call SchematicToBlueprint: Convert the Minecraft object into a JSON blueprint."
                 }
-              ]
+              ],
+              "actor": "Designer"
             }
           ]
         }
@@ -90,7 +92,6 @@
       "events": [
         {
           "time": "00:20.0",
-          "actor": "ProjectManager",
           "entries": [
             {
               "time": "00:20.0",
@@ -104,7 +105,8 @@
                 "JSON blueprint",
                 "Foreman",
                 "workers"
-              ]
+              ],
+              "actor": "ProjectManager"
             },
             {
               "time": "00:25.0",
@@ -126,7 +128,8 @@
                 {
                   "results": "Verified that the five regions can be built separately."
                 }
-              ]
+              ],
+              "actor": "ProjectManager"
             },
             {
               "time": "00:30",
@@ -137,27 +140,15 @@
               ],
               "sublines": [
                 {
-                  "tools": "Send message to Foreman-A: Build Region A with Workers 001-020."
-                },
-                {
-                  "tools": "Send message to Foreman-B: Build Region B with Workers 021-040."
-                },
-                {
-                  "tools": "Send message to Foreman-C: Build Region C with Workers 041-060."
-                },
-                {
-                  "tools": "Send message to Foreman-D: Build Region D with Workers 061-080."
-                },
-                {
-                  "tools": "Send message to Foreman-E: Build Region E with Workers 081-100."
+                  "tools": "Send message to Foreman-[A-E]: Build Region [A-E]"
                 }
-              ]
+              ],
+              "actor": "ProjectManager"
             }
           ]
         },
         {
           "time": "00:31",
-          "actor": "Foreman-A..E",
           "entries": [
             {
               "time": "00:31",
@@ -184,7 +175,6 @@
       "events": [
         {
           "time": "00:32.0",
-          "actor": "Foreman-A..E",
           "entries": [
             {
               "time": "00:32.0",
@@ -212,79 +202,128 @@
           "groupId": "chunk-region-a-e-subplans"
         },
         {
+          "groupId": "chunk-worker-001-020-placement-trace",
           "time": "00:35.0",
-          "actor": "Worker-001",
           "entries": [
             {
               "time": "00:35.0",
-              "action": "Received subplan A-01 from Foreman-A. First, I need to read this subplan.",
+              "actor": "Foreman-A",
+              "action": "Worker-001..020 start Region A subplans in parallel.",
+              "highlights": [
+                "Worker-001",
+                "Worker-020",
+                "Region A"
+              ],
               "sublines": [
                 {
-                  "tools": "Tool call Read Subplan: Load the blocks and target positions for A-01."
+                  "tools": "Tool call Assign Subplans: A-01 through A-20."
                 }
               ],
+              "progress": {
+                "label": "Placement trace",
+                "current": 4,
+                "total": 20
+              },
+              "skill": "build_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Placement",
+                "current": 4,
+                "total": 20
+              }
+            },
+            {
+              "time": "00:35.8",
+              "actor": "Worker-001..008",
+              "action": "Several workers repeat the same read, check, move, and place sequence.",
               "highlights": [
                 "Read Subplan",
-                "A-01"
-              ]
-            },
-            {
-              "time": "00:35.6",
-              "action": "Now I need to check whether I have the required blocks for A-01.",
-              "sublines": [
-                {
-                  "tools": "Tool call Check Inventory: Confirm the required blocks for A-01."
-                }
-              ],
-              "highlights": [
                 "Check Inventory",
-                "A-01"
-              ]
-            },
-            {
-              "time": "00:36.0",
-              "action": "The blocks are ready. I need to move to the target position for A-01 before placing blocks.",
+                "Go To Region",
+                "Place Blocks"
+              ],
               "sublines": [
                 {
-                  "tools": "Tool call Go To Region: Move to the target position for A-01."
+                  "tools": "Tool trace: Read Subplan -> Check Inventory -> Go To Region -> Place Blocks."
                 }
               ],
+              "progress": {
+                "label": "Placement trace",
+                "current": 8,
+                "total": 20
+              },
+              "skill": "build_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Placement",
+                "current": 8,
+                "total": 20
+              }
+            },
+            {
+              "time": "00:36.6",
+              "actor": "Worker-009..016",
+              "action": "The placement trace keeps matching across nearby subplans.",
               "highlights": [
-                "Go To Region",
-                "A-01"
-              ]
+                "placement trace",
+                "subplans"
+              ],
+              "sublines": [],
+              "progress": {
+                "label": "Placement trace",
+                "current": 16,
+                "total": 20
+              },
+              "skill": "build_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Placement",
+                "current": 16,
+                "total": 20
+              }
             },
             {
               "time": "00:37.2",
-              "action": "I am in position. I need to place the A-01 blocks at their target coordinates.",
+              "actor": "Worker-017..020",
+              "action": "Region placement has enough matching traces for Foreman-A to summarize.",
+              "highlights": [
+                "Region placement",
+                "matching traces",
+                "Foreman-A"
+              ],
               "sublines": [
                 {
-                  "tools": "Tool call Place Blocks: Place the blocks for A-01 in target positions."
+                  "results": "Result: placement trace collected 20/20."
                 }
               ],
-              "highlights": [
-                "Place Blocks",
-                "A-01"
-              ]
+              "progress": {
+                "label": "Placement trace",
+                "current": 20,
+                "total": 20
+              },
+              "skill": "build_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Placement",
+                "current": 20,
+                "total": 20
+              }
             }
           ]
         },
         {
           "groupId": "skill-region-placement",
           "time": "00:37.2",
-          "actor": "Foreman-A",
           "entries": [
             {
               "time": "00:37.2",
               "actor": "Foreman-A",
-              "action": "Foreman-A sees the same placement job across Region A workers and asks ProjectManager to turn it into a reusable workflow.",
+              "action": "Foreman-A summarizes the completed placement trace and sends it to ProjectManager.",
               "highlights": [
-                "Learned Region Placement"
+                "placement trace",
+                "ProjectManager"
               ],
               "sublines": [
-                {
-                  "notes": "Worker-001 completed A-01 and Worker-002 completed A-02."
-                },
                 {
                   "tools": "Send message to ProjectManager: create Learned Region Placement."
                 }
@@ -293,7 +332,7 @@
             {
               "time": "00:39.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager creates Learned Region Placement from the Region A worker pattern.",
+              "action": "ProjectManager creates Learned Region Placement from the collected placement trace.",
               "highlights": [
                 "Create Skill",
                 "Learned Region Placement"
@@ -309,19 +348,19 @@
             },
             {
               "time": "00:40.2",
-              "actor": "Worker-003",
-              "action": "Received subplan A-03 and Learned Region Placement. I can place region blocks with one skill call.",
+              "actor": "Worker-021..024",
+              "action": "New workers receive similar region subplans and use Learned Region Placement.",
               "highlights": [
                 "Use Skill",
                 "Learned Region Placement",
-                "A-03"
+                "Worker-021"
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Placement with subplan A-03."
+                  "skills": "Tool call Use Skill: Learned Region Placement on subplans B-01..B-04."
                 },
                 {
-                  "results": "Result: blocks are placed and reported to Foreman-A."
+                  "results": "Result: blocks are placed and reported to the assigned foremen."
                 }
               ]
             }
@@ -330,12 +369,11 @@
         {
           "groupId": "chunk-worker-001-020-placement",
           "time": "00:48.0",
-          "actor": "Worker-001..020",
           "entries": [
             {
               "time": "00:48.0",
               "actor": "Foreman-A",
-              "action": "Worker-001 through Worker-020 build the first shell wave, mostly using the new Region Placement workflow.",
+              "action": "Worker-001..020 build the first shell wave, mostly using the new Region Placement workflow.",
               "highlights": [
                 "Worker-001",
                 "Worker-020",
@@ -422,7 +460,6 @@
         {
           "groupId": "chunk-worker-021-040-placement-accumulating-scaffold",
           "time": "01:12.0",
-          "actor": "Worker-021..040",
           "entries": [
             {
               "time": "01:12.0",
@@ -440,8 +477,15 @@
                 }
               ],
               "progress": {
-                "label": "Workers 021-040",
-                "current": 2,
+                "label": "Scaffold trace",
+                "current": 4,
+                "total": 20
+              },
+              "skill": "scaffold",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Scaffold Construction",
+                "current": 4,
                 "total": 20
               }
             },
@@ -460,8 +504,15 @@
                 }
               ],
               "progress": {
-                "label": "Workers 021-040",
-                "current": 6,
+                "label": "Scaffold trace",
+                "current": 8,
+                "total": 20
+              },
+              "skill": "scaffold",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Scaffold Construction",
+                "current": 8,
                 "total": 20
               }
             },
@@ -479,8 +530,15 @@
                 }
               ],
               "progress": {
-                "label": "Workers 021-040",
-                "current": 13,
+                "label": "Scaffold trace",
+                "current": 15,
+                "total": 20
+              },
+              "skill": "scaffold",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Scaffold Construction",
+                "current": 15,
                 "total": 20
               }
             },
@@ -498,7 +556,14 @@
                 }
               ],
               "progress": {
-                "label": "Workers 021-040",
+                "label": "Scaffold trace",
+                "current": 20,
+                "total": 20
+              },
+              "skill": "scaffold",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Scaffold Construction",
                 "current": 20,
                 "total": 20
               }
@@ -508,16 +573,15 @@
         {
           "groupId": "skill-scaffold-construction",
           "time": "01:39.2",
-          "actor": "Foreman-C",
           "entries": [
             {
               "time": "01:39.2",
               "actor": "Foreman-C",
-              "action": "Foreman-C submits the roof support pattern as Learned Scaffold Construction.",
+              "action": "Foreman-C summarizes the completed roof-support trace for ProjectManager.",
               "highlights": [
                 "Worker-021",
                 "Worker-040",
-                "Learned Scaffold Construction"
+                "roof-support trace"
               ],
               "sublines": [
                 {
@@ -565,7 +629,6 @@
         {
           "groupId": "chunk-worker-041-060-placement-scaffold",
           "time": "01:52.0",
-          "actor": "Worker-041..060",
           "entries": [
             {
               "time": "01:52.0",
@@ -580,8 +643,15 @@
               ],
               "sublines": [],
               "progress": {
-                "label": "Workers 041-060",
-                "current": 3,
+                "label": "Repair trace",
+                "current": 4,
+                "total": 20
+              },
+              "skill": "replace_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Replacement",
+                "current": 4,
                 "total": 20
               }
             },
@@ -606,8 +676,15 @@
                 }
               ],
               "progress": {
-                "label": "Workers 041-060",
-                "current": 7,
+                "label": "Repair trace",
+                "current": 8,
+                "total": 20
+              },
+              "skill": "replace_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Replacement",
+                "current": 8,
                 "total": 20
               }
             },
@@ -625,8 +702,15 @@
                 }
               ],
               "progress": {
-                "label": "Workers 041-060",
-                "current": 14,
+                "label": "Repair trace",
+                "current": 15,
+                "total": 20
+              },
+              "skill": "replace_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Replacement",
+                "current": 15,
                 "total": 20
               }
             },
@@ -644,7 +728,14 @@
                 }
               ],
               "progress": {
-                "label": "Workers 041-060",
+                "label": "Repair trace",
+                "current": 20,
+                "total": 20
+              },
+              "skill": "replace_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Replacement",
                 "current": 20,
                 "total": 20
               }
@@ -654,16 +745,15 @@
         {
           "groupId": "skill-region-replacement",
           "time": "02:17.2",
-          "actor": "Foreman-B",
           "entries": [
             {
               "time": "02:17.2",
               "actor": "Foreman-B",
-              "action": "Foreman-B submits the recurring block-repair job as Learned Region Replacement.",
+              "action": "Foreman-B summarizes the completed block-repair trace for ProjectManager.",
               "highlights": [
                 "Worker-048",
                 "Worker-060",
-                "Learned Region Replacement"
+                "block-repair trace"
               ],
               "sublines": [
                 {
@@ -711,7 +801,6 @@
         {
           "groupId": "chunk-worker-061-080-mixed-skills-accumulating-cleanup",
           "time": "02:31.0",
-          "actor": "Worker-061..080",
           "entries": [
             {
               "time": "02:31.0",
@@ -770,8 +859,15 @@
                 }
               ],
               "progress": {
-                "label": "Workers 061-080",
-                "current": 14,
+                "label": "Cleanup trace",
+                "current": 8,
+                "total": 20
+              },
+              "skill": "clean_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Cleaning",
+                "current": 8,
                 "total": 20
               }
             },
@@ -789,8 +885,15 @@
                 }
               ],
               "progress": {
-                "label": "Workers 061-080",
-                "current": 20,
+                "label": "Cleanup trace",
+                "current": 14,
+                "total": 20
+              },
+              "skill": "clean_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Cleaning",
+                "current": 14,
                 "total": 20
               }
             }
@@ -799,7 +902,6 @@
         {
           "groupId": "chunk-region-progress",
           "time": "03:01.5",
-          "actor": "ProjectManager",
           "entries": [
             {
               "time": "03:01.5",
@@ -828,7 +930,6 @@
         {
           "groupId": "chunk-verification-start",
           "time": "03:02.6",
-          "actor": "ProjectManager",
           "entries": [
             {
               "time": "03:02.6",
@@ -853,22 +954,33 @@
                 "CL-08",
                 "leftover support blocks"
               ],
-              "sublines": []
+              "sublines": [],
+              "progress": {
+                "label": "Cleanup trace",
+                "current": 20,
+                "total": 20
+              },
+              "skill": "clean_region",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Region Cleaning",
+                "current": 20,
+                "total": 20
+              }
             }
           ]
         },
         {
           "groupId": "skill-region-cleaning",
           "time": "03:03.2",
-          "actor": "Foreman-E",
           "entries": [
             {
               "time": "03:03.2",
               "actor": "Foreman-E",
-              "action": "Foreman-E submits the recurring cleanup job as Learned Region Cleaning.",
+              "action": "Foreman-E summarizes the completed cleanup trace for ProjectManager.",
               "highlights": [
                 "cleanup job",
-                "Learned Region Cleaning"
+                "cleanup trace"
               ],
               "sublines": [
                 {
@@ -916,7 +1028,6 @@
         {
           "groupId": "chunk-worker-081-100-cleanup",
           "time": "03:18.0",
-          "actor": "Worker-081..100",
           "entries": [
             {
               "time": "03:18.0",
@@ -1013,7 +1124,6 @@
         {
           "groupId": "chunk-final-verification",
           "time": "03:52.0",
-          "actor": "ProjectManager",
           "entries": [
             {
               "time": "03:52.0",
@@ -1063,7 +1173,6 @@
         {
           "groupId": "chunk-final-acceptance",
           "time": "04:17.5",
-          "actor": "ProjectManager",
           "entries": [
             {
               "time": "04:17.5",

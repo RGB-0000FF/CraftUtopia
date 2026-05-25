@@ -181,14 +181,14 @@ function createStructuredProgress(progress) {
 }
 
 function getSkillRefForStructuredSubline(line = '', event = {}, log = {}) {
-  if (event.skill || event.message?.skillRef) return event.skill || event.message?.skillRef;
   const text = [
     line,
     log.action,
     ...(Array.isArray(log.highlights) ? log.highlights : [])
   ].join(' ').toLowerCase();
-  return Object.entries(SKILL_REGISTRY)
+  const lineMatch = Object.entries(SKILL_REGISTRY)
     .find(([, skill]) => text.includes(String(skill.name || '').toLowerCase()))?.[0] || '';
+  return lineMatch || event.skill || event.message?.skillRef || '';
 }
 
 function getStructuredSublineMeta(line = '', event = {}, log = {}) {
@@ -371,6 +371,10 @@ function ensureSkillState(skillRef = '') {
       published: false,
       learnedRoom: '',
       learnedIndex: Number.POSITIVE_INFINITY,
+      firstEventIndex: Number.POSITIVE_INFINITY,
+      traceCurrent: 0,
+      traceTotal: 0,
+      traceLabel: '',
       usedRooms: new Set(),
       events: []
     });
@@ -408,23 +412,39 @@ function updateSkillStateFromEvent(event, index = -1) {
   const kind = event.skillEvent || event.message?.kind || event.type || 'skill-event';
   const stageTitle = event.group?.title || event.stageLabel || 'Build Pools';
   const wasLearned = skill.learned;
-  if (kind === 'skill-detection' || String(kind).includes('SKILL◆')) {
+  const traceProgress = event.skillProgress || event.display?.skillProgress || null;
+  const traceTotal = Number(traceProgress?.total || 0);
+  const traceCurrent = Number(traceProgress?.current || 0);
+  const hasTraceProgress = Number.isFinite(traceTotal) && traceTotal > 0 && Number.isFinite(traceCurrent);
+  if (hasTraceProgress) {
+    skill.traceCurrent = Math.max(0, Math.min(traceCurrent, traceTotal));
+    skill.traceTotal = traceTotal;
+    skill.traceLabel = traceProgress.label || skill.traceLabel || String(skill.name || '').replace(/^Learned\s+/i, '');
+  }
+
+  if (kind === 'skill-trace' || kind === 'skill-progress') {
+    if (!Number.isFinite(skill.firstEventIndex)) skill.firstEventIndex = Number.isFinite(index) ? index : skill.events.length;
+  } else if (kind === 'skill-detection' || String(kind).includes('SKILL◆')) {
     skill.learned = true;
     skill.learnedRoom = stageTitle;
+    if (skill.traceTotal) skill.traceCurrent = skill.traceTotal;
   } else if (kind === 'skill-broadcast' || String(kind).includes('SKILL↗')) {
     skill.learned = true;
     skill.published = true;
     if (!skill.learnedRoom) skill.learnedRoom = stageTitle;
+    if (skill.traceTotal) skill.traceCurrent = skill.traceTotal;
   } else if (kind === 'skill-use' || String(kind).includes('SKILL')) {
     skill.learned = true;
     skill.published = true;
     if (!skill.learnedRoom) skill.learnedRoom = skill.learnedLabel || stageTitle;
     skill.usedRooms.add(stageTitle);
+    if (skill.traceTotal) skill.traceCurrent = skill.traceTotal;
   } else {
     skill.learned = true;
     if (!skill.learnedRoom) skill.learnedRoom = stageTitle;
   }
   if (!wasLearned && skill.learned) skill.learnedIndex = Number.isFinite(index) ? index : skill.events.length;
+  if (!Number.isFinite(skill.firstEventIndex)) skill.firstEventIndex = Number.isFinite(index) ? index : skill.events.length;
   focusedSkillRef = skill.ref;
   skill.events.push({ index, kind, room: event.group?.id || `stage-${event.stageId}`, title: stageTitle });
   skillLibraryUnlocked = true;
@@ -435,8 +455,9 @@ function updateSkillStateFromEvent(event, index = -1) {
 function getSkillStatus(skill) {
   if (skill.published) return 'shared';
   if (skill.learned) return 'learned';
+  if (skill.traceTotal) return `trace ${Math.round(skill.traceCurrent)}/${Math.round(skill.traceTotal)}`;
   if (skill.usedRooms.size) return `${skill.usedRooms.size} ${skill.usedRooms.size === 1 ? 'room' : 'rooms'}`;
-  return 'locked';
+  return 'forming';
 }
 
 function summarizeRooms(rooms, emptyLabel = 'Waiting') {
@@ -473,7 +494,7 @@ function renderSkillLibrary(activeRef = focusedSkillRef) {
   const discoveredSkills = skills.filter((skill) => skill.learned || skill.events.length);
   skillLibrary?.classList.toggle('is-empty', discoveredSkills.length === 0);
   const title = skillLibrary?.querySelector('h3');
-  if (title) title.textContent = discoveredSkills.length ? `Skill · ${discoveredSkills.length} discovered` : 'Skill · discovering';
+  if (title) title.textContent = discoveredSkills.length ? `Skill · ${discoveredSkills.length} active` : 'Skill · discovering';
   skillList.replaceChildren();
 
   discoveredSkills.forEach((skill) => {
@@ -520,28 +541,39 @@ function renderSkillLibrary(activeRef = focusedSkillRef) {
 
 function renderSkillNotifications(activeRef = focusedSkillRef) {
   if (!skillNotificationStack) return;
-  const learnedSkills = [...skillState.values()]
-    .filter((skill) => skill.learned)
-    .sort((a, b) => (a.learnedIndex || 0) - (b.learnedIndex || 0) || a.name.localeCompare(b.name));
+  const visibleSkills = [...skillState.values()]
+    .filter((skill) => skill.learned || skill.traceTotal || skill.events.length)
+    .sort((a, b) => {
+      const aIndex = Number.isFinite(a.firstEventIndex) ? a.firstEventIndex : a.learnedIndex;
+      const bIndex = Number.isFinite(b.firstEventIndex) ? b.firstEventIndex : b.learnedIndex;
+      return (aIndex || 0) - (bIndex || 0) || a.name.localeCompare(b.name);
+    });
 
   skillNotificationStack.replaceChildren();
-  skillNotificationStack.hidden = learnedSkills.length === 0;
-  if (!learnedSkills.length) return;
+  skillNotificationStack.hidden = visibleSkills.length === 0;
+  if (!visibleSkills.length) return;
 
-  learnedSkills.forEach((skill) => {
+  visibleSkills.forEach((skill) => {
     const item = document.createElement('article');
-    item.className = `skill-notification${skill.ref === activeRef ? ' is-current' : ''}`;
+    const isLearned = Boolean(skill.learned);
+    const traceRatio = skill.traceTotal ? Math.max(0, Math.min(1, skill.traceCurrent / skill.traceTotal)) : 0;
+    item.className = `skill-notification${skill.ref === activeRef ? ' is-current' : ''}${isLearned ? ' is-learned' : ' is-forming'}`;
     item.dataset.skillRef = skill.ref;
     item.style.setProperty('--skill-accent', skill.accent || '#72ffd1');
+    item.style.setProperty('--skill-trace-ratio', String(traceRatio));
     const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Build Pools';
-    const notificationDescription = skill.notificationDescription || skill.summary || '';
     const notificationName = String(skill.name || 'Skill').replace(/^Learned\s+/i, '');
-    item.title = `${notificationName}. ${notificationDescription} ${learnedFrom}`;
+    const traceText = skill.traceTotal
+      ? `Trace ${Math.round(skill.traceCurrent)}/${Math.round(skill.traceTotal)}`
+      : 'Trace forming';
+    const statusText = isLearned ? 'Learned' : traceText;
+    item.title = `${notificationName}. ${statusText}. ${learnedFrom}`;
     item.innerHTML = `
       <span class="skill-notification-icon">${getSkillIconMarkup(skill.ref)}</span>
       <span class="skill-notification-body">
-        <b><span>SKILL:</span> ${escapeHtml(notificationName)}</b>
-        <small>${escapeHtml(notificationDescription)}</small>
+        <b><span>${isLearned ? 'SKILL:' : 'TRACE:'}</span> ${escapeHtml(notificationName)}</b>
+        <small>${escapeHtml(statusText)}</small>
+        <i aria-hidden="true"><em></em></i>
       </span>
     `;
     skillNotificationStack.append(item);
@@ -745,9 +777,9 @@ function scrollChatToBottom(index, options = {}) {
   if (!options.force && !shouldFollowLog) return;
   lockAutoScrollSync();
   shouldFollowLog = true;
-  const behavior = index === 0 || options.instant ? 'auto' : 'smooth';
+  const behavior = index === 0 || options.instant || isAutoPlaying ? 'auto' : 'smooth';
   chatFeed.scrollTo({ top: chatFeed.scrollHeight, behavior });
-  if (options.force || options.instant) {
+  if (options.force || options.instant || isAutoPlaying) {
     const pinToBottom = () => {
       chatFeed.style.scrollBehavior = 'auto';
       chatFeed.scrollTop = chatFeed.scrollHeight;
