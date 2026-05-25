@@ -35,7 +35,7 @@
       "label": "Build Region",
       "timeRange": [
         32,
-        90
+        185
       ],
       "segments": [
         {
@@ -43,7 +43,7 @@
           "label": "A",
           "timeRange": [
             32,
-            90
+            185
           ]
         },
         {
@@ -51,7 +51,7 @@
           "label": "B",
           "timeRange": [
             32,
-            90
+            185
           ]
         },
         {
@@ -59,7 +59,7 @@
           "label": "C",
           "timeRange": [
             32,
-            90
+            185
           ]
         },
         {
@@ -67,7 +67,7 @@
           "label": "D",
           "timeRange": [
             32,
-            90
+            185
           ]
         },
         {
@@ -75,7 +75,7 @@
           "label": "E",
           "timeRange": [
             32,
-            90
+            185
           ]
         }
       ]
@@ -84,16 +84,16 @@
       "id": "verified-cleanup",
       "label": "Verified and CleanUp",
       "timeRange": [
-        90,
-        126
+        185,
+        259.48
       ]
     },
     {
       "id": "complete",
       "label": "Complete",
       "timeRange": [
-        126,
-        126
+        259.48,
+        259.48
       ],
       "noProgress": true
     }
@@ -102,27 +102,27 @@
     {
       "id": "region-placement",
       "label": "Region Placement",
-      "demoSeconds": 36,
+      "demoSeconds": 39,
       "skill": "build_region"
-    },
-    {
-      "id": "region-replace",
-      "label": "Region Replace",
-      "demoSeconds": 67,
-      "skill": "replace_region"
     },
     {
       "id": "scaffold-construction",
       "label": "Scaffold Construction",
-      "demoSeconds": 85,
+      "demoSeconds": 101,
       "skill": "scaffold"
     },
     {
+      "id": "region-replace",
+      "label": "Region Replacement",
+      "demoSeconds": 139,
+      "skill": "replace_region"
+    },
+    {
       "id": "region-clean",
-      "label": "Region Clean",
-      "demoSeconds": 98,
+      "label": "Region Cleaning",
+      "demoSeconds": 185,
       "skill": "clean_region"
     }
   ],
-  "durationSeconds": 133
+  "durationSeconds": 259.48
 }

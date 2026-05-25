@@ -2,43 +2,109 @@
   "id": "pyramid",
   "pageTitle": "Pyramid Demo",
   "taskTitle": "Pyramid with 100 Agents",
+  "stylesheet": "data/demos/sydney-opera-house/demo.css",
   "video": "hls-primer/pyramid/master.m3u8",
   "coverImage": "data/demos/pyramid/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",
+  "introSeconds": 0,
   "frameworkImage": "assets/images/architecture.jpg",
-  "logManifest": "data/demo-log/manifest.json",
-  "timelineKeyframes": [
+  "logManifest": "data/demos/sydney-opera-house/milestone-log-preview.json",
+  "alignTimelineToLogTime": true,
+  "topMilestoneMode": true,
+  "topMilestoneStartAtVideoStart": true,
+  "topMilestones": [
     {
-      "id": "blueprint-ready",
-      "label": "Blueprint Ready",
-      "demoSeconds": 10,
-      "stageId": 1
+      "id": "transfer-blueprint",
+      "label": "Transfer png to blueprint",
+      "timeRange": [
+        0,
+        20
+      ]
     },
     {
-      "id": "build-region",
+      "id": "blueprint-split",
+      "label": "Blueprint split",
+      "timeRange": [
+        20,
+        32
+      ]
+    },
+    {
+      "id": "regions-build",
       "label": "Build Region",
-      "demoSeconds": 17,
-      "skill": "build_region"
+      "timeRange": [
+        32,
+        239.6
+      ],
+      "segments": [
+        {
+          "id": "region-a",
+          "label": "A",
+          "timeRange": [
+            32,
+            239.6
+          ]
+        },
+        {
+          "id": "region-b",
+          "label": "B",
+          "timeRange": [
+            32,
+            239.6
+          ]
+        },
+        {
+          "id": "region-c",
+          "label": "C",
+          "timeRange": [
+            32,
+            239.6
+          ]
+        },
+        {
+          "id": "region-d",
+          "label": "D",
+          "timeRange": [
+            32,
+            239.6
+          ]
+        },
+        {
+          "id": "region-e",
+          "label": "E",
+          "timeRange": [
+            32,
+            239.6
+          ]
+        }
+      ]
     },
     {
-      "id": "scaffold",
-      "label": "Scaffold",
-      "demoSeconds": 28,
-      "skill": "scaffold"
+      "id": "verified-cleanup",
+      "label": "Verified and CleanUp",
+      "timeRange": [
+        239.6,
+        239.6
+      ]
     },
     {
-      "id": "replace-region",
-      "label": "Replace Region",
-      "demoSeconds": 38,
-      "skill": "replace_region"
-    },
-    {
-      "id": "clean-region",
-      "label": "Clean Region",
-      "demoSeconds": 50,
-      "skill": "clean_region"
+      "id": "complete",
+      "label": "Complete",
+      "timeRange": [
+        239.6,
+        239.6
+      ],
+      "noProgress": true
     }
   ],
-  "durationSeconds": 180
+  "timelineKeyframes": [
+    {
+      "id": "region-placement",
+      "label": "Region Placement",
+      "demoSeconds": 50,
+      "skill": "build_region"
+    }
+  ],
+  "durationSeconds": 239.6
 }

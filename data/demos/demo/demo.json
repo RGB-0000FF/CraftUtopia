@@ -2,7 +2,7 @@
   "id": "demo",
   "pageTitle": "Architecture Overview",
   "taskTitle": "Architecture Overview",
-  "video": "hls-primer/demo/master.m3u8",
+  "video": "hls-primer/demo/master.m3u8?v=20260524-overview-hls",
   "introImage": "assets/images/architecture.jpg",
   "coverImage": "data/demos/demo/cover.png",
   "videoFit": "contain",
@@ -13,5 +13,5 @@
   "introSeconds": 0,
   "logManifest": "data/demo-log/manifest.json",
   "timelineKeyframes": [],
-  "durationSeconds": 180
+  "durationSeconds": 376.521739
 }

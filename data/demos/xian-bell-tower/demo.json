@@ -2,43 +2,127 @@
   "id": "xian-bell-tower",
   "pageTitle": "Xi'an Bell Tower Demo",
   "taskTitle": "Xi'an Bell Tower with 100 Agents",
+  "stylesheet": "data/demos/sydney-opera-house/demo.css",
   "video": "hls-primer/xian-bell-tower/master.m3u8",
   "coverImage": "data/demos/xian-bell-tower/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",
+  "introSeconds": 0,
   "frameworkImage": "assets/images/architecture.jpg",
-  "logManifest": "data/demo-log/manifest.json",
-  "timelineKeyframes": [
+  "logManifest": "data/demos/sydney-opera-house/milestone-log-preview.json",
+  "alignTimelineToLogTime": true,
+  "topMilestoneMode": true,
+  "topMilestoneStartAtVideoStart": true,
+  "topMilestones": [
     {
-      "id": "blueprint-ready",
-      "label": "Blueprint Ready",
-      "demoSeconds": 10,
-      "stageId": 1
+      "id": "transfer-blueprint",
+      "label": "Transfer png to blueprint",
+      "timeRange": [
+        0,
+        20
+      ]
     },
     {
-      "id": "build-region",
+      "id": "blueprint-split",
+      "label": "Blueprint split",
+      "timeRange": [
+        20,
+        32
+      ]
+    },
+    {
+      "id": "regions-build",
       "label": "Build Region",
-      "demoSeconds": 17,
+      "timeRange": [
+        32,
+        202
+      ],
+      "segments": [
+        {
+          "id": "region-a",
+          "label": "A",
+          "timeRange": [
+            32,
+            202
+          ]
+        },
+        {
+          "id": "region-b",
+          "label": "B",
+          "timeRange": [
+            32,
+            202
+          ]
+        },
+        {
+          "id": "region-c",
+          "label": "C",
+          "timeRange": [
+            32,
+            202
+          ]
+        },
+        {
+          "id": "region-d",
+          "label": "D",
+          "timeRange": [
+            32,
+            202
+          ]
+        },
+        {
+          "id": "region-e",
+          "label": "E",
+          "timeRange": [
+            32,
+            202
+          ]
+        }
+      ]
+    },
+    {
+      "id": "verified-cleanup",
+      "label": "Verified and CleanUp",
+      "timeRange": [
+        202,
+        237.2
+      ]
+    },
+    {
+      "id": "complete",
+      "label": "Complete",
+      "timeRange": [
+        237.2,
+        237.2
+      ],
+      "noProgress": true
+    }
+  ],
+  "timelineKeyframes": [
+    {
+      "id": "region-placement",
+      "label": "Region Placement",
+      "demoSeconds": 43,
       "skill": "build_region"
     },
     {
-      "id": "scaffold",
-      "label": "Scaffold",
-      "demoSeconds": 28,
+      "id": "scaffold-construction",
+      "label": "Scaffold Construction",
+      "demoSeconds": 98,
       "skill": "scaffold"
     },
     {
-      "id": "replace-region",
-      "label": "Replace Region",
-      "demoSeconds": 38,
+      "id": "region-replace",
+      "label": "Region Replacement",
+      "demoSeconds": 148,
       "skill": "replace_region"
     },
     {
-      "id": "clean-region",
-      "label": "Clean Region",
-      "demoSeconds": 50,
+      "id": "region-clean",
+      "label": "Region Cleaning",
+      "demoSeconds": 202,
       "skill": "clean_region"
     }
   ],
-  "durationSeconds": 131.483
+  "durationSeconds": 237.2
 }

@@ -1,5 +1,5 @@
 // CraftUtopia demo data.
-function setStage(stageId, activeMessage = null, activeEvent = null) {
+function setStage(stageId, activeMessage = null) {
   const stage = stages.find((item) => Number(item.id) === Number(stageId)) || stages[0];
   if (!stage) return;
 
@@ -7,33 +7,9 @@ function setStage(stageId, activeMessage = null, activeEvent = null) {
   skillLibrary?.classList.add('is-visible');
   if (activeMessage?.dataset.skillRef) renderSkillLibrary(activeMessage.dataset.skillRef);
 
-  const eventIndex = Number(activeMessage?.dataset.eventIndex);
-  const focusedEvent = activeEvent || (Number.isFinite(eventIndex) ? playbackEvents[eventIndex] : null);
-  const focusedPlaybackIndex = Number.isFinite(eventIndex) ? eventIndex : (focusedEvent ? playbackEvents.indexOf(focusedEvent) : -1);
-  const focusedCount = focusedPlaybackIndex >= 0 ? focusedPlaybackIndex + 1 : playbackCursor;
-  const elapsedSeconds = getDemoSecondsForEventCount(focusedCount);
-  const elapsedTime = formatTimelineTime(elapsedSeconds);
-  const progressValue = `${Math.round(clamp((elapsedSeconds / getPresentationTotalSeconds()) * 100, 0, 100))}%`;
-
-  if (consoleProgressValue) consoleProgressValue.textContent = progressValue;
-  if (consoleElapsedValue) consoleElapsedValue.textContent = elapsedTime;
-  if (consoleProgressBar) consoleProgressBar.style.width = progressValue;
-  if (consoleElapsedBar) consoleElapsedBar.style.width = progressValue;
-  if (timelineScrubber) timelineScrubber.value = String(Math.round(clamp((elapsedSeconds / getPresentationTotalSeconds()) * 1000, 0, 1000)));
-  consoleMeters.forEach((node) => { node.style.setProperty('--value', progressValue); });
-  buildTimeline?.setAttribute('aria-valuenow', String(Math.round(clamp((elapsedSeconds / getPresentationTotalSeconds()) * 100, 0, 100))));
-  buildTimeline?.setAttribute('aria-valuetext', elapsedTime);
-  if (isAutoPlaying) {
-    syncTimelineOverlayOnly(elapsedSeconds);
-  } else {
-    updateVideoForDemoSeconds(elapsedSeconds);
-  }
-  updateTimelineMarkerState(elapsedSeconds);
   renderMilestones(stage.id);
 
-  const fallbackMessage = chatMessages.find((node) => Number(node.dataset.chatStage) === Number(stage.id));
-  const focusedMessage = activeMessage || fallbackMessage;
-  chatMessages.forEach((node) => node.classList.toggle('active', node === focusedMessage));
+  chatMessages.forEach((node) => node.classList.toggle('active', node === activeMessage));
 }
 
 function parseTimelineTime(time = '00:00.0') {
@@ -200,10 +176,8 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260522-icon-order';
-const DEFAULT_LOG_MANIFEST_PATH = 'data/demo-log/manifest.json';
-
-let runEventsManifestPath = DEFAULT_LOG_MANIFEST_PATH;
+const DATA_ASSET_VERSION = '20260525-skill-timestamps';
+let runEventsManifestPath = '';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;
 
@@ -324,7 +298,7 @@ function applyDemoProfile(profile = {}) {
       demoProfileStylesheet.disabled = true;
     }
   }
-  runEventsManifestPath = profile.logManifest || DEFAULT_LOG_MANIFEST_PATH;
+  runEventsManifestPath = profile.logManifest;
   introArchitectureSeconds = Number.isFinite(Number(profile.introSeconds)) ? Math.max(0, Number(profile.introSeconds)) : INTRO_ARCHITECTURE_SECONDS;
   if (Number.isFinite(Number(profile.durationSeconds))) {
     demoVideoSeconds = Number(profile.durationSeconds);

@@ -37,6 +37,7 @@ let autoPlayTimer = null;
 let autoPlayFrame = null;
 let autoPlayClockStartSeconds = 0;
 let autoPlayClockStartedAt = 0;
+let currentDemoSeconds = 0;
 let isAutoPlaying = false;
 let playbackSpeed = 1;
 let demoVideoSeconds = DEFAULT_VIDEO_DURATION_SECONDS;

@@ -351,15 +351,11 @@ function ensureSkillState(skillRef = '') {
   const ref = String(skillRef || '').trim();
   if (!ref) return null;
   if (!skillState.has(ref)) {
-    const fallbackName = ref.replace(/_/g, ' ');
+    const skill = SKILL_REGISTRY[ref];
+    if (!skill) return null;
     skillState.set(ref, {
       ref,
-      ...(SKILL_REGISTRY[ref] || {
-        name: ref,
-        summary: `${fallbackName} shared across Foreman groups.`,
-        learnedLabel: 'Learned in pool',
-        baseRoute: ['learn', 'publish', 'reuse']
-      }),
+      ...skill,
       learned: false,
       published: false,
       learnedRoom: '',
@@ -432,9 +428,9 @@ function getSkillStatus(skill) {
   return 'locked';
 }
 
-function summarizeRooms(rooms, fallback = 'Waiting') {
+function summarizeRooms(rooms, emptyLabel = 'Waiting') {
   const values = [...rooms];
-  if (!values.length) return fallback;
+  if (!values.length) return emptyLabel;
   return values
     .map((room) => room
       .replace(' Worker Pool', '')
@@ -453,17 +449,16 @@ function activateSkillCard(skillRef) {
 }
 
 function getSkillIconMarkup(skillRef = '') {
-  const skill = SKILL_REGISTRY[skillRef] || {};
-  const src = skill.icon || 'assets/icons/skills/skill-fallback.svg';
-  const alt = skill.name ? `${skill.name} icon` : 'Skill icon';
+  const skill = SKILL_REGISTRY[skillRef];
+  if (!skill) return '';
+  const src = skill.icon;
+  const alt = `${skill.name} icon`;
   return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async">`;
 }
 
 function renderSkillLibrary(activeRef = focusedSkillRef) {
   if (!skillList || !skillRoute) return;
-  const baseSkills = Object.keys(SKILL_REGISTRY).map(ensureSkillState).filter(Boolean);
-  const extraSkills = [...skillState.values()].filter((skill) => !SKILL_REGISTRY[skill.ref]);
-  const skills = [...baseSkills, ...extraSkills];
+  const skills = Object.keys(SKILL_REGISTRY).map(ensureSkillState).filter(Boolean);
   const unlockedCount = skills.filter((skill) => skill.learned || skill.events.length).length;
   skillLibrary?.classList.toggle('is-empty', unlockedCount === 0);
   const title = skillLibrary?.querySelector('h3');

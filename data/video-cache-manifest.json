@@ -1,10 +1,10 @@
 {
-  "version": "20260522-icon-order",
+  "version": "20260525-skill-timestamps",
   "videos": [
     {
       "id": "demo",
       "title": "Overview",
-      "url": "hls-primer/demo/master.m3u8"
+      "url": "hls-primer/demo/master.m3u8?v=20260524-overview-hls"
     },
     {
       "id": "colosseum",

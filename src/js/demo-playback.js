@@ -272,6 +272,7 @@ function setActionButtonLabel(button, label, iconName) {
 
 function setTimelineReadout(seconds = 0) {
   const safeSeconds = clamp(Number(seconds) || 0, 0, getPresentationTotalSeconds());
+  currentDemoSeconds = safeSeconds;
   const total = getPresentationTotalSeconds();
   const ratio = total > 0 ? clamp(safeSeconds / total, 0, 1) : 0;
   const progressValue = `${Math.round(ratio * 100)}%`;
@@ -313,7 +314,6 @@ function renderPlaybackUntilLive(targetCount) {
     shouldFollowLog = shouldStickToBottom;
     scrollChatToBottom(count, { instant: true });
   }
-  if (playbackCursor >= total && !isVideoOnlyMode) stopAutoPlay(false);
   updatePlaybackControls();
 }
 
@@ -394,7 +394,7 @@ function runAutoPlayFrame(now = performance.now()) {
   renderPlaybackToDemoSeconds(demoSeconds, { noSeek: true });
 
   if (keyframe && playbackCursor >= (keyframe.targetCount || Infinity) && beginKeyframeHold(keyframe)) return;
-  if (demoSeconds >= getPresentationTotalSeconds() || playbackCursor >= playbackEvents.length) {
+  if (demoSeconds >= getPresentationTotalSeconds()) {
     if (isVideoOnlyMode) {
       restartVideoOnlyPlayback();
       return;
@@ -439,15 +439,12 @@ function formatMilestoneRange(metrics = []) {
 function buildMilestoneNodes() {
   const stageNodes = stages.map((stage) => {
     const stageId = Number(stage.id);
-    const fallbackLabel = String(stage.label || `Phase ${stage.id}`)
-      .replace(/^\d+\s+/, '')
-      .replace(/([a-z])([A-Z])/g, '$1 $2');
     return {
       id: `phase-${stage.id}`,
       startStage: stageId,
       endStage: stageId,
       code: `[${String(stage.id).padStart(2, '0')}]`,
-      label: MILESTONE_EVENT_LABELS[stageId] || fallbackLabel,
+      label: MILESTONE_EVENT_LABELS[stageId],
       role: formatMilestoneRange(stage.metrics || []),
       summary: stage.summary || stage.system || '',
       prefix: 'event'
@@ -728,13 +725,16 @@ function renderMilestones(currentStageId = stages[0]?.id ?? 0) {
 
 function scheduleAutoPlay() {
   if (!isAutoPlaying || isKeyframeHolding) return;
-  startAutoPlayLoop(getDemoSecondsForEventCount(playbackCursor));
+  startAutoPlayLoop(currentDemoSeconds);
 }
 
 function updatePlaybackControls() {
   const total = playbackEvents.length;
   const shown = Math.min(playbackCursor, total);
-  const isComplete = shown >= total && total > 0;
+  const timelineSeconds = Number.isFinite(Number(currentDemoSeconds))
+    ? Number(currentDemoSeconds)
+    : getDemoSecondsForEventCount(playbackCursor);
+  const isComplete = total > 0 && timelineSeconds >= getPresentationTotalSeconds() - 0.08;
 
   renderMilestones(playbackEvents[Math.max(shown - 1, 0)]?.stageId ?? stages[0]?.id ?? 0);
 
@@ -846,8 +846,12 @@ function revealChatMessage(index = 0) {
   shouldFollowLog = shouldStickToBottom;
   scrollChatToBottom(index);
   playbackCursor = index + 1;
+  if (!isAutoPlaying) {
+    const elapsedSeconds = getDemoSecondsForEventCount(playbackCursor);
+    setTimelineReadout(elapsedSeconds);
+    updateVideoForDemoSeconds(elapsedSeconds, { force: true });
+  }
   isMessagePending = false;
-  if (playbackCursor >= playbackEvents.length && !isVideoOnlyMode) stopAutoPlay(false);
   updatePlaybackControls();
   if (!isVideoOnlyMode && isAutoPlaying && beginKeyframeHold(getNextPendingKeyframe())) return;
   scheduleAutoPlay();
@@ -954,6 +958,9 @@ function renderPlaybackUntil(targetCount) {
     setStage(stages[0]?.id ?? 0, chatMessages[0]);
   }
 
+  const elapsedSeconds = getDemoSecondsForEventCount(count);
+  setTimelineReadout(elapsedSeconds);
+  updateVideoForDemoSeconds(elapsedSeconds, { force: true });
   updatePlaybackControls();
 }
 
@@ -974,10 +981,11 @@ function toggleAutoPlay() {
     return;
   }
   if (!playbackEvents.length) return;
-  if (playbackCursor >= playbackEvents.length) renderPlaybackUntil(0);
+  const shouldReplay = currentDemoSeconds >= getPresentationTotalSeconds() - 0.08;
+  if (shouldReplay) renderPlaybackUntil(0);
   isAutoPlaying = true;
   updatePlaybackControls();
-  startAutoPlayLoop(getDemoSecondsForEventCount(playbackCursor));
+  startAutoPlayLoop(shouldReplay ? 0 : currentDemoSeconds);
 }
 
 function setPlaybackSpeed(nextSpeed) {
@@ -1025,10 +1033,6 @@ function findEventCountForKeyframe(keyframe, previousCount = 0) {
         break;
       }
     }
-  }
-  if (index < 0) {
-    const fallbackSeconds = keyframe.demoSeconds / getPresentationTotalSeconds() * getPlaybackTotalSeconds();
-    index = playbackEvents.findIndex((event) => event.seconds >= fallbackSeconds);
   }
   return clamp((index < 0 ? playbackEvents.length : index + 1), minCount, playbackEvents.length);
 }
@@ -1135,7 +1139,7 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
   const duration = Number.isFinite(worldVideo.duration) && worldVideo.duration > 0 ? worldVideo.duration : demoVideoSeconds;
   const clampedVideoTime = clamp(targetVideoTime, 0, duration);
   const isVideoTargetComplete = !isIntro && duration > 0 && clampedVideoTime >= duration - 0.08;
-  const shouldSeek = !options.noSeek && (options.force || !isAutoPlaying || isKeyframeHolding || playbackCursor >= playbackEvents.length || isIntro);
+  const shouldSeek = !options.noSeek && (options.force || !isAutoPlaying || isKeyframeHolding || isIntro);
   try {
     if (options.force && !options.noSeek && !isAutoPlaying && clampedVideoTime <= 0.05) {
       worldVideo.pause();
@@ -1154,7 +1158,7 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
   } catch (error) {
     // Some browsers can briefly reject seeking while metadata is loading.
   }
-  if (isIntro || !isAutoPlaying || isKeyframeHolding || playbackCursor >= playbackEvents.length || isVideoTargetComplete) {
+  if (isIntro || !isAutoPlaying || isKeyframeHolding || isVideoTargetComplete) {
     if (!worldVideo.paused) worldVideo.pause();
   } else if (worldVideo.paused && !worldVideo.ended) {
     worldVideo.play?.().catch(() => {});
@@ -1193,8 +1197,7 @@ function pauseVideoAtCurrentFrame() {
 
 function resumeVideoFromCurrentFrame() {
   if (!worldVideo) return;
-  if (playbackCursor >= playbackEvents.length) return;
-  const demoSeconds = getDemoSecondsForEventCount(playbackCursor);
+  const demoSeconds = currentDemoSeconds;
   timelineIntro?.classList.toggle('is-visible', demoSeconds < introArchitectureSeconds);
   if (demoSeconds >= introArchitectureSeconds) {
     const playFromFrozenFrame = () => worldVideo.play?.().catch(() => {});
@@ -1211,19 +1214,10 @@ function syncTimelineOverlayOnly(seconds = 0) {
 
 function previewTimelineRatio(ratio = 0) {
   const safeRatio = clamp(ratio, 0, 1);
-  const progressValue = `${Math.round(safeRatio * 100)}%`;
   const elapsedSeconds = safeRatio * getPresentationTotalSeconds();
-  const elapsedTime = formatTimelineTime(elapsedSeconds);
-  if (consoleProgressValue) consoleProgressValue.textContent = progressValue;
-  if (consoleElapsedValue) consoleElapsedValue.textContent = elapsedTime;
-  if (consoleProgressBar) consoleProgressBar.style.width = progressValue;
-  if (consoleElapsedBar) consoleElapsedBar.style.width = progressValue;
-  if (timelineScrubber) timelineScrubber.value = String(Math.round(safeRatio * 1000));
-  consoleMeters.forEach((node) => { node.style.setProperty('--value', progressValue); });
-  buildTimeline?.setAttribute('aria-valuenow', String(Math.round(safeRatio * 100)));
-  buildTimeline?.setAttribute('aria-valuetext', elapsedTime);
+  setTimelineReadout(elapsedSeconds);
   updateVideoForDemoSeconds(elapsedSeconds, { force: true });
-  updateTimelineMarkerState(elapsedSeconds);
+  updatePlaybackControls();
 }
 
 function renderTimelineMarkers() {
@@ -1366,7 +1360,7 @@ function seekTimelineToRatio(ratio = 0, options = {}) {
   const safeRatio = clamp(ratio, 0, 1);
   const seconds = safeRatio * getPresentationTotalSeconds();
   const count = getEventCountForTimelineRatio(safeRatio);
-  const shouldResume = options.resume === true && count < playbackEvents.length;
+  const shouldResume = options.resume === true && seconds < getPresentationTotalSeconds() - 0.08;
   syncHeldKeyframesForSeconds(seconds);
   renderPlaybackUntil(count);
   previewTimelineRatio(safeRatio);
@@ -1479,7 +1473,7 @@ function endTimelineScrub(event) {
 function handleTimelineKeydown(event) {
   if (!playbackEvents.length) return;
   const total = getPresentationTotalSeconds();
-  const currentRatio = clamp(getDemoSecondsForEventCount(playbackCursor) / total, 0, 1);
+  const currentRatio = clamp(currentDemoSeconds / total, 0, 1);
   const smallStep = 8 / Math.max(total, 1);
   const largeStep = 40 / Math.max(total, 1);
   let nextRatio = currentRatio;

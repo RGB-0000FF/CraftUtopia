@@ -2,8 +2,10 @@
   'use strict';
 
   const scriptUrl = new URL(document.currentScript?.src || document.baseURI, document.baseURI);
-  const assetVersion = scriptUrl.searchParams.get('v') || '20260522-icon-order';
-  const MANIFEST_URL = `data/video-cache-manifest.json?v=${encodeURIComponent(assetVersion)}`;
+  const assetVersion = scriptUrl.searchParams.get('v');
+  const MANIFEST_URL = assetVersion
+    ? `data/video-cache-manifest.json?v=${encodeURIComponent(assetVersion)}`
+    : 'data/video-cache-manifest.json';
   const SEGMENTS_PER_INTENT = 2;
   const INITIAL_VIEWER_SEGMENTS = 8;
   const MAX_CONCURRENT_PRELOADS = 2;
