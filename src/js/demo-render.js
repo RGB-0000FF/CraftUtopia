@@ -154,40 +154,148 @@ function getActorColor(actor = '') {
 }
 
 function createStructuredProgress(progress) {
-  if (!progress) return null;
+  return null;
+}
+
+function formatTerminalProgressText(progress = {}) {
   const total = Number(progress.total || 0);
   const current = Number(progress.current || 0);
+  if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(current)) return '';
+  const ratio = Math.max(0, Math.min(1, current / total));
+  const isDone = ratio >= 1;
+  const cells = 18;
+  const filled = Math.max(0, Math.min(cells, Math.round(ratio * cells)));
+  const bar = `${'#'.repeat(filled)}${'-'.repeat(cells - filled)}`;
+  const label = String(progress.label || 'progress').trim();
+  const percent = String(Math.round(ratio * 100)).padStart(3, ' ');
+  return `${label} [${bar}] ${percent}% ${Math.round(current)}/${Math.round(total)} ${isDone ? 'done' : 'working'}`;
+}
+
+function createTerminalProgress(progress = {}) {
+  const text = formatTerminalProgressText(progress);
+  if (!text) return null;
+  const total = Number(progress.total || 0);
+  const current = Number(progress.current || 0);
+  const ratio = total > 0 ? Math.max(0, Math.min(1, current / total)) : 0;
+  const node = document.createElement('span');
+  node.className = `chunk-terminal-progress${ratio >= 1 ? ' is-complete' : ''}`;
+  node.textContent = text;
+  node.setAttribute('aria-label', text);
+  return node;
+}
+
+function getEventBatchSummary(event = {}) {
+  return event.batchSummary || event.display?.batchSummary || null;
+}
+
+function formatSavedPercent(value = 0) {
+  const rounded = Math.round((Number(value) || 0) * 10) / 10;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+}
+
+function getBatchSummaryProgress(summary = {}, event = {}) {
+  const progress = getEventProgress(event) || {};
+  const total = Number(summary.total || progress.total || 0);
+  const current = Number.isFinite(Number(progress.current))
+    ? Number(progress.current)
+    : Number(summary.current || total);
   if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(current)) return null;
   const ratio = Math.max(0, Math.min(1, current / total));
-  const cells = 8;
-  const filled = Math.max(0, Math.min(cells, Math.round(ratio * cells)));
-  const wrap = document.createElement('span');
-  wrap.className = 'structured-progress';
+  return {
+    total,
+    current: Math.max(0, Math.min(total, current)),
+    ratio,
+    unit: String(summary.unit || '').trim()
+  };
+}
 
-  const track = document.createElement('span');
-  track.className = 'structured-progress-track';
-  for (let i = 0; i < cells; i += 1) {
-    const cell = document.createElement('span');
-    cell.className = `structured-progress-cell${i < filled ? ' is-filled' : ''}`;
-    track.append(cell);
+function formatBatchSummaryBar(progress = {}) {
+  const cells = 20;
+  const filled = Math.max(0, Math.min(cells, Math.round((progress.ratio || 0) * cells)));
+  const unit = progress.unit ? ` ${progress.unit}` : '';
+  return `[${'#'.repeat(filled)}${'-'.repeat(cells - filled)}] ${Math.round(progress.current)}/${Math.round(progress.total)}${unit} ${progress.ratio >= 1 ? 'done' : 'working'}`;
+}
+
+function createBatchSummaryRow(kind = '', item = {}, total = 0) {
+  const count = Math.max(0, Number(item.count || 0));
+  if (!count || !total) return null;
+  const row = document.createElement('span');
+  row.className = `chunk-batch-summary-row is-${kind}`;
+
+  const badge = document.createElement('span');
+  badge.className = 'chunk-batch-summary-kind';
+  badge.textContent = kind === 'skill' ? 'SKILL' : 'TOOLS';
+
+  const name = document.createElement('span');
+  name.className = 'chunk-batch-summary-name';
+  name.textContent = String(item.label || item.name || (kind === 'skill' ? 'Skill' : 'Tool trace'));
+
+  const amount = document.createElement('span');
+  amount.className = 'chunk-batch-summary-amount';
+  amount.textContent = `${Math.round(count)}/${Math.round(total)} ${item.unit || (kind === 'skill' ? 'tasks' : 'traces')}`;
+
+  const note = document.createElement('span');
+  note.className = 'chunk-batch-summary-note';
+  if (kind === 'skill') {
+    const savedPercent = (count * 0.5 / total) * 100;
+    note.textContent = `saved ${formatSavedPercent(savedPercent)}% time`;
+  } else {
+    note.textContent = item.status || 'collecting';
   }
 
-  const label = progress.label ? `${progress.label} ` : '';
-  const text = document.createElement('span');
-  text.className = 'structured-progress-text';
-  text.textContent = `${label}${Math.round(ratio * 100)}%`;
-  wrap.append(track, text);
-  return wrap;
+  row.append(badge, name, amount, note);
+  return row;
+}
+
+function createBatchSummary(summary = {}, event = {}) {
+  if (!summary) return null;
+  const progress = getBatchSummaryProgress(summary, event);
+  if (!progress || progress.ratio < 1) return null;
+
+  const panel = document.createElement('section');
+  panel.className = 'chunk-batch-summary';
+
+  const header = document.createElement('span');
+  header.className = 'chunk-batch-summary-header';
+  const title = document.createElement('span');
+  title.className = 'chunk-batch-summary-title';
+  title.textContent = String(summary.label || 'Worker batch');
+  const bar = document.createElement('span');
+  bar.className = 'chunk-batch-summary-bar';
+  bar.textContent = formatBatchSummaryBar(progress);
+  header.append(title, bar);
+
+  const rows = document.createElement('span');
+  rows.className = 'chunk-batch-summary-rows';
+  const total = progress.total;
+  const skillRows = Array.isArray(summary.skills) ? summary.skills : [];
+  const toolRows = Array.isArray(summary.tools) ? summary.tools : [];
+  [...skillRows.map((item) => createBatchSummaryRow('skill', item, total)),
+    ...toolRows.map((item) => createBatchSummaryRow('tools', item, total))]
+    .filter(Boolean)
+    .forEach((row) => rows.append(row));
+
+  panel.append(header);
+  if (rows.children.length) panel.append(rows);
+  return panel;
 }
 
 function getSkillRefForStructuredSubline(line = '', event = {}, log = {}) {
+  const lineText = String(line || '').toLowerCase();
+  const matchSkill = (text) => Object.entries(SKILL_REGISTRY)
+    .find(([, skill]) => {
+      const fullName = String(skill.name || '').toLowerCase();
+      const cleanName = fullName.replace(/^learned\s+/, '');
+      return (fullName && text.includes(fullName)) || (cleanName && text.includes(cleanName));
+    })?.[0] || '';
+  const lineMatch = matchSkill(lineText);
+  if (lineMatch) return lineMatch;
   const text = [
-    line,
     log.action,
     ...(Array.isArray(log.highlights) ? log.highlights : [])
   ].join(' ').toLowerCase();
-  const lineMatch = Object.entries(SKILL_REGISTRY)
-    .find(([, skill]) => text.includes(String(skill.name || '').toLowerCase()))?.[0] || '';
+  const contextMatch = matchSkill(text);
+  if (contextMatch) return contextMatch;
   return lineMatch || event.skill || event.message?.skillRef || '';
 }
 
@@ -202,7 +310,7 @@ function getStructuredSublineMeta(line = '', event = {}, log = {}) {
     return {
       className: 'is-skill',
       accent: SKILL_REGISTRY[skillRef]?.accent || '#72ffd1',
-      label: SKILL_REGISTRY[skillRef]?.name || 'Skill',
+      label: getSkillDisplayName(skillRef) || 'Skill',
       skillRef
     };
   }
@@ -225,7 +333,7 @@ function getStructuredFollowupMeta(followup = {}, event = {}, log = {}) {
     return {
       className: 'is-skill',
       accent: SKILL_REGISTRY[skillRef]?.accent || '#72ffd1',
-      label: SKILL_REGISTRY[skillRef]?.name || followup.label || 'Skill',
+      label: getSkillDisplayName(skillRef) || followup.label || 'Skill',
       skillRef
     };
   }
@@ -239,6 +347,69 @@ function getStructuredLogGroupKey(event = {}) {
   const groupKey = event.logGroup || event.display?.logGroup || '';
   if (!groupKey) return '';
   return `${event.stageId ?? ''}::${groupKey}`;
+}
+
+function getSkillRefTextForEvent(event = {}) {
+  const display = event.display || {};
+  const pieces = [
+    event.skill,
+    event.skillRef,
+    event.message?.skillRef,
+    display.skill,
+    display.skillRef,
+    event.logGroup,
+    display.logGroup,
+    event.learningLabel,
+    display.learningLabel,
+    event.text,
+    display.action,
+    display.result,
+    ...(Array.isArray(event.highlights) ? event.highlights : []),
+    ...(Array.isArray(display.highlights) ? display.highlights : []),
+    ...(Array.isArray(display.sublines) ? display.sublines : [])
+  ];
+  return pieces
+    .flatMap((piece) => {
+      if (!piece || typeof piece !== 'object') return [piece];
+      return Object.values(piece);
+    })
+    .filter((piece) => piece !== undefined && piece !== null)
+    .join(' ');
+}
+
+function normalizeSkillMatchText(value = '') {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/^learned\s+/, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function resolveSkillRefForEvent(event = {}) {
+  const explicitRef = event.skill || event.skillRef || event.message?.skillRef || event.display?.skill || event.display?.skillRef;
+  if (SKILL_REGISTRY[explicitRef]) return explicitRef;
+
+  const normalized = normalizeSkillMatchText(getSkillRefTextForEvent(event));
+  if (!normalized) return '';
+  return Object.entries(SKILL_REGISTRY)
+    .find(([ref, skill]) => {
+      const refText = normalizeSkillMatchText(ref);
+      const nameText = normalizeSkillMatchText(skill.name);
+      return (refText && normalized.includes(refText))
+        || (nameText && normalized.includes(nameText));
+    })?.[0] || '';
+}
+
+function isLearningLogGroup(event = {}) {
+  const groupKey = String(event.logGroup || event.display?.logGroup || '');
+  return Boolean(event.learningLabel || event.display?.learningLabel || /^skill-/.test(groupKey));
+}
+
+function getLearningLogLabel(event = {}) {
+  if (event.learningLabel || event.display?.learningLabel) return event.learningLabel || event.display.learningLabel;
+  const groupKey = String(event.logGroup || event.display?.logGroup || '');
+  const skill = SKILL_REGISTRY[resolveSkillRefForEvent({ ...event, learningLabel: groupKey })];
+  return skill?.name ? `Learning · ${skill.name.replace(/^Learned\s+/i, '')}` : 'Learning phase';
 }
 
 function appendStructuredLogEntry(node, event, options = {}) {
@@ -317,6 +488,13 @@ function appendStructuredLogEntry(node, event, options = {}) {
       const prefix = document.createElement('span');
       prefix.className = 'structured-subline-prefix';
       prefix.textContent = meta.className === 'is-skill' ? 'SKILL' : 'TOOL';
+      if (meta.className === 'is-skill') {
+        const cleanSkillLine = line
+          .replace(/^\s*tool call\s+use skill\s*:\s*/i, 'Use Skill: ')
+          .replace(/\bLearned\s+(Region Placement|Scaffold Construction|Region Replacement|Region Cleaning)\b/gi, '$1');
+        body.replaceChildren();
+        appendHighlightedText(body, cleanSkillLine, log.highlights);
+      }
       if (meta.className === 'is-skill' && meta.skillRef) {
         const icon = document.createElement('span');
         icon.className = 'structured-subline-icon';
@@ -351,10 +529,11 @@ function appendStructuredEventToChatMessage(article, event, index, options = {})
   const text = article?.querySelector('.event-text');
   const log = createStructuredLogText(event);
   const previousActor = article?.dataset?.logLastActor || '';
-  const showHeader = Boolean(log?.actor && previousActor && log.actor !== previousActor);
+  const showHeader = isLearningLogGroup(event) || Boolean(log?.actor && previousActor && log.actor !== previousActor);
   if (!text || !appendStructuredLogEntry(text, event, { showHeader, animate: options.animate === true })) return null;
   if (log?.actor) article.dataset.logLastActor = log.actor;
   updateChatMessageMetadata(article, event, index);
+  updateChatMessageProgress(article, event);
   return article;
 }
 
@@ -396,6 +575,11 @@ function getSkillEventLabel(kind = '') {
   if (kind === 'skill-broadcast') return 'Skill broadcast';
   if (kind === 'skill-use') return 'Skill reused';
   return 'Skill event';
+}
+
+function getSkillDisplayName(skillOrRef = '') {
+  const skill = typeof skillOrRef === 'string' ? SKILL_REGISTRY[skillOrRef] : skillOrRef;
+  return String(skill?.name || skillOrRef || 'Skill').replace(/^Learned\s+/i, '');
 }
 
 function getSkillSchedule(skillRef) {
@@ -447,7 +631,7 @@ function updateSkillStateFromEvent(event, index = -1) {
   if (!Number.isFinite(skill.firstEventIndex)) skill.firstEventIndex = Number.isFinite(index) ? index : skill.events.length;
   focusedSkillRef = skill.ref;
   skill.events.push({ index, kind, room: event.group?.id || `stage-${event.stageId}`, title: stageTitle });
-  skillLibraryUnlocked = true;
+  if (skill.learned) skillLibraryUnlocked = true;
   renderSkillLibrary(skill.ref);
   renderSkillNotifications(skill.ref);
 }
@@ -455,9 +639,7 @@ function updateSkillStateFromEvent(event, index = -1) {
 function getSkillStatus(skill) {
   if (skill.published) return 'shared';
   if (skill.learned) return 'learned';
-  if (skill.traceTotal) return `trace ${Math.round(skill.traceCurrent)}/${Math.round(skill.traceTotal)}`;
-  if (skill.usedRooms.size) return `${skill.usedRooms.size} ${skill.usedRooms.size === 1 ? 'room' : 'rooms'}`;
-  return 'forming';
+  return '';
 }
 
 function summarizeRooms(rooms, emptyLabel = 'Waiting') {
@@ -484,17 +666,34 @@ function getSkillIconMarkup(skillRef = '') {
   const skill = SKILL_REGISTRY[skillRef];
   if (!skill) return '';
   const src = skill.icon;
-  const alt = `${skill.name} icon`;
+  const alt = `${getSkillDisplayName(skill)} icon`;
   return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async">`;
+}
+
+function getSkillTraceWindowMarkup(skill) {
+  const trace = skill?.trace;
+  if (!trace || !Array.isArray(trace.steps) || !trace.steps.length) return '';
+  const source = trace.source || 'Worker trace';
+  const steps = trace.steps
+    .map((step) => `<span><b>TOOL</b>${escapeHtml(step)}</span>`)
+    .join('');
+  return `
+    <span class="skill-trace-window" role="tooltip">
+      <span class="skill-trace-title">Trace source · ${escapeHtml(source)}</span>
+      <span class="skill-trace-line">[${escapeHtml(source)}] Representative tools execution</span>
+      <span class="skill-trace-steps">${steps}</span>
+      <span class="skill-trace-note">${escapeHtml(trace.note || 'Similar workers follow the same tools trace.')}</span>
+    </span>
+  `;
 }
 
 function renderSkillLibrary(activeRef = focusedSkillRef) {
   if (!skillList || !skillRoute) return;
   const skills = Object.keys(SKILL_REGISTRY).map(ensureSkillState).filter(Boolean);
-  const discoveredSkills = skills.filter((skill) => skill.learned || skill.events.length);
+  const discoveredSkills = skills.filter((skill) => skill.learned);
   skillLibrary?.classList.toggle('is-empty', discoveredSkills.length === 0);
   const title = skillLibrary?.querySelector('h3');
-  if (title) title.textContent = discoveredSkills.length ? `Skill · ${discoveredSkills.length} active` : 'Skill · discovering';
+  if (title) title.textContent = discoveredSkills.length ? `Skill · ${discoveredSkills.length} learned` : 'Skill';
   skillList.replaceChildren();
 
   discoveredSkills.forEach((skill) => {
@@ -503,20 +702,23 @@ function renderSkillLibrary(activeRef = focusedSkillRef) {
     button.className = `skill-card${skill.ref === activeRef ? ' active' : ''}`;
     button.type = 'button';
     button.dataset.skillRef = skill.ref;
+    button.style.setProperty('--skill-accent', skill.accent || '#72ffd1');
     button.setAttribute('aria-pressed', String(skill.ref === activeRef));
     const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Waiting';
     const usedBy = summarizeRooms(skill.usedRooms, 'No reuse yet');
-    button.title = `${skill.name}: ${skill.summary} Discovered in ${learnedFrom}. Used by ${usedBy}.`;
+    const skillName = getSkillDisplayName(skill);
+    button.title = `${skillName}: ${skill.summary} Discovered in ${learnedFrom}. Used by ${usedBy}.`;
     button.innerHTML = `
       <span class="skill-icon">${getSkillIconMarkup(skill.ref)}</span>
-      <span class="skill-name">${escapeHtml(skill.name)}</span>
+      <span class="skill-name">${escapeHtml(skillName)}</span>
       <span class="skill-status">${escapeHtml(getSkillStatus(skill))}</span>
-      <span class="skill-detail-grid" aria-label="${escapeHtml(skill.name)} sharing details">
+      <span class="skill-detail-grid" aria-label="${escapeHtml(skillName)} sharing details">
         <span class="skill-detail"><b>Discovered in</b><span title="${escapeHtml(learnedFrom)}">${escapeHtml(learnedFrom)}</span></span>
         <span class="skill-detail"><b>Used by</b><span title="${escapeHtml(usedBy)}">${escapeHtml(usedBy)}</span></span>
       </span>
       <span class="skill-share-line">Shown only after repeated traces produce a reusable workflow.</span>
-      <span class="skill-jump">Jump to next ${escapeHtml(skill.name)} event -></span>
+      <span class="skill-jump">Jump to next ${escapeHtml(skillName)} event -></span>
+      ${getSkillTraceWindowMarkup(skill)}
     `;
     button.addEventListener('click', () => activateSkillCard(skill.ref));
     item.append(button);
@@ -539,13 +741,34 @@ function renderSkillLibrary(activeRef = focusedSkillRef) {
   }));
 }
 
+function getSkillProgressRatio(skill) {
+  const total = Number(skill?.traceTotal || 0);
+  const current = Number(skill?.traceCurrent || 0);
+  if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(current)) return 0;
+  return Math.max(0, Math.min(1, current / total));
+}
+
+function getSkillProgressMarkup(skill) {
+  if (!skill?.traceTotal || skill.learned) return '';
+  const ratio = getSkillProgressRatio(skill);
+  const total = Number(skill.traceTotal || 0);
+  const current = Math.max(0, Math.min(Number(skill.traceCurrent || 0), total));
+  const percent = Math.round(ratio * 100);
+  return `
+    <span class="skill-notification-progress" style="--skill-progress: ${percent}%">
+      <span class="skill-notification-progress-track" aria-hidden="true"><i></i></span>
+      <span class="skill-notification-progress-text">${escapeHtml(String(Math.round(current)))} / ${escapeHtml(String(Math.round(total)))} traces</span>
+    </span>
+  `;
+}
+
 function renderSkillNotifications(activeRef = focusedSkillRef) {
   if (!skillNotificationStack) return;
   const visibleSkills = [...skillState.values()]
-    .filter((skill) => skill.learned || skill.traceTotal || skill.events.length)
+    .filter((skill) => skill.learned || Number(skill.traceTotal || 0) > 0)
     .sort((a, b) => {
-      const aIndex = Number.isFinite(a.firstEventIndex) ? a.firstEventIndex : a.learnedIndex;
-      const bIndex = Number.isFinite(b.firstEventIndex) ? b.firstEventIndex : b.learnedIndex;
+      const aIndex = Number.isFinite(a.learnedIndex) ? a.learnedIndex : a.firstEventIndex;
+      const bIndex = Number.isFinite(b.learnedIndex) ? b.learnedIndex : b.firstEventIndex;
       return (aIndex || 0) - (bIndex || 0) || a.name.localeCompare(b.name);
     });
 
@@ -556,25 +779,22 @@ function renderSkillNotifications(activeRef = focusedSkillRef) {
   visibleSkills.forEach((skill) => {
     const item = document.createElement('article');
     const isLearned = Boolean(skill.learned);
-    const traceRatio = skill.traceTotal ? Math.max(0, Math.min(1, skill.traceCurrent / skill.traceTotal)) : 0;
-    item.className = `skill-notification${skill.ref === activeRef ? ' is-current' : ''}${isLearned ? ' is-learned' : ' is-forming'}`;
+    item.className = `skill-notification ${isLearned ? 'is-learned' : 'is-collecting'}${skill.ref === activeRef ? ' is-current' : ''}`;
     item.dataset.skillRef = skill.ref;
+    item.tabIndex = 0;
     item.style.setProperty('--skill-accent', skill.accent || '#72ffd1');
-    item.style.setProperty('--skill-trace-ratio', String(traceRatio));
     const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Build Pools';
-    const notificationName = String(skill.name || 'Skill').replace(/^Learned\s+/i, '');
-    const traceText = skill.traceTotal
-      ? `Trace ${Math.round(skill.traceCurrent)}/${Math.round(skill.traceTotal)}`
-      : 'Trace forming';
-    const statusText = isLearned ? 'Learned' : traceText;
+    const notificationName = getSkillDisplayName(skill);
+    const statusText = isLearned ? 'Learned from worker trace' : 'Collecting worker trace';
     item.title = `${notificationName}. ${statusText}. ${learnedFrom}`;
     item.innerHTML = `
       <span class="skill-notification-icon">${getSkillIconMarkup(skill.ref)}</span>
       <span class="skill-notification-body">
         <b><span>${isLearned ? 'SKILL:' : 'TRACE:'}</span> ${escapeHtml(notificationName)}</b>
         <small>${escapeHtml(statusText)}</small>
-        <i aria-hidden="true"><em></em></i>
+        ${getSkillProgressMarkup(skill)}
       </span>
+      ${isLearned ? getSkillTraceWindowMarkup(skill) : ''}
     `;
     skillNotificationStack.append(item);
   });
@@ -698,11 +918,63 @@ function getEventProgress(event = {}) {
   return event.progress || event.display?.progress || null;
 }
 
+function getChunkProgressState(event = {}) {
+  const progress = getEventProgress(event);
+  if (!progress) return null;
+  const label = String(progress.label || '');
+  if (/\btrace\b/i.test(label) || !/\bworkers?\b/i.test(label)) return null;
+  const total = Number(progress.total || 0);
+  const current = Number(progress.current || 0);
+  if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(current)) return null;
+  const ratio = Math.max(0, Math.min(1, current / total));
+  if (ratio <= 0) return null;
+  return {
+    ratio,
+    label: String(progress.label || '').trim()
+  };
+}
+
 function getProgressRowKey(event = {}) {
   if (getStructuredLogGroupKey(event)) return '';
   const progress = getEventProgress(event);
   if (!progress?.label) return '';
   return `${event.stageId}:${progress.label}`;
+}
+
+function updateChatMessageProgress(article, event) {
+  article.querySelector('.chunk-terminal-progress')?.remove();
+  article.querySelector('.chunk-batch-summary')?.remove();
+  const batchSummary = getEventBatchSummary(event);
+  if (batchSummary) {
+    const batchSummaryNode = createBatchSummary(batchSummary, event);
+    if (!batchSummaryNode) {
+      article.classList.remove('has-chunk-progress', 'has-batch-summary');
+      article.style.removeProperty('--chunk-progress');
+      delete article.dataset.chunkProgressLabel;
+      return;
+    }
+    const batchProgress = getBatchSummaryProgress(batchSummary, event);
+    article.classList.add('has-chunk-progress', 'has-batch-summary');
+    article.style.setProperty('--chunk-progress', `${Math.round(batchProgress.ratio * 1000) / 10}%`);
+    article.dataset.chunkProgressLabel = batchSummary.label || '';
+    article.append(batchSummaryNode);
+    return;
+  }
+
+  const progress = getChunkProgressState(event);
+  if (!progress) {
+    article.classList.remove('has-chunk-progress', 'has-batch-summary');
+    article.style.removeProperty('--chunk-progress');
+    delete article.dataset.chunkProgressLabel;
+    return;
+  }
+  article.classList.add('has-chunk-progress');
+  article.classList.remove('has-batch-summary');
+  article.style.setProperty('--chunk-progress', `${Math.round(progress.ratio * 1000) / 10}%`);
+  if (progress.label) article.dataset.chunkProgressLabel = progress.label;
+  else delete article.dataset.chunkProgressLabel;
+  const progressNode = createTerminalProgress(getEventProgress(event));
+  if (progressNode) article.append(progressNode);
 }
 
 function updateChatMessageMetadata(article, event, index) {
@@ -713,6 +985,21 @@ function updateChatMessageMetadata(article, event, index) {
   const groupKey = getStructuredLogGroupKey(event);
   if (groupKey) article.dataset.logGroupKey = groupKey;
   else delete article.dataset.logGroupKey;
+  if (isLearningLogGroup(event)) {
+    article.classList.add('is-learning-chunk');
+    article.dataset.learningLabel = getLearningLogLabel(event);
+    const learningSkillRef = resolveSkillRefForEvent(event);
+    if (learningSkillRef) article.dataset.learningSkillRef = learningSkillRef;
+    else delete article.dataset.learningSkillRef;
+    const skillAccent = SKILL_REGISTRY[learningSkillRef]?.accent;
+    if (skillAccent) article.style.setProperty('--learning-accent', skillAccent);
+    else article.style.removeProperty('--learning-accent');
+  } else {
+    article.classList.remove('is-learning-chunk');
+    delete article.dataset.learningLabel;
+    delete article.dataset.learningSkillRef;
+    article.style.removeProperty('--learning-accent');
+  }
   const progressKey = getProgressRowKey(event);
   if (progressKey) article.dataset.progressKey = progressKey;
   else delete article.dataset.progressKey;
@@ -756,6 +1043,7 @@ function populateChatMessage(article, event, index, options = {}) {
   } else {
     article.append(time, badge, text);
   }
+  updateChatMessageProgress(article, event);
   return article;
 }
 

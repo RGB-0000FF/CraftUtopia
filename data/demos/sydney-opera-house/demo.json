@@ -124,5 +124,23 @@
       "skill": "clean_region"
     }
   ],
+  "skillLearningRanges": {
+    "build_region": [
+      38,
+      53
+    ],
+    "scaffold": [
+      101,
+      111
+    ],
+    "replace_region": [
+      139,
+      154
+    ],
+    "clean_region": [
+      185,
+      201
+    ]
+  },
   "durationSeconds": 259.48
 }

@@ -143,6 +143,51 @@ function inferSkillRefFromEvent(event = {}, display = {}) {
   return aliases.find((skill) => skill.labels.some((label) => text.includes(label)))?.ref || '';
 }
 
+function isLearningEventGroup(group = {}) {
+  return Boolean(group.learningLabel || /^skill-/.test(String(group.groupId || group.logGroup || '')));
+}
+
+function getLearningRangeForGroup(group = {}, entries = []) {
+  if (!isLearningEventGroup(group)) return null;
+  const skill = inferSkillRefFromEvent({
+    ...group,
+    action: [
+      group.action,
+      group.learningLabel,
+      group.groupId,
+      ...entries.map((entry) => entry.action)
+    ].filter(Boolean).join(' '),
+    sublines: [
+      ...(Array.isArray(group.sublines) ? group.sublines : []),
+      ...entries.flatMap((entry) => Array.isArray(entry.sublines) ? entry.sublines : [])
+    ],
+    highlights: [
+      ...(Array.isArray(group.highlights) ? group.highlights : []),
+      ...entries.flatMap((entry) => Array.isArray(entry.highlights) ? entry.highlights : [])
+    ]
+  });
+  const range = activeDemoProfile.skillLearningRanges?.[skill] || group.learningRange || group.timeRange;
+  if (!Array.isArray(range) || range.length < 2) return null;
+  const start = parseTimelineTime(range[0]);
+  const end = parseTimelineTime(range[1]);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return null;
+  return { start, end };
+}
+
+function distributeEntriesAcrossLearningRange(group = {}, entries = []) {
+  const range = getLearningRangeForGroup(group, entries);
+  if (!range || entries.length <= 1) return entries;
+  const span = range.end - range.start;
+  return entries.map((entry, index) => {
+    const defaultRatio = entries.length <= 1 ? 0 : index / (entries.length - 1);
+    const ratio = LEARNING_RANGE_ENTRY_FRACTIONS[index] ?? defaultRatio;
+    return {
+      ...entry,
+      time: formatManifestTimelineTime(range.start + (span * Math.max(0, Math.min(1, ratio))))
+    };
+  });
+}
+
 function inferSkillEventKind(event = {}, display = {}) {
   if (event.skillEvent || display.skillEvent) return event.skillEvent || display.skillEvent;
   const tool = String(event.tool || display.tool || '').trim().toLowerCase();
@@ -226,10 +271,11 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260525-log-follow';
+const DATA_ASSET_VERSION = '20260525-assigned-work';
 let runEventsManifestPath = '';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;
+const LEARNING_RANGE_ENTRY_FRACTIONS = [0, 0.72, 0.92, 1];
 
 function getRequestedDemoParam() {
   const params = new URLSearchParams(window.location.search);
@@ -341,7 +387,9 @@ function applyDemoProfile(profile = {}) {
   document.title = profile.pageTitle || profile.taskTitle || 'CraftUtopia Demo Viewer';
   if (demoProfileStylesheet) {
     if (profile.stylesheet) {
-      demoProfileStylesheet.href = siteAssetUrl(profile.stylesheet);
+      const stylesheetUrl = new URL(siteAssetUrl(profile.stylesheet));
+      stylesheetUrl.searchParams.set('v', DATA_ASSET_VERSION);
+      demoProfileStylesheet.href = stylesheetUrl.href;
       demoProfileStylesheet.disabled = false;
     } else {
       demoProfileStylesheet.removeAttribute('href');
@@ -411,7 +459,8 @@ function normalizeRunEvents(events = [], seqRef) {
 
     const { entries, ...group } = event;
     const logGroup = group.groupId || `${group.actor || 'log'}-${group.time || seqRef.value}-${groupIndex}`;
-    return entries.flatMap((entry, entryIndex) => expandTimedSublineEvent({
+    const timedEntries = distributeEntriesAcrossLearningRange(group, entries);
+    return timedEntries.flatMap((entry, entryIndex) => expandTimedSublineEvent({
       ...group,
       ...entry,
       actor: entry.actor || group.actor,
@@ -545,6 +594,7 @@ function normalizeRunEvent(event = {}, seq = 0) {
       results,
       notes,
       logGroup: event.logGroup || display.logGroup || '',
+      learningLabel: event.learningLabel || display.learningLabel || '',
       sublineOnly: Boolean(event.sublineOnly || display.sublineOnly),
       highlights: highlights.map((highlight) => String(highlight)).filter(Boolean)
     }

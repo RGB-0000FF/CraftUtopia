@@ -82,7 +82,17 @@ const SKILL_REGISTRY = {
     summary: 'Reusable bounded placement loop learned after many Workers repeat read, script, run, verify, submit.',
     learnedLabel: 'Foreman-A Build',
     sharedTo: 'Foreman-A..Foreman-E',
-    accent: '#35c9ff'
+    accent: '#35c9ff',
+    trace: {
+      source: 'Worker-001',
+      note: 'Same tools trace repeats across Worker-001..020 placement subplans.',
+      steps: [
+        'Read Subplan: Load the blocks and target positions for A-01.',
+        'Check Inventory: Confirm the required blocks for A-01.',
+        'Go To Region: Move to the target position for A-01.',
+        'Place Blocks: Place the blocks for A-01 in target positions.'
+      ]
+    }
   },
   replace_region: {
     name: 'Learned Region Replacement',
@@ -91,7 +101,18 @@ const SKILL_REGISTRY = {
     summary: 'Wrong-block and missing-block repair pattern learned when mid-build repair pressure increases.',
     learnedLabel: 'Foreman-B Build',
     sharedTo: 'Foreman-A..Foreman-E',
-    accent: '#ff5c8a'
+    accent: '#ff5c8a',
+    trace: {
+      source: 'Worker-045',
+      note: 'Same tools trace repeats across mismatch repair subplans.',
+      steps: [
+        'Read Subplan: Load the target block list for the repair area.',
+        'Scan Region: Compare placed blocks with the blueprint target.',
+        'Remove Wrong Blocks: Clear blocks that do not match the target.',
+        'Place Missing Blocks: Restore the required blocks.',
+        'Verify Region: Confirm the repaired region matches the blueprint.'
+      ]
+    }
   },
   scaffold: {
     name: 'Learned Scaffold Construction',
@@ -100,7 +121,18 @@ const SKILL_REGISTRY = {
     summary: 'Temporary support placement with cleanup markers learned from awkward high-region builds.',
     learnedLabel: 'Foreman-C Build',
     sharedTo: 'Foreman-A..Foreman-E',
-    accent: '#ffd166'
+    accent: '#ffd166',
+    trace: {
+      source: 'Worker-027',
+      note: 'Same tools trace repeats across high roof-rib access subplans.',
+      steps: [
+        'Read Subplan: Load the elevated roof-rib target area.',
+        'Check Access: Detect that the target is out of normal reach.',
+        'Place Temporary Support: Build a support path to the target.',
+        'Reach Target: Move onto the temporary support.',
+        'Remove Temporary Support: Clear support blocks after placement.'
+      ]
+    }
   },
   clean_region: {
     name: 'Learned Region Cleaning',
@@ -109,7 +141,18 @@ const SKILL_REGISTRY = {
     summary: 'Final cleanup pass for scaffold and leftover blocks while preserving valid blueprint blocks.',
     learnedLabel: 'Foreman-E Build',
     sharedTo: 'Foreman-A..Foreman-E',
-    accent: '#6ee75f'
+    accent: '#6ee75f',
+    trace: {
+      source: 'Worker-083',
+      note: 'Same tools trace repeats across final cleanup subplans.',
+      steps: [
+        'Read Cleanup Subplan: Load the scan volume for CL-03.',
+        'Scan Region: Find leftover scaffold or stray blocks.',
+        'Validate Blueprint: Keep blocks that belong to the final build.',
+        'Remove Leftovers: Clear only non-blueprint blocks.',
+        'Report Clean: Submit the cleaned volume to the foreman.'
+      ]
+    }
   }
 };
 

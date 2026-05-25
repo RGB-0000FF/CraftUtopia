@@ -1680,6 +1680,7 @@ body.is-block-count-hidden .blueprint-block-count {
 }
 
 .skill-card {
+  position: relative;
   width: 100%;
   min-height: 68px;
   display: grid;
@@ -2230,6 +2231,57 @@ body.is-block-count-hidden .blueprint-block-count {
   border-color: rgba(116,214,196,0.36);
   border-left-color: var(--aether);
   box-shadow: inset 0 1px rgba(255,255,255,0.08), 0 14px 28px rgba(0,0,0,0.18), 0 0 26px rgba(116,214,196,0.14);
+}
+
+.event-row.is-learning-chunk {
+  --learning-accent: #72ffd1;
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 7px;
+  margin-bottom: 12px;
+  padding: 28px 13px 12px;
+  border-color: color-mix(in srgb, var(--learning-accent) 24%, transparent);
+  border-left-color: color-mix(in srgb, var(--learning-accent) 62%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--learning-accent) 8%, transparent), rgba(116,214,196,0.030)),
+    linear-gradient(180deg, rgba(255,255,255,0.030), rgba(255,255,255,0.010)),
+    rgba(4,8,6,0.58);
+  box-shadow: inset 0 1px rgba(255,255,255,0.06), 0 12px 26px rgba(0,0,0,0.16);
+}
+
+.event-row.is-learning-chunk[data-skill-ref] {
+  border-color: color-mix(in srgb, var(--learning-accent) 30%, transparent);
+  border-left-color: color-mix(in srgb, var(--learning-accent) 72%, transparent);
+  box-shadow: inset 0 1px rgba(255,255,255,0.06), 0 12px 26px rgba(0,0,0,0.16), 0 0 18px color-mix(in srgb, var(--learning-accent) 10%, transparent);
+}
+
+.event-row.is-learning-chunk::before {
+  content: attr(data-learning-label);
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  max-width: calc(100% - 24px);
+  color: color-mix(in srgb, var(--learning-accent) 76%, #ffffff);
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.event-row.is-learning-chunk::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  border-bottom: 2px dashed color-mix(in srgb, var(--learning-accent) 36%, rgba(143,255,194,0.32));
+  opacity: 0.82;
+  pointer-events: none;
 }
 
 .event-time {
@@ -3968,7 +4020,6 @@ body.is-block-count-hidden .blueprint-block-count {
 
 .skill-notification {
   --skill-accent: #72ffd1;
-  --skill-trace-ratio: 0;
   position: relative;
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
@@ -3977,7 +4028,7 @@ body.is-block-count-hidden .blueprint-block-count {
   min-width: 0;
   min-height: 42px;
   padding: 5px 7px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid color-mix(in srgb, var(--skill-accent) 42%, transparent);
   border-radius: 6px;
   color: #eaffef;
@@ -4000,13 +4051,17 @@ body.is-block-count-hidden .blueprint-block-count {
   border-color: color-mix(in srgb, var(--skill-accent) 64%, transparent);
 }
 
-.skill-notification.is-forming {
-  border-style: dashed;
+.skill-notification.is-collecting {
+  border-color: color-mix(in srgb, var(--skill-accent) 30%, transparent);
+  color: rgba(234,255,239,0.82);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--skill-accent) 10%, transparent), rgba(255,255,255,0.012)),
+    rgba(4,13,9,0.74);
+  box-shadow: inset 0 1px rgba(255,255,255,0.045);
 }
 
-.skill-notification.is-forming .skill-notification-icon {
-  opacity: 0.72;
-  filter: saturate(0.78);
+.skill-notification.is-collecting .skill-notification-icon {
+  opacity: 0.82;
 }
 
 .skill-notification-icon {
@@ -4066,30 +4121,137 @@ body.is-block-count-hidden .blueprint-block-count {
   white-space: normal;
 }
 
-.skill-notification-body i {
+.skill-notification-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  margin-top: 2px;
+}
+
+.skill-notification-progress-track {
+  position: relative;
   display: block;
-  width: 100%;
   height: 4px;
   overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--skill-accent) 22%, transparent);
   border-radius: 999px;
-  background: rgba(255,255,255,0.10);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+  background: rgba(180,255,214,0.08);
 }
 
-.skill-notification-body i em {
-  display: block;
-  width: 100%;
-  height: 100%;
+.skill-notification-progress-track i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--skill-progress, 0%);
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--skill-accent), color-mix(in srgb, var(--skill-accent) 48%, white));
-  box-shadow: 0 0 10px color-mix(in srgb, var(--skill-accent) 34%, transparent);
-  transform: scaleX(var(--skill-trace-ratio));
-  transform-origin: left center;
-  transition: transform 220ms ease;
+  background: linear-gradient(90deg, var(--skill-accent), color-mix(in srgb, var(--skill-accent) 58%, white));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--skill-accent) 30%, transparent);
 }
 
-.skill-notification.is-learned .skill-notification-body i em {
-  transform: scaleX(1);
+.skill-notification-progress-text {
+  color: color-mix(in srgb, var(--skill-accent) 72%, #dfffee);
+  font-size: 0.48rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.skill-trace-window {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 40;
+  width: min(380px, calc(100vw - 48px));
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+  border: 1px solid color-mix(in srgb, var(--skill-accent, #72ffd1) 44%, transparent);
+  border-radius: 7px;
+  color: #eaffef;
+  background:
+    linear-gradient(180deg, rgba(8,18,14,0.97), rgba(2,8,5,0.98)),
+    radial-gradient(circle at 0 0, color-mix(in srgb, var(--skill-accent, #72ffd1) 16%, transparent), transparent 9rem);
+  box-shadow: 0 18px 42px rgba(0,0,0,0.42), 0 0 22px color-mix(in srgb, var(--skill-accent, #72ffd1) 16%, transparent);
+  font-family: var(--font-mono);
+  text-align: left;
+}
+
+.skill-notification:nth-child(even) .skill-trace-window {
+  left: auto;
+  right: 0;
+}
+
+.skill-card .skill-trace-window {
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translate(-50%, -4px);
+}
+
+.skill-notification:hover .skill-trace-window,
+.skill-notification:focus .skill-trace-window,
+.skill-notification:focus-visible .skill-trace-window,
+.skill-card:hover .skill-trace-window,
+.skill-card:focus .skill-trace-window,
+.skill-card:focus-visible .skill-trace-window {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.skill-card:hover .skill-trace-window,
+.skill-card:focus .skill-trace-window,
+.skill-card:focus-visible .skill-trace-window {
+  transform: translate(-50%, 0);
+}
+
+.skill-trace-title {
+  color: color-mix(in srgb, var(--skill-accent, #72ffd1) 88%, #ffffff);
+  font-size: 0.58rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.skill-trace-line,
+.skill-trace-note {
+  color: rgba(205,255,223,0.68);
+  font-size: 0.56rem;
+  line-height: 1.35;
+}
+
+.skill-trace-steps {
+  display: grid;
+  gap: 4px;
+}
+
+.skill-trace-steps span {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+  padding: 5px 6px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 5px;
+  background: rgba(255,255,255,0.035);
+  color: rgba(234,255,239,0.86);
+  font-size: 0.54rem;
+  line-height: 1.28;
+}
+
+.skill-trace-steps b {
+  color: #031008;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--skill-accent, #72ffd1) 72%, #ffffff);
+  font-size: 0.46rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
 }
 
 .console-log .chat-feed,
@@ -4518,6 +4680,134 @@ body.is-block-count-hidden .blueprint-block-count {
 .structured-progress-text {
   white-space: nowrap;
   color: rgba(224,255,180,0.74);
+}
+
+.terminal-log-line.has-chunk-progress {
+  position: relative;
+}
+
+.terminal-log-line.has-chunk-progress:not(.is-learning-chunk)::before {
+  display: none;
+}
+
+.chunk-terminal-progress {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 8px 0 0;
+  padding: 5px 8px;
+  overflow: hidden;
+  border: 1px solid rgba(116,214,196,0.16);
+  border-radius: 5px;
+  color: rgba(197,255,218,0.84);
+  background:
+    linear-gradient(90deg, rgba(85,255,164,0.055), rgba(53,201,255,0.030)),
+    rgba(0,0,0,0.22);
+  box-shadow: inset 0 1px rgba(255,255,255,0.035);
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  font-weight: 860;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chunk-terminal-progress.is-complete {
+  border-color: rgba(85,255,164,0.20);
+  color: rgba(217,255,226,0.76);
+  background:
+    linear-gradient(90deg, rgba(85,255,164,0.045), rgba(85,255,164,0.018)),
+    rgba(0,0,0,0.18);
+}
+
+.chunk-batch-summary {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 9px 0 0;
+  padding: 8px 9px;
+  border: 1px solid rgba(116,214,196,0.18);
+  border-radius: 6px;
+  color: rgba(213,255,228,0.88);
+  background:
+    linear-gradient(90deg, rgba(85,255,164,0.060), rgba(53,201,255,0.035)),
+    rgba(0,0,0,0.25);
+  box-shadow: inset 0 1px rgba(255,255,255,0.040);
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  font-weight: 820;
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+.chunk-batch-summary-header,
+.chunk-batch-summary-rows,
+.chunk-batch-summary-row {
+  display: block;
+  min-width: 0;
+}
+
+.chunk-batch-summary-header {
+  color: rgba(231,255,239,0.92);
+  font-weight: 920;
+}
+
+.chunk-batch-summary-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chunk-batch-summary-bar {
+  display: block;
+  margin-top: 2px;
+  color: rgba(190,255,211,0.72);
+  white-space: nowrap;
+}
+
+.chunk-batch-summary-rows {
+  margin-top: 6px;
+}
+
+.chunk-batch-summary-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto auto;
+  gap: 7px;
+  align-items: baseline;
+  padding-top: 3px;
+}
+
+.chunk-batch-summary-kind {
+  font-size: 0.78em;
+  font-weight: 980;
+  color: rgba(129,236,255,0.80);
+}
+
+.chunk-batch-summary-row.is-skill .chunk-batch-summary-kind {
+  color: rgba(119,255,180,0.88);
+}
+
+.chunk-batch-summary-name {
+  overflow: hidden;
+  color: rgba(232,255,240,0.86);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chunk-batch-summary-amount {
+  color: rgba(203,226,215,0.74);
+  white-space: nowrap;
+}
+
+.chunk-batch-summary-note {
+  color: rgba(255,224,75,0.82);
+  white-space: nowrap;
+}
+
+.chunk-batch-summary-row.is-tools .chunk-batch-summary-note {
+  color: rgba(129,236,255,0.72);
 }
 
 .terminal-log-line.is-structured[data-event-kind^="TOOL"] .structured-kind {

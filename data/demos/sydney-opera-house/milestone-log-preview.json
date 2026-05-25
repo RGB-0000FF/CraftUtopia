@@ -191,7 +191,7 @@
                   "tools": "Tool call Split Regions: convert Regions A-E into worker subplans."
                 },
                 {
-                  "tools": "Tool call Assign Subplans: send one subplan to each worker lane."
+                  "tools": "Tool call Assign Subplans: send one subplan to each worker."
                 },
                 {
                   "tools": "Tool call Start Build: open the five region queues in parallel."
@@ -204,11 +204,23 @@
         {
           "groupId": "chunk-worker-001-020-placement-trace",
           "time": "00:35.0",
+          "batchSummary": {
+            "label": "Workers 001-020 assigned work",
+            "total": 20,
+            "tools": [
+              {
+                "label": "Region Placement trace",
+                "count": 20,
+                "status": "collected"
+              }
+            ],
+            "unit": "work items"
+          },
           "entries": [
             {
               "time": "00:35.0",
               "actor": "Foreman-A",
-              "action": "Worker-001..020 start Region A subplans in parallel.",
+              "action": "Foreman-A assigns A-01 through A-20 to Worker-001..020; each worker starts one placement subplan with basic tools.",
               "highlights": [
                 "Worker-001",
                 "Worker-020",
@@ -220,7 +232,7 @@
                 }
               ],
               "progress": {
-                "label": "Placement trace",
+                "label": "Workers 001-020 assigned work",
                 "current": 4,
                 "total": 20
               },
@@ -248,7 +260,7 @@
                 }
               ],
               "progress": {
-                "label": "Placement trace",
+                "label": "Workers 001-020 assigned work",
                 "current": 8,
                 "total": 20
               },
@@ -270,7 +282,7 @@
               ],
               "sublines": [],
               "progress": {
-                "label": "Placement trace",
+                "label": "Workers 001-020 assigned work",
                 "current": 16,
                 "total": 20
               },
@@ -291,13 +303,9 @@
                 "matching traces",
                 "Foreman-A"
               ],
-              "sublines": [
-                {
-                  "results": "Result: placement trace collected 20/20."
-                }
-              ],
+              "sublines": [],
               "progress": {
-                "label": "Placement trace",
+                "label": "Workers 001-020 assigned work",
                 "current": 20,
                 "total": 20
               },
@@ -313,6 +321,7 @@
         },
         {
           "groupId": "skill-region-placement",
+          "learningLabel": "Learning · Region Placement",
           "time": "00:37.2",
           "entries": [
             {
@@ -332,7 +341,7 @@
             {
               "time": "00:39.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager creates Learned Region Placement from the collected placement trace.",
+              "action": "ProjectManager reviews the repeated worker trace and creates Learned Region Placement.",
               "highlights": [
                 "Create Skill",
                 "Learned Region Placement"
@@ -348,19 +357,30 @@
             },
             {
               "time": "00:40.2",
-              "actor": "Worker-021..024",
-              "action": "New workers receive similar region subplans and use Learned Region Placement.",
+              "actor": "ProjectManager",
+              "action": "ProjectManager sends Learned Region Placement back to Foreman-A for distribution.",
               "highlights": [
-                "Use Skill",
                 "Learned Region Placement",
-                "Worker-021"
+                "Foreman-A"
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Placement on subplans B-01..B-04."
-                },
+                  "tools": "Tool call Publish Skill: Send Learned Region Placement to Foreman-A."
+                }
+              ]
+            },
+            {
+              "time": "00:41.0",
+              "actor": "Foreman-A",
+              "action": "Foreman-A broadcasts Learned Region Placement to workers handling similar placement subplans.",
+              "highlights": [
+                "Broadcast Skill",
+                "Learned Region Placement",
+                "workers"
+              ],
+              "sublines": [
                 {
-                  "results": "Result: blocks are placed and reported to the assigned foremen."
+                  "tools": "Tool call Broadcast Skill: Learned Region Placement to the worker pool."
                 }
               ]
             }
@@ -368,12 +388,30 @@
         },
         {
           "groupId": "chunk-worker-001-020-placement",
-          "time": "00:48.0",
+          "time": "00:58.0",
+          "batchSummary": {
+            "label": "Workers 001-020 assigned work",
+            "total": 20,
+            "skills": [
+              {
+                "label": "Region Placement",
+                "count": 14
+              }
+            ],
+            "tools": [
+              {
+                "label": "Scaffold trace",
+                "count": 6,
+                "status": "emerging"
+              }
+            ],
+            "unit": "work items"
+          },
           "entries": [
             {
-              "time": "00:48.0",
+              "time": "00:58.0",
               "actor": "Foreman-A",
-              "action": "Worker-001..020 build the first shell wave, mostly using the new Region Placement workflow.",
+              "action": "Foreman-A assigns shell work to Worker-001..020: Worker-001..014 place shell and podium blocks with Region Placement, while Worker-015..020 handle high-reach blocks with basic tools.",
               "highlights": [
                 "Worker-001",
                 "Worker-020",
@@ -385,13 +423,13 @@
                 }
               ],
               "progress": {
-                "label": "Workers 001-020",
+                "label": "Workers 001-020 assigned work",
                 "current": 4,
                 "total": 20
               }
             },
             {
-              "time": "00:54.0",
+              "time": "01:02.0",
               "actor": "Worker-001..008",
               "action": "Used Learned Region Placement for lower shell blocks and podium edge placement.",
               "highlights": [
@@ -401,44 +439,44 @@
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Placement on subplans A-04..A-11."
+                  "skills": "Use Skill: Region Placement on subplans A-04..A-11."
                 },
                 {
                   "results": "Result: lower shell and podium edge blocks are placed."
                 }
               ],
               "progress": {
-                "label": "Workers 001-020",
+                "label": "Workers 001-020 assigned work",
                 "current": 8,
                 "total": 20
               }
             },
             {
-              "time": "01:00.0",
+              "time": "01:06.0",
               "actor": "Worker-009..014",
-              "action": "Used Region Placement on curved roof slices; high-reach support work starts appearing during this wave.",
+              "action": "Used Region Placement on curved roof slices; high-reach support work starts appearing during this assignment.",
               "highlights": [
                 "Learned Region Placement",
                 "high-reach"
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Placement on subplans A-12..A-17."
+                  "skills": "Use Skill: Region Placement on subplans A-12..A-17."
                 },
                 {
                   "results": "Result: curved roof placement continues; high-reach support needs follow-up."
                 }
               ],
               "progress": {
-                "label": "Workers 001-020",
+                "label": "Workers 001-020 assigned work",
                 "current": 14,
                 "total": 20
               }
             },
             {
-              "time": "01:06.0",
+              "time": "01:10.0",
               "actor": "Worker-015..020",
-              "action": "Completed the first shell wave and handed the high-reach support issue to Foreman-C.",
+              "action": "Completed the assigned shell work and handed the high-reach support issue to Foreman-C.",
               "highlights": [
                 "Worker-015",
                 "Worker-020",
@@ -450,7 +488,7 @@
                 }
               ],
               "progress": {
-                "label": "Workers 001-020",
+                "label": "Workers 001-020 assigned work",
                 "current": 20,
                 "total": 20
               }
@@ -460,11 +498,29 @@
         {
           "groupId": "chunk-worker-021-040-placement-accumulating-scaffold",
           "time": "01:12.0",
+          "batchSummary": {
+            "label": "Workers 021-040 assigned work",
+            "total": 20,
+            "skills": [
+              {
+                "label": "Region Placement",
+                "count": 5
+              }
+            ],
+            "tools": [
+              {
+                "label": "Scaffold trace",
+                "count": 15,
+                "status": "collected"
+              }
+            ],
+            "unit": "work items"
+          },
           "entries": [
             {
               "time": "01:12.0",
               "actor": "Foreman-C",
-              "action": "Worker-021 through Worker-040 build the roof ribs; placement matches the existing workflow, but elevated supports need extra work.",
+              "action": "Foreman-C assigns roof rib subplans to Worker-021..040: Worker-021..026 place reachable ribs with Region Placement, while Worker-027..040 build high ribs with temporary supports.",
               "highlights": [
                 "Worker-021",
                 "Worker-040",
@@ -477,7 +533,7 @@
                 }
               ],
               "progress": {
-                "label": "Scaffold trace",
+                "label": "Workers 021-040 assigned work",
                 "current": 4,
                 "total": 20
               },
@@ -500,11 +556,11 @@
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Placement on subplans C-01..C-06."
+                  "skills": "Use Skill: Region Placement on subplans C-01..C-06."
                 }
               ],
               "progress": {
-                "label": "Scaffold trace",
+                "label": "Workers 021-040 assigned work",
                 "current": 8,
                 "total": 20
               },
@@ -530,7 +586,7 @@
                 }
               ],
               "progress": {
-                "label": "Scaffold trace",
+                "label": "Workers 021-040 assigned work",
                 "current": 15,
                 "total": 20
               },
@@ -545,9 +601,9 @@
             {
               "time": "01:33.0",
               "actor": "Worker-034..040",
-              "action": "Finished the roof rib wave; ProjectManager now has enough support examples to create a workflow.",
+              "action": "Finished the assigned roof rib work; ProjectManager now has enough support examples to create a workflow.",
               "highlights": [
-                "roof rib wave",
+                "roof rib work",
                 "support examples"
               ],
               "sublines": [
@@ -556,7 +612,7 @@
                 }
               ],
               "progress": {
-                "label": "Scaffold trace",
+                "label": "Workers 021-040 assigned work",
                 "current": 20,
                 "total": 20
               },
@@ -572,6 +628,7 @@
         },
         {
           "groupId": "skill-scaffold-construction",
+          "learningLabel": "Learning · Scaffold Construction",
           "time": "01:39.2",
           "entries": [
             {
@@ -592,7 +649,7 @@
             {
               "time": "01:41.0",
               "actor": "ProjectManager",
-              "action": "Created Learned Scaffold Construction from the roof support pattern.",
+              "action": "ProjectManager reviews the repeated roof-support trace and creates Learned Scaffold Construction.",
               "highlights": [
                 "Create Skill",
                 "Learned Scaffold Construction"
@@ -608,19 +665,30 @@
             },
             {
               "time": "01:46.0",
-              "actor": "Worker-041..044",
-              "action": "Immediately used Learned Scaffold Construction for the next elevated roof supports.",
+              "actor": "ProjectManager",
+              "action": "ProjectManager sends Learned Scaffold Construction back to Foreman-C.",
               "highlights": [
-                "Use Skill",
                 "Learned Scaffold Construction",
-                "Worker-041"
+                "Foreman-C"
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Scaffold Construction on subplans D-01..D-04."
-                },
+                  "tools": "Tool call Publish Skill: Send Learned Scaffold Construction to Foreman-C."
+                }
+              ]
+            },
+            {
+              "time": "01:47.0",
+              "actor": "Foreman-C",
+              "action": "Foreman-C broadcasts Learned Scaffold Construction to workers assigned elevated support work.",
+              "highlights": [
+                "Broadcast Skill",
+                "Learned Scaffold Construction",
+                "workers"
+              ],
+              "sublines": [
                 {
-                  "results": "Result: elevated roof supports are reachable with one skill call."
+                  "tools": "Tool call Broadcast Skill: Learned Scaffold Construction to the worker pool."
                 }
               ]
             }
@@ -628,12 +696,34 @@
         },
         {
           "groupId": "chunk-worker-041-060-placement-scaffold",
-          "time": "01:52.0",
+          "time": "01:54.0",
+          "batchSummary": {
+            "label": "Workers 041-060 assigned work",
+            "total": 20,
+            "skills": [
+              {
+                "label": "Region Placement",
+                "count": 6
+              },
+              {
+                "label": "Scaffold Construction",
+                "count": 5
+              }
+            ],
+            "tools": [
+              {
+                "label": "Region Replacement trace",
+                "count": 9,
+                "status": "collected"
+              }
+            ],
+            "unit": "work items"
+          },
           "entries": [
             {
-              "time": "01:52.0",
+              "time": "01:54.0",
               "actor": "Foreman-D",
-              "action": "Worker-041 through Worker-060 assemble the roof shell using placement and scaffold workflows, then find block mismatches.",
+              "action": "Foreman-D assigns roof shell work to Worker-041..060: Worker-041..046 place reachable shell blocks, Worker-047..051 handle high roof access with Scaffold Construction, and Worker-052..060 repair mismatched blocks with basic tools.",
               "highlights": [
                 "Worker-041",
                 "Worker-060",
@@ -643,7 +733,7 @@
               ],
               "sublines": [],
               "progress": {
-                "label": "Repair trace",
+                "label": "Workers 041-060 assigned work",
                 "current": 4,
                 "total": 20
               },
@@ -656,7 +746,7 @@
               }
             },
             {
-              "time": "01:59.0",
+              "time": "02:02.0",
               "actor": "Worker-041..047",
               "action": "Used placement for shell blocks and scaffold for the high roof lip.",
               "highlights": [
@@ -666,17 +756,17 @@
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Placement on D-01..D-07."
+                  "skills": "Use Skill: Region Placement on D-01..D-07."
                 },
                 {
-                  "skills": "Tool call Use Skill: Learned Scaffold Construction for high roof access."
+                  "skills": "Use Skill: Scaffold Construction for high roof access."
                 },
                 {
                   "results": "Result: high roof lip blocks placed and reported to Foreman-D."
                 }
               ],
               "progress": {
-                "label": "Repair trace",
+                "label": "Workers 041-060 assigned work",
                 "current": 8,
                 "total": 20
               },
@@ -689,7 +779,7 @@
               }
             },
             {
-              "time": "02:06.0",
+              "time": "02:10.0",
               "actor": "Worker-048..054",
               "action": "Found mismatched placeholder blocks from the imported blueprint and fixed them with basic tools.",
               "highlights": [
@@ -702,7 +792,7 @@
                 }
               ],
               "progress": {
-                "label": "Repair trace",
+                "label": "Workers 041-060 assigned work",
                 "current": 15,
                 "total": 20
               },
@@ -715,9 +805,9 @@
               }
             },
             {
-              "time": "02:13.0",
+              "time": "02:17.0",
               "actor": "Worker-055..060",
-              "action": "Completed the roof shell wave; Foreman-B now has enough block-repair examples to request a workflow.",
+              "action": "Completed the assigned roof shell work; Foreman-B now has enough block-repair examples to request a workflow.",
               "highlights": [
                 "roof shell",
                 "block repair"
@@ -728,7 +818,7 @@
                 }
               ],
               "progress": {
-                "label": "Repair trace",
+                "label": "Workers 041-060 assigned work",
                 "current": 20,
                 "total": 20
               },
@@ -744,6 +834,7 @@
         },
         {
           "groupId": "skill-region-replacement",
+          "learningLabel": "Learning · Region Replacement",
           "time": "02:17.2",
           "entries": [
             {
@@ -764,7 +855,7 @@
             {
               "time": "02:19.0",
               "actor": "ProjectManager",
-              "action": "Created Learned Region Replacement from the block-repair pattern.",
+              "action": "ProjectManager reviews the repeated block-repair trace and creates Learned Region Replacement.",
               "highlights": [
                 "Create Skill",
                 "Learned Region Replacement"
@@ -780,19 +871,30 @@
             },
             {
               "time": "02:24.0",
-              "actor": "Worker-061..064",
-              "action": "Used Learned Region Replacement on the next mismatch cluster and reported clean repair results.",
+              "actor": "ProjectManager",
+              "action": "ProjectManager sends Learned Region Replacement back to Foreman-B.",
               "highlights": [
-                "Use Skill",
                 "Learned Region Replacement",
-                "Worker-061"
+                "Foreman-B"
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Replacement on subplans B-21..B-24."
-                },
+                  "tools": "Tool call Publish Skill: Send Learned Region Replacement to Foreman-B."
+                }
+              ]
+            },
+            {
+              "time": "02:25.0",
+              "actor": "Foreman-B",
+              "action": "Foreman-B broadcasts Learned Region Replacement to workers assigned mismatch repair tasks.",
+              "highlights": [
+                "Broadcast Skill",
+                "Learned Region Replacement",
+                "workers"
+              ],
+              "sublines": [
                 {
-                  "results": "Result: mismatch cluster repaired and verified."
+                  "tools": "Tool call Broadcast Skill: Learned Region Replacement to the worker pool."
                 }
               ]
             }
@@ -800,12 +902,38 @@
         },
         {
           "groupId": "chunk-worker-061-080-mixed-skills-accumulating-cleanup",
-          "time": "02:31.0",
+          "time": "02:38.0",
+          "batchSummary": {
+            "label": "Workers 061-080 assigned work",
+            "total": 20,
+            "skills": [
+              {
+                "label": "Region Placement",
+                "count": 5
+              },
+              {
+                "label": "Scaffold Construction",
+                "count": 4
+              },
+              {
+                "label": "Region Replacement",
+                "count": 5
+              }
+            ],
+            "tools": [
+              {
+                "label": "Region Cleaning trace",
+                "count": 6,
+                "status": "collecting"
+              }
+            ],
+            "unit": "work items"
+          },
           "entries": [
             {
-              "time": "02:31.0",
+              "time": "02:38.0",
               "actor": "Foreman-E",
-              "action": "Worker-061 through Worker-080 close the remaining regions, using the three discovered workflows where they fit.",
+              "action": "Foreman-E assigns region closure to Worker-061..080: placement, scaffold, and replacement work run in parallel, while the last workers clean leftover support blocks with basic tools.",
               "highlights": [
                 "Worker-061",
                 "Worker-080",
@@ -813,13 +941,13 @@
               ],
               "sublines": [],
               "progress": {
-                "label": "Workers 061-080",
+                "label": "Workers 061-080 assigned work",
                 "current": 2,
                 "total": 20
               }
             },
             {
-              "time": "02:38.0",
+              "time": "02:45.0",
               "actor": "Worker-061..067",
               "action": "Used placement, scaffold, and replacement workflows on the final region blocks.",
               "highlights": [
@@ -830,23 +958,23 @@
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Placement on E-01..E-07."
+                  "skills": "Use Skill: Region Placement on E-01..E-07."
                 },
                 {
-                  "skills": "Tool call Use Skill: Learned Scaffold Construction for roof edge access."
+                  "skills": "Use Skill: Scaffold Construction for roof edge access."
                 },
                 {
-                  "skills": "Tool call Use Skill: Learned Region Replacement for mismatch repairs."
+                  "skills": "Use Skill: Region Replacement for mismatch repairs."
                 }
               ],
               "progress": {
-                "label": "Workers 061-080",
+                "label": "Workers 061-080 assigned work",
                 "current": 7,
                 "total": 20
               }
             },
             {
-              "time": "02:47.0",
+              "time": "02:54.0",
               "actor": "Worker-068..074",
               "action": "Removed leftover temporary supports with basic tools; the same cleanup job keeps appearing.",
               "highlights": [
@@ -859,8 +987,8 @@
                 }
               ],
               "progress": {
-                "label": "Cleanup trace",
-                "current": 8,
+                "label": "Workers 061-080 assigned work",
+                "current": 14,
                 "total": 20
               },
               "skill": "clean_region",
@@ -872,7 +1000,7 @@
               }
             },
             {
-              "time": "02:56.0",
+              "time": "03:01.0",
               "actor": "Worker-075..080",
               "action": "Finished region closure and handed the recurring cleanup work to verification.",
               "highlights": [
@@ -885,8 +1013,8 @@
                 }
               ],
               "progress": {
-                "label": "Cleanup trace",
-                "current": 14,
+                "label": "Workers 061-080 assigned work",
+                "current": 20,
                 "total": 20
               },
               "skill": "clean_region",
@@ -972,6 +1100,7 @@
         },
         {
           "groupId": "skill-region-cleaning",
+          "learningLabel": "Learning · Region Cleaning",
           "time": "03:03.2",
           "entries": [
             {
@@ -991,7 +1120,7 @@
             {
               "time": "03:05.0",
               "actor": "ProjectManager",
-              "action": "Created Learned Region Cleaning for the final cleanup wave.",
+              "action": "ProjectManager reviews the repeated cleanup trace and creates Learned Region Cleaning.",
               "highlights": [
                 "Create Skill",
                 "Learned Region Cleaning"
@@ -1007,19 +1136,30 @@
             },
             {
               "time": "03:10.0",
-              "actor": "Worker-081..084",
-              "action": "Used Learned Region Cleaning on the first cleanup cluster and confirmed the local scan was clean.",
+              "actor": "ProjectManager",
+              "action": "ProjectManager sends Learned Region Cleaning back to Foreman-E.",
               "highlights": [
-                "Use Skill",
                 "Learned Region Cleaning",
-                "Worker-081"
+                "Foreman-E"
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Cleaning on cleanup subplans CL-01..CL-04."
-                },
+                  "tools": "Tool call Publish Skill: Send Learned Region Cleaning to Foreman-E."
+                }
+              ]
+            },
+            {
+              "time": "03:11.0",
+              "actor": "Foreman-E",
+              "action": "Foreman-E broadcasts Learned Region Cleaning to workers assigned cleanup subplans.",
+              "highlights": [
+                "Broadcast Skill",
+                "Learned Region Cleaning",
+                "workers"
+              ],
+              "sublines": [
                 {
-                  "results": "Result: CL-01 through CL-04 are clean."
+                  "tools": "Tool call Broadcast Skill: Learned Region Cleaning to the worker pool."
                 }
               ]
             }
@@ -1027,12 +1167,27 @@
         },
         {
           "groupId": "chunk-worker-081-100-cleanup",
-          "time": "03:18.0",
+          "time": "03:24.0",
+          "batchSummary": {
+            "label": "Workers 081-100 assigned work",
+            "total": 20,
+            "skills": [
+              {
+                "label": "Region Cleaning",
+                "count": 16
+              },
+              {
+                "label": "Region Replacement",
+                "count": 4
+              }
+            ],
+            "unit": "work items"
+          },
           "entries": [
             {
-              "time": "03:18.0",
+              "time": "03:24.0",
               "actor": "Foreman-E",
-              "action": "Worker-081 through Worker-100 run the cleanup wave with Learned Region Cleaning.",
+              "action": "Foreman-E assigns cleanup to Worker-081..100: most workers scan and clean with Region Cleaning, while the last workers handle final exposed mismatches with Region Replacement.",
               "highlights": [
                 "Worker-081",
                 "Worker-100",
@@ -1044,13 +1199,13 @@
                 }
               ],
               "progress": {
-                "label": "Workers 081-100",
+                "label": "Workers 081-100 assigned work",
                 "current": 3,
                 "total": 20
               }
             },
             {
-              "time": "03:25.0",
+              "time": "03:31.0",
               "actor": "Worker-081..087",
               "action": "Used Learned Region Cleaning for leftover scaffold blocks around the lower shell.",
               "highlights": [
@@ -1060,20 +1215,20 @@
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Cleaning on CL-01..CL-07."
+                  "skills": "Use Skill: Region Cleaning on CL-01..CL-07."
                 },
                 {
                   "results": "Result: lower shell cleanup scan is clean."
                 }
               ],
               "progress": {
-                "label": "Workers 081-100",
+                "label": "Workers 081-100 assigned work",
                 "current": 7,
                 "total": 20
               }
             },
             {
-              "time": "03:33.0",
+              "time": "03:39.0",
               "actor": "Worker-088..094",
               "action": "Used cleaning for temporary supports around the roof ribs, then used replacement on one exposed mismatch.",
               "highlights": [
@@ -1082,23 +1237,23 @@
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Cleaning on CL-08..CL-14."
+                  "skills": "Use Skill: Region Cleaning on CL-08..CL-14."
                 },
                 {
-                  "skills": "Tool call Use Skill: Learned Region Replacement for one exposed roof rib block."
+                  "skills": "Use Skill: Region Replacement for one exposed roof rib block."
                 },
                 {
                   "results": "Result: roof rib cleanup and repair are verified."
                 }
               ],
               "progress": {
-                "label": "Workers 081-100",
+                "label": "Workers 081-100 assigned work",
                 "current": 14,
                 "total": 20
               }
             },
             {
-              "time": "03:42.0",
+              "time": "03:48.0",
               "actor": "Worker-095..100",
               "action": "Completed the final cleanup subplans and reported every scanned volume as clean.",
               "highlights": [
@@ -1107,14 +1262,14 @@
               ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Cleaning on CL-15..CL-20."
+                  "skills": "Use Skill: Region Cleaning on CL-15..CL-20."
                 },
                 {
-                  "results": "Result: cleanup wave complete; no leftover support blocks remain."
+                  "results": "Result: assigned cleanup and repair work is complete; no leftover support blocks remain."
                 }
               ],
               "progress": {
-                "label": "Workers 081-100",
+                "label": "Workers 081-100 assigned work",
                 "current": 20,
                 "total": 20
               }
@@ -1128,7 +1283,7 @@
             {
               "time": "03:52.0",
               "actor": "ProjectManager",
-              "action": "Ran the final blueprint comparison after the cleanup wave completed.",
+              "action": "Ran the final blueprint comparison after cleanup and repair work completed.",
               "highlights": [
                 "final blueprint comparison"
               ],
