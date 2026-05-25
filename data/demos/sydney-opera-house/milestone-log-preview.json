@@ -1,6 +1,7 @@
 {
-  "version": "sydney-milestone-log-preview-v2",
+  "version": "sydney-opera-house-readable-worker-chunks-20260525",
   "title": "Sydney Opera House with 100 Agents",
+  "intro": "BOOT runtime started · Sydney Opera House with 100 Agents · readable log grouped by worker range and discovered workflow state",
   "milestones": [
     {
       "id": "transfer-blueprint",
@@ -156,14 +157,17 @@
         },
         {
           "time": "00:31",
-          "actor": "Foreman-[A-E]",
+          "actor": "Foreman-A..E",
           "entries": [
             {
               "time": "00:31",
-              "action": "I'll launch 20 workers to construct the designated region.",
+              "action": "Each foreman launches 20 workers for its assigned region.",
               "highlights": [
-                "20 workers"
-              ]
+                "Foreman-A..E",
+                "20 workers",
+                "assigned region"
+              ],
+              "actor": "Foreman-A..E"
             }
           ]
         }
@@ -172,87 +176,40 @@
     {
       "id": "regions-build",
       "label": "3. Regions [A,B,C,D,E] Build",
+      "stageId": 3,
       "timeRange": [
         "00:32.0",
-        "01:30.0"
+        "03:05.0"
       ],
-      "stageId": 3,
       "events": [
         {
           "time": "00:32.0",
-          "actor": "Foreman-A",
+          "actor": "Foreman-A..E",
           "entries": [
             {
               "time": "00:32.0",
-              "action": "Received Region A from the ProjectManager. I need to split Region A into smaller subplans before assigning workers.",
+              "actor": "Foreman-A..E",
+              "action": "Received Regions A-E from the ProjectManager. Each foreman splits its region into worker subplans before assignment.",
+              "highlights": [
+                "Regions A-E",
+                "worker subplans",
+                "Foreman-A..E"
+              ],
+              "spanSeconds": 2.8,
               "sublines": [
                 {
-                  "tools": "Tool call Read BluePrint: Read the Reiogn"
+                  "tools": "Tool call Split Regions: convert Regions A-E into worker subplans."
                 },
                 {
-                  "tools": "Tool call Split BluePrint: Split the Region A blueprint into 20 subplans."
+                  "tools": "Tool call Assign Subplans: send one subplan to each worker lane."
                 },
                 {
-                  "tools": "Tool call Assign Subplans: Assign the 20 subplans to the 20 workers."
-                },
-                {
-                  "tools": "Tool call Start Build: Start the build of Region A."
-                },
-                {
-                  "tools": "Tool call Verify Build: Verify the build of Region A."
-                },
-                {
-                  "tools": "Tool call Report Build: Report the build of Region A."
-                },
-                {
-                  "tools": "Tool call Complete Build: Complete the build of Region A."
-                },
-                {
-                  "tools": "Tool call Report Complete: Report the completion of Region A."
+                  "tools": "Tool call Start Build: open the five region queues in parallel."
                 }
-              ],
-              "highlights": [
-                "Region A",
-                "subplans"
-              ]
-            },
-            {
-              "time": "00:33.0",
-              "action": "I need to divide Region A into subplans so each worker can build one part.",
-              "sublines": [
-                {
-                  "tools": "Tool call Split Region Plan: Split Region A into subplans A-01 through A-20."
-                },
-                {
-                  "results": "Result: Each subplan has blocks to place and target positions."
-                }
-              ],
-              "highlights": [
-                "Split Region Plan",
-                "Region A",
-                "subplans"
-              ]
-            },
-            {
-              "time": "00:34.0",
-              "action": "Region A has been split into 20 subplans. I should assign one subplan to each worker.",
-              "sublines": [
-                {
-                  "tools": "Send message to Worker-001: Build subplan A-01."
-                },
-                {
-                  "tools": "Send message to Worker-002: Build subplan A-02."
-                },
-                {
-                  "notes": "Workers 003-020 receive A-03 through A-20 in parallel."
-                }
-              ],
-              "highlights": [
-                "Region A",
-                "subplans"
               ]
             }
-          ]
+          ],
+          "groupId": "chunk-region-a-e-subplans"
         },
         {
           "time": "00:35.0",
@@ -313,991 +270,547 @@
           ]
         },
         {
-          "time": "00:39.0",
+          "groupId": "skill-region-placement",
+          "time": "00:37.2",
           "actor": "Foreman-A",
           "entries": [
             {
-              "time": "00:39.0",
-              "action": "Collected the first batch of worker results. This repeated workflow can become a skill for placing region blocks.",
+              "time": "00:37.2",
+              "actor": "Foreman-A",
+              "action": "Foreman-A sees the same placement job across Region A workers and asks ProjectManager to turn it into a reusable workflow.",
+              "highlights": [
+                "Learned Region Placement"
+              ],
               "sublines": [
                 {
                   "notes": "Worker-001 completed A-01 and Worker-002 completed A-02."
                 },
                 {
-                  "notes": "Workers 003-020 are applying Read Subplan -> Check Inventory -> Go To Region -> Place Blocks to their assigned subplans."
-                },
-                {
-                  "tools": "Send message to ProjectManager: Please summarize this workflow as Learned Region Placement."
+                  "tools": "Send message to ProjectManager: create Learned Region Placement."
                 }
-              ],
-              "highlights": [
-                "Learned Region Placement"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "00:40.2",
-          "actor": "ProjectManager",
-          "entries": [
-            {
-              "time": "00:40.2",
-              "action": "Foreman-A reported a repeated placement workflow. I should turn it into a reusable skill.",
-              "sublines": [
-                {
-                  "skills": "Tool call Create Skill: Create Learned Region Placement from Read Subplan -> Check Inventory -> Go To Region -> Place Blocks."
-                },
-                {
-                  "results": "Result: Learned Region Placement is ready."
-                }
-              ],
-              "highlights": [
-                "Create Skill",
-                "Learned Region Placement"
               ]
             },
             {
-              "time": "00:41.0",
-              "action": "Learned Region Placement is ready. I should send it back to the foremen so workers can use it.",
-              "sublines": [
-                {
-                  "tools": "Send message to Foreman-A: Broadcast Learned Region Placement to Workers 001-020."
-                },
-                {
-                  "tools": "Send message to Foreman-D: Learned Region Placement is available."
-                },
-                {
-                  "tools": "Send message to Foreman-E: Learned Region Placement is available."
-                }
-              ],
+              "time": "00:39.0",
+              "actor": "ProjectManager",
+              "action": "ProjectManager creates Learned Region Placement from the Region A worker pattern.",
               "highlights": [
-                "Learned Region Placement",
-                "ready"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "00:41.8",
-          "actor": "Foreman-A",
-          "entries": [
-            {
-              "time": "00:41.8",
-              "action": "Received Learned Region Placement from the ProjectManager. I should broadcast it to Region A workers.",
-              "sublines": [
-                {
-                  "tools": "Send message to Worker-003: Use Learned Region Placement for subplan A-03."
-                },
-                {
-                  "notes": "Workers 004-020 receive the same skill for their own subplans."
-                }
-              ],
-              "highlights": [
+                "Create Skill",
                 "Learned Region Placement"
+              ],
+              "sublines": [
+                {
+                  "tools": "Tool call Create Skill: Learned Region Placement."
+                },
+                {
+                  "results": "Result: -> SKILL Learned Region Placement is ready."
+                }
               ]
-            }
-          ]
-        },
-        {
-          "time": "00:42.8",
-          "actor": "Worker-003",
-          "entries": [
+            },
             {
-              "time": "00:42.8",
+              "time": "00:40.2",
+              "actor": "Worker-003",
               "action": "Received subplan A-03 and Learned Region Placement. I can place region blocks with one skill call.",
+              "highlights": [
+                "Use Skill",
+                "Learned Region Placement",
+                "A-03"
+              ],
               "sublines": [
                 {
                   "skills": "Tool call Use Skill: Learned Region Placement with subplan A-03."
                 },
                 {
-                  "results": "Result: A-03 blocks are placed and reported to Foreman-A."
+                  "results": "Result: blocks are placed and reported to Foreman-A."
                 }
-              ],
-              "highlights": [
-                "Use Skill",
-                "Learned Region Placement",
-                "A-03"
               ]
             }
           ]
         },
         {
-          "time": "00:43.8",
-          "actor": "Foreman-A",
-          "entries": [
-            {
-              "time": "00:43.8",
-              "action": "At the same time, the other foremen are splitting their own regions and assigning subplans to workers.",
-              "sublines": [
-                {
-                  "notes": "Foreman-B, Foreman-C, Foreman-D, and Foreman-E are running their own region workflows."
-                }
-              ],
-              "highlights": [
-                "parallel",
-                "foremen"
-              ]
-            },
-            {
-              "time": "00:45.0",
-              "action": "The workers finished Region A. I need to verify it before reporting completion.",
-              "sublines": [
-                {
-                  "tools": "Tool call Verify Region: Check whether Region A matches the blueprint."
-                },
-                {
-                  "results": "Result: Region A is complete."
-                }
-              ],
-              "highlights": [
-                "Verify Region",
-                "Region A"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "00:45.0",
-          "actor": "Foreman-B",
-          "entries": [
-            {
-              "time": "00:45.0",
-              "action": "Received Region B from the ProjectManager. I need to split Region B into smaller subplans before assigning workers.",
-              "sublines": [
-                {
-                  "notes": "Next step: Split Region B into worker subplans."
-                },
-                {
-                  "notes": "Then assign one subplan to each worker."
-                }
-              ],
-              "highlights": [
-                "Region B",
-                "subplans"
-              ]
-            },
-            {
-              "time": "00:46.0",
-              "action": "I need to divide Region B into subplans so each worker can fix one part.",
-              "sublines": [
-                {
-                  "tools": "Tool call Split Region Plan: Split Region B into subplans B-01 through B-20."
-                },
-                {
-                  "results": "Result: Each subplan has blocks to place and target positions."
-                }
-              ],
-              "highlights": [
-                "Split Region Plan",
-                "Region B",
-                "subplans"
-              ]
-            },
-            {
-              "time": "00:47.0",
-              "action": "Region B has been split into 20 subplans. I should assign one subplan to each worker.",
-              "sublines": [
-                {
-                  "tools": "Send message to Worker-021: Fix subplan B-01."
-                },
-                {
-                  "tools": "Send message to Worker-022: Fix subplan B-02."
-                },
-                {
-                  "notes": "Workers 023-040 receive B-03 through B-20 in parallel."
-                }
-              ],
-              "highlights": [
-                "Region B",
-                "subplans"
-              ]
-            }
-          ]
-        },
-        {
+          "groupId": "chunk-worker-001-020-placement",
           "time": "00:48.0",
-          "actor": "Worker-021",
+          "actor": "Worker-001..020",
           "entries": [
             {
               "time": "00:48.0",
-              "action": "Received subplan B-01 from Foreman-B. First, I need to read this subplan.",
+              "actor": "Foreman-A",
+              "action": "Worker-001 through Worker-020 build the first shell wave, mostly using the new Region Placement workflow.",
+              "highlights": [
+                "Worker-001",
+                "Worker-020",
+                "Learned Region Placement"
+              ],
               "sublines": [
                 {
-                  "tools": "Tool call Read Subplan: Load the blocks and target positions for B-01."
+                  "tools": "Tool call Assign Subplans: A-04 through A-20 plus B-01 through B-03."
                 }
               ],
-              "highlights": [
-                "Read Subplan",
-                "B-01"
-              ]
+              "progress": {
+                "label": "Workers 001-020",
+                "current": 4,
+                "total": 20
+              }
             },
             {
-              "time": "00:49.0",
-              "action": "Now I need to check which blocks in B-01 should be replaced.",
-              "sublines": [
-                {
-                  "tools": "Tool call Check Blocks: Find the wrong blocks in B-01."
-                }
-              ],
-              "highlights": [
-                "Check Blocks",
-                "B-01"
-              ]
-            },
-            {
-              "time": "00:50.0",
-              "action": "I found the wrong blocks. I need to remove them before placing the correct blocks.",
-              "sublines": [
-                {
-                  "tools": "Tool call Remove Blocks: Remove the wrong blocks in B-01."
-                }
-              ],
-              "highlights": [
-                "Remove Blocks",
-                "B-01"
-              ]
-            },
-            {
-              "time": "00:51.5",
-              "action": "The wrong blocks are removed. I need to move to the target position and place the correct blocks.",
-              "sublines": [
-                {
-                  "tools": "Tool call Go To Region: Move to the target position for B-01."
-                }
-              ],
-              "highlights": [
-                "Go To Region",
-                "B-01"
-              ]
-            },
-            {
-              "time": "00:53.0",
-              "action": "I am in position. I need to place the correct blocks for B-01.",
-              "sublines": [
-                {
-                  "tools": "Tool call Place Blocks: Place the correct blocks for B-01."
-                }
-              ],
-              "highlights": [
-                "Place Blocks",
-                "B-01"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "00:55.0",
-          "actor": "Foreman-B",
-          "entries": [
-            {
-              "time": "00:55.0",
-              "action": "Collected enough replacement results from Region B workers. This repeated workflow can become a skill for replacing region blocks.",
-              "sublines": [
-                {
-                  "notes": "Worker-021 completed B-01 and Worker-022 completed B-02."
-                },
-                {
-                  "notes": "Workers 023-040 are applying Read Subplan -> Check Blocks -> Remove Blocks -> Go To Region -> Place Blocks to their assigned subplans."
-                },
-                {
-                  "tools": "Send message to ProjectManager: Please summarize this workflow as Learned Region Replacement."
-                }
-              ],
-              "highlights": [
-                "Learned Region Replacement"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "00:56.0",
-          "actor": "ProjectManager",
-          "entries": [
-            {
-              "time": "00:56.0",
-              "action": "Foreman-B reported a repeated replacement workflow. I should turn it into a reusable skill.",
-              "sublines": [
-                {
-                  "skills": "Tool call Create Skill: Create Learned Region Replacement from Read Subplan -> Check Blocks -> Remove Blocks -> Go To Region -> Place Blocks."
-                },
-                {
-                  "results": "Result: Learned Region Replacement is ready."
-                }
-              ],
-              "highlights": [
-                "Create Skill",
-                "Learned Region Replacement"
-              ]
-            },
-            {
-              "time": "00:57.0",
-              "action": "Learned Region Replacement is ready. I should send it back to the foremen so workers can use it.",
-              "sublines": [
-                {
-                  "tools": "Send message to Foreman-B: Broadcast Learned Region Replacement to Workers 021-040."
-                },
-                {
-                  "tools": "Send message to Foreman-D: Learned Region Replacement is available."
-                },
-                {
-                  "tools": "Send message to Foreman-E: Learned Region Replacement is available."
-                }
-              ],
-              "highlights": [
-                "Learned Region Replacement",
-                "ready"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "00:58.0",
-          "actor": "Worker-023",
-          "entries": [
-            {
-              "time": "00:58.0",
-              "action": "Received subplan B-03 and Learned Region Replacement. I can replace region blocks with one skill call.",
-              "sublines": [
-                {
-                  "skills": "Tool call Use Skill: Learned Region Replacement with subplan B-03."
-                },
-                {
-                  "results": "Result: B-03 blocks are fixed and reported to Foreman-B."
-                }
-              ],
+              "time": "00:54.0",
+              "actor": "Worker-001..008",
+              "action": "Used Learned Region Placement for lower shell blocks and podium edge placement.",
               "highlights": [
                 "Use Skill",
-                "Learned Region Replacement",
-                "B-03"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "00:59.0",
-          "actor": "Foreman-B",
-          "entries": [
-            {
-              "time": "00:59.0",
-              "action": "At the same time, other foremen are continuing their own region workflows.",
+                "Learned Region Placement",
+                "lower shell"
+              ],
               "sublines": [
                 {
-                  "notes": "Foreman-A workers are using Learned Region Placement."
+                  "skills": "Tool call Use Skill: Learned Region Placement on subplans A-04..A-11."
                 },
                 {
-                  "notes": "Foreman-C is preparing scaffold subplans."
-                },
-                {
-                  "notes": "Foreman-D and Foreman-E are preparing later subplans."
+                  "results": "Result: lower shell and podium edge blocks are placed."
                 }
               ],
-              "highlights": [
-                "parallel",
-                "foremen"
-              ]
+              "progress": {
+                "label": "Workers 001-020",
+                "current": 8,
+                "total": 20
+              }
             },
             {
               "time": "01:00.0",
-              "action": "The workers finished Region B. I need to verify it before reporting completion.",
+              "actor": "Worker-009..014",
+              "action": "Used Region Placement on curved roof slices; high-reach support work starts appearing during this wave.",
+              "highlights": [
+                "Learned Region Placement",
+                "high-reach"
+              ],
               "sublines": [
                 {
-                  "tools": "Tool call Verify Region: Check whether Region B matches the blueprint."
+                  "skills": "Tool call Use Skill: Learned Region Placement on subplans A-12..A-17."
                 },
                 {
-                  "results": "Result: Region B is complete."
+                  "results": "Result: curved roof placement continues; high-reach support needs follow-up."
                 }
               ],
+              "progress": {
+                "label": "Workers 001-020",
+                "current": 14,
+                "total": 20
+              }
+            },
+            {
+              "time": "01:06.0",
+              "actor": "Worker-015..020",
+              "action": "Completed the first shell wave and handed the high-reach support issue to Foreman-C.",
               "highlights": [
-                "Verify Region",
-                "Region B"
-              ]
+                "Worker-015",
+                "Worker-020",
+                "accumulation"
+              ],
+              "sublines": [
+                {
+                  "results": "Result: Region A shell placement is stable."
+                }
+              ],
+              "progress": {
+                "label": "Workers 001-020",
+                "current": 20,
+                "total": 20
+              }
             }
           ]
         },
         {
-          "time": "01:00.0",
-          "actor": "Foreman-C",
-          "entries": [
-            {
-              "time": "01:00.0",
-              "action": "Received Region C from the ProjectManager. I need to split Region C into smaller subplans before assigning workers.",
-              "sublines": [
-                {
-                  "notes": "Next step: Split Region C into worker subplans."
-                },
-                {
-                  "notes": "Then assign one subplan to each worker."
-                }
-              ],
-              "highlights": [
-                "Region C",
-                "subplans"
-              ]
-            },
-            {
-              "time": "01:01.0",
-              "action": "I need to divide Region C into subplans so each worker can build one scaffold part.",
-              "sublines": [
-                {
-                  "tools": "Tool call Split Region Plan: Split Region C into subplans C-01 through C-20."
-                },
-                {
-                  "results": "Result: Each subplan has blocks to place and target positions."
-                }
-              ],
-              "highlights": [
-                "Split Region Plan",
-                "Region C",
-                "subplans"
-              ]
-            },
-            {
-              "time": "01:02.0",
-              "action": "Region C has been split into 20 subplans. I should assign one scaffold subplan to each worker.",
-              "sublines": [
-                {
-                  "tools": "Send message to Worker-041: Build scaffold subplan C-01."
-                },
-                {
-                  "tools": "Send message to Worker-042: Build scaffold subplan C-02."
-                },
-                {
-                  "notes": "Workers 043-060 receive C-03 through C-20 in parallel."
-                }
-              ],
-              "highlights": [
-                "Region C",
-                "subplans"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:03.0",
-          "actor": "Worker-041",
-          "entries": [
-            {
-              "time": "01:03.0",
-              "action": "Received subplan C-01 from Foreman-C. First, I need to read this subplan.",
-              "sublines": [
-                {
-                  "tools": "Tool call Read Subplan: Load the blocks and target positions for C-01."
-                }
-              ],
-              "highlights": [
-                "Read Subplan",
-                "C-01"
-              ]
-            },
-            {
-              "time": "01:04.0",
-              "action": "Now I need to check whether I have the required scaffold blocks for C-01.",
-              "sublines": [
-                {
-                  "tools": "Tool call Check Inventory: Confirm the required scaffold blocks for C-01."
-                }
-              ],
-              "highlights": [
-                "Check Inventory",
-                "C-01"
-              ]
-            },
-            {
-              "time": "01:05.0",
-              "action": "The scaffold blocks are ready. I need to move to the target position for C-01.",
-              "sublines": [
-                {
-                  "tools": "Tool call Go To Region: Move to the target position for C-01."
-                }
-              ],
-              "highlights": [
-                "Go To Region",
-                "C-01"
-              ]
-            },
-            {
-              "time": "01:07.0",
-              "action": "I am in position. I need to place the scaffold blocks for C-01.",
-              "sublines": [
-                {
-                  "tools": "Tool call Place Scaffold Blocks: Place the scaffold blocks for C-01."
-                }
-              ],
-              "highlights": [
-                "Place Scaffold Blocks",
-                "C-01"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:09.0",
-          "actor": "Foreman-C",
-          "entries": [
-            {
-              "time": "01:09.0",
-              "action": "Collected enough scaffold results from Region C workers. This repeated workflow can become a skill for scaffold construction.",
-              "sublines": [
-                {
-                  "notes": "Worker-041 completed C-01 and Worker-042 completed C-02."
-                },
-                {
-                  "notes": "Workers 043-060 are applying Read Subplan -> Check Inventory -> Go To Region -> Place Scaffold Blocks to their assigned subplans."
-                },
-                {
-                  "tools": "Send message to ProjectManager: Please summarize this workflow as Learned Scaffold Construction."
-                }
-              ],
-              "highlights": [
-                "Learned Scaffold Construction"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:10.0",
-          "actor": "ProjectManager",
-          "entries": [
-            {
-              "time": "01:10.0",
-              "action": "Foreman-C reported a repeated scaffold workflow. I should turn it into a reusable skill.",
-              "sublines": [
-                {
-                  "skills": "Tool call Create Skill: Create Learned Scaffold Construction from Read Subplan -> Check Inventory -> Go To Region -> Place Scaffold Blocks."
-                },
-                {
-                  "results": "Result: Learned Scaffold Construction is ready."
-                }
-              ],
-              "highlights": [
-                "Create Skill",
-                "Learned Scaffold Construction"
-              ]
-            },
-            {
-              "time": "01:11.0",
-              "action": "Learned Scaffold Construction is ready. I should send it back to the foremen so workers can use it.",
-              "sublines": [
-                {
-                  "tools": "Send message to Foreman-C: Broadcast Learned Scaffold Construction to Workers 041-060."
-                },
-                {
-                  "tools": "Send message to Foreman-D: Learned Scaffold Construction is available."
-                },
-                {
-                  "tools": "Send message to Foreman-E: Learned Scaffold Construction is available."
-                }
-              ],
-              "highlights": [
-                "Learned Scaffold Construction",
-                "ready"
-              ]
-            }
-          ]
-        },
-        {
+          "groupId": "chunk-worker-021-040-placement-accumulating-scaffold",
           "time": "01:12.0",
-          "actor": "Worker-043",
+          "actor": "Worker-021..040",
           "entries": [
             {
               "time": "01:12.0",
-              "action": "Received subplan C-03 and Learned Scaffold Construction. I can build scaffold with one skill call.",
+              "actor": "Foreman-C",
+              "action": "Worker-021 through Worker-040 build the roof ribs; placement matches the existing workflow, but elevated supports need extra work.",
+              "highlights": [
+                "Worker-021",
+                "Worker-040",
+                "Learned Region Placement",
+                "elevated supports"
+              ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Scaffold Construction with subplan C-03."
-                },
-                {
-                  "results": "Result: C-03 scaffold blocks are placed and reported to Foreman-C."
+                  "tools": "Tool call Assign Subplans: C-01 through C-20 for roof rib placement."
                 }
               ],
+              "progress": {
+                "label": "Workers 021-040",
+                "current": 2,
+                "total": 20
+              }
+            },
+            {
+              "time": "01:18.0",
+              "actor": "Worker-021..026",
+              "action": "Used Region Placement for reachable roof blocks while building temporary supports for the higher ribs.",
               "highlights": [
                 "Use Skill",
-                "Learned Scaffold Construction",
-                "C-03"
-              ]
+                "Learned Region Placement",
+                "temporary supports"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Placement on subplans C-01..C-06."
+                }
+              ],
+              "progress": {
+                "label": "Workers 021-040",
+                "current": 6,
+                "total": 20
+              }
+            },
+            {
+              "time": "01:25.0",
+              "actor": "Worker-027..033",
+              "action": "Several workers hit the same temporary-support job, so Foreman-C groups it for ProjectManager.",
+              "highlights": [
+                "temporary support",
+                "Foreman-C"
+              ],
+              "sublines": [
+                {
+                  "tools": "Send message to ProjectManager: package the temporary-support pattern."
+                }
+              ],
+              "progress": {
+                "label": "Workers 021-040",
+                "current": 13,
+                "total": 20
+              }
+            },
+            {
+              "time": "01:33.0",
+              "actor": "Worker-034..040",
+              "action": "Finished the roof rib wave; ProjectManager now has enough support examples to create a workflow.",
+              "highlights": [
+                "roof rib wave",
+                "support examples"
+              ],
+              "sublines": [
+                {
+                  "results": "Result: roof rib placement is complete."
+                }
+              ],
+              "progress": {
+                "label": "Workers 021-040",
+                "current": 20,
+                "total": 20
+              }
             }
           ]
         },
         {
-          "time": "01:13.0",
+          "groupId": "skill-scaffold-construction",
+          "time": "01:39.2",
           "actor": "Foreman-C",
           "entries": [
             {
-              "time": "01:13.0",
-              "action": "At the same time, the other foremen are using learned skills in their own regions.",
+              "time": "01:39.2",
+              "actor": "Foreman-C",
+              "action": "Foreman-C submits the roof support pattern as Learned Scaffold Construction.",
+              "highlights": [
+                "Worker-021",
+                "Worker-040",
+                "Learned Scaffold Construction"
+              ],
               "sublines": [
                 {
-                  "notes": "Foreman-A workers use Learned Region Placement."
-                },
-                {
-                  "notes": "Foreman-B workers use Learned Region Replacement."
-                },
-                {
-                  "notes": "Foreman-D and Foreman-E are ready to use the learned skills."
+                  "tools": "Send message to ProjectManager: create Learned Scaffold Construction."
                 }
-              ],
-              "highlights": [
-                "parallel",
-                "foremen"
               ]
             },
             {
-              "time": "01:14.0",
-              "action": "The workers finished Region C. I need to verify it before reporting completion.",
+              "time": "01:41.0",
+              "actor": "ProjectManager",
+              "action": "Created Learned Scaffold Construction from the roof support pattern.",
+              "highlights": [
+                "Create Skill",
+                "Learned Scaffold Construction"
+              ],
               "sublines": [
                 {
-                  "tools": "Tool call Verify Region: Check whether Region C matches the blueprint."
+                  "tools": "Tool call Create Skill: Learned Scaffold Construction."
                 },
                 {
-                  "results": "Result: Region C is complete."
+                  "results": "Result: -> SKILL Learned Scaffold Construction is ready."
                 }
-              ],
-              "highlights": [
-                "Verify Region",
-                "Region C"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:14.0",
-          "actor": "Foreman-D",
-          "entries": [
-            {
-              "time": "01:14.0",
-              "action": "Received Region D from the ProjectManager. I need to split Region D into smaller subplans.",
-              "sublines": [
-                {
-                  "notes": "Next step: Split Region D into worker subplans."
-                },
-                {
-                  "notes": "Then assign one subplan to each worker."
-                }
-              ],
-              "highlights": [
-                "Region D",
-                "subplans"
               ]
             },
             {
-              "time": "01:15.5",
-              "action": "I need to divide Region D into subplans before assigning workers.",
-              "sublines": [
-                {
-                  "tools": "Tool call Split Region Plan: Split Region D into subplans D-01 through D-20."
-                },
-                {
-                  "results": "Result: Each subplan has blocks to place and target positions."
-                }
-              ],
-              "highlights": [
-                "Split Region Plan",
-                "Region D",
-                "subplans"
-              ]
-            },
-            {
-              "time": "01:17.0",
-              "action": "Region D has been split into 20 subplans. The ProjectManager has sent the learned skills, so I can assign workers with the right skill for each subplan.",
-              "sublines": [
-                {
-                  "tools": "Send message to Worker-061: Use Learned Region Placement for subplan D-01."
-                },
-                {
-                  "tools": "Send message to Worker-062: Use Learned Region Replacement for subplan D-02."
-                },
-                {
-                  "tools": "Send message to Worker-063: Use Learned Scaffold Construction for subplan D-03."
-                },
-                {
-                  "notes": "Workers 064-080 receive D-04 through D-20 in parallel."
-                }
-              ],
-              "highlights": [
-                "learned skills",
-                "Region D"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:18.5",
-          "actor": "Worker-061",
-          "entries": [
-            {
-              "time": "01:18.5",
-              "action": "Received subplan D-01 and Learned Region Placement. I can place region blocks with one skill call.",
-              "sublines": [
-                {
-                  "skills": "Tool call Use Skill: Learned Region Placement with subplan D-01."
-                },
-                {
-                  "results": "Result: D-01 blocks are placed and reported to Foreman-D."
-                }
-              ],
-              "highlights": [
-                "Use Skill",
-                "Learned Region Placement",
-                "D-01"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:20.0",
-          "actor": "Worker-062",
-          "entries": [
-            {
-              "time": "01:20.0",
-              "action": "Received subplan D-02 and Learned Region Replacement. I can fix wrong blocks with one skill call.",
-              "sublines": [
-                {
-                  "skills": "Tool call Use Skill: Learned Region Replacement with subplan D-02."
-                },
-                {
-                  "results": "Result: D-02 blocks are fixed and reported to Foreman-D."
-                }
-              ],
-              "highlights": [
-                "Use Skill",
-                "Learned Region Replacement",
-                "D-02"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:21.5",
-          "actor": "Worker-063",
-          "entries": [
-            {
-              "time": "01:21.5",
-              "action": "Received subplan D-03 and Learned Scaffold Construction. I can build scaffold with one skill call.",
-              "sublines": [
-                {
-                  "skills": "Tool call Use Skill: Learned Scaffold Construction with subplan D-03."
-                },
-                {
-                  "results": "Result: D-03 scaffold blocks are placed and reported to Foreman-D."
-                }
-              ],
+              "time": "01:46.0",
+              "actor": "Worker-041..044",
+              "action": "Immediately used Learned Scaffold Construction for the next elevated roof supports.",
               "highlights": [
                 "Use Skill",
                 "Learned Scaffold Construction",
-                "D-03"
+                "Worker-041"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Scaffold Construction on subplans D-01..D-04."
+                },
+                {
+                  "results": "Result: elevated roof supports are reachable with one skill call."
+                }
               ]
             }
           ]
         },
         {
-          "time": "01:23.0",
-          "actor": "Foreman-D",
+          "groupId": "chunk-worker-041-060-placement-scaffold",
+          "time": "01:52.0",
+          "actor": "Worker-041..060",
           "entries": [
             {
-              "time": "01:23.0",
-              "action": "Collected Region D worker reports. Most subplans are complete, but a few blocks need to be fixed.",
-              "sublines": [
-                {
-                  "notes": "Worker-061 completed D-01 and Worker-062 completed D-02."
-                },
-                {
-                  "notes": "Workers 063-080 are continuing with learned skills on their assigned subplans."
-                },
-                {
-                  "notes": "Issue: A small fix is needed before handoff."
-                }
-              ],
+              "time": "01:52.0",
+              "actor": "Foreman-D",
+              "action": "Worker-041 through Worker-060 assemble the roof shell using placement and scaffold workflows, then find block mismatches.",
               "highlights": [
-                "Region D",
-                "worker reports"
-              ]
+                "Worker-041",
+                "Worker-060",
+                "Learned Region Placement",
+                "Learned Scaffold Construction",
+                "block mismatches"
+              ],
+              "sublines": [],
+              "progress": {
+                "label": "Workers 041-060",
+                "current": 3,
+                "total": 20
+              }
             },
             {
-              "time": "01:25.0",
-              "action": "Region D is almost complete, but I found a few wrong blocks. I need to replace them.",
-              "sublines": [
-                {
-                  "tools": "Tool call Replace Region: Replace the wrong blocks in Region D."
-                },
-                {
-                  "results": "Result: Region D is complete."
-                }
-              ],
-              "highlights": [
-                "Replace Region",
-                "Region D"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:25.0",
-          "actor": "Foreman-E",
-          "entries": [
-            {
-              "time": "01:25.0",
-              "action": "Received Region E from the ProjectManager. I need to split Region E into smaller subplans.",
-              "sublines": [
-                {
-                  "notes": "Next step: Split Region E into worker subplans."
-                },
-                {
-                  "notes": "Then assign one subplan to each worker."
-                }
-              ],
-              "highlights": [
-                "Region E",
-                "subplans"
-              ]
-            },
-            {
-              "time": "01:25.7",
-              "action": "I need to divide Region E into subplans before assigning workers.",
-              "sublines": [
-                {
-                  "tools": "Tool call Split Region Plan: Split Region E into subplans E-01 through E-20."
-                },
-                {
-                  "results": "Result: Each subplan has blocks to place and target positions."
-                }
-              ],
-              "highlights": [
-                "Split Region Plan",
-                "Region E",
-                "subplans"
-              ]
-            },
-            {
-              "time": "01:26.4",
-              "action": "Region E has been split into 20 subplans. The learned skills are available, so I can assign workers with one skill per subplan.",
-              "sublines": [
-                {
-                  "tools": "Send message to Worker-081: Use Learned Region Placement for subplan E-01."
-                },
-                {
-                  "tools": "Send message to Worker-082: Use Learned Region Replacement for subplan E-02."
-                },
-                {
-                  "tools": "Send message to Worker-083: Use Learned Scaffold Construction for subplan E-03."
-                },
-                {
-                  "notes": "Workers 084-100 receive E-04 through E-20 in parallel."
-                }
-              ],
-              "highlights": [
-                "learned skills",
-                "Region E"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:27.1",
-          "actor": "Worker-081",
-          "entries": [
-            {
-              "time": "01:27.1",
-              "action": "Received subplan E-01 and Learned Region Placement. I can place region blocks with one skill call.",
-              "sublines": [
-                {
-                  "skills": "Tool call Use Skill: Learned Region Placement with subplan E-01."
-                },
-                {
-                  "results": "Result: E-01 blocks are placed and reported to Foreman-E."
-                }
-              ],
+              "time": "01:59.0",
+              "actor": "Worker-041..047",
+              "action": "Used placement for shell blocks and scaffold for the high roof lip.",
               "highlights": [
                 "Use Skill",
                 "Learned Region Placement",
-                "E-01"
-              ]
+                "Learned Scaffold Construction"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Placement on D-01..D-07."
+                },
+                {
+                  "skills": "Tool call Use Skill: Learned Scaffold Construction for high roof access."
+                },
+                {
+                  "results": "Result: high roof lip blocks placed and reported to Foreman-D."
+                }
+              ],
+              "progress": {
+                "label": "Workers 041-060",
+                "current": 7,
+                "total": 20
+              }
+            },
+            {
+              "time": "02:06.0",
+              "actor": "Worker-048..054",
+              "action": "Found mismatched placeholder blocks from the imported blueprint and fixed them with basic tools.",
+              "highlights": [
+                "mismatched placeholder blocks",
+                "basic tools"
+              ],
+              "sublines": [
+                {
+                  "tools": "Send message to Foreman-B: workers keep hitting the same block-repair job."
+                }
+              ],
+              "progress": {
+                "label": "Workers 041-060",
+                "current": 14,
+                "total": 20
+              }
+            },
+            {
+              "time": "02:13.0",
+              "actor": "Worker-055..060",
+              "action": "Completed the roof shell wave; Foreman-B now has enough block-repair examples to request a workflow.",
+              "highlights": [
+                "roof shell",
+                "block repair"
+              ],
+              "sublines": [
+                {
+                  "results": "Result: roof shell placement and support are complete."
+                }
+              ],
+              "progress": {
+                "label": "Workers 041-060",
+                "current": 20,
+                "total": 20
+              }
             }
           ]
         },
         {
-          "time": "01:27.8",
-          "actor": "Worker-082",
+          "groupId": "skill-region-replacement",
+          "time": "02:17.2",
+          "actor": "Foreman-B",
           "entries": [
             {
-              "time": "01:27.8",
-              "action": "Received subplan E-02 and Learned Region Replacement. I can fix wrong blocks with one skill call.",
+              "time": "02:17.2",
+              "actor": "Foreman-B",
+              "action": "Foreman-B submits the recurring block-repair job as Learned Region Replacement.",
+              "highlights": [
+                "Worker-048",
+                "Worker-060",
+                "Learned Region Replacement"
+              ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Replacement with subplan E-02."
-                },
-                {
-                  "results": "Result: E-02 blocks are fixed and reported to Foreman-E."
+                  "tools": "Send message to ProjectManager: create Learned Region Replacement."
                 }
-              ],
-              "highlights": [
-                "Use Skill",
-                "Learned Region Replacement",
-                "E-02"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:28.5",
-          "actor": "Worker-083",
-          "entries": [
-            {
-              "time": "01:28.5",
-              "action": "Received subplan E-03 and Learned Scaffold Construction. I can build scaffold with one skill call.",
-              "sublines": [
-                {
-                  "skills": "Tool call Use Skill: Learned Scaffold Construction with subplan E-03."
-                },
-                {
-                  "results": "Result: E-03 scaffold blocks are placed and reported to Foreman-E."
-                }
-              ],
-              "highlights": [
-                "Use Skill",
-                "Learned Scaffold Construction",
-                "E-03"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:29.2",
-          "actor": "Foreman-E",
-          "entries": [
-            {
-              "time": "01:29.2",
-              "action": "Collected final worker reports. Region E is complete.",
-              "sublines": [
-                {
-                  "notes": "Worker-081 completed E-01 and Worker-082 completed E-02."
-                },
-                {
-                  "notes": "Workers 083-100 completed the remaining subplans with learned skills."
-                },
-                {
-                  "tools": "Send message to ProjectManager: Region E is complete."
-                }
-              ],
-              "highlights": [
-                "Region E",
-                "worker reports"
               ]
             },
             {
-              "time": "01:30.0",
-              "action": "The final region is complete. I need to verify that all five regions are connected.",
+              "time": "02:19.0",
+              "actor": "ProjectManager",
+              "action": "Created Learned Region Replacement from the block-repair pattern.",
+              "highlights": [
+                "Create Skill",
+                "Learned Region Replacement"
+              ],
               "sublines": [
                 {
-                  "tools": "Tool call Verify Region: Check whether all five regions are connected."
+                  "tools": "Tool call Create Skill: Learned Region Replacement."
                 },
                 {
-                  "results": "Result: All five regions are connected."
+                  "results": "Result: -> SKILL Learned Region Replacement is ready."
+                }
+              ]
+            },
+            {
+              "time": "02:24.0",
+              "actor": "Worker-061..064",
+              "action": "Used Learned Region Replacement on the next mismatch cluster and reported clean repair results.",
+              "highlights": [
+                "Use Skill",
+                "Learned Region Replacement",
+                "Worker-061"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Replacement on subplans B-21..B-24."
+                },
+                {
+                  "results": "Result: mismatch cluster repaired and verified."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "chunk-worker-061-080-mixed-skills-accumulating-cleanup",
+          "time": "02:31.0",
+          "actor": "Worker-061..080",
+          "entries": [
+            {
+              "time": "02:31.0",
+              "actor": "Foreman-E",
+              "action": "Worker-061 through Worker-080 close the remaining regions, using the three discovered workflows where they fit.",
+              "highlights": [
+                "Worker-061",
+                "Worker-080",
+                "region closure"
+              ],
+              "sublines": [],
+              "progress": {
+                "label": "Workers 061-080",
+                "current": 2,
+                "total": 20
+              }
+            },
+            {
+              "time": "02:38.0",
+              "actor": "Worker-061..067",
+              "action": "Used placement, scaffold, and replacement workflows on the final region blocks.",
+              "highlights": [
+                "Use Skill",
+                "Learned Region Placement",
+                "Learned Scaffold Construction",
+                "Learned Region Replacement"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Placement on E-01..E-07."
+                },
+                {
+                  "skills": "Tool call Use Skill: Learned Scaffold Construction for roof edge access."
+                },
+                {
+                  "skills": "Tool call Use Skill: Learned Region Replacement for mismatch repairs."
                 }
               ],
+              "progress": {
+                "label": "Workers 061-080",
+                "current": 7,
+                "total": 20
+              }
+            },
+            {
+              "time": "02:47.0",
+              "actor": "Worker-068..074",
+              "action": "Removed leftover temporary supports with basic tools; the same cleanup job keeps appearing.",
               "highlights": [
-                "Verify Region",
-                "Region E"
-              ]
+                "temporary support blocks",
+                "cleanup pattern"
+              ],
+              "sublines": [
+                {
+                  "tools": "Send message to Foreman-E: cleanup work is repeating across subregions."
+                }
+              ],
+              "progress": {
+                "label": "Workers 061-080",
+                "current": 14,
+                "total": 20
+              }
+            },
+            {
+              "time": "02:56.0",
+              "actor": "Worker-075..080",
+              "action": "Finished region closure and handed the recurring cleanup work to verification.",
+              "highlights": [
+                "region closure",
+                "cleanup work"
+              ],
+              "sublines": [
+                {
+                  "results": "Result: all five build regions report complete."
+                }
+              ],
+              "progress": {
+                "label": "Workers 061-080",
+                "current": 20,
+                "total": 20
+              }
+            }
+          ]
+        },
+        {
+          "groupId": "chunk-region-progress",
+          "time": "03:01.5",
+          "actor": "ProjectManager",
+          "entries": [
+            {
+              "time": "03:01.5",
+              "actor": "ProjectManager",
+              "action": "All build regions are complete. Verification now checks the remaining cleanup work.",
+              "highlights": [
+                "build regions",
+                "verification",
+                "cleanup"
+              ],
+              "sublines": []
             }
           ]
         }
@@ -1308,236 +821,264 @@
       "label": "4. Verified and Cleanup",
       "stageId": 8,
       "timeRange": [
-        "01:30.0",
-        "02:13.0"
+        "03:05.0",
+        "04:19.5"
       ],
       "events": [
         {
-          "time": "01:30.0",
+          "groupId": "chunk-verification-start",
+          "time": "03:02.6",
           "actor": "ProjectManager",
           "entries": [
             {
-              "time": "01:30.0",
-              "action": "All regions have reported completion. Now the final build needs cleaning before the last verification.",
+              "time": "03:02.6",
+              "actor": "ProjectManager",
+              "action": "Started final verification against the blueprint. The checker is looking for leftover scaffold and temporary support blocks.",
+              "highlights": [
+                "final verification",
+                "leftover scaffold"
+              ],
               "sublines": [
                 {
-                  "tools": "Send message to Foreman-E: Start final cleaning."
-                },
-                {
-                  "notes": "Note: Learned Region Cleaning should be learned during this cleaning stage."
+                  "tools": "Tool call Verify Build: compare current blocks against blueprint and cleanup rules."
                 }
-              ],
-              "highlights": [
-                "Learned Region Cleaning"
               ]
+            },
+            {
+              "time": "03:02.9",
+              "actor": "Foreman-E",
+              "action": "Verification found the same leftover-support cleanup job in CL-01 through CL-08.",
+              "highlights": [
+                "CL-01",
+                "CL-08",
+                "leftover support blocks"
+              ],
+              "sublines": []
             }
           ]
         },
         {
-          "time": "01:35.0",
+          "groupId": "skill-region-cleaning",
+          "time": "03:03.2",
           "actor": "Foreman-E",
           "entries": [
             {
-              "time": "01:35.0",
-              "action": "I need to split the final cleaning work into smaller cleanup subplans before assigning workers.",
-              "sublines": [
-                {
-                  "tools": "Tool call Split Region Plan: Split final cleaning into cleanup subplans CL-01 through CL-20."
-                },
-                {
-                  "results": "Result: Each cleanup subplan has blocks to remove and target positions."
-                }
-              ],
+              "time": "03:03.2",
+              "actor": "Foreman-E",
+              "action": "Foreman-E submits the recurring cleanup job as Learned Region Cleaning.",
               "highlights": [
-                "Split Region Plan",
-                "subplans"
-              ]
-            },
-            {
-              "time": "01:39.0",
-              "action": "The cleanup work has been split. I should assign cleanup subplans to workers.",
-              "sublines": [
-                {
-                  "tools": "Send message to Worker-081: Clean subplan CL-01."
-                },
-                {
-                  "tools": "Send message to Worker-082: Clean subplan CL-02."
-                },
-                {
-                  "notes": "Workers 083-100 receive CL-03 through CL-20 in parallel."
-                }
-              ],
-              "highlights": [
-                "subplans"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:43.0",
-          "actor": "Worker-081",
-          "entries": [
-            {
-              "time": "01:43.0",
-              "action": "Received cleanup subplan CL-01. First, I need to read this cleanup subplan.",
-              "sublines": [
-                {
-                  "tools": "Tool call Read Subplan: Load the blocks to remove and target positions for CL-01."
-                }
-              ],
-              "highlights": [
-                "Read Subplan",
-                "CL-01"
-              ]
-            },
-            {
-              "time": "01:47.0",
-              "action": "Now I need to move to the target position for CL-01.",
-              "sublines": [
-                {
-                  "tools": "Tool call Go To Region: Move to the target position for CL-01."
-                }
-              ],
-              "highlights": [
-                "Go To Region",
-                "CL-01"
-              ]
-            },
-            {
-              "time": "01:51.0",
-              "action": "I am in position. I need to remove the blocks listed in CL-01.",
-              "sublines": [
-                {
-                  "tools": "Tool call Remove Blocks: Remove the listed blocks for CL-01."
-                }
-              ],
-              "highlights": [
-                "Remove Blocks",
-                "CL-01"
-              ]
-            },
-            {
-              "time": "01:55.0",
-              "action": "The listed blocks are removed. I need to verify this cleanup subplan.",
-              "sublines": [
-                {
-                  "tools": "Tool call Verify Region: Check whether CL-01 is clean."
-                },
-                {
-                  "results": "Result: CL-01 is clean."
-                }
-              ],
-              "highlights": [
-                "Verify Region",
-                "CL-01"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "01:59.0",
-          "actor": "Foreman-E",
-          "entries": [
-            {
-              "time": "01:59.0",
-              "action": "Collected cleanup results. The same cleanup workflow is repeating across workers.",
-              "sublines": [
-                {
-                  "notes": "Worker-081 completed CL-01 and Worker-082 completed CL-02."
-                },
-                {
-                  "notes": "Workers 083-100 are applying Read Subplan -> Go To Region -> Remove Blocks -> Verify Region to their cleanup subplans."
-                },
-                {
-                  "tools": "Send message to ProjectManager: Please summarize this workflow as Learned Region Cleaning."
-                }
-              ],
-              "highlights": [
+                "cleanup job",
                 "Learned Region Cleaning"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "02:03.0",
-          "actor": "ProjectManager",
-          "entries": [
-            {
-              "time": "02:03.0",
-              "action": "Foreman-E reported a repeated cleaning workflow. I should turn it into a reusable skill.",
+              ],
               "sublines": [
                 {
-                  "skills": "Tool call Create Skill: Create Learned Region Cleaning from Read Subplan -> Go To Region -> Remove Blocks -> Verify Region."
-                },
-                {
-                  "results": "Result: Learned Region Cleaning is ready."
+                  "tools": "Send message to ProjectManager: create Learned Region Cleaning."
                 }
-              ],
+              ]
+            },
+            {
+              "time": "03:05.0",
+              "actor": "ProjectManager",
+              "action": "Created Learned Region Cleaning for the final cleanup wave.",
               "highlights": [
                 "Create Skill",
                 "Learned Region Cleaning"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "02:06.0",
-          "actor": "Worker-083",
-          "entries": [
-            {
-              "time": "02:06.0",
-              "action": "Received cleanup subplan CL-03 and Learned Region Cleaning. I can clean region blocks with one skill call.",
+              ],
               "sublines": [
                 {
-                  "skills": "Tool call Use Skill: Learned Region Cleaning with cleanup subplan CL-03."
+                  "tools": "Tool call Create Skill: Learned Region Cleaning."
                 },
                 {
-                  "results": "Result: CL-03 is clean and reported to Foreman-E."
+                  "results": "Result: -> SKILL Learned Region Cleaning is ready."
                 }
-              ],
-              "highlights": [
-                "Use Skill",
-                "Learned Region Cleaning",
-                "CL-03"
-              ]
-            }
-          ]
-        },
-        {
-          "time": "02:10.0",
-          "actor": "ProjectManager",
-          "entries": [
-            {
-              "time": "02:10.0",
-              "action": "The cleaning is complete. I need to verify the whole build before calling it finished.",
-              "sublines": [
-                {
-                  "tools": "Tool call Validate Build: Check whether the final build matches the blueprint."
-                },
-                {
-                  "results": "Result: The build is accepted."
-                }
-              ],
-              "highlights": [
-                "Validate Build",
-                "blueprint"
               ]
             },
             {
-              "time": "02:13.0",
-              "action": "Done. The Sydney Opera House has been built, verified, and cleaned up.",
+              "time": "03:10.0",
+              "actor": "Worker-081..084",
+              "action": "Used Learned Region Cleaning on the first cleanup cluster and confirmed the local scan was clean.",
+              "highlights": [
+                "Use Skill",
+                "Learned Region Cleaning",
+                "Worker-081"
+              ],
               "sublines": [
                 {
-                  "notes": "Agents: 100."
+                  "skills": "Tool call Use Skill: Learned Region Cleaning on cleanup subplans CL-01..CL-04."
                 },
                 {
-                  "notes": "Blocks: 95,151."
-                },
+                  "results": "Result: CL-01 through CL-04 are clean."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "chunk-worker-081-100-cleanup",
+          "time": "03:18.0",
+          "actor": "Worker-081..100",
+          "entries": [
+            {
+              "time": "03:18.0",
+              "actor": "Foreman-E",
+              "action": "Worker-081 through Worker-100 run the cleanup wave with Learned Region Cleaning.",
+              "highlights": [
+                "Worker-081",
+                "Worker-100",
+                "Learned Region Cleaning"
+              ],
+              "sublines": [
                 {
-                  "notes": "Status: Verified and cleaned up."
+                  "tools": "Tool call Assign Cleanup Subplans: CL-01 through CL-20."
                 }
               ],
-              "highlights": []
+              "progress": {
+                "label": "Workers 081-100",
+                "current": 3,
+                "total": 20
+              }
+            },
+            {
+              "time": "03:25.0",
+              "actor": "Worker-081..087",
+              "action": "Used Learned Region Cleaning for leftover scaffold blocks around the lower shell.",
+              "highlights": [
+                "Use Skill",
+                "Learned Region Cleaning",
+                "lower shell"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Cleaning on CL-01..CL-07."
+                },
+                {
+                  "results": "Result: lower shell cleanup scan is clean."
+                }
+              ],
+              "progress": {
+                "label": "Workers 081-100",
+                "current": 7,
+                "total": 20
+              }
+            },
+            {
+              "time": "03:33.0",
+              "actor": "Worker-088..094",
+              "action": "Used cleaning for temporary supports around the roof ribs, then used replacement on one exposed mismatch.",
+              "highlights": [
+                "Learned Region Cleaning",
+                "Learned Region Replacement"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Cleaning on CL-08..CL-14."
+                },
+                {
+                  "skills": "Tool call Use Skill: Learned Region Replacement for one exposed roof rib block."
+                },
+                {
+                  "results": "Result: roof rib cleanup and repair are verified."
+                }
+              ],
+              "progress": {
+                "label": "Workers 081-100",
+                "current": 14,
+                "total": 20
+              }
+            },
+            {
+              "time": "03:42.0",
+              "actor": "Worker-095..100",
+              "action": "Completed the final cleanup subplans and reported every scanned volume as clean.",
+              "highlights": [
+                "final cleanup",
+                "clean"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Cleaning on CL-15..CL-20."
+                },
+                {
+                  "results": "Result: cleanup wave complete; no leftover support blocks remain."
+                }
+              ],
+              "progress": {
+                "label": "Workers 081-100",
+                "current": 20,
+                "total": 20
+              }
+            }
+          ]
+        },
+        {
+          "groupId": "chunk-final-verification",
+          "time": "03:52.0",
+          "actor": "ProjectManager",
+          "entries": [
+            {
+              "time": "03:52.0",
+              "actor": "ProjectManager",
+              "action": "Ran the final blueprint comparison after the cleanup wave completed.",
+              "highlights": [
+                "final blueprint comparison"
+              ],
+              "sublines": [
+                {
+                  "tools": "Tool call Validate Build: compare final block map with blueprint."
+                }
+              ]
+            },
+            {
+              "time": "04:00.0",
+              "actor": "Foreman-A..E",
+              "action": "All foremen confirmed their regions: placement complete, scaffold removed, replacements verified, cleanup clean.",
+              "highlights": [
+                "placement complete",
+                "scaffold removed",
+                "replacements verified",
+                "cleanup clean"
+              ],
+              "sublines": [
+                {
+                  "results": "Result: Region A, B, C, D, and E are accepted."
+                }
+              ]
+            },
+            {
+              "time": "04:10.0",
+              "actor": "ProjectManager",
+              "action": "Prepared final acceptance using the discovered workflows as the build summary.",
+              "highlights": [
+                "discovered workflows",
+                "final acceptance"
+              ],
+              "sublines": [
+                {
+                  "notes": "Skill summary: Region Placement, Scaffold Construction, Region Replacement, Region Cleaning."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "chunk-final-acceptance",
+          "time": "04:17.5",
+          "actor": "ProjectManager",
+          "entries": [
+            {
+              "time": "04:17.5",
+              "actor": "ProjectManager",
+              "action": "Done. Sydney Opera House has been built, verified, and cleaned up with the learned workflow chunks.",
+              "highlights": [
+                "Done",
+                "Sydney Opera House",
+                "learned workflow chunks"
+              ],
+              "sublines": [
+                {
+                  "results": "Agents: 100. Blocks: 95,151. Status: verified and cleaned up."
+                }
+              ]
             }
           ]
         }

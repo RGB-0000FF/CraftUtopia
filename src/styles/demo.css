@@ -3952,6 +3952,7 @@ body.is-block-count-hidden .blueprint-block-count {
 
 .skill-notification-stack {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 5px;
   min-width: 0;
   padding: 0 10px 8px;
@@ -3969,12 +3970,12 @@ body.is-block-count-hidden .blueprint-block-count {
   --skill-accent: #72ffd1;
   position: relative;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  align-items: start;
-  gap: 8px;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
   min-width: 0;
-  min-height: 46px;
-  padding: 6px 8px;
+  min-height: 42px;
+  padding: 5px 7px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--skill-accent) 42%, transparent);
   border-radius: 6px;
@@ -4003,8 +4004,8 @@ body.is-block-count-hidden .blueprint-block-count {
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 38px;
+  width: 34px;
+  height: 30px;
   padding: 2px;
   border: 1px solid rgba(255,255,255,0.78);
   border-radius: 5px;
@@ -4026,7 +4027,7 @@ body.is-block-count-hidden .blueprint-block-count {
   z-index: 1;
   display: grid;
   min-width: 0;
-  gap: 3px;
+  gap: 2px;
   font-family: var(--font-mono);
   line-height: 1.15;
 }
@@ -4034,7 +4035,7 @@ body.is-block-count-hidden .blueprint-block-count {
 .skill-notification-body b {
   min-width: 0;
   color: color-mix(in srgb, var(--skill-accent) 84%, #ffffff);
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 950;
   letter-spacing: 0;
   overflow-wrap: anywhere;
@@ -4048,7 +4049,7 @@ body.is-block-count-hidden .blueprint-block-count {
 .skill-notification-body small {
   min-width: 0;
   color: rgba(205,255,223,0.60);
-  font-size: 0.58rem;
+  font-size: 0.52rem;
   font-weight: 680;
   line-height: 1.24;
   overflow-wrap: anywhere;
@@ -4219,6 +4220,10 @@ body.is-block-count-hidden .blueprint-block-count {
 
 .structured-entry.is-continuation .structured-main {
   color: rgba(224,255,234,0.84);
+}
+
+.structured-entry.is-subline-only {
+  margin-top: 5px;
 }
 
 .structured-entry.is-entry-entering {

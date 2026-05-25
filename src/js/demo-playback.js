@@ -812,6 +812,13 @@ function advancePlayback(options = {}) {
   revealChatMessage(playbackCursor);
 }
 
+function findStructuredLogGroupNode(event) {
+  const groupKey = getStructuredLogGroupKey(event);
+  if (!groupKey) return null;
+  return [...chatFeed.querySelectorAll('.event-row.is-structured[data-log-group-key]')]
+    .find((article) => article.dataset.logGroupKey === groupKey) || null;
+}
+
 function revealChatMessage(index = 0) {
   const event = playbackEvents[index];
   if (!event) {
@@ -824,12 +831,15 @@ function revealChatMessage(index = 0) {
   const shouldStickToBottom = shouldFollowLog || isLogNearBottom();
   let article = progressKey ? progressRows.get(progressKey) : null;
   appendStageDividerIfNeeded(event);
+  const existingLogGroupNode = !article && !progressKey
+    ? (canAppendToStructuredLogGroup(activeLogGroupNode, event) ? activeLogGroupNode : findStructuredLogGroupNode(event))
+    : null;
   if (article) {
     populateChatMessage(article, event, index, { entering: false });
     if (shouldStickToBottom) chatFeed.append(article);
     article.classList.add('active');
-  } else if (canAppendToStructuredLogGroup(activeLogGroupNode, event)) {
-    article = appendStructuredEventToChatMessage(activeLogGroupNode, event, index, { animate: true });
+  } else if (existingLogGroupNode) {
+    article = appendStructuredEventToChatMessage(existingLogGroupNode, event, index, { animate: true });
     if (shouldStickToBottom) chatFeed.append(article);
     article.classList.add('active');
   } else {
@@ -900,11 +910,14 @@ function appendEventInstantly(event, index, options = {}) {
   const progressKey = getProgressRowKey(event);
   let node = progressKey ? progressRows.get(progressKey) : null;
   appendStageDividerIfNeeded(event);
+  const existingLogGroupNode = !node && !progressKey
+    ? (canAppendToStructuredLogGroup(activeLogGroupNode, event) ? activeLogGroupNode : findStructuredLogGroupNode(event))
+    : null;
   if (node) {
     populateChatMessage(node, event, index, { entering: false });
     chatFeed.append(node);
-  } else if (canAppendToStructuredLogGroup(activeLogGroupNode, event)) {
-    node = appendStructuredEventToChatMessage(activeLogGroupNode, event, index, { animate: options.animateEntry === true });
+  } else if (existingLogGroupNode) {
+    node = appendStructuredEventToChatMessage(existingLogGroupNode, event, index, { animate: options.animateEntry === true });
     chatFeed.append(node);
   } else {
     node = createChatMessage(event, index);

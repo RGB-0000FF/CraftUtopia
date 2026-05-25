@@ -1,0 +1,461 @@
+{
+  "version": "united-states-capitol-chunked-skill-log-20260525",
+  "title": "United States Capitol with 100 Agents",
+  "intro": "BOOT runtime started · United States Capitol with 100 Agents · log grouped by workflow chunk type",
+  "milestones": [
+    {
+      "id": "transfer-blueprint",
+      "label": "1. Transfer PNG to Blueprint",
+      "stageId": 1,
+      "timeRange": [
+        "00:00.0",
+        "00:20.0"
+      ],
+      "events": [
+        {
+          "groupId": "chunk-transfer-blueprint",
+          "time": "00:00.8",
+          "actor": "ProjectManager",
+          "entries": [
+            {
+              "time": "00:00.8",
+              "actor": "ProjectManager",
+              "action": "The user requested a build. We have a PNG and need a usable blueprint.",
+              "highlights": [
+                "PNG",
+                "blueprint"
+              ],
+              "sublines": [
+                {
+                  "tools": "Send message to Designer: Convert the relevant PNG into a blueprint."
+                }
+              ]
+            },
+            {
+              "time": "00:08.0",
+              "actor": "Designer",
+              "action": "Generated the coarse 3D structure and exported it into a Minecraft object.",
+              "highlights": [
+                "3D structure",
+                "Minecraft object"
+              ],
+              "sublines": [
+                {
+                  "tools": "Tool call TRELLIS.2 -> ObjToSchematic: prepare source geometry."
+                }
+              ]
+            },
+            {
+              "time": "00:16.0",
+              "actor": "Designer",
+              "action": "Converted the object into a buildable JSON blueprint.",
+              "highlights": [
+                "JSON blueprint"
+              ],
+              "sublines": [
+                {
+                  "results": "Result: blueprint is ready for region splitting."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blueprint-split",
+      "label": "2. Blueprint Split",
+      "stageId": 2,
+      "timeRange": [
+        "00:20.0",
+        "00:32.0"
+      ],
+      "events": [
+        {
+          "groupId": "chunk-blueprint-split",
+          "time": "00:20.5",
+          "actor": "ProjectManager",
+          "entries": [
+            {
+              "time": "00:20.5",
+              "actor": "ProjectManager",
+              "action": "The blueprint is ready. I need to split it into build regions for parallel work.",
+              "highlights": [
+                "split",
+                "build regions"
+              ],
+              "sublines": [
+                {
+                  "tools": "Tool call Split Blueprint: divide the blueprint into Region A through Region E."
+                }
+              ]
+            },
+            {
+              "time": "00:27.0",
+              "actor": "ProjectManager",
+              "action": "Assigned the five regions to Foreman teams and prepared worker subplans.",
+              "highlights": [
+                "Region A",
+                "Region E",
+                "100 workers"
+              ],
+              "sublines": [
+                {
+                  "results": "Result: 5 foremen and 100 workers are ready to build."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "regions-build",
+      "label": "3. Regions [A,B,C,D,E] Build",
+      "stageId": 3,
+      "timeRange": [
+        "00:32.0",
+        "03:27.0"
+      ],
+      "events": [
+        {
+          "groupId": "chunk-region-assignment",
+          "time": "00:32.0",
+          "actor": "Foreman-A",
+          "entries": [
+            {
+              "time": "00:32.0",
+              "actor": "Foreman-A",
+              "action": "Received Region A and started assigning worker subplans.",
+              "highlights": [
+                "Region A",
+                "worker subplans"
+              ],
+              "sublines": [
+                {
+                  "tools": "Tool call Assign Subplans: distribute region work to workers."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "skill-region-placement",
+          "time": "00:44.2",
+          "actor": "Foreman-A",
+          "entries": [
+            {
+              "time": "00:44.2",
+              "actor": "Foreman-A",
+              "action": "Collected enough worker results in Region A. This repeated workflow can become Learned Region Placement.",
+              "highlights": [
+                "Learned Region Placement"
+              ],
+              "sublines": [
+                {
+                  "notes": "Worker-001 completed A-01 and Worker-002 completed A-02."
+                },
+                {
+                  "notes": "Workers are repeating Read Subplan -> Check Inventory -> Go To Region -> Place Blocks."
+                },
+                {
+                  "tools": "Send message to ProjectManager: Please summarize this workflow as Learned Region Placement."
+                }
+              ]
+            },
+            {
+              "time": "00:46.0",
+              "actor": "ProjectManager",
+              "action": "Foreman-A reported a repeated placement workflow. I should turn it into a reusable skill.",
+              "highlights": [
+                "Create Skill",
+                "Learned Region Placement"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Create Skill: Create Learned Region Placement from Read Subplan -> Check Inventory -> Go To Region -> Place Blocks."
+                },
+                {
+                  "results": "Result: Learned Region Placement is ready."
+                }
+              ]
+            },
+            {
+              "time": "00:47.2",
+              "actor": "Worker-003",
+              "action": "Received subplan A-03 and Learned Region Placement. I can place region blocks with one skill call.",
+              "highlights": [
+                "Use Skill",
+                "Learned Region Placement",
+                "A-03"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Placement with subplan A-03."
+                },
+                {
+                  "results": "Result: blocks are placed and reported to Foreman-A."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "skill-scaffold-construction",
+          "time": "01:27.2",
+          "actor": "Foreman-C",
+          "entries": [
+            {
+              "time": "01:27.2",
+              "actor": "Foreman-C",
+              "action": "Collected enough worker results in Region C. This repeated workflow can become Learned Scaffold Construction.",
+              "highlights": [
+                "Learned Scaffold Construction"
+              ],
+              "sublines": [
+                {
+                  "notes": "Worker-041 completed C-01 and Worker-042 completed C-02."
+                },
+                {
+                  "notes": "Workers are repeating Read Subplan -> Check Inventory -> Go To Region -> Place Scaffold Blocks."
+                },
+                {
+                  "tools": "Send message to ProjectManager: Please summarize this workflow as Learned Scaffold Construction."
+                }
+              ]
+            },
+            {
+              "time": "01:29.0",
+              "actor": "ProjectManager",
+              "action": "Foreman-C reported a repeated scaffold workflow. I should turn it into a reusable skill.",
+              "highlights": [
+                "Create Skill",
+                "Learned Scaffold Construction"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Create Skill: Create Learned Scaffold Construction from Read Subplan -> Check Inventory -> Go To Region -> Place Scaffold Blocks."
+                },
+                {
+                  "results": "Result: Learned Scaffold Construction is ready."
+                }
+              ]
+            },
+            {
+              "time": "01:30.2",
+              "actor": "Worker-043",
+              "action": "Received subplan C-03 and Learned Scaffold Construction. I can build scaffold with one skill call.",
+              "highlights": [
+                "Use Skill",
+                "Learned Scaffold Construction",
+                "C-03"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Scaffold Construction with subplan C-03."
+                },
+                {
+                  "results": "Result: scaffold blocks are placed and reported to Foreman-C."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "skill-region-replacement",
+          "time": "02:15.2",
+          "actor": "Foreman-B",
+          "entries": [
+            {
+              "time": "02:15.2",
+              "actor": "Foreman-B",
+              "action": "Collected enough worker results in Region B. This repeated workflow can become Learned Region Replacement.",
+              "highlights": [
+                "Learned Region Replacement"
+              ],
+              "sublines": [
+                {
+                  "notes": "Worker-021 completed B-01 and Worker-022 completed B-02."
+                },
+                {
+                  "notes": "Workers are repeating Read Subplan -> Check Blocks -> Remove Blocks -> Go To Region -> Place Blocks."
+                },
+                {
+                  "tools": "Send message to ProjectManager: Please summarize this workflow as Learned Region Replacement."
+                }
+              ]
+            },
+            {
+              "time": "02:17.0",
+              "actor": "ProjectManager",
+              "action": "Foreman-B reported a repeated replacement workflow. I should turn it into a reusable skill.",
+              "highlights": [
+                "Create Skill",
+                "Learned Region Replacement"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Create Skill: Create Learned Region Replacement from Read Subplan -> Check Blocks -> Remove Blocks -> Go To Region -> Place Blocks."
+                },
+                {
+                  "results": "Result: Learned Region Replacement is ready."
+                }
+              ]
+            },
+            {
+              "time": "02:18.2",
+              "actor": "Worker-023",
+              "action": "Received subplan B-03 and Learned Region Replacement. I can fix wrong or missing blocks with one skill call.",
+              "highlights": [
+                "Use Skill",
+                "Learned Region Replacement",
+                "B-03"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Replacement with subplan B-03."
+                },
+                {
+                  "results": "Result: blocks are fixed and reported to Foreman-B."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "chunk-region-progress",
+          "time": "03:25.0",
+          "actor": "ProjectManager",
+          "entries": [
+            {
+              "time": "03:25.0",
+              "actor": "ProjectManager",
+              "action": "Region workers are continuing with the learned skills that have appeared in this build.",
+              "highlights": [
+                "learned skills"
+              ],
+              "sublines": [
+                {
+                  "notes": "Progress follows the red boxed markers in the video."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "verified-cleanup",
+      "label": "4. Verified and Cleanup",
+      "stageId": 8,
+      "timeRange": [
+        "03:27.0",
+        "03:53.6"
+      ],
+      "events": [
+        {
+          "groupId": "chunk-verification-start",
+          "time": "03:24.6",
+          "actor": "ProjectManager",
+          "entries": [
+            {
+              "time": "03:24.6",
+              "actor": "ProjectManager",
+              "action": "All active regions have reported completion. The build now moves into final verification and cleanup.",
+              "highlights": [
+                "verification",
+                "cleanup"
+              ],
+              "sublines": [
+                {
+                  "tools": "Tool call Verify Build: check whether the current build matches the blueprint."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "skill-region-cleaning",
+          "time": "03:25.2",
+          "actor": "Foreman-E",
+          "entries": [
+            {
+              "time": "03:25.2",
+              "actor": "Foreman-E",
+              "action": "Collected enough worker results in Region cleanup. This repeated workflow can become Learned Region Cleaning.",
+              "highlights": [
+                "Learned Region Cleaning"
+              ],
+              "sublines": [
+                {
+                  "notes": "Worker-081 completed CL-01 and Worker-082 completed CL-02."
+                },
+                {
+                  "notes": "Workers are repeating Read Subplan -> Go To Region -> Remove Blocks -> Verify Region."
+                },
+                {
+                  "tools": "Send message to ProjectManager: Please summarize this workflow as Learned Region Cleaning."
+                }
+              ]
+            },
+            {
+              "time": "03:27.0",
+              "actor": "ProjectManager",
+              "action": "Foreman-E reported a repeated cleaning workflow. I should turn it into a reusable skill.",
+              "highlights": [
+                "Create Skill",
+                "Learned Region Cleaning"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Create Skill: Create Learned Region Cleaning from Read Subplan -> Go To Region -> Remove Blocks -> Verify Region."
+                },
+                {
+                  "results": "Result: Learned Region Cleaning is ready."
+                }
+              ]
+            },
+            {
+              "time": "03:28.2",
+              "actor": "Worker-083",
+              "action": "Received subplan CL-03 and Learned Region Cleaning. I can clean leftover blocks with one skill call.",
+              "highlights": [
+                "Use Skill",
+                "Learned Region Cleaning",
+                "CL-03"
+              ],
+              "sublines": [
+                {
+                  "skills": "Tool call Use Skill: Learned Region Cleaning with subplan CL-03."
+                },
+                {
+                  "results": "Result: CL-03 is clean and reported to Foreman-E."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "groupId": "chunk-final-acceptance",
+          "time": "03:41.6",
+          "actor": "ProjectManager",
+          "entries": [
+            {
+              "time": "03:41.6",
+              "actor": "ProjectManager",
+              "action": "Final verification is complete and the build is accepted.",
+              "highlights": [
+                "build accepted"
+              ],
+              "sublines": [
+                {
+                  "results": "Done. United States Capitol has been built and verified."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

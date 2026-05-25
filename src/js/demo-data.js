@@ -18,6 +18,56 @@ function parseTimelineTime(time = '00:00.0') {
   return parts.reduce((total, part) => (total * 60) + (Number.isFinite(part) ? part : 0), 0);
 }
 
+function formatManifestTimelineTime(seconds = 0) {
+  const safeSeconds = Math.max(0, Number(seconds) || 0);
+  const minutes = Math.floor(safeSeconds / 60);
+  const remaining = safeSeconds - (minutes * 60);
+  return `${String(minutes).padStart(2, '0')}:${remaining.toFixed(1).padStart(4, '0')}`;
+}
+
+function getTimedSublineSpan(event = {}, sublineCount = 0) {
+  const span = Number(event.sublineSpanSeconds ?? event.spanSeconds ?? 0);
+  if (Number.isFinite(span) && span > 0) return span;
+  if (event.revealSublines === true && sublineCount > 0) return Math.max(1.2, sublineCount * 0.75);
+  return 0;
+}
+
+function expandTimedSublineEvent(event = {}, seqRef) {
+  const sublines = Array.isArray(event.sublines) ? event.sublines : [];
+  const span = getTimedSublineSpan(event, sublines.length);
+  if (!span || !sublines.length) return [normalizeRunEvent(event, seqRef.value++)];
+
+  const startSeconds = parseTimelineTime(event.time || event.at || '00:00.0');
+  const step = span / Math.max(sublines.length, 1);
+  const {
+    sublineSpanSeconds,
+    spanSeconds,
+    revealSublines,
+    ...baseEvent
+  } = event;
+  const events = [
+    normalizeRunEvent({
+      ...baseEvent,
+      sublines: []
+    }, seqRef.value++)
+  ];
+
+  sublines.forEach((subline, index) => {
+    events.push(normalizeRunEvent({
+      ...baseEvent,
+      action: '',
+      text: '',
+      lines: undefined,
+      sublines: [subline],
+      progress: null,
+      sublineOnly: true,
+      time: formatManifestTimelineTime(startSeconds + (step * (index + 1))),
+      groupEntryIndex: (baseEvent.groupEntryIndex ?? 0) + ((index + 1) / 100)
+    }, seqRef.value++));
+  });
+  return events;
+}
+
 function buildPlaybackEvents(runStages = []) {
   return runStages
     .flatMap((stage, stageIndex) => (stage.events || []).map((event, eventIndex) => ({
@@ -176,7 +226,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260525-ts-hls';
+const DATA_ASSET_VERSION = '20260525-skill-colors';
 let runEventsManifestPath = '';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;
@@ -356,12 +406,12 @@ async function loadJsonAsset(path) {
 function normalizeRunEvents(events = [], seqRef) {
   return events.flatMap((event, groupIndex) => {
     if (!Array.isArray(event.entries) || !event.entries.length) {
-      return [normalizeRunEvent(event, seqRef.value++)];
+      return expandTimedSublineEvent(event, seqRef);
     }
 
     const { entries, ...group } = event;
     const logGroup = group.groupId || `${group.actor || 'log'}-${group.time || seqRef.value}-${groupIndex}`;
-    return entries.map((entry, entryIndex) => normalizeRunEvent({
+    return entries.flatMap((entry, entryIndex) => expandTimedSublineEvent({
       ...group,
       ...entry,
       actor: entry.actor || group.actor,
@@ -369,7 +419,7 @@ function normalizeRunEvents(events = [], seqRef) {
       logGroup: entry.logGroup || logGroup,
       groupEntryIndex: entry.groupEntryIndex ?? entryIndex,
       groupEntryCount: entries.length
-    }, seqRef.value++));
+    }, seqRef));
   });
 }
 
@@ -456,8 +506,12 @@ function normalizeRunEvent(event = {}, seq = 0) {
   const time = event.time || event.at || '00:00.0';
   const actor = event.actor || display.actor || 'System';
   const kind = String(event.kind || event.type || display.kind || 'LOG').replace(/▶/g, '');
-  const action = event.action || display.action || String(event.text || '').replace(/^\[T\+[^\]]+\]\s+\[[^\]]+\]\s+\[[^\]]+\]\s*/, '');
-  const sublines = event.sublines || display.sublines || [];
+  const action = event.action !== undefined
+    ? event.action
+    : (display.action !== undefined
+      ? display.action
+      : String(event.text || '').replace(/^\[T\+[^\]]+\]\s+\[[^\]]+\]\s+\[[^\]]+\]\s*/, ''));
+  const sublines = event.sublines !== undefined ? event.sublines : (display.sublines || []);
   const tools = event.tools || display.tools || [];
   const messages = event.messages || display.messages || [];
   const skills = event.skills || display.skills || [];
@@ -491,6 +545,7 @@ function normalizeRunEvent(event = {}, seq = 0) {
       results,
       notes,
       logGroup: event.logGroup || display.logGroup || '',
+      sublineOnly: Boolean(event.sublineOnly || display.sublineOnly),
       highlights: highlights.map((highlight) => String(highlight)).filter(Boolean)
     }
   };

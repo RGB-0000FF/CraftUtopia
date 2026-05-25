@@ -80,7 +80,7 @@ const SKILL_REGISTRY = {
     summary: 'Reusable bounded placement loop learned after many Workers repeat read, script, run, verify, submit.',
     learnedLabel: 'Foreman-A Build',
     sharedTo: 'Foreman-A..Foreman-E',
-    accent: '#72ffd1'
+    accent: '#35c9ff'
   },
   replace_region: {
     name: 'Learned Region Replacement',
@@ -89,7 +89,7 @@ const SKILL_REGISTRY = {
     summary: 'Wrong-block and missing-block repair pattern learned when mid-build repair pressure increases.',
     learnedLabel: 'Foreman-B Build',
     sharedTo: 'Foreman-A..Foreman-E',
-    accent: '#f06f9f'
+    accent: '#ff5c8a'
   },
   scaffold: {
     name: 'Learned Scaffold Construction',
@@ -98,7 +98,7 @@ const SKILL_REGISTRY = {
     summary: 'Temporary support placement with cleanup markers learned from awkward high-region builds.',
     learnedLabel: 'Foreman-C Build',
     sharedTo: 'Foreman-A..Foreman-E',
-    accent: '#ffd987'
+    accent: '#ffd166'
   },
   clean_region: {
     name: 'Learned Region Cleaning',
@@ -107,7 +107,7 @@ const SKILL_REGISTRY = {
     summary: 'Final cleanup pass for scaffold and leftover blocks while preserving valid blueprint blocks.',
     learnedLabel: 'Foreman-E Build',
     sharedTo: 'Foreman-A..Foreman-E',
-    accent: '#9dff89'
+    accent: '#6ee75f'
   }
 };
 

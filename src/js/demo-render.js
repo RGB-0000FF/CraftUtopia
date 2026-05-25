@@ -218,6 +218,9 @@ function getStructuredFollowupMeta(followup = {}, event = {}, log = {}) {
     return { className: 'is-tool-call', accent: '#9fb0bd', label: followup.label || 'Tool call' };
   }
   if (followup.type === 'skill') {
+    if (/\bcreate skill\b/i.test(followup.text || '')) {
+      return { className: 'is-tool-call', accent: '#9fb0bd', label: followup.label || 'Tool call' };
+    }
     const skillRef = getSkillRefForStructuredSubline(followup.text || '', event, log);
     return {
       className: 'is-skill',
@@ -244,6 +247,7 @@ function appendStructuredLogEntry(node, event, options = {}) {
   const showHeader = options.showHeader !== false;
   const entry = document.createElement('span');
   entry.className = `structured-entry${showHeader ? '' : ' is-continuation'}`;
+  if (event.sublineOnly || event.display?.sublineOnly) entry.classList.add('is-subline-only');
   if (options.animate) {
     entry.classList.add('is-entry-entering');
     entry.addEventListener('animationend', () => entry.classList.remove('is-entry-entering'), { once: true });
@@ -264,10 +268,13 @@ function appendStructuredLogEntry(node, event, options = {}) {
     main.append(timecode, actor);
   }
 
-  const action = document.createElement('span');
-  action.className = 'structured-action';
-  appendHighlightedText(action, log.action, log.highlights);
-  main.append(action);
+  const hasAction = Boolean(String(log.action || '').trim());
+  if (hasAction) {
+    const action = document.createElement('span');
+    action.className = 'structured-action';
+    appendHighlightedText(action, log.action, log.highlights);
+    main.append(action);
+  }
 
   if (log.result) {
     const result = document.createElement('span');
@@ -280,7 +287,7 @@ function appendStructuredLogEntry(node, event, options = {}) {
   if (progress) {
     main.append(progress);
   }
-  entry.append(main);
+  if (showHeader || hasAction || log.result || progress) entry.append(main);
 
   if (log.followups?.length) {
     const followups = document.createElement('span');
@@ -342,7 +349,11 @@ function canAppendToStructuredLogGroup(article, event) {
 
 function appendStructuredEventToChatMessage(article, event, index, options = {}) {
   const text = article?.querySelector('.event-text');
-  if (!text || !appendStructuredLogEntry(text, event, { showHeader: false, animate: options.animate === true })) return null;
+  const log = createStructuredLogText(event);
+  const previousActor = article?.dataset?.logLastActor || '';
+  const showHeader = Boolean(log?.actor && previousActor && log.actor !== previousActor);
+  if (!text || !appendStructuredLogEntry(text, event, { showHeader, animate: options.animate === true })) return null;
+  if (log?.actor) article.dataset.logLastActor = log.actor;
   updateChatMessageMetadata(article, event, index);
   return article;
 }
@@ -459,42 +470,34 @@ function getSkillIconMarkup(skillRef = '') {
 function renderSkillLibrary(activeRef = focusedSkillRef) {
   if (!skillList || !skillRoute) return;
   const skills = Object.keys(SKILL_REGISTRY).map(ensureSkillState).filter(Boolean);
-  const unlockedCount = skills.filter((skill) => skill.learned || skill.events.length).length;
-  skillLibrary?.classList.toggle('is-empty', unlockedCount === 0);
+  const discoveredSkills = skills.filter((skill) => skill.learned || skill.events.length);
+  skillLibrary?.classList.toggle('is-empty', discoveredSkills.length === 0);
   const title = skillLibrary?.querySelector('h3');
-  if (title) title.textContent = `Skill · ${unlockedCount}/${skills.length}`;
+  if (title) title.textContent = discoveredSkills.length ? `Skill · ${discoveredSkills.length} discovered` : 'Skill · discovering';
   skillList.replaceChildren();
 
-  skills.forEach((skill) => {
-    const isUnlocked = skill.learned || skill.events.length;
+  discoveredSkills.forEach((skill) => {
     const item = document.createElement('li');
     const button = document.createElement('button');
-    button.className = `skill-card${skill.ref === activeRef && isUnlocked ? ' active' : ''}${isUnlocked ? '' : ' is-locked'}`;
+    button.className = `skill-card${skill.ref === activeRef ? ' active' : ''}`;
     button.type = 'button';
     button.dataset.skillRef = skill.ref;
-    button.disabled = !isUnlocked;
-    button.setAttribute('aria-pressed', String(skill.ref === activeRef && isUnlocked));
+    button.setAttribute('aria-pressed', String(skill.ref === activeRef));
     const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Waiting';
     const usedBy = summarizeRooms(skill.usedRooms, 'No reuse yet');
-    button.title = isUnlocked
-      ? `${skill.name}: ${skill.summary} Learned in ${learnedFrom}. Shared to ${skill.sharedTo}. Used by ${usedBy}.`
-      : 'Empty skill slot';
-    button.innerHTML = isUnlocked ? `
+    button.title = `${skill.name}: ${skill.summary} Discovered in ${learnedFrom}. Used by ${usedBy}.`;
+    button.innerHTML = `
       <span class="skill-icon">${getSkillIconMarkup(skill.ref)}</span>
       <span class="skill-name">${escapeHtml(skill.name)}</span>
       <span class="skill-status">${escapeHtml(getSkillStatus(skill))}</span>
       <span class="skill-detail-grid" aria-label="${escapeHtml(skill.name)} sharing details">
-        <span class="skill-detail"><b>Learned in</b><span title="${escapeHtml(learnedFrom)}">${escapeHtml(learnedFrom)}</span></span>
-        <span class="skill-detail"><b>Shared to</b><span title="${escapeHtml(skill.sharedTo)}">${escapeHtml(skill.sharedTo)}</span></span>
+        <span class="skill-detail"><b>Discovered in</b><span title="${escapeHtml(learnedFrom)}">${escapeHtml(learnedFrom)}</span></span>
         <span class="skill-detail"><b>Used by</b><span title="${escapeHtml(usedBy)}">${escapeHtml(usedBy)}</span></span>
       </span>
-      <span class="skill-share-line">Shared via global Skill Library, not private to the learning room.</span>
+      <span class="skill-share-line">Shown only after repeated traces produce a reusable workflow.</span>
       <span class="skill-jump">Jump to next ${escapeHtml(skill.name)} event -></span>
-    ` : `
-      <span class="skill-icon" aria-hidden="true"></span>
-      <span class="skill-name">Empty</span>
     `;
-    if (isUnlocked) button.addEventListener('click', () => activateSkillCard(skill.ref));
+    button.addEventListener('click', () => activateSkillCard(skill.ref));
     item.append(button);
     skillList.append(item);
   });
@@ -664,6 +667,7 @@ function getEventProgress(event = {}) {
 }
 
 function getProgressRowKey(event = {}) {
+  if (getStructuredLogGroupKey(event)) return '';
   const progress = getEventProgress(event);
   if (!progress?.label) return '';
   return `${event.stageId}:${progress.label}`;
@@ -710,6 +714,7 @@ function populateChatMessage(article, event, index, options = {}) {
   if (structuredLog) {
     article.classList.add('is-structured');
     appendStructuredLog(text, event);
+    article.dataset.logLastActor = structuredLog.actor || '';
   } else {
     appendMentionedText(text, event.text || '');
   }

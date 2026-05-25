@@ -9,7 +9,7 @@
   "introImage": "assets/images/architecture.jpg",
   "introSeconds": 0,
   "frameworkImage": "assets/images/architecture.jpg",
-  "logManifest": "data/demos/sydney-opera-house/milestone-log-preview.json",
+  "logManifest": "data/demos/taj-mahal/milestone-log-preview.json",
   "alignTimelineToLogTime": true,
   "topMilestoneMode": true,
   "topMilestoneStartAtVideoStart": true,
