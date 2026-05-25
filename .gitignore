@@ -15,6 +15,7 @@ assets/videos/
 assets/videos_faststart/
 assets/videos_1080p/
 *.mp4
+!hls-primer/**/init.mp4
 *.mov
 *.mkv
 *.webm
