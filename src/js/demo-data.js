@@ -271,7 +271,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260525-assigned-work';
+const DATA_ASSET_VERSION = '20260525-chunk-reframe';
 let runEventsManifestPath = '';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;

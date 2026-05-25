@@ -146,21 +146,6 @@
               "actor": "ProjectManager"
             }
           ]
-        },
-        {
-          "time": "00:31",
-          "entries": [
-            {
-              "time": "00:31",
-              "action": "Each foreman launches 20 workers for its assigned region.",
-              "highlights": [
-                "Foreman-A..E",
-                "20 workers",
-                "assigned region"
-              ],
-              "actor": "Foreman-A..E"
-            }
-          ]
         }
       ]
     },
@@ -179,7 +164,7 @@
             {
               "time": "00:32.0",
               "actor": "Foreman-A..E",
-              "action": "Received Regions A-E from the ProjectManager. Each foreman splits its region into worker subplans before assignment.",
+              "action": "Foreman-A..E initialize the build stage: split Regions A-E into one subplan per worker and open five queues in parallel.",
               "highlights": [
                 "Regions A-E",
                 "worker subplans",
@@ -191,7 +176,7 @@
                   "tools": "Tool call Split Regions: convert Regions A-E into worker subplans."
                 },
                 {
-                  "tools": "Tool call Assign Subplans: send one subplan to each worker."
+                  "tools": "Tool call Assign Subplans: prepare one subplan for each worker."
                 },
                 {
                   "tools": "Tool call Start Build: open the five region queues in parallel."
@@ -220,11 +205,12 @@
             {
               "time": "00:35.0",
               "actor": "Foreman-A",
-              "action": "Foreman-A assigns A-01 through A-20 to Worker-001..020; each worker starts one placement subplan with basic tools.",
+              "action": "Foreman-A assigns A-01 through A-20 to Worker-001..020. No existing skill matches this placement sequence yet, so workers use basic tools and leave traces.",
               "highlights": [
                 "Worker-001",
                 "Worker-020",
-                "Region A"
+                "basic tools",
+                "placement traces"
               ],
               "sublines": [
                 {
@@ -247,7 +233,7 @@
             {
               "time": "00:35.8",
               "actor": "Worker-001..008",
-              "action": "Several workers repeat the same read, check, move, and place sequence.",
+              "action": "Worker-001..008 execute the same basic sequence for their placement subplans.",
               "highlights": [
                 "Read Subplan",
                 "Check Inventory",
@@ -275,7 +261,7 @@
             {
               "time": "00:36.6",
               "actor": "Worker-009..016",
-              "action": "The placement trace keeps matching across nearby subplans.",
+              "action": "Worker-009..016 repeat the sequence on nearby subplans; the placement trace is becoming stable.",
               "highlights": [
                 "placement trace",
                 "subplans"
@@ -297,7 +283,7 @@
             {
               "time": "00:37.2",
               "actor": "Worker-017..020",
-              "action": "Region placement has enough matching traces for Foreman-A to summarize.",
+              "action": "Worker-017..020 finish the batch, giving Foreman-A 20 matching placement traces to summarize.",
               "highlights": [
                 "Region placement",
                 "matching traces",
@@ -334,53 +320,53 @@
               ],
               "sublines": [
                 {
-                  "tools": "Send message to ProjectManager: create Learned Region Placement."
+                  "tools": "Send message to ProjectManager: package Region Placement trace."
                 }
               ]
             },
             {
               "time": "00:39.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager reviews the repeated worker trace and creates Learned Region Placement.",
+              "action": "ProjectManager reviews the repeated worker trace and creates Region Placement.",
               "highlights": [
                 "Create Skill",
-                "Learned Region Placement"
+                "Region Placement"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Create Skill: Learned Region Placement."
+                  "tools": "Tool call Create Skill: Region Placement."
                 },
                 {
-                  "results": "Result: -> SKILL Learned Region Placement is ready."
+                  "results": "Result: -> SKILL Region Placement is ready."
                 }
               ]
             },
             {
               "time": "00:40.2",
               "actor": "ProjectManager",
-              "action": "ProjectManager sends Learned Region Placement back to Foreman-A for distribution.",
+              "action": "ProjectManager sends Region Placement back to Foreman-A for distribution.",
               "highlights": [
-                "Learned Region Placement",
+                "Region Placement",
                 "Foreman-A"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Publish Skill: Send Learned Region Placement to Foreman-A."
+                  "tools": "Tool call Publish Skill: Send Region Placement to Foreman-A."
                 }
               ]
             },
             {
               "time": "00:41.0",
               "actor": "Foreman-A",
-              "action": "Foreman-A broadcasts Learned Region Placement to workers handling similar placement subplans.",
+              "action": "Foreman-A broadcasts Region Placement to workers handling similar placement subplans.",
               "highlights": [
                 "Broadcast Skill",
-                "Learned Region Placement",
+                "Region Placement",
                 "workers"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Broadcast Skill: Learned Region Placement to the worker pool."
+                  "tools": "Tool call Broadcast Skill: Region Placement to the worker pool."
                 }
               ]
             }
@@ -411,11 +397,11 @@
             {
               "time": "00:58.0",
               "actor": "Foreman-A",
-              "action": "Foreman-A assigns shell work to Worker-001..020: Worker-001..014 place shell and podium blocks with Region Placement, while Worker-015..020 handle high-reach blocks with basic tools.",
+              "action": "Foreman-A assigns work to Worker-001..020: Worker-001..014 place shell and podium blocks with Region Placement, while Worker-015..020 handle high-reach blocks with basic tools.",
               "highlights": [
                 "Worker-001",
                 "Worker-020",
-                "Learned Region Placement"
+                "Region Placement"
               ],
               "sublines": [
                 {
@@ -431,10 +417,10 @@
             {
               "time": "01:02.0",
               "actor": "Worker-001..008",
-              "action": "Used Learned Region Placement for lower shell blocks and podium edge placement.",
+              "action": "Used Region Placement for lower shell blocks and podium edge placement.",
               "highlights": [
                 "Use Skill",
-                "Learned Region Placement",
+                "Region Placement",
                 "lower shell"
               ],
               "sublines": [
@@ -456,7 +442,7 @@
               "actor": "Worker-009..014",
               "action": "Used Region Placement on curved roof slices; high-reach support work starts appearing during this assignment.",
               "highlights": [
-                "Learned Region Placement",
+                "Region Placement",
                 "high-reach"
               ],
               "sublines": [
@@ -476,7 +462,7 @@
             {
               "time": "01:10.0",
               "actor": "Worker-015..020",
-              "action": "Completed the assigned shell work and handed the high-reach support issue to Foreman-C.",
+              "action": "Completed the assigned work and handed the high-reach support issue to Foreman-C.",
               "highlights": [
                 "Worker-015",
                 "Worker-020",
@@ -524,7 +510,7 @@
               "highlights": [
                 "Worker-021",
                 "Worker-040",
-                "Learned Region Placement",
+                "Region Placement",
                 "elevated supports"
               ],
               "sublines": [
@@ -551,7 +537,7 @@
               "action": "Used Region Placement for reachable roof blocks while building temporary supports for the higher ribs.",
               "highlights": [
                 "Use Skill",
-                "Learned Region Placement",
+                "Region Placement",
                 "temporary supports"
               ],
               "sublines": [
@@ -601,9 +587,9 @@
             {
               "time": "01:33.0",
               "actor": "Worker-034..040",
-              "action": "Finished the assigned roof rib work; ProjectManager now has enough support examples to create a workflow.",
+              "action": "Finished the assigned work; ProjectManager now has enough support examples to create a workflow.",
               "highlights": [
-                "roof rib work",
+                "assigned work",
                 "support examples"
               ],
               "sublines": [
@@ -642,53 +628,53 @@
               ],
               "sublines": [
                 {
-                  "tools": "Send message to ProjectManager: create Learned Scaffold Construction."
+                  "tools": "Send message to ProjectManager: package Scaffold Construction trace."
                 }
               ]
             },
             {
               "time": "01:41.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager reviews the repeated roof-support trace and creates Learned Scaffold Construction.",
+              "action": "ProjectManager reviews the repeated roof-support trace and creates Scaffold Construction.",
               "highlights": [
                 "Create Skill",
-                "Learned Scaffold Construction"
+                "Scaffold Construction"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Create Skill: Learned Scaffold Construction."
+                  "tools": "Tool call Create Skill: Scaffold Construction."
                 },
                 {
-                  "results": "Result: -> SKILL Learned Scaffold Construction is ready."
+                  "results": "Result: -> SKILL Scaffold Construction is ready."
                 }
               ]
             },
             {
               "time": "01:46.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager sends Learned Scaffold Construction back to Foreman-C.",
+              "action": "ProjectManager sends Scaffold Construction back to Foreman-C.",
               "highlights": [
-                "Learned Scaffold Construction",
+                "Scaffold Construction",
                 "Foreman-C"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Publish Skill: Send Learned Scaffold Construction to Foreman-C."
+                  "tools": "Tool call Publish Skill: Send Scaffold Construction to Foreman-C."
                 }
               ]
             },
             {
               "time": "01:47.0",
               "actor": "Foreman-C",
-              "action": "Foreman-C broadcasts Learned Scaffold Construction to workers assigned elevated support work.",
+              "action": "Foreman-C broadcasts Scaffold Construction to workers assigned elevated support work.",
               "highlights": [
                 "Broadcast Skill",
-                "Learned Scaffold Construction",
+                "Scaffold Construction",
                 "workers"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Broadcast Skill: Learned Scaffold Construction to the worker pool."
+                  "tools": "Tool call Broadcast Skill: Scaffold Construction to the worker pool."
                 }
               ]
             }
@@ -723,12 +709,12 @@
             {
               "time": "01:54.0",
               "actor": "Foreman-D",
-              "action": "Foreman-D assigns roof shell work to Worker-041..060: Worker-041..046 place reachable shell blocks, Worker-047..051 handle high roof access with Scaffold Construction, and Worker-052..060 repair mismatched blocks with basic tools.",
+              "action": "Foreman-D assigns work to Worker-041..060: Worker-041..046 place reachable shell blocks, Worker-047..051 handle high roof access with Scaffold Construction, and Worker-052..060 repair mismatched blocks with basic tools.",
               "highlights": [
                 "Worker-041",
                 "Worker-060",
-                "Learned Region Placement",
-                "Learned Scaffold Construction",
+                "Region Placement",
+                "Scaffold Construction",
                 "block mismatches"
               ],
               "sublines": [],
@@ -751,8 +737,8 @@
               "action": "Used placement for shell blocks and scaffold for the high roof lip.",
               "highlights": [
                 "Use Skill",
-                "Learned Region Placement",
-                "Learned Scaffold Construction"
+                "Region Placement",
+                "Scaffold Construction"
               ],
               "sublines": [
                 {
@@ -807,7 +793,7 @@
             {
               "time": "02:17.0",
               "actor": "Worker-055..060",
-              "action": "Completed the assigned roof shell work; Foreman-B now has enough block-repair examples to request a workflow.",
+              "action": "Completed the assigned work; Foreman-B now has enough block-repair examples to request a workflow.",
               "highlights": [
                 "roof shell",
                 "block repair"
@@ -848,53 +834,53 @@
               ],
               "sublines": [
                 {
-                  "tools": "Send message to ProjectManager: create Learned Region Replacement."
+                  "tools": "Send message to ProjectManager: package Region Replacement trace."
                 }
               ]
             },
             {
               "time": "02:19.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager reviews the repeated block-repair trace and creates Learned Region Replacement.",
+              "action": "ProjectManager reviews the repeated block-repair trace and creates Region Replacement.",
               "highlights": [
                 "Create Skill",
-                "Learned Region Replacement"
+                "Region Replacement"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Create Skill: Learned Region Replacement."
+                  "tools": "Tool call Create Skill: Region Replacement."
                 },
                 {
-                  "results": "Result: -> SKILL Learned Region Replacement is ready."
+                  "results": "Result: -> SKILL Region Replacement is ready."
                 }
               ]
             },
             {
               "time": "02:24.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager sends Learned Region Replacement back to Foreman-B.",
+              "action": "ProjectManager sends Region Replacement back to Foreman-B.",
               "highlights": [
-                "Learned Region Replacement",
+                "Region Replacement",
                 "Foreman-B"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Publish Skill: Send Learned Region Replacement to Foreman-B."
+                  "tools": "Tool call Publish Skill: Send Region Replacement to Foreman-B."
                 }
               ]
             },
             {
               "time": "02:25.0",
               "actor": "Foreman-B",
-              "action": "Foreman-B broadcasts Learned Region Replacement to workers assigned mismatch repair tasks.",
+              "action": "Foreman-B broadcasts Region Replacement to workers assigned mismatch repair tasks.",
               "highlights": [
                 "Broadcast Skill",
-                "Learned Region Replacement",
+                "Region Replacement",
                 "workers"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Broadcast Skill: Learned Region Replacement to the worker pool."
+                  "tools": "Tool call Broadcast Skill: Region Replacement to the worker pool."
                 }
               ]
             }
@@ -933,7 +919,7 @@
             {
               "time": "02:38.0",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns region closure to Worker-061..080: placement, scaffold, and replacement work run in parallel, while the last workers clean leftover support blocks with basic tools.",
+              "action": "Foreman-E assigns work to Worker-061..080: placement, scaffold, and replacement tasks run in parallel, while the last workers clean leftover support blocks with basic tools.",
               "highlights": [
                 "Worker-061",
                 "Worker-080",
@@ -952,9 +938,9 @@
               "action": "Used placement, scaffold, and replacement workflows on the final region blocks.",
               "highlights": [
                 "Use Skill",
-                "Learned Region Placement",
-                "Learned Scaffold Construction",
-                "Learned Region Replacement"
+                "Region Placement",
+                "Scaffold Construction",
+                "Region Replacement"
               ],
               "sublines": [
                 {
@@ -1113,53 +1099,53 @@
               ],
               "sublines": [
                 {
-                  "tools": "Send message to ProjectManager: create Learned Region Cleaning."
+                  "tools": "Send message to ProjectManager: package Region Cleaning trace."
                 }
               ]
             },
             {
               "time": "03:05.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager reviews the repeated cleanup trace and creates Learned Region Cleaning.",
+              "action": "ProjectManager reviews the repeated cleanup trace and creates Region Cleaning.",
               "highlights": [
                 "Create Skill",
-                "Learned Region Cleaning"
+                "Region Cleaning"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Create Skill: Learned Region Cleaning."
+                  "tools": "Tool call Create Skill: Region Cleaning."
                 },
                 {
-                  "results": "Result: -> SKILL Learned Region Cleaning is ready."
+                  "results": "Result: -> SKILL Region Cleaning is ready."
                 }
               ]
             },
             {
               "time": "03:10.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager sends Learned Region Cleaning back to Foreman-E.",
+              "action": "ProjectManager sends Region Cleaning back to Foreman-E.",
               "highlights": [
-                "Learned Region Cleaning",
+                "Region Cleaning",
                 "Foreman-E"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Publish Skill: Send Learned Region Cleaning to Foreman-E."
+                  "tools": "Tool call Publish Skill: Send Region Cleaning to Foreman-E."
                 }
               ]
             },
             {
               "time": "03:11.0",
               "actor": "Foreman-E",
-              "action": "Foreman-E broadcasts Learned Region Cleaning to workers assigned cleanup subplans.",
+              "action": "Foreman-E broadcasts Region Cleaning to workers assigned cleanup subplans.",
               "highlights": [
                 "Broadcast Skill",
-                "Learned Region Cleaning",
+                "Region Cleaning",
                 "workers"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Broadcast Skill: Learned Region Cleaning to the worker pool."
+                  "tools": "Tool call Broadcast Skill: Region Cleaning to the worker pool."
                 }
               ]
             }
@@ -1191,7 +1177,7 @@
               "highlights": [
                 "Worker-081",
                 "Worker-100",
-                "Learned Region Cleaning"
+                "Region Cleaning"
               ],
               "sublines": [
                 {
@@ -1207,10 +1193,10 @@
             {
               "time": "03:31.0",
               "actor": "Worker-081..087",
-              "action": "Used Learned Region Cleaning for leftover scaffold blocks around the lower shell.",
+              "action": "Used Region Cleaning for leftover scaffold blocks around the lower shell.",
               "highlights": [
                 "Use Skill",
-                "Learned Region Cleaning",
+                "Region Cleaning",
                 "lower shell"
               ],
               "sublines": [
@@ -1232,8 +1218,8 @@
               "actor": "Worker-088..094",
               "action": "Used cleaning for temporary supports around the roof ribs, then used replacement on one exposed mismatch.",
               "highlights": [
-                "Learned Region Cleaning",
-                "Learned Region Replacement"
+                "Region Cleaning",
+                "Region Replacement"
               ],
               "sublines": [
                 {
