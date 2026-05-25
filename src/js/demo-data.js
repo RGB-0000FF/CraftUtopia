@@ -271,7 +271,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260525-all-demo-standard';
+const DATA_ASSET_VERSION = '20260525-overview-controls';
 let runEventsManifestPath = '';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;
@@ -414,9 +414,10 @@ function applyDemoProfile(profile = {}) {
   document.body.classList.toggle('is-block-count-hidden', profile.showBlockCount === false);
   document.body.classList.toggle('is-video-only-locked', Boolean(profile.lockVideoOnly || profile.videoOnly));
   document.body.classList.toggle('is-video-fit-contain', profile.videoFit === 'contain');
+  const useTimelinePlaybackControls = Boolean(profile.topMilestoneMode || profile.videoOnly);
   document.body.classList.toggle('is-sydney-top-milestones', Boolean(profile.topMilestoneMode));
-  document.body.classList.toggle('is-timeline-playback-controls', Boolean(profile.topMilestoneMode));
-  positionPlaybackControls(Boolean(profile.topMilestoneMode));
+  document.body.classList.toggle('is-timeline-playback-controls', useTimelinePlaybackControls);
+  positionPlaybackControls(useTimelinePlaybackControls);
   topMilestoneRenderKey = '';
   renderTopMilestones(stages[0]?.id ?? 0);
   if (profile.showCover !== false) setImageSource('#blueprint-cover-image', profile.coverImage || profile.introImage, `${profile.taskTitle || 'Blueprint'} cover preview`);

@@ -375,7 +375,7 @@
           "groupId": "chunk-worker-021-040-assigned-work",
           "time": "01:10.0",
           "batchSummary": {
-            "label": "Worker-021-040 assigned work",
+            "label": "Workers 021-040 assigned work",
             "total": 20,
             "skills": [
               {
@@ -396,11 +396,11 @@
             {
               "time": "01:10.0",
               "actor": "Foreman-B",
-              "action": "Foreman-B assigns B-01 through B-20 to Worker-021..040: most workers use Region Placement, while the rest handle outer layer alignment with basic tools.",
+              "action": "Foreman-B assigns B-01 through B-20 to Worker-021..040: most workers use Region Placement, while the rest handle target volume alignment with basic tools.",
               "highlights": [
                 "Worker-021..040",
                 "Region Placement",
-                "basic tools"
+                "final assigned volumes"
               ],
               "sublines": [
                 {
@@ -408,7 +408,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-021-040 assigned work",
+                "label": "Workers 021-040 assigned work",
                 "current": 4,
                 "total": 20
               }
@@ -416,7 +416,7 @@
             {
               "time": "01:16.0",
               "actor": "Worker-021..036",
-              "action": "Used Region Placement for repeated pyramid block placement across B-01 through B-20.",
+              "action": "Used Region Placement for repeated assigned-region placement across B-01 through B-20.",
               "highlights": [
                 "Use Skill",
                 "Region Placement"
@@ -427,7 +427,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-021-040 assigned work",
+                "label": "Workers 021-040 assigned work",
                 "current": 16,
                 "total": 20
               }
@@ -435,10 +435,10 @@
             {
               "time": "01:22.0",
               "actor": "Worker-037..040",
-              "action": "Completed outer layer alignment with basic tools and reported the assigned work complete.",
+              "action": "Completed target volume alignment with basic tools and reported the assigned work complete.",
               "highlights": [
                 "basic tools",
-                "outer layer alignment"
+                "target volume alignment"
               ],
               "sublines": [
                 {
@@ -446,7 +446,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-021-040 assigned work",
+                "label": "Workers 021-040 assigned work",
                 "current": 20,
                 "total": 20
               }
@@ -457,7 +457,7 @@
           "groupId": "chunk-worker-041-060-assigned-work",
           "time": "01:53.6",
           "batchSummary": {
-            "label": "Worker-041-060 assigned work",
+            "label": "Workers 041-060 assigned work",
             "total": 20,
             "skills": [
               {
@@ -478,11 +478,11 @@
             {
               "time": "01:53.6",
               "actor": "Foreman-C",
-              "action": "Foreman-C assigns C-01 through C-20 to Worker-041..060: most workers use Region Placement, while the rest handle stair-step edge adjustment with basic tools.",
+              "action": "Foreman-C assigns C-01 through C-20 to Worker-041..060: most workers use Region Placement, while the rest handle target volume adjustment with basic tools.",
               "highlights": [
                 "Worker-041..060",
                 "Region Placement",
-                "basic tools"
+                "final assigned volumes"
               ],
               "sublines": [
                 {
@@ -490,7 +490,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-041-060 assigned work",
+                "label": "Workers 041-060 assigned work",
                 "current": 4,
                 "total": 20
               }
@@ -498,7 +498,7 @@
             {
               "time": "01:59.6",
               "actor": "Worker-041..058",
-              "action": "Used Region Placement for repeated pyramid block placement across C-01 through C-20.",
+              "action": "Used Region Placement for repeated assigned-region placement across C-01 through C-20.",
               "highlights": [
                 "Use Skill",
                 "Region Placement"
@@ -509,7 +509,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-041-060 assigned work",
+                "label": "Workers 041-060 assigned work",
                 "current": 18,
                 "total": 20
               }
@@ -517,10 +517,10 @@
             {
               "time": "02:05.6",
               "actor": "Worker-059..060",
-              "action": "Completed stair-step edge adjustment with basic tools and reported the assigned work complete.",
+              "action": "Completed target volume adjustment with basic tools and reported the assigned work complete.",
               "highlights": [
                 "basic tools",
-                "stair-step edge adjustment"
+                "target volume adjustment"
               ],
               "sublines": [
                 {
@@ -528,7 +528,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-041-060 assigned work",
+                "label": "Workers 041-060 assigned work",
                 "current": 20,
                 "total": 20
               }
@@ -539,7 +539,7 @@
           "groupId": "chunk-worker-061-080-assigned-work",
           "time": "02:38.9",
           "batchSummary": {
-            "label": "Worker-061-080 assigned work",
+            "label": "Workers 061-080 assigned work",
             "total": 20,
             "skills": [
               {
@@ -560,11 +560,11 @@
             {
               "time": "02:38.9",
               "actor": "Foreman-D",
-              "action": "Foreman-D assigns D-01 through D-20 to Worker-061..080: most workers use Region Placement, while the rest handle capstone alignment with basic tools.",
+              "action": "Foreman-D assigns D-01 through D-20 to Worker-061..080: most workers use Region Placement, while the rest handle final target volume alignment with basic tools.",
               "highlights": [
                 "Worker-061..080",
                 "Region Placement",
-                "basic tools"
+                "final assigned volumes"
               ],
               "sublines": [
                 {
@@ -572,7 +572,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-061-080 assigned work",
+                "label": "Workers 061-080 assigned work",
                 "current": 4,
                 "total": 20
               }
@@ -580,7 +580,7 @@
             {
               "time": "02:44.9",
               "actor": "Worker-061..079",
-              "action": "Used Region Placement for repeated pyramid block placement across D-01 through D-20.",
+              "action": "Used Region Placement for repeated assigned-region placement across D-01 through D-20.",
               "highlights": [
                 "Use Skill",
                 "Region Placement"
@@ -591,18 +591,18 @@
                 }
               ],
               "progress": {
-                "label": "Worker-061-080 assigned work",
+                "label": "Workers 061-080 assigned work",
                 "current": 19,
                 "total": 20
               }
             },
             {
               "time": "02:50.9",
-              "actor": "Worker-080..080",
-              "action": "Completed capstone alignment with basic tools and reported the assigned work complete.",
+              "actor": "Worker-080",
+              "action": "Completed final target volume alignment with basic tools and reported the assigned work complete.",
               "highlights": [
                 "basic tools",
-                "capstone alignment"
+                "final target volume alignment"
               ],
               "sublines": [
                 {
@@ -610,7 +610,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-061-080 assigned work",
+                "label": "Workers 061-080 assigned work",
                 "current": 20,
                 "total": 20
               }
@@ -621,7 +621,7 @@
           "groupId": "chunk-worker-081-100-assigned-work",
           "time": "03:19.3",
           "batchSummary": {
-            "label": "Worker-081-100 assigned work",
+            "label": "Workers 081-100 assigned work",
             "total": 20,
             "skills": [
               {
@@ -635,11 +635,11 @@
             {
               "time": "03:19.3",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns E-01 through E-20 to Worker-081..100: most workers use Region Placement, while the rest handle final layer checks with basic tools.",
+              "action": "Foreman-E assigns E-01 through E-20 to Worker-081..100: all workers use Region Placement for the final assigned volumes.",
               "highlights": [
                 "Worker-081..100",
                 "Region Placement",
-                "basic tools"
+                "final assigned volumes"
               ],
               "sublines": [
                 {
@@ -647,7 +647,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-081-100 assigned work",
+                "label": "Workers 081-100 assigned work",
                 "current": 4,
                 "total": 20
               }
@@ -655,7 +655,7 @@
             {
               "time": "03:25.3",
               "actor": "Worker-081..100",
-              "action": "Used Region Placement for repeated pyramid block placement across E-01 through E-20.",
+              "action": "Used Region Placement for repeated assigned-region placement across E-01 through E-20.",
               "highlights": [
                 "Use Skill",
                 "Region Placement"
@@ -666,7 +666,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-081-100 assigned work",
+                "label": "Workers 081-100 assigned work",
                 "current": 20,
                 "total": 20
               }
@@ -674,7 +674,7 @@
             {
               "time": "03:31.3",
               "actor": "Worker-081..100",
-              "action": "Completed the assigned work with Region Placement and reported all layers aligned.",
+              "action": "Completed the assigned work with Region Placement and reported all assigned volumes aligned.",
               "highlights": [
                 "Region Placement",
                 "aligned"
@@ -685,7 +685,7 @@
                 }
               ],
               "progress": {
-                "label": "Worker-081-100 assigned work",
+                "label": "Workers 081-100 assigned work",
                 "current": 20,
                 "total": 20
               }
@@ -743,7 +743,7 @@
             {
               "time": "03:59.6",
               "actor": "ProjectManager",
-              "action": "Done. Pyramid has been built and verified with the learned Region Placement workflow.",
+              "action": "Done. Pyramid has been built and verified with the discovered Region Placement workflow.",
               "highlights": [
                 "Done",
                 "Pyramid",

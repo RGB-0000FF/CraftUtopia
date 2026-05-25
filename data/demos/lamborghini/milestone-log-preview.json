@@ -397,7 +397,7 @@
             {
               "time": "00:49.6",
               "actor": "Foreman-A",
-              "action": "Foreman-A assigns work to Worker-001..020: Worker-001..014 place shell and podium blocks with Region Placement, while Worker-015..020 handle high-reach blocks with basic tools.",
+              "action": "Foreman-A assigns work to Worker-001..020: Worker-001..014 place reachable blocks in assigned subregions with Region Placement, while Worker-015..020 handle high-reach target volumes with basic tools.",
               "highlights": [
                 "Worker-001",
                 "Worker-020",
@@ -417,18 +417,18 @@
             {
               "time": "00:52.1",
               "actor": "Worker-001..008",
-              "action": "Used Region Placement for lower shell blocks and podium edge placement.",
+              "action": "Used Region Placement for reachable blocks in the first assigned volumes.",
               "highlights": [
                 "Use Skill",
                 "Region Placement",
-                "lower shell"
+                "assigned volumes"
               ],
               "sublines": [
                 {
                   "skills": "Use Skill: Region Placement on subplans A-04..A-11."
                 },
                 {
-                  "results": "Result: lower shell and podium edge blocks are placed."
+                  "results": "Result: first assigned volumes are placed."
                 }
               ],
               "progress": {
@@ -440,7 +440,7 @@
             {
               "time": "00:54.5",
               "actor": "Worker-009..014",
-              "action": "Used Region Placement on curved roof slices; high-reach support work starts appearing during this assignment.",
+              "action": "Used Region Placement on repeated subregion placements; high-reach support work starts appearing during this assignment.",
               "highlights": [
                 "Region Placement",
                 "high-reach"
@@ -450,7 +450,7 @@
                   "skills": "Use Skill: Region Placement on subplans A-12..A-17."
                 },
                 {
-                  "results": "Result: curved roof placement continues; high-reach support needs follow-up."
+                  "results": "Result: repeated placement continues; high-reach support needs follow-up."
                 }
               ],
               "progress": {
@@ -470,7 +470,7 @@
               ],
               "sublines": [
                 {
-                  "results": "Result: Region A shell placement is stable."
+                  "results": "Result: Region A placement is stable."
                 }
               ],
               "progress": {
@@ -506,7 +506,7 @@
             {
               "time": "00:58.2",
               "actor": "Foreman-C",
-              "action": "Foreman-C assigns roof rib subplans to Worker-021..040: Worker-021..026 place reachable ribs with Region Placement, while Worker-027..040 build high ribs with temporary supports.",
+              "action": "Foreman-C assigns high-reach subplans to Worker-021..040: Worker-021..026 place reachable target volumes with Region Placement, while Worker-027..040 build elevated target volumes with temporary supports.",
               "highlights": [
                 "Worker-021",
                 "Worker-040",
@@ -515,7 +515,7 @@
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Assign Subplans: C-01 through C-20 for roof rib placement."
+                  "tools": "Tool call Assign Subplans: C-01 through C-20 for high-reach region placement."
                 }
               ],
               "progress": {
@@ -534,7 +534,7 @@
             {
               "time": "01:01.9",
               "actor": "Worker-021..026",
-              "action": "Used Region Placement for reachable roof blocks while building temporary supports for the higher ribs.",
+              "action": "Used Region Placement for reachable target volumes while building temporary supports for higher target volumes.",
               "highlights": [
                 "Use Skill",
                 "Region Placement",
@@ -594,7 +594,7 @@
               ],
               "sublines": [
                 {
-                  "results": "Result: roof rib placement is complete."
+                  "results": "Result: high-reach placement is complete."
                 }
               ],
               "progress": {
@@ -620,11 +620,11 @@
             {
               "time": "01:14.9",
               "actor": "Foreman-C",
-              "action": "Foreman-C summarizes the completed roof-support trace for ProjectManager.",
+              "action": "Foreman-C summarizes the completed high-reach support trace for ProjectManager.",
               "highlights": [
                 "Worker-021",
                 "Worker-040",
-                "roof-support trace"
+                "high-reach support trace"
               ],
               "sublines": [
                 {
@@ -635,7 +635,7 @@
             {
               "time": "01:16.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager reviews the repeated roof-support trace and creates Scaffold Construction.",
+              "action": "ProjectManager reviews the repeated high-reach support trace and creates Scaffold Construction.",
               "highlights": [
                 "Create Skill",
                 "Scaffold Construction"
@@ -709,7 +709,7 @@
             {
               "time": "01:35.5",
               "actor": "Foreman-D",
-              "action": "Foreman-D assigns work to Worker-041..060: Worker-041..046 place reachable shell blocks, Worker-047..051 handle high roof access with Scaffold Construction, and Worker-052..060 repair mismatched blocks with basic tools.",
+              "action": "Foreman-D assigns work to Worker-041..060: Worker-041..046 place reachable target volumes, Worker-047..051 handle high-reach access with Scaffold Construction, and Worker-052..060 repair mismatched blocks with basic tools.",
               "highlights": [
                 "Worker-041",
                 "Worker-060",
@@ -734,7 +734,7 @@
             {
               "time": "01:47.5",
               "actor": "Worker-041..047",
-              "action": "Used placement for shell blocks and scaffold for the high roof lip.",
+              "action": "Used placement for reachable target volumes and Scaffold Construction for high-reach access.",
               "highlights": [
                 "Use Skill",
                 "Region Placement",
@@ -745,10 +745,10 @@
                   "skills": "Use Skill: Region Placement on D-01..D-07."
                 },
                 {
-                  "skills": "Use Skill: Scaffold Construction for high roof access."
+                  "skills": "Use Skill: Scaffold Construction for high-reach access."
                 },
                 {
-                  "results": "Result: high roof lip blocks placed and reported to Foreman-D."
+                  "results": "Result: high-reach target volumes placed and reported to Foreman-D."
                 }
               ],
               "progress": {
@@ -795,12 +795,12 @@
               "actor": "Worker-055..060",
               "action": "Completed the assigned work; Foreman-B now has enough block-repair examples to request a workflow.",
               "highlights": [
-                "roof shell",
+                "assigned region",
                 "block repair"
               ],
               "sublines": [
                 {
-                  "results": "Result: roof shell placement and support are complete."
+                  "results": "Result: assigned region placement and support are complete."
                 }
               ],
               "progress": {
@@ -919,7 +919,7 @@
             {
               "time": "02:49.8",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns work to Worker-061..080: placement, scaffold, and replacement tasks run in parallel, while the last workers clean leftover support blocks with basic tools.",
+              "action": "Foreman-E assigns work to Worker-061..080: placement, high-reach support, and replacement tasks run in parallel, while the last workers clean leftover support blocks with basic tools.",
               "highlights": [
                 "Worker-061",
                 "Worker-080",
@@ -935,7 +935,7 @@
             {
               "time": "03:03.3",
               "actor": "Worker-061..067",
-              "action": "Used placement, scaffold, and replacement workflows on the final region blocks.",
+              "action": "Used placement, high-reach support, and replacement workflows on final assigned volumes.",
               "highlights": [
                 "Use Skill",
                 "Region Placement",
@@ -947,7 +947,7 @@
                   "skills": "Use Skill: Region Placement on E-01..E-07."
                 },
                 {
-                  "skills": "Use Skill: Scaffold Construction for roof edge access."
+                  "skills": "Use Skill: Scaffold Construction for high-reach access."
                 },
                 {
                   "skills": "Use Skill: Region Replacement for mismatch repairs."
@@ -1048,10 +1048,10 @@
             {
               "time": "03:37.4",
               "actor": "ProjectManager",
-              "action": "Started final verification against the blueprint. The checker is looking for leftover scaffold and temporary support blocks.",
+              "action": "Started final verification against the blueprint. The checker is looking for leftover temporary supports and cleanup artifacts.",
               "highlights": [
                 "final verification",
-                "leftover scaffold"
+                "leftover support"
               ],
               "sublines": [
                 {
@@ -1193,18 +1193,18 @@
             {
               "time": "03:47.5",
               "actor": "Worker-081..087",
-              "action": "Used Region Cleaning for leftover scaffold blocks around the lower shell.",
+              "action": "Used Region Cleaning for leftover support blocks in assigned volumes.",
               "highlights": [
                 "Use Skill",
                 "Region Cleaning",
-                "lower shell"
+                "assigned volumes"
               ],
               "sublines": [
                 {
                   "skills": "Use Skill: Region Cleaning on CL-01..CL-07."
                 },
                 {
-                  "results": "Result: lower shell cleanup scan is clean."
+                  "results": "Result: assigned volumes cleanup scan is clean."
                 }
               ],
               "progress": {
@@ -1216,7 +1216,7 @@
             {
               "time": "03:49.2",
               "actor": "Worker-088..094",
-              "action": "Used cleaning for temporary supports around the roof ribs, then used replacement on one exposed mismatch.",
+              "action": "Used cleaning for temporary supports in assigned volumes, then used replacement on one exposed mismatch.",
               "highlights": [
                 "Region Cleaning",
                 "Region Replacement"
@@ -1226,10 +1226,10 @@
                   "skills": "Use Skill: Region Cleaning on CL-08..CL-14."
                 },
                 {
-                  "skills": "Use Skill: Region Replacement for one exposed roof rib block."
+                  "skills": "Use Skill: Region Replacement for one exposed mismatched block."
                 },
                 {
-                  "results": "Result: roof rib cleanup and repair are verified."
+                  "results": "Result: cleanup and repair are verified."
                 }
               ],
               "progress": {
@@ -1282,10 +1282,10 @@
             {
               "time": "03:53.7",
               "actor": "Foreman-A..E",
-              "action": "All foremen confirmed their regions: placement complete, scaffold removed, replacements verified, cleanup clean.",
+              "action": "All foremen confirmed their regions: placement complete, temporary supports removed, replacements verified, cleanup clean.",
               "highlights": [
                 "placement complete",
-                "scaffold removed",
+                "temporary supports removed",
                 "replacements verified",
                 "cleanup clean"
               ],
@@ -1318,11 +1318,11 @@
             {
               "time": "03:57.4",
               "actor": "ProjectManager",
-              "action": "Done. Lamborghini has been built, verified, and cleaned up with the learned workflow chunks.",
+              "action": "Done. Lamborghini has been built, verified, and cleaned up with the discovered workflow chunks.",
               "highlights": [
                 "Done",
                 "Lamborghini",
-                "learned workflow chunks"
+                "discovered workflow chunks"
               ],
               "sublines": [
                 {
