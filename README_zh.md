@@ -38,7 +38,7 @@
   </a>
 </div>
 
-也可以从仓库中下载 MP4 和 MOV 格式的源文件（`demo.mp4`、`demo.mov`）。
+当前网页演示使用 HLS 切片播放，源视频不放入 GitHub Pages 仓库。
 
 ## 亮点
 

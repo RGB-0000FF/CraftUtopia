@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preload" as="image" href="assets/ui/craftutopia-logo-tight-260.png">
-  <link rel="stylesheet" href="src/styles/demo.css?v=20260525-overview-controls">
+  <link rel="stylesheet" href="src/styles/demo.css?v=20260526-block-counts">
   <link rel="stylesheet" id="demo-profile-stylesheet" disabled>
 </head>
 <body>
@@ -48,16 +48,6 @@
             <div class="timeline-markers" id="timeline-markers" aria-hidden="false"></div>
             <input id="timeline-scrubber" class="timeline-scrubber" type="range" min="0" max="1000" step="1" value="0" aria-label="Scrub build timeline">
           </div>
-        </div>
-        <div class="video-only-controls" aria-label="Video playback controls">
-          <button class="video-control video-control-play" id="video-only-play" type="button">Play</button>
-          <button class="video-control video-control-step" id="video-only-slower" type="button" aria-label="Slow down playback">
-            <i data-lucide="minus" aria-hidden="true"></i>
-          </button>
-          <button class="video-control video-control-speed" id="video-only-speed" type="button" aria-label="Playback speed: 1x">1x</button>
-          <button class="video-control video-control-step" id="video-only-faster" type="button" aria-label="Speed up playback">
-            <i data-lucide="plus" aria-hidden="true"></i>
-          </button>
         </div>
         <button class="blueprint-cover-card" id="blueprint-cover-toggle" type="button" aria-label="Expand blueprint cover preview" aria-expanded="false">
           <img id="blueprint-cover-image" src="assets/images/stage-preview.jpg" alt="Blueprint cover preview">
@@ -150,12 +140,12 @@
 
   <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.16/dist/hls.min.js"></script>
-  <script src="src/js/hls-preload.js?v=20260525-overview-controls"></script>
-  <script src="src/js/demo-config.js?v=20260525-overview-controls"></script>
-  <script src="src/js/demo-utils.js?v=20260525-overview-controls"></script>
-  <script src="src/js/demo-render.js?v=20260525-overview-controls"></script>
-  <script src="src/js/demo-playback.js?v=20260525-overview-controls"></script>
-  <script src="src/js/demo-data.js?v=20260525-overview-controls"></script>
-  <script src="src/js/demo-events.js?v=20260525-overview-controls"></script>
+  <script src="src/js/hls-preload.js?v=20260526-block-counts"></script>
+  <script src="src/js/demo-config.js?v=20260526-block-counts"></script>
+  <script src="src/js/demo-utils.js?v=20260526-block-counts"></script>
+  <script src="src/js/demo-render.js?v=20260526-block-counts"></script>
+  <script src="src/js/demo-playback.js?v=20260526-block-counts"></script>
+  <script src="src/js/demo-data.js?v=20260526-block-counts"></script>
+  <script src="src/js/demo-events.js?v=20260526-block-counts"></script>
 </body>
 </html>

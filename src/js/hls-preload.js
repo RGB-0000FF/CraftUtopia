@@ -3,9 +3,6 @@
 
   const scriptUrl = new URL(document.currentScript?.src || document.baseURI, document.baseURI);
   const assetVersion = scriptUrl.searchParams.get('v');
-  const MANIFEST_URL = assetVersion
-    ? `data/video-cache-manifest.json?v=${encodeURIComponent(assetVersion)}`
-    : 'data/video-cache-manifest.json';
   const SEGMENTS_PER_INTENT = 2;
   const INITIAL_VIEWER_SEGMENTS = 8;
   const MAX_CONCURRENT_PRELOADS = 2;
@@ -14,7 +11,7 @@
   const CARD_SELECTOR = 'a.demo-card[href*="?demo="]';
   const CARD_IMAGE_SELECTOR = `${CARD_SELECTOR} img[src]`;
 
-  const videoManifestById = new Map();
+  const demoProfilePromises = new Map();
   const playlistCache = new Map();
   const preloadPromises = new Map();
   const fetchedUrls = new Set();
@@ -23,7 +20,6 @@
   const queue = [];
 
   let activeCount = 0;
-  let manifestReady = null;
   let preloadPausedUntil = 0;
   let preloadResumeTimer = null;
 
@@ -61,6 +57,20 @@
 
   function isHlsManifestUrl(url) {
     return /\.m3u8(?:[?#]|$)/i.test(String(url || ''));
+  }
+
+  function withAssetVersion(url) {
+    if (!assetVersion) {
+      return url;
+    }
+
+    const versionedUrl = new URL(url, document.baseURI || window.location.href);
+    versionedUrl.searchParams.set('v', assetVersion);
+    return versionedUrl.href;
+  }
+
+  function normalizeDemoId(value) {
+    return String(value || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
   }
 
   function isPageHidden() {
@@ -179,48 +189,34 @@
     };
   }
 
-  async function loadPreloadManifest() {
-    if (manifestReady) {
-      return manifestReady;
+  async function getPlaylistUrlForDemo(demoId) {
+    const safeDemoId = normalizeDemoId(demoId);
+    if (!safeDemoId) {
+      return null;
     }
 
-    const manifestUrl = resolveUrl(MANIFEST_URL) || MANIFEST_URL;
-
-    manifestReady = fetch(manifestUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Video manifest failed: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((manifest) => {
-        if (!Array.isArray(manifest.videos)) {
-          return videoManifestById;
-        }
-
-        for (const video of manifest.videos) {
-          if (video && video.id && video.url) {
-            const playlistUrl = resolveUrl(video.url);
-            if (playlistUrl && isHlsManifestUrl(playlistUrl)) {
-              videoManifestById.set(video.id, playlistUrl);
-            }
+    if (!demoProfilePromises.has(safeDemoId)) {
+      const profileUrl = withAssetVersion(`data/demos/${safeDemoId}/demo.json`);
+      demoProfilePromises.set(safeDemoId, fetch(profileUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Demo profile failed: ${response.status}`);
           }
-        }
+          return response.json();
+        })
+        .then((profile) => {
+          const playlistUrl = resolveUrl(profile.video);
+          return playlistUrl && isHlsManifestUrl(playlistUrl) ? playlistUrl : null;
+        })
+        .catch(() => null));
+    }
 
-        return videoManifestById;
-      })
-      .catch(() => videoManifestById);
-
-    return manifestReady;
+    return demoProfilePromises.get(safeDemoId);
   }
 
   async function getPlaylistData(demoId) {
-    await loadPreloadManifest();
-
-    const playlistUrl = videoManifestById.get(demoId);
-    if (!playlistUrl) {
-      return null;
-    }
+    const playlistUrl = await getPlaylistUrlForDemo(demoId);
+    if (!playlistUrl) return null;
 
     if (playlistCache.has(playlistUrl)) {
       return playlistCache.get(playlistUrl);
@@ -446,9 +442,12 @@
   }
 
   async function warmAllPlaylists() {
-    await loadPreloadManifest();
+    const demoIds = [...document.querySelectorAll(CARD_SELECTOR)]
+      .map(getDemoIdFromCard)
+      .map(normalizeDemoId)
+      .filter(Boolean);
 
-    for (const demoId of videoManifestById.keys()) {
+    for (const demoId of demoIds) {
       if (isPageHidden()) {
         return;
       }

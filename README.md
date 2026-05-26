@@ -12,14 +12,11 @@ Open `http://127.0.0.1:8000/index.html` for the demo gallery, or open the shared
 http://127.0.0.1:8000/demos/viewer/?demo=sydney-opera-house
 ```
 
-## Editable Run Log
+## Demo Profiles
 
 The shared viewer is driven by demo profiles in `data/demos/<demo-id>/demo.json`.
-Most demos reuse the phase log:
+Each published demo profile points to:
 
-- `data/demo-log/manifest.json`: phase order and top-level run metadata.
-- `data/demo-log/*.json`: per-phase timeline events shown on the right.
-
-The Sydney Opera House demo uses its own linear log:
-
-- `data/demos/sydney-opera-house/milestone-log-preview.json`
+- an HLS manifest in `hls-primer/<demo-id>/master.m3u8`
+- a milestone log in `data/demos/<demo-id>/milestone-log-preview.json`
+- shared top-milestone styling in `data/demos/shared/top-milestone-layout.css`

@@ -177,9 +177,6 @@
                 },
                 {
                   "tools": "Tool call Assign Subplans: prepare one subplan for each worker."
-                },
-                {
-                  "tools": "Tool call Start Build: open the five region queues in parallel."
                 }
               ]
             }
@@ -188,7 +185,7 @@
         },
         {
           "groupId": "chunk-worker-001-020-placement-trace",
-          "time": "00:36.7",
+          "time": "00:35.0",
           "batchSummary": {
             "label": "Workers 001-020 assigned work",
             "total": 20,
@@ -203,14 +200,12 @@
           },
           "entries": [
             {
-              "time": "00:36.7",
+              "time": "00:35.0",
               "actor": "Foreman-A",
-              "action": "Foreman-A assigns A-01 through A-20 to Worker-001..020. No existing skill matches this placement sequence yet, so workers use basic tools and leave traces.",
+              "action": "Foreman-A assigns A-01 through A-20 to Worker-001..020.",
               "highlights": [
-                "Worker-001",
-                "Worker-020",
-                "basic tools",
-                "placement traces"
+                "Worker-001..020",
+                "A-01 through A-20"
               ],
               "sublines": [
                 {
@@ -218,80 +213,31 @@
                 }
               ],
               "progress": {
-                "label": "Workers 001-020 assigned work",
-                "current": 4,
-                "total": 20
-              },
-              "skill": "build_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Placement",
-                "current": 4,
+                "label": "Workers 001-020 placement work",
+                "current": 0,
                 "total": 20
               }
             },
             {
-              "time": "00:38.0",
-              "actor": "Worker-001..008",
-              "action": "Worker-001..008 execute the same basic sequence for their placement subplans.",
+              "time": "00:35.8",
+              "actor": "Worker-001..020",
+              "action": "Worker-001..020 inspect their assigned placement subplans. No learned skill matches this sequence yet, so they complete the batch with basic tools and leave the Region Placement trace.",
               "highlights": [
-                "Read Subplan",
-                "Check Inventory",
-                "Go To Region",
-                "Place Blocks"
+                "Worker-001..020",
+                "No learned skill matches",
+                "basic tools",
+                "Region Placement trace"
               ],
               "sublines": [
                 {
                   "tools": "Tool trace: Read Subplan -> Check Inventory -> Go To Region -> Place Blocks."
+                },
+                {
+                  "results": "Result: Region Placement trace collected 20/20."
                 }
               ],
               "progress": {
-                "label": "Workers 001-020 assigned work",
-                "current": 8,
-                "total": 20
-              },
-              "skill": "build_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Placement",
-                "current": 8,
-                "total": 20
-              }
-            },
-            {
-              "time": "00:39.2",
-              "actor": "Worker-009..016",
-              "action": "Worker-009..016 repeat the sequence on nearby subplans; the placement trace is becoming stable.",
-              "highlights": [
-                "placement trace",
-                "subplans"
-              ],
-              "sublines": [],
-              "progress": {
-                "label": "Workers 001-020 assigned work",
-                "current": 16,
-                "total": 20
-              },
-              "skill": "build_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Placement",
-                "current": 16,
-                "total": 20
-              }
-            },
-            {
-              "time": "00:40.2",
-              "actor": "Worker-017..020",
-              "action": "Worker-017..020 finish the batch, giving Foreman-A 20 matching placement traces to summarize.",
-              "highlights": [
-                "Region placement",
-                "matching traces",
-                "Foreman-A"
-              ],
-              "sublines": [],
-              "progress": {
-                "label": "Workers 001-020 assigned work",
+                "label": "Workers 001-020 placement work",
                 "current": 20,
                 "total": 20
               },
@@ -397,11 +343,11 @@
             {
               "time": "00:59.9",
               "actor": "Foreman-A",
-              "action": "Foreman-A assigns work to Worker-001..020: Worker-001..014 place reachable blocks in assigned subregions with Region Placement, while Worker-015..020 handle high-reach target volumes with basic tools.",
+              "action": "Foreman-A assigns one subplan to each worker in Worker-001..020. Workers will inspect their own subplans and decide whether a learned skill matches.",
               "highlights": [
-                "Worker-001",
-                "Worker-020",
-                "Region Placement"
+                "Worker-001..020",
+                "one subplan",
+                "decide whether a learned skill matches"
               ],
               "sublines": [
                 {
@@ -410,47 +356,25 @@
               ],
               "progress": {
                 "label": "Workers 001-020 assigned work",
-                "current": 4,
+                "current": 0,
                 "total": 20
               }
             },
             {
-              "time": "01:03.4",
-              "actor": "Worker-001..008",
-              "action": "Used Region Placement for reachable blocks in the first assigned volumes.",
+              "time": "01:02.0",
+              "actor": "Worker-001..014",
+              "action": "Worker-001..014 inspect their assigned subplans, find the placement pattern matches Region Placement, and use the skill for those work items.",
               "highlights": [
-                "Use Skill",
-                "Region Placement",
-                "assigned volumes"
+                "Worker-001..014",
+                "matches Region Placement",
+                "use the skill"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on subplans A-04..A-11."
+                  "skills": "Use Skill: Region Placement on matched placement work items."
                 },
                 {
-                  "results": "Result: first assigned volumes are placed."
-                }
-              ],
-              "progress": {
-                "label": "Workers 001-020 assigned work",
-                "current": 8,
-                "total": 20
-              }
-            },
-            {
-              "time": "01:07.0",
-              "actor": "Worker-009..014",
-              "action": "Used Region Placement on repeated subregion placements; high-reach support work starts appearing during this assignment.",
-              "highlights": [
-                "Region Placement",
-                "high-reach"
-              ],
-              "sublines": [
-                {
-                  "skills": "Use Skill: Region Placement on subplans A-12..A-17."
-                },
-                {
-                  "results": "Result: repeated placement continues; high-reach support needs follow-up."
+                  "results": "Result: 14 assigned work items are placed with Region Placement."
                 }
               ],
               "progress": {
@@ -462,20 +386,31 @@
             {
               "time": "01:10.5",
               "actor": "Worker-015..020",
-              "action": "Completed the assigned work and handed the high-reach support issue to Foreman-C.",
+              "action": "Worker-015..020 inspect their assigned subplans and find the target positions require temporary support. Region Placement alone is not enough, so they run the support sequence with basic tools and leave Scaffold Construction trace examples.",
               "highlights": [
-                "Worker-015",
-                "Worker-020",
-                "accumulation"
+                "Worker-015..020",
+                "temporary support",
+                "basic tools",
+                "Scaffold Construction trace"
               ],
               "sublines": [
                 {
-                  "results": "Result: Region A placement is stable."
+                  "tools": "Tool trace: Read Subplan -> Check Height -> Place Temporary Support -> Reach Target -> Place Blocks -> Remove Temporary Support."
+                },
+                {
+                  "results": "Result: 6 assigned work items are completed with tools; Scaffold Construction trace examples are recorded."
                 }
               ],
               "progress": {
                 "label": "Workers 001-020 assigned work",
                 "current": 20,
+                "total": 20
+              },
+              "skill": "scaffold",
+              "skillEvent": "skill-trace",
+              "skillProgress": {
+                "label": "Scaffold Construction",
+                "current": 6,
                 "total": 20
               }
             }
@@ -496,7 +431,7 @@
             "tools": [
               {
                 "label": "Scaffold trace",
-                "count": 15,
+                "count": 20,
                 "status": "collected"
               }
             ],
@@ -506,12 +441,11 @@
             {
               "time": "01:12.3",
               "actor": "Foreman-C",
-              "action": "Foreman-C assigns high-reach subplans to Worker-021..040: Worker-021..026 place reachable target volumes with Region Placement, while Worker-027..040 build elevated target volumes with temporary supports.",
+              "action": "Foreman-C assigns one subplan to each worker in Worker-021..040. Workers inspect their own work items and then choose a learned skill or basic tools.",
               "highlights": [
-                "Worker-021",
-                "Worker-040",
-                "Region Placement",
-                "elevated supports"
+                "Worker-021..040",
+                "one subplan",
+                "choose a learned skill or basic tools"
               ],
               "sublines": [
                 {
@@ -520,40 +454,29 @@
               ],
               "progress": {
                 "label": "Workers 021-040 assigned work",
-                "current": 4,
-                "total": 20
-              },
-              "skill": "scaffold",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Scaffold Construction",
-                "current": 4,
+                "current": 0,
                 "total": 20
               }
             },
             {
               "time": "01:17.6",
               "actor": "Worker-021..026",
-              "action": "Used Region Placement for reachable target volumes while building temporary supports for higher target volumes.",
+              "action": "Worker-021..026 complete the reachable part of the high-reach assignment with Region Placement. These tasks are skill reuse, not scaffold trace collection.",
               "highlights": [
                 "Use Skill",
                 "Region Placement",
-                "temporary supports"
+                "skill reuse"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on subplans C-01..C-06."
+                  "skills": "Use Skill: Region Placement on reachable target volumes C-01..C-06."
+                },
+                {
+                  "results": "Result: reachable target volumes are placed."
                 }
               ],
               "progress": {
                 "label": "Workers 021-040 assigned work",
-                "current": 8,
-                "total": 20
-              },
-              "skill": "scaffold",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Scaffold Construction",
                 "current": 8,
                 "total": 20
               }
@@ -561,14 +484,18 @@
             {
               "time": "01:23.8",
               "actor": "Worker-027..033",
-              "action": "Several workers hit the same temporary-support job, so Foreman-C groups it for ProjectManager.",
+              "action": "Worker-027..033 reach elevated targets with the same temporary-support tool sequence, adding matching Scaffold Construction trace examples.",
               "highlights": [
                 "temporary support",
-                "Foreman-C"
+                "basic tools",
+                "Scaffold Construction trace"
               ],
               "sublines": [
                 {
-                  "tools": "Send message to ProjectManager: package the temporary-support pattern."
+                  "tools": "Tool trace: Read Subplan -> Check Height -> Place Temporary Support -> Reach Target -> Place Blocks -> Remove Temporary Support."
+                },
+                {
+                  "results": "Result: repeated support traces are grouped for Foreman-C."
                 }
               ],
               "progress": {
@@ -580,21 +507,25 @@
               "skillEvent": "skill-trace",
               "skillProgress": {
                 "label": "Scaffold Construction",
-                "current": 15,
+                "current": 14,
                 "total": 20
               }
             },
             {
               "time": "01:30.9",
               "actor": "Worker-034..040",
-              "action": "Finished the assigned work; ProjectManager now has enough support examples to create a workflow.",
+              "action": "Worker-034..040 repeat the temporary-support sequence on the remaining elevated targets, giving ProjectManager enough scaffold examples to create the workflow.",
               "highlights": [
-                "assigned work",
-                "support examples"
+                "temporary support",
+                "basic tools",
+                "enough examples"
               ],
               "sublines": [
                 {
-                  "results": "Result: high-reach placement is complete."
+                  "tools": "Tool trace: Read Subplan -> Check Height -> Place Temporary Support -> Reach Target -> Place Blocks -> Remove Temporary Support."
+                },
+                {
+                  "results": "Result: high-reach placement is complete and Scaffold Construction trace collection is ready for learning."
                 }
               ],
               "progress": {
@@ -699,7 +630,7 @@
             "tools": [
               {
                 "label": "Region Replacement trace",
-                "count": 9,
+                "count": 20,
                 "status": "collected"
               }
             ],
@@ -709,98 +640,80 @@
             {
               "time": "01:55.1",
               "actor": "Foreman-D",
-              "action": "Foreman-D assigns work to Worker-041..060: Worker-041..046 place reachable target volumes, Worker-047..051 handle high-reach access with Scaffold Construction, and Worker-052..060 repair mismatched blocks with basic tools.",
+              "action": "Foreman-D assigns one subplan to each worker in Worker-041..060. Workers inspect their own work items and then choose a learned skill or basic tools.",
               "highlights": [
-                "Worker-041",
-                "Worker-060",
-                "Region Placement",
-                "Scaffold Construction",
-                "block mismatches"
+                "Worker-041..060",
+                "one subplan",
+                "choose a learned skill or basic tools"
               ],
               "sublines": [],
               "progress": {
                 "label": "Workers 041-060 assigned work",
-                "current": 4,
-                "total": 20
-              },
-              "skill": "replace_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Replacement",
-                "current": 4,
+                "current": 0,
                 "total": 20
               }
             },
             {
               "time": "02:05.6",
-              "actor": "Worker-041..047",
-              "action": "Used placement for reachable target volumes and Scaffold Construction for high-reach access.",
+              "actor": "Worker-041..046",
+              "action": "Worker-041..046 complete reachable target volumes with Region Placement.",
               "highlights": [
                 "Use Skill",
                 "Region Placement",
-                "Scaffold Construction"
+                "reachable target volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on D-01..D-07."
+                  "skills": "Use Skill: Region Placement on D-01..D-06."
                 },
                 {
-                  "skills": "Use Skill: Scaffold Construction for high-reach access."
-                },
-                {
-                  "results": "Result: high-reach target volumes placed and reported to Foreman-D."
+                  "results": "Result: reachable target volumes are placed."
                 }
               ],
               "progress": {
                 "label": "Workers 041-060 assigned work",
-                "current": 8,
-                "total": 20
-              },
-              "skill": "replace_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Replacement",
-                "current": 8,
+                "current": 6,
                 "total": 20
               }
             },
             {
               "time": "02:16.2",
-              "actor": "Worker-048..054",
-              "action": "Found mismatched placeholder blocks from the imported blueprint and fixed them with basic tools.",
+              "actor": "Worker-047..051",
+              "action": "Worker-047..051 complete high-reach access with Scaffold Construction.",
               "highlights": [
-                "mismatched placeholder blocks",
-                "basic tools"
+                "Use Skill",
+                "Scaffold Construction",
+                "high-reach access"
               ],
               "sublines": [
                 {
-                  "tools": "Send message to Foreman-B: workers keep hitting the same block-repair job."
+                  "skills": "Use Skill: Scaffold Construction for elevated target access."
+                },
+                {
+                  "results": "Result: high-reach target volumes are placed."
                 }
               ],
               "progress": {
                 "label": "Workers 041-060 assigned work",
-                "current": 15,
-                "total": 20
-              },
-              "skill": "replace_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Replacement",
-                "current": 15,
+                "current": 11,
                 "total": 20
               }
             },
             {
               "time": "02:25.4",
-              "actor": "Worker-055..060",
-              "action": "Completed the assigned work; Foreman-B now has enough block-repair examples to request a workflow.",
+              "actor": "Worker-052..060",
+              "action": "Worker-052..060 find mismatched blocks from the imported blueprint and repair them with the same basic-tool sequence, collecting Region Replacement trace examples.",
               "highlights": [
-                "assigned region",
-                "block repair"
+                "mismatched blocks",
+                "basic tools",
+                "Region Replacement trace"
               ],
               "sublines": [
                 {
-                  "results": "Result: assigned region placement and support are complete."
+                  "tools": "Tool trace: Read Block Map -> Compare Blueprint -> Remove Wrong Block -> Place Correct Block -> Verify Coordinates."
+                },
+                {
+                  "results": "Result: assigned region placement and repair are complete; replacement traces are ready for learning."
                 }
               ],
               "progress": {
@@ -909,7 +822,7 @@
             "tools": [
               {
                 "label": "Region Cleaning trace",
-                "count": 6,
+                "count": 14,
                 "status": "collecting"
               }
             ],
@@ -919,38 +832,37 @@
             {
               "time": "02:50.3",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns work to Worker-061..080: placement, high-reach support, and replacement tasks run in parallel, while the last workers clean leftover support blocks with basic tools.",
+              "action": "Foreman-E assigns one subplan to each worker in Worker-061..080. Workers inspect their own work items and then choose a learned skill or basic tools.",
               "highlights": [
-                "Worker-061",
-                "Worker-080",
-                "region closure"
+                "Worker-061..080",
+                "one subplan",
+                "choose a learned skill or basic tools"
               ],
               "sublines": [],
               "progress": {
                 "label": "Workers 061-080 assigned work",
-                "current": 2,
+                "current": 0,
                 "total": 20
               }
             },
             {
               "time": "02:58.5",
               "actor": "Worker-061..067",
-              "action": "Used placement, high-reach support, and replacement workflows on final assigned volumes.",
+              "action": "Worker-061..067 finish assigned placement and high-reach work with the existing Region Placement and Scaffold Construction skills.",
               "highlights": [
                 "Use Skill",
                 "Region Placement",
-                "Scaffold Construction",
-                "Region Replacement"
+                "Scaffold Construction"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on E-01..E-07."
+                  "skills": "Use Skill: Region Placement on reachable E subplans."
                 },
                 {
-                  "skills": "Use Skill: Scaffold Construction for high-reach access."
+                  "skills": "Use Skill: Scaffold Construction for elevated access."
                 },
                 {
-                  "skills": "Use Skill: Region Replacement for mismatch repairs."
+                  "results": "Result: placement and support work are complete for this slice of assigned work."
                 }
               ],
               "progress": {
@@ -962,40 +874,41 @@
             {
               "time": "03:09.1",
               "actor": "Worker-068..074",
-              "action": "Removed leftover temporary supports with basic tools; the same cleanup job keeps appearing.",
+              "action": "Worker-068..074 finish remaining mismatch and closure work with Region Replacement where it matches the learned repair workflow.",
               "highlights": [
-                "temporary support blocks",
-                "cleanup pattern"
+                "Use Skill",
+                "Region Replacement",
+                "closure work"
               ],
               "sublines": [
                 {
-                  "tools": "Send message to Foreman-E: cleanup work is repeating across subregions."
+                  "skills": "Use Skill: Region Replacement for matched repair tasks."
+                },
+                {
+                  "results": "Result: remaining repair and closure work is verified."
                 }
               ],
               "progress": {
                 "label": "Workers 061-080 assigned work",
                 "current": 14,
                 "total": 20
-              },
-              "skill": "clean_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Cleaning",
-                "current": 8,
-                "total": 20
               }
             },
             {
               "time": "03:17.3",
               "actor": "Worker-075..080",
-              "action": "Finished region closure and handed the recurring cleanup work to verification.",
+              "action": "Worker-075..080 remove leftover temporary supports with basic tools; the repeated cleanup sequence becomes Region Cleaning trace evidence.",
               "highlights": [
-                "region closure",
-                "cleanup work"
+                "leftover temporary supports",
+                "basic tools",
+                "Region Cleaning trace"
               ],
               "sublines": [
                 {
-                  "results": "Result: all five build regions report complete."
+                  "tools": "Tool trace: Scan Volume -> Find Leftover Support -> Remove Support Block -> Recheck Volume -> Report Clean."
+                },
+                {
+                  "results": "Result: all five build regions report complete and cleanup trace examples continue into verification."
                 }
               ],
               "progress": {
@@ -1061,14 +974,21 @@
             },
             {
               "time": "03:19.5",
-              "actor": "Foreman-E",
-              "action": "Verification found the same leftover-support cleanup job in CL-01 through CL-08.",
+              "actor": "Worker-081..088",
+              "action": "Worker-081..088 scan their cleanup subplans and hit the same leftover-support sequence, completing the Region Cleaning trace evidence.",
               "highlights": [
-                "CL-01",
-                "CL-08",
-                "leftover support blocks"
+                "Worker-081..088",
+                "leftover-support sequence",
+                "Region Cleaning trace"
               ],
-              "sublines": [],
+              "sublines": [
+                {
+                  "tools": "Tool trace: Scan Volume -> Find Leftover Support -> Remove Support Block -> Recheck Volume -> Report Clean."
+                },
+                {
+                  "results": "Result: cleanup trace reaches 20 matching examples for ProjectManager review."
+                }
+              ],
               "progress": {
                 "label": "Cleanup trace",
                 "current": 20,
@@ -1173,11 +1093,11 @@
             {
               "time": "03:31.0",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns cleanup to Worker-081..100: most workers scan and clean with Region Cleaning, while the last workers handle final exposed mismatches with Region Replacement.",
+              "action": "Foreman-E assigns one cleanup subplan to each worker in Worker-081..100. Workers inspect their own cleanup work items and then choose a learned skill or basic tools.",
               "highlights": [
-                "Worker-081",
-                "Worker-100",
-                "Region Cleaning"
+                "Worker-081..100",
+                "one cleanup subplan",
+                "choose a learned skill or basic tools"
               ],
               "sublines": [
                 {
@@ -1186,7 +1106,7 @@
               ],
               "progress": {
                 "label": "Workers 081-100 assigned work",
-                "current": 3,
+                "current": 0,
                 "total": 20
               }
             },
@@ -1326,7 +1246,7 @@
               ],
               "sublines": [
                 {
-                  "results": "Agents: 100. Blocks: 95,151. Status: verified and cleaned up."
+                  "results": "Agents: 100. Blocks: 74,734. Status: verified and cleaned up."
                 }
               ]
             }

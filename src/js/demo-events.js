@@ -26,10 +26,6 @@ playbackSpeedToggle?.addEventListener('click', resetPlaybackSpeed);
 playbackSlower?.addEventListener('click', () => stepPlaybackSpeed(-1));
 playbackFaster?.addEventListener('click', () => stepPlaybackSpeed(1));
 videoOnlyToggle?.addEventListener('click', () => setVideoOnlyMode(!isVideoOnlyMode));
-videoOnlyPlay?.addEventListener('click', toggleAutoPlay);
-videoOnlySpeed?.addEventListener('click', resetPlaybackSpeed);
-videoOnlySlower?.addEventListener('click', () => stepPlaybackSpeed(-1));
-videoOnlyFaster?.addEventListener('click', () => stepPlaybackSpeed(1));
 blueprintCoverToggle?.addEventListener('click', () => {
   const isExpanded = !blueprintCoverToggle.classList.contains('is-expanded');
   blueprintCoverToggle.classList.toggle('is-expanded', isExpanded);

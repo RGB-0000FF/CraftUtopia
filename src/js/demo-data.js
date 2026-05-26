@@ -271,7 +271,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260525-overview-controls';
+const DATA_ASSET_VERSION = '20260526-block-counts';
 let runEventsManifestPath = '';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;
@@ -292,12 +292,30 @@ function getRequestedDemoId() {
 
 async function loadDemoProfile() {
   const demoId = getRequestedDemoId();
+  let profile;
   try {
-    return await loadJsonAsset(`data/demos/${demoId}/demo.json`);
+    profile = await loadJsonAsset(`data/demos/${demoId}/demo.json`);
   } catch (error) {
     const requested = normalizeDemoId(getRequestedDemoParam());
     if (!requested || requested === DEFAULT_DEMO_ID) throw error;
     throw new Error(`Unknown demo "${demoId}". Check data/demos/${demoId}/demo.json on GitHub Pages.`);
+  }
+  validateDemoProfile(profile, demoId);
+  return profile;
+}
+
+function validateDemoProfile(profile = {}, demoId = '') {
+  const errors = [];
+  ['id', 'video', 'logManifest', 'introImage'].forEach((field) => {
+    if (!String(profile[field] || '').trim()) errors.push(field);
+  });
+  if (profile.video && !HLS_MANIFEST_PATTERN.test(String(profile.video))) errors.push('video .m3u8');
+  ['introSeconds', 'durationSeconds'].forEach((field) => {
+    if (!Number.isFinite(Number(profile[field]))) errors.push(field);
+  });
+  if (!Array.isArray(profile.timelineKeyframes)) errors.push('timelineKeyframes');
+  if (errors.length) {
+    throw new Error(`Invalid demo profile "${demoId}": missing ${errors.join(', ')}.`);
   }
 }
 
@@ -352,11 +370,7 @@ function loadWorldVideoSource(videoPath) {
     worldVideo.removeAttribute('crossorigin');
   }
 
-  if (!isHlsSource) {
-    worldVideo.src = sourceUrl;
-    worldVideo.load?.();
-    return;
-  }
+  if (!isHlsSource) throw new Error(`Demo video must be an HLS manifest: ${videoPath}`);
 
   window.CraftUtopiaHlsPreload?.warmCurrentDemo?.(sourceUrl, {
     initialSegmentCount: 8,
@@ -378,8 +392,7 @@ function loadWorldVideoSource(videoPath) {
     return;
   }
 
-  worldVideo.src = sourceUrl;
-  worldVideo.load?.();
+  throw new Error('HLS playback is not supported in this browser.');
 }
 
 function applyDemoProfile(profile = {}) {
@@ -397,16 +410,10 @@ function applyDemoProfile(profile = {}) {
     }
   }
   runEventsManifestPath = profile.logManifest;
-  introArchitectureSeconds = Number.isFinite(Number(profile.introSeconds)) ? Math.max(0, Number(profile.introSeconds)) : INTRO_ARCHITECTURE_SECONDS;
-  if (Number.isFinite(Number(profile.durationSeconds))) {
-    demoVideoSeconds = Number(profile.durationSeconds);
-  }
-  if (Array.isArray(profile.timelineKeyframes)) {
-    timelineKeyframes = profile.timelineKeyframes.map((keyframe) => ({ ...keyframe }));
-    heldKeyframes.clear();
-  } else {
-    timelineKeyframes = DEFAULT_TIMELINE_KEYFRAMES.map((keyframe) => ({ ...keyframe }));
-  }
+  introArchitectureSeconds = Math.max(0, Number(profile.introSeconds));
+  demoVideoSeconds = Math.max(0, Number(profile.durationSeconds));
+  timelineKeyframes = profile.timelineKeyframes.map((keyframe) => ({ ...keyframe }));
+  heldKeyframes.clear();
   if (worldVideo && profile.video) loadWorldVideoSource(profile.video);
   setImageSource('#timeline-intro img', profile.introImage, '');
   setImageSource('.framework-preview img, .framework-lightbox img', profile.frameworkImage, 'CraftUtopia execution framework architecture');
@@ -415,7 +422,7 @@ function applyDemoProfile(profile = {}) {
   document.body.classList.toggle('is-video-only-locked', Boolean(profile.lockVideoOnly || profile.videoOnly));
   document.body.classList.toggle('is-video-fit-contain', profile.videoFit === 'contain');
   const useTimelinePlaybackControls = Boolean(profile.topMilestoneMode || profile.videoOnly);
-  document.body.classList.toggle('is-sydney-top-milestones', Boolean(profile.topMilestoneMode));
+  document.body.classList.toggle('is-top-milestone-layout', Boolean(profile.topMilestoneMode));
   document.body.classList.toggle('is-timeline-playback-controls', useTimelinePlaybackControls);
   positionPlaybackControls(useTimelinePlaybackControls);
   topMilestoneRenderKey = '';
@@ -493,7 +500,7 @@ function buildMilestoneRunLog(manifest = {}) {
     intro: manifest.intro || manifest.title || '',
     meta: {
       ...(manifest.meta || {}),
-      runId: manifest.meta?.runId || manifest.version || 'sydney-milestone-log',
+      runId: manifest.meta?.runId || manifest.version || 'milestone-log',
       taskTitle: manifest.title,
       eventCount: stages.reduce((total, stage) => total + (stage.events?.length || 0), 0),
       phaseCount: stages.length
@@ -502,48 +509,12 @@ function buildMilestoneRunLog(manifest = {}) {
   };
 }
 
-async function loadRunEventsManifest() {
-  const manifest = await loadJsonAsset(runEventsManifestPath);
-  if (Array.isArray(manifest.milestones)) {
-    return buildMilestoneRunLog(manifest);
-  }
-
-  const manifestBasePath = runEventsManifestPath.split('/').slice(0, -1).join('/');
-  const phaseLogs = await Promise.all((manifest.timeline || []).map(async (phase) => {
-    const phaseFile = phase.file || '';
-    const phasePath = phaseFile.startsWith('/') || phaseFile.startsWith('http')
-      ? phaseFile
-      : `${manifestBasePath}/${phaseFile}`.replace(/^\//, '');
-    const phaseLog = await loadJsonAsset(phasePath);
-    return { phase, phaseLog };
-  }));
-  let seq = 1;
-  const stages = phaseLogs.map(({ phase, phaseLog }) => {
-    const stage = phaseLog.stage || {};
-    const events = (phaseLog.events || []).map((event) => normalizeRunEvent(event, seq++));
-    return {
-      ...stage,
-      id: stage.id ?? phase.id,
-      label: stage.label || phase.label,
-      summary: stage.summary || phase.summary || '',
-      system: stage.system || stage.summary || phase.summary || '',
-      metrics: stage.metrics || phase.metrics || [],
-      events
-    };
-  });
-  return {
-    title: manifest.title,
-    intro: manifest.intro,
-    meta: {
-      ...manifest.meta,
-      eventCount: stages.reduce((total, stage) => total + (stage.events?.length || 0), 0)
-    },
-    stages
-  };
-}
-
 async function loadRunEvents() {
-  return loadRunEventsManifest();
+  const manifest = await loadJsonAsset(runEventsManifestPath);
+  if (!Array.isArray(manifest.milestones)) {
+    throw new Error(`Run log must use the milestone manifest format: ${runEventsManifestPath}`);
+  }
+  return buildMilestoneRunLog(manifest);
 }
 
 function formatRunTimecode(time = '00:00.0') {

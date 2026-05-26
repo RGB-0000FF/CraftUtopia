@@ -177,9 +177,6 @@
                 },
                 {
                   "tools": "Tool call Assign Subplans: prepare one subplan for each worker."
-                },
-                {
-                  "tools": "Tool call Start Build: open the five region queues in parallel."
                 }
               ]
             }
@@ -204,12 +201,10 @@
             {
               "time": "00:35.0",
               "actor": "Foreman-A",
-              "action": "Foreman-A assigns A-01 through A-20 to Worker-001..020. No existing skill matches this placement sequence yet, so workers use basic tools and leave traces.",
+              "action": "Foreman-A assigns A-01 through A-20 to Worker-001..020.",
               "highlights": [
-                "Worker-001",
-                "Worker-020",
-                "basic tools",
-                "placement traces"
+                "Worker-001..020",
+                "A-01 through A-20"
               ],
               "sublines": [
                 {
@@ -217,80 +212,31 @@
                 }
               ],
               "progress": {
-                "label": "Workers 001-020 assigned work",
-                "current": 4,
-                "total": 20
-              },
-              "skill": "build_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Placement",
-                "current": 4,
+                "label": "Workers 001-020 placement work",
+                "current": 0,
                 "total": 20
               }
             },
             {
-              "time": "00:39.0",
-              "actor": "Worker-001..008",
-              "action": "Worker-001..008 execute the same basic sequence for their placement subplans.",
+              "time": "00:35.8",
+              "actor": "Worker-001..020",
+              "action": "Worker-001..020 inspect their assigned placement subplans. No learned skill matches this sequence yet, so they complete the batch with basic tools and leave the Region Placement trace.",
               "highlights": [
-                "Read Subplan",
-                "Check Inventory",
-                "Go To Region",
-                "Place Blocks"
+                "Worker-001..020",
+                "No learned skill matches",
+                "basic tools",
+                "Region Placement trace"
               ],
               "sublines": [
                 {
                   "tools": "Tool trace: Read Subplan -> Check Inventory -> Go To Region -> Place Blocks."
+                },
+                {
+                  "results": "Result: Region Placement trace collected 20/20."
                 }
               ],
               "progress": {
-                "label": "Workers 001-020 assigned work",
-                "current": 8,
-                "total": 20
-              },
-              "skill": "build_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Placement",
-                "current": 8,
-                "total": 20
-              }
-            },
-            {
-              "time": "00:44.0",
-              "actor": "Worker-009..016",
-              "action": "Worker-009..016 repeat the sequence on nearby subplans; the placement trace is becoming stable.",
-              "highlights": [
-                "placement trace",
-                "subplans"
-              ],
-              "sublines": [],
-              "progress": {
-                "label": "Workers 001-020 assigned work",
-                "current": 16,
-                "total": 20
-              },
-              "skill": "build_region",
-              "skillEvent": "skill-trace",
-              "skillProgress": {
-                "label": "Region Placement",
-                "current": 16,
-                "total": 20
-              }
-            },
-            {
-              "time": "00:48.0",
-              "actor": "Worker-017..020",
-              "action": "Worker-017..020 finish the batch, giving Foreman-A 20 matching placement traces to summarize.",
-              "highlights": [
-                "Region placement",
-                "matching traces",
-                "Foreman-A"
-              ],
-              "sublines": [],
-              "progress": {
-                "label": "Workers 001-020 assigned work",
+                "label": "Workers 001-020 placement work",
                 "current": 20,
                 "total": 20
               },
@@ -396,11 +342,11 @@
             {
               "time": "01:10.0",
               "actor": "Foreman-B",
-              "action": "Foreman-B assigns B-01 through B-20 to Worker-021..040: most workers use Region Placement, while the rest handle target volume alignment with basic tools.",
+              "action": "Foreman-B assigns one subplan to each worker in Worker-021..040. Workers inspect their own work items and then choose a learned skill or basic tools.",
               "highlights": [
                 "Worker-021..040",
-                "Region Placement",
-                "final assigned volumes"
+                "one subplan",
+                "choose a learned skill or basic tools"
               ],
               "sublines": [
                 {
@@ -409,21 +355,25 @@
               ],
               "progress": {
                 "label": "Workers 021-040 assigned work",
-                "current": 4,
+                "current": 0,
                 "total": 20
               }
             },
             {
               "time": "01:16.0",
               "actor": "Worker-021..036",
-              "action": "Used Region Placement for repeated assigned-region placement across B-01 through B-20.",
+              "action": "Worker-021..036 complete matching assigned volumes with Region Placement.",
               "highlights": [
                 "Use Skill",
-                "Region Placement"
+                "Region Placement",
+                "matching assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on assigned subplans."
+                  "skills": "Use Skill: Region Placement on matching assigned volumes."
+                },
+                {
+                  "results": "Result: matched placement work is complete."
                 }
               ],
               "progress": {
@@ -435,12 +385,15 @@
             {
               "time": "01:22.0",
               "actor": "Worker-037..040",
-              "action": "Completed target volume alignment with basic tools and reported the assigned work complete.",
+              "action": "Worker-037..040 complete target volume alignment with basic tools because this work does not match the placement skill closely enough.",
               "highlights": [
                 "basic tools",
                 "target volume alignment"
               ],
               "sublines": [
+                {
+                  "tools": "Tool trace: Read Subplan -> Compare Target Volume -> Adjust Coordinates -> Place Blocks -> Verify Alignment."
+                },
                 {
                   "results": "Result: assigned work is complete."
                 }
@@ -478,11 +431,11 @@
             {
               "time": "01:53.6",
               "actor": "Foreman-C",
-              "action": "Foreman-C assigns C-01 through C-20 to Worker-041..060: most workers use Region Placement, while the rest handle target volume adjustment with basic tools.",
+              "action": "Foreman-C assigns one subplan to each worker in Worker-041..060. Workers inspect their own work items and then choose a learned skill or basic tools.",
               "highlights": [
                 "Worker-041..060",
-                "Region Placement",
-                "final assigned volumes"
+                "one subplan",
+                "choose a learned skill or basic tools"
               ],
               "sublines": [
                 {
@@ -491,21 +444,25 @@
               ],
               "progress": {
                 "label": "Workers 041-060 assigned work",
-                "current": 4,
+                "current": 0,
                 "total": 20
               }
             },
             {
               "time": "01:59.6",
               "actor": "Worker-041..058",
-              "action": "Used Region Placement for repeated assigned-region placement across C-01 through C-20.",
+              "action": "Worker-041..058 complete matching assigned volumes with Region Placement.",
               "highlights": [
                 "Use Skill",
-                "Region Placement"
+                "Region Placement",
+                "matching assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on assigned subplans."
+                  "skills": "Use Skill: Region Placement on matching assigned volumes."
+                },
+                {
+                  "results": "Result: matched placement work is complete."
                 }
               ],
               "progress": {
@@ -517,12 +474,15 @@
             {
               "time": "02:05.6",
               "actor": "Worker-059..060",
-              "action": "Completed target volume adjustment with basic tools and reported the assigned work complete.",
+              "action": "Worker-059..060 complete target volume adjustment with basic tools because this work does not match the placement skill closely enough.",
               "highlights": [
                 "basic tools",
                 "target volume adjustment"
               ],
               "sublines": [
+                {
+                  "tools": "Tool trace: Read Subplan -> Compare Target Volume -> Adjust Coordinates -> Place Blocks -> Verify Alignment."
+                },
                 {
                   "results": "Result: assigned work is complete."
                 }
@@ -560,11 +520,11 @@
             {
               "time": "02:38.9",
               "actor": "Foreman-D",
-              "action": "Foreman-D assigns D-01 through D-20 to Worker-061..080: most workers use Region Placement, while the rest handle final target volume alignment with basic tools.",
+              "action": "Foreman-D assigns one subplan to each worker in Worker-061..080. Workers inspect their own work items and then choose a learned skill or basic tools.",
               "highlights": [
                 "Worker-061..080",
-                "Region Placement",
-                "final assigned volumes"
+                "one subplan",
+                "choose a learned skill or basic tools"
               ],
               "sublines": [
                 {
@@ -573,21 +533,25 @@
               ],
               "progress": {
                 "label": "Workers 061-080 assigned work",
-                "current": 4,
+                "current": 0,
                 "total": 20
               }
             },
             {
               "time": "02:44.9",
               "actor": "Worker-061..079",
-              "action": "Used Region Placement for repeated assigned-region placement across D-01 through D-20.",
+              "action": "Worker-061..079 complete matching assigned volumes with Region Placement.",
               "highlights": [
                 "Use Skill",
-                "Region Placement"
+                "Region Placement",
+                "matching assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on assigned subplans."
+                  "skills": "Use Skill: Region Placement on matching assigned volumes."
+                },
+                {
+                  "results": "Result: matched placement work is complete."
                 }
               ],
               "progress": {
@@ -599,12 +563,15 @@
             {
               "time": "02:50.9",
               "actor": "Worker-080",
-              "action": "Completed final target volume alignment with basic tools and reported the assigned work complete.",
+              "action": "Worker-080 complete final target volume alignment with basic tools because this work does not match the placement skill closely enough.",
               "highlights": [
                 "basic tools",
                 "final target volume alignment"
               ],
               "sublines": [
+                {
+                  "tools": "Tool trace: Read Subplan -> Compare Target Volume -> Adjust Coordinates -> Place Blocks -> Verify Alignment."
+                },
                 {
                   "results": "Result: assigned work is complete."
                 }
@@ -635,11 +602,11 @@
             {
               "time": "03:19.3",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns E-01 through E-20 to Worker-081..100: all workers use Region Placement for the final assigned volumes.",
+              "action": "Foreman-E assigns one subplan to each worker in Worker-081..100. Workers inspect their own work items and then choose a learned skill or basic tools.",
               "highlights": [
                 "Worker-081..100",
-                "Region Placement",
-                "final assigned volumes"
+                "one subplan",
+                "choose a learned skill or basic tools"
               ],
               "sublines": [
                 {
@@ -648,21 +615,25 @@
               ],
               "progress": {
                 "label": "Workers 081-100 assigned work",
-                "current": 4,
+                "current": 0,
                 "total": 20
               }
             },
             {
               "time": "03:25.3",
               "actor": "Worker-081..100",
-              "action": "Used Region Placement for repeated assigned-region placement across E-01 through E-20.",
+              "action": "Worker-081..100 complete matching final assigned volumes with Region Placement.",
               "highlights": [
                 "Use Skill",
-                "Region Placement"
+                "Region Placement",
+                "final assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on assigned subplans."
+                  "skills": "Use Skill: Region Placement on matching final assigned volumes."
+                },
+                {
+                  "results": "Result: final assigned volumes are aligned."
                 }
               ],
               "progress": {
@@ -751,7 +722,7 @@
               ],
               "sublines": [
                 {
-                  "results": "Agents: 100. Blocks: 95,151. Status: verified."
+                  "results": "Agents: 100. Blocks: 85,320. Status: verified."
                 }
               ]
             }

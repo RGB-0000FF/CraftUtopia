@@ -745,12 +745,6 @@ function updatePlaybackControls() {
     const icon = isKeyframeHolding ? 'hourglass' : (isAutoPlaying ? 'pause' : (isComplete ? 'rotate-ccw' : 'play'));
     setActionButtonLabel(playbackAuto, label, icon);
   }
-  if (videoOnlyPlay) {
-    videoOnlyPlay.disabled = total === 0;
-    const label = isAutoPlaying ? 'Pause' : (isComplete ? 'Replay' : 'Play');
-    const icon = isAutoPlaying ? 'pause' : (isComplete ? 'rotate-ccw' : 'play');
-    setActionButtonLabel(videoOnlyPlay, label, icon);
-  }
   if (playbackSpeedToggle) {
     playbackSpeedToggle.textContent = formatPlaybackSpeed();
     playbackSpeedToggle.setAttribute('aria-label', `Playback speed: ${formatPlaybackSpeed()}. Click to reset to 1x.`);
@@ -758,28 +752,13 @@ function updatePlaybackControls() {
     playbackSpeedToggle.classList.toggle('is-fast', playbackSpeed > 1);
     playbackSpeedToggle.classList.toggle('is-slow', playbackSpeed < 1);
   }
-  if (videoOnlySpeed) {
-    videoOnlySpeed.textContent = formatPlaybackSpeed();
-    videoOnlySpeed.setAttribute('aria-label', `Playback speed: ${formatPlaybackSpeed()}. Click to reset to 1x.`);
-    videoOnlySpeed.setAttribute('aria-pressed', String(playbackSpeed !== 1));
-    videoOnlySpeed.classList.toggle('is-fast', playbackSpeed > 1);
-    videoOnlySpeed.classList.toggle('is-slow', playbackSpeed < 1);
-  }
   if (playbackSlower) {
     playbackSlower.disabled = playbackSpeed <= PLAYBACK_SPEED_STEPS[0];
     playbackSlower.setAttribute('aria-label', `Slow down playback from ${formatPlaybackSpeed()}`);
   }
-  if (videoOnlySlower) {
-    videoOnlySlower.disabled = playbackSpeed <= PLAYBACK_SPEED_STEPS[0];
-    videoOnlySlower.setAttribute('aria-label', `Slow down playback from ${formatPlaybackSpeed()}`);
-  }
   if (playbackFaster) {
     playbackFaster.disabled = playbackSpeed >= PLAYBACK_SPEED_STEPS.at(-1);
     playbackFaster.setAttribute('aria-label', `Speed up playback from ${formatPlaybackSpeed()}`);
-  }
-  if (videoOnlyFaster) {
-    videoOnlyFaster.disabled = playbackSpeed >= PLAYBACK_SPEED_STEPS.at(-1);
-    videoOnlyFaster.setAttribute('aria-label', `Speed up playback from ${formatPlaybackSpeed()}`);
   }
   if (playbackStep) {
     playbackStep.max = String(total);
@@ -897,7 +876,7 @@ function renderChat(events) {
   chatMessages = [];
 
   if (!events?.length) {
-    chatFeed.insertAdjacentHTML('beforeend', '<div class="log-error">No run events found in <code>data/demo-log/manifest.json</code>.</div>');
+    chatFeed.insertAdjacentHTML('beforeend', `<div class="log-error">No run events found in <code>${escapeHtml(runEventsManifestPath || 'configured demo log')}</code>.</div>`);
     applyRoomVisibility();
     updatePlaybackControls();
     return;

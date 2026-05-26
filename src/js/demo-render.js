@@ -124,6 +124,35 @@ function appendHighlightedText(node, value = '', highlights = []) {
   if (cursor < text.length) node.append(document.createTextNode(text.slice(cursor)));
 }
 
+function getTraceStepHighlights(value = '') {
+  const text = String(value || '');
+  const traceMatch = text.match(/\bTool trace:\s*(.+)$/i);
+  if (!traceMatch) return [];
+  return traceMatch[1]
+    .split(/\s*->\s*/g)
+    .map((step) => step.replace(/[.;:,]+$/g, '').trim())
+    .filter(Boolean);
+}
+
+function getSkillUseHighlights(value = '') {
+  const text = String(value || '');
+  const terms = Object.values(SKILL_REGISTRY)
+    .map((skill) => String(skill?.name || '').replace(/^Learned\s+/i, '').trim())
+    .filter(Boolean)
+    .filter((name) => text.toLowerCase().includes(name.toLowerCase()));
+  const match = text.match(/\bUse Skill:\s*([^.:]+?)(?:\s+(?:on|for|with)\b|[.:]|$)/i);
+  if (match?.[1]) terms.push(match[1].trim());
+  return [...new Set(terms)];
+}
+
+function getStructuredLineHighlights(value = '', baseHighlights = []) {
+  return [
+    ...(Array.isArray(baseHighlights) ? baseHighlights : []),
+    ...getTraceStepHighlights(value),
+    ...getSkillUseHighlights(value)
+  ];
+}
+
 const ACTOR_COLOR_MAP = {
   ProjectManager: '#ffe04b',
   Designer: '#35c9ff',
@@ -470,7 +499,7 @@ function appendStructuredLogEntry(node, event, options = {}) {
         const detail = document.createElement('span');
         detail.className = `structured-detail ${meta.className}`;
         detail.title = meta.label;
-        appendHighlightedText(detail, line, log.highlights);
+        appendHighlightedText(detail, line, getStructuredLineHighlights(line, log.highlights));
         followups.append(detail);
         return;
       }
@@ -483,7 +512,7 @@ function appendStructuredLogEntry(node, event, options = {}) {
       arrow.textContent = '↳';
       const body = document.createElement('span');
       body.className = 'structured-subline-body';
-      appendHighlightedText(body, line, log.highlights);
+      appendHighlightedText(body, line, getStructuredLineHighlights(line, log.highlights));
       subline.classList.add('has-prefix');
       const prefix = document.createElement('span');
       prefix.className = 'structured-subline-prefix';
@@ -493,7 +522,7 @@ function appendStructuredLogEntry(node, event, options = {}) {
           .replace(/^\s*tool call\s+use skill\s*:\s*/i, 'Use Skill: ')
           .replace(/\bLearned\s+(Region Placement|Scaffold Construction|Region Replacement|Region Cleaning)\b/gi, '$1');
         body.replaceChildren();
-        appendHighlightedText(body, cleanSkillLine, log.highlights);
+        appendHighlightedText(body, cleanSkillLine, getStructuredLineHighlights(cleanSkillLine, log.highlights));
       }
       if (meta.className === 'is-skill' && meta.skillRef) {
         const icon = document.createElement('span');
@@ -565,7 +594,6 @@ function resetSkillState() {
   skillState = new Map();
   Object.keys(SKILL_REGISTRY).forEach(ensureSkillState);
   focusedSkillRef = Object.keys(SKILL_REGISTRY)[0] || '';
-  skillLibraryUnlocked = false;
   renderSkillLibrary();
   renderSkillNotifications();
 }
@@ -631,7 +659,6 @@ function updateSkillStateFromEvent(event, index = -1) {
   if (!Number.isFinite(skill.firstEventIndex)) skill.firstEventIndex = Number.isFinite(index) ? index : skill.events.length;
   focusedSkillRef = skill.ref;
   skill.events.push({ index, kind, room: event.group?.id || `stage-${event.stageId}`, title: stageTitle });
-  if (skill.learned) skillLibraryUnlocked = true;
   renderSkillLibrary(skill.ref);
   renderSkillNotifications(skill.ref);
 }

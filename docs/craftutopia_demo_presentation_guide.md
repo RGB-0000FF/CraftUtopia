@@ -3,7 +3,7 @@
 以 Sydney Opera House demo 为主线，用于对外介绍 CraftUtopia 的系统设计、页面展示逻辑、关键截图讲解与常见问答。
 
 参考材料：
-- Demo 页面：`http://localhost:8000/demos/viewer/?demo=sydney-opera-house&verify=abstract-region-log`
+- Demo 页面：`http://localhost:8000/demos/viewer/?demo=sydney-opera-house`
 - Paper：`assets/AAMAS_2026_CraftUtopia_A_LLM-based_Multi-Agent_System_for_Collaborative_Construction_in_Minecraft.pdf`
 - 当前 demo 数据：`data/demos/sydney-opera-house/demo.json` 与 `data/demos/sydney-opera-house/milestone-log-preview.json`
 

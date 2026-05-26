@@ -1,9 +1,9 @@
-body.is-sydney-top-milestones .status {
+body.is-top-milestone-layout .status {
   grid-template-rows: minmax(0, 1fr);
   gap: 0;
 }
 
-body.is-sydney-top-milestones .top-milestone-strip:not(:empty) {
+body.is-top-milestone-layout .top-milestone-strip:not(:empty) {
   position: absolute;
   left: clamp(16px, calc(24px * var(--ui-scale)), 30px);
   right: clamp(16px, calc(24px * var(--ui-scale)), 30px);
@@ -25,12 +25,12 @@ body.is-sydney-top-milestones .top-milestone-strip:not(:empty) {
   scrollbar-width: none;
 }
 
-body.is-sydney-top-milestones .top-milestone-strip::-webkit-scrollbar {
+body.is-top-milestone-layout .top-milestone-strip::-webkit-scrollbar {
   display: none;
 }
 
-body.is-sydney-top-milestones .blueprint-block-count,
-body.is-sydney-top-milestones .app.is-video-only .blueprint-block-count {
+body.is-top-milestone-layout .blueprint-block-count,
+body.is-top-milestone-layout .app.is-video-only .blueprint-block-count {
   top: auto;
   right: clamp(18px, calc(26px * var(--ui-scale)), 32px);
   bottom: clamp(68px, calc(82px * var(--ui-scale)), 96px);
@@ -44,34 +44,34 @@ body.is-sydney-top-milestones .app.is-video-only .blueprint-block-count {
   backdrop-filter: blur(10px) saturate(1.08);
 }
 
-body.is-sydney-top-milestones .blueprint-block-count span {
+body.is-top-milestone-layout .blueprint-block-count span {
   font-size: 0.52rem;
   letter-spacing: 0.14em;
 }
 
-body.is-sydney-top-milestones .blueprint-block-count strong {
+body.is-top-milestone-layout .blueprint-block-count strong {
   font-size: clamp(0.82rem, calc(1rem * var(--ui-scale)), 1.16rem);
 }
 
-body.is-sydney-top-milestones .terminal-console,
-body.is-sydney-top-milestones .chat-shell.terminal-console,
-body.is-sydney-top-milestones .terminal-console.is-framework-expanded,
-body.is-sydney-top-milestones .chat-shell.terminal-console.is-framework-expanded {
+body.is-top-milestone-layout .terminal-console,
+body.is-top-milestone-layout .chat-shell.terminal-console,
+body.is-top-milestone-layout .terminal-console.is-framework-expanded,
+body.is-top-milestone-layout .chat-shell.terminal-console.is-framework-expanded {
   grid-template-rows: auto minmax(0, 1fr);
 }
 
-body.is-sydney-top-milestones .right-rail {
+body.is-top-milestone-layout .right-rail {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 12px;
 }
 
-body.is-sydney-top-milestones .console-milestones,
-body.is-sydney-top-milestones .console-framework {
+body.is-top-milestone-layout .console-milestones,
+body.is-top-milestone-layout .console-framework {
   display: none;
 }
 
-body.is-sydney-top-milestones .console-header {
+body.is-top-milestone-layout .console-header {
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
   justify-items: center;
@@ -79,7 +79,7 @@ body.is-sydney-top-milestones .console-header {
   border-bottom: 1px solid rgba(92,255,172,0.12);
 }
 
-body.is-sydney-top-milestones .console-title-group {
+body.is-top-milestone-layout .console-title-group {
   min-width: 0;
   width: 100%;
   display: flex;
@@ -89,7 +89,7 @@ body.is-sydney-top-milestones .console-title-group {
   text-align: left;
 }
 
-body.is-sydney-top-milestones .console-header h2 {
+body.is-top-milestone-layout .console-header h2 {
   display: block;
   width: auto;
   min-width: 0;
@@ -103,7 +103,7 @@ body.is-sydney-top-milestones .console-header h2 {
   white-space: nowrap;
 }
 
-body.is-sydney-top-milestones .console-title-logo {
+body.is-top-milestone-layout .console-title-logo {
   display: block;
   width: clamp(118px, calc(150px * var(--ui-scale)), 178px);
   height: auto;
@@ -111,7 +111,7 @@ body.is-sydney-top-milestones .console-title-logo {
   filter: drop-shadow(0 5px 14px rgba(0,0,0,0.28));
 }
 
-body.is-sydney-top-milestones .console-title-break {
+body.is-top-milestone-layout .console-title-break {
   display: block;
   margin-left: 0;
   color: inherit;
@@ -123,53 +123,53 @@ body.is-sydney-top-milestones .console-title-break {
   text-transform: none;
 }
 
-body.is-sydney-top-milestones .console-title-scale {
+body.is-top-milestone-layout .console-title-scale {
   color: #8fdcff;
   font-size: inherit;
   line-height: inherit;
 }
 
 @container log-panel (max-width: 560px) {
-  body.is-sydney-top-milestones .console-header h2 {
+  body.is-top-milestone-layout .console-header h2 {
     font-size: clamp(0.98rem, calc(1.16rem * var(--ui-scale)), 1.3rem);
     white-space: nowrap;
     overflow: visible;
     text-overflow: clip;
   }
 
-  body.is-sydney-top-milestones .console-title-logo {
+  body.is-top-milestone-layout .console-title-logo {
     width: clamp(96px, calc(118px * var(--ui-scale)), 138px);
   }
 }
 
-body.is-sydney-top-milestones .console-header-spacer {
+body.is-top-milestone-layout .console-header-spacer {
   display: none;
 }
 
-body.is-sydney-top-milestones .console-log .chat-feed {
+body.is-top-milestone-layout .console-log .chat-feed {
   padding: 14px 16px 18px;
 }
 
-body.is-sydney-top-milestones .skill-notification-stack {
+body.is-top-milestone-layout .skill-notification-stack {
   padding-inline: 16px;
 }
 
-body.is-sydney-top-milestones .terminal-log-line,
-body.is-sydney-top-milestones .event-row.terminal-log-line {
+body.is-top-milestone-layout .terminal-log-line,
+body.is-top-milestone-layout .event-row.terminal-log-line {
   padding: 8px 5px 14px;
   font-size: clamp(0.96rem, calc(1.08rem * var(--ui-scale)), 1.22rem);
   line-height: 1.62;
 }
 
-body.is-sydney-top-milestones .event-row.terminal-log-line.has-chunk-progress {
+body.is-top-milestone-layout .event-row.terminal-log-line.has-chunk-progress {
   padding-top: 8px;
 }
 
-body.is-sydney-top-milestones .event-row.terminal-log-line.has-chunk-progress:not(.is-learning-chunk)::before {
+body.is-top-milestone-layout .event-row.terminal-log-line.has-chunk-progress:not(.is-learning-chunk)::before {
   display: none;
 }
 
-body.is-sydney-top-milestones .chunk-terminal-progress {
+body.is-top-milestone-layout .chunk-terminal-progress {
   margin-top: 9px;
   padding: 6px 9px;
   border-color: rgba(116,214,196,0.18);
@@ -177,7 +177,7 @@ body.is-sydney-top-milestones .chunk-terminal-progress {
   font-size: 0.76em;
 }
 
-body.is-sydney-top-milestones .chunk-batch-summary {
+body.is-top-milestone-layout .chunk-batch-summary {
   margin-top: 10px;
   padding: 8px 9px;
   border-color: rgba(116,214,196,0.20);
@@ -185,7 +185,7 @@ body.is-sydney-top-milestones .chunk-batch-summary {
   font-size: 0.76em;
 }
 
-body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk {
+body.is-top-milestone-layout .event-row.terminal-log-line.is-learning-chunk {
   --learning-accent: #72ffd1;
   position: relative;
   margin-bottom: 12px;
@@ -199,13 +199,13 @@ body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk {
   box-shadow: inset 0 1px rgba(255,255,255,0.055), 0 12px 26px rgba(0,0,0,0.16);
 }
 
-body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk.active {
+body.is-top-milestone-layout .event-row.terminal-log-line.is-learning-chunk.active {
   border-color: color-mix(in srgb, var(--learning-accent) 32%, transparent);
   border-left-color: color-mix(in srgb, var(--learning-accent) 76%, transparent);
   box-shadow: inset 0 1px rgba(255,255,255,0.070), 0 14px 28px rgba(0,0,0,0.18), 0 0 18px color-mix(in srgb, var(--learning-accent) 10%, transparent);
 }
 
-body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk::before {
+body.is-top-milestone-layout .event-row.terminal-log-line.is-learning-chunk::before {
   content: attr(data-learning-label);
   position: absolute;
   top: 10px;
@@ -223,7 +223,7 @@ body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk::be
   white-space: nowrap;
 }
 
-body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk::after {
+body.is-top-milestone-layout .event-row.terminal-log-line.is-learning-chunk::after {
   content: "";
   position: absolute;
   left: 0;
@@ -234,25 +234,25 @@ body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk::af
   pointer-events: none;
 }
 
-body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk .structured-entry {
+body.is-top-milestone-layout .event-row.terminal-log-line.is-learning-chunk .structured-entry {
   gap: 5px;
 }
 
-body.is-sydney-top-milestones .event-row.terminal-log-line.is-learning-chunk .structured-entry + .structured-entry {
+body.is-top-milestone-layout .event-row.terminal-log-line.is-learning-chunk .structured-entry + .structured-entry {
   margin-top: 10px;
 }
 
-body.is-sydney-top-milestones .terminal-log-line + .terminal-log-line {
+body.is-top-milestone-layout .terminal-log-line + .terminal-log-line {
   margin-top: 6px;
 }
 
-body.is-sydney-top-milestones .structured-main {
+body.is-top-milestone-layout .structured-main {
   font-size: 1em;
   line-height: 1.48;
   color: rgba(222,245,228,0.80);
 }
 
-body.is-sydney-top-milestones .structured-sublines {
+body.is-top-milestone-layout .structured-sublines {
   margin-top: 5px;
   padding-left: 1.15em;
   font-size: 0.82em;
@@ -260,15 +260,15 @@ body.is-sydney-top-milestones .structured-sublines {
   color: rgba(178,204,188,0.50);
 }
 
-body.is-sydney-top-milestones .structured-action {
+body.is-top-milestone-layout .structured-action {
   color: rgba(222,245,228,0.80);
 }
 
-body.is-sydney-top-milestones .structured-subline-body {
+body.is-top-milestone-layout .structured-subline-body {
   color: rgba(178,204,188,0.54);
 }
 
-body.is-sydney-top-milestones .structured-highlight {
+body.is-top-milestone-layout .structured-highlight {
   display: inline;
   margin: 0;
   padding: 0;
@@ -283,17 +283,17 @@ body.is-sydney-top-milestones .structured-highlight {
   text-shadow: none;
 }
 
-body.is-sydney-top-milestones .structured-sublines .structured-highlight {
+body.is-top-milestone-layout .structured-sublines .structured-highlight {
   color: rgba(111,255,153,0.74);
   font-size: 1.08em;
   font-weight: 900;
 }
 
-body.is-sydney-top-milestones .structured-subline-prefix {
+body.is-top-milestone-layout .structured-subline-prefix {
   color: rgba(255,217,135,0.42);
 }
 
-body.is-sydney-top-milestones .vote-card {
+body.is-top-milestone-layout .vote-card {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -314,7 +314,7 @@ body.is-sydney-top-milestones .vote-card {
     inset 0 -14px 28px rgba(0,0,0,0.10);
 }
 
-body.is-sydney-top-milestones .vote-card span {
+body.is-top-milestone-layout .vote-card span {
   flex: 0 0 auto;
   min-width: 0;
   color: #ffffff;
@@ -328,7 +328,7 @@ body.is-sydney-top-milestones .vote-card span {
   white-space: nowrap;
 }
 
-body.is-sydney-top-milestones .vote-card strong {
+body.is-top-milestone-layout .vote-card strong {
   flex: 0 0 auto;
   min-width: 0;
   color: #ffffff;
@@ -341,7 +341,7 @@ body.is-sydney-top-milestones .vote-card strong {
 }
 
 @container right-rail (max-width: 540px) {
-  body.is-sydney-top-milestones .vote-card {
+  body.is-top-milestone-layout .vote-card {
     justify-content: center;
     gap: 8px;
     min-height: 96px;
@@ -349,8 +349,8 @@ body.is-sydney-top-milestones .vote-card strong {
     text-align: center;
   }
 
-  body.is-sydney-top-milestones .vote-card span,
-  body.is-sydney-top-milestones .vote-card strong {
+  body.is-top-milestone-layout .vote-card span,
+  body.is-top-milestone-layout .vote-card strong {
     flex-basis: 100%;
     max-width: 100%;
     text-align: center;

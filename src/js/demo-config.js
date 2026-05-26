@@ -3,17 +3,8 @@ const AGENT_TYPING_DELAY = 2000;
 const AUTO_PLAY_MIN_DELAY = 1000;
 const AUTO_PLAY_MAX_DELAY = 1000;
 const AUTO_PLAY_MS_PER_WORD = 22;
-const INTRO_ARCHITECTURE_SECONDS = 10;
-const DEFAULT_VIDEO_DURATION_SECONDS = 89.767;
 const KEYFRAME_HOLD_MS = 5000;
 const PLAYBACK_SPEED_STEPS = [0.5, 1, 1.5, 2, 4];
-const DEFAULT_TIMELINE_KEYFRAMES = [
-  { id: 'blueprint-ready', label: 'Blueprint Ready', demoSeconds: 10, stageId: 1 },
-  { id: 'build-region', label: 'Build Region', demoSeconds: 17, skill: 'build_region' },
-  { id: 'scaffold', label: 'Scaffold', demoSeconds: 28, skill: 'scaffold' },
-  { id: 'replace-region', label: 'Replace Region', demoSeconds: 38, skill: 'replace_region' },
-  { id: 'clean-region', label: 'Clean Region', demoSeconds: 50, skill: 'clean_region' }
-];
 const DESIGN_WIDTH = 1440;
 const DESIGN_HEIGHT = 900;
 const COMPACT_BREAKPOINT = 980;
@@ -42,11 +33,11 @@ let autoPlayClockStartedAt = 0;
 let currentDemoSeconds = 0;
 let isAutoPlaying = false;
 let playbackSpeed = 1;
-let demoVideoSeconds = DEFAULT_VIDEO_DURATION_SECONDS;
-let introArchitectureSeconds = INTRO_ARCHITECTURE_SECONDS;
+let demoVideoSeconds = 0;
+let introArchitectureSeconds = 0;
 let activeDemoProfile = {};
 let activeHlsController = null;
-let timelineKeyframes = DEFAULT_TIMELINE_KEYFRAMES.map((keyframe) => ({ ...keyframe }));
+let timelineKeyframes = [];
 let timelineAnchors = [];
 let keyframeHoldTimer = null;
 let frameworkCollapseTimer = null;
@@ -56,7 +47,6 @@ let heldKeyframes = new Set();
 let activeRoom = '';
 let milestoneRenderKey = '';
 let topMilestoneRenderKey = '';
-let skillLibraryUnlocked = false;
 let focusedSkillRef = '';
 let skillState = new Map();
 let mentionRegex = null;
@@ -124,9 +114,9 @@ const SKILL_REGISTRY = {
     accent: '#ffd166',
     trace: {
       source: 'Worker-027',
-      note: 'Same tools trace repeats across high roof-rib access subplans.',
+      note: 'Same tools trace repeats across elevated access subplans.',
       steps: [
-        'Read Subplan: Load the elevated roof-rib target area.',
+        'Read Subplan: Load the elevated target area.',
         'Check Access: Detect that the target is out of normal reach.',
         'Place Temporary Support: Build a support path to the target.',
         'Reach Target: Move onto the temporary support.',
@@ -207,10 +197,6 @@ const playbackSpeedToggle = document.querySelector('#playback-speed');
 const playbackSlower = document.querySelector('#playback-slower');
 const playbackFaster = document.querySelector('#playback-faster');
 const videoOnlyToggle = document.querySelector('#video-only-toggle');
-const videoOnlyPlay = document.querySelector('#video-only-play');
-const videoOnlySpeed = document.querySelector('#video-only-speed');
-const videoOnlySlower = document.querySelector('#video-only-slower');
-const videoOnlyFaster = document.querySelector('#video-only-faster');
 const playbackStep = document.querySelector('#playback-step');
 const playbackJump = document.querySelector('#playback-jump');
 const playbackCounter = document.querySelector('#playback-counter');
