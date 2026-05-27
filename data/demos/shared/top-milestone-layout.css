@@ -1,28 +1,99 @@
 body.is-top-milestone-layout .status {
   grid-template-rows: minmax(0, 1fr);
+  padding-top: clamp(8px, calc(12px * var(--ui-scale)), 16px);
+  border: 1px solid rgba(243,229,195,0.16);
+  background:
+    linear-gradient(180deg, rgba(20, 31, 23, 0.54), rgba(4, 8, 6, 0.72)),
+    radial-gradient(circle at 46% 0%, rgba(213, 170, 98, 0.08), transparent 28rem);
+  box-shadow: inset 0 1px rgba(255,255,255,0.05);
+  clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);
   gap: 0;
 }
 
+body.is-top-milestone-layout .status::after {
+  content: none;
+}
+
+body.is-top-milestone-layout .gif-stage {
+  border: 0;
+  box-shadow: none;
+  clip-path: none;
+}
+
+body.is-top-milestone-layout .visual-wrap {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: clamp(5px, calc(7px * var(--ui-scale)), 10px);
+}
+
+body.is-top-milestone-layout .visual-wrap > .scale-award {
+  position: relative;
+  top: auto;
+  left: auto;
+  z-index: 8;
+  justify-self: center;
+  height: 30px;
+  gap: 7px;
+  margin-top: -3px;
+  transform: none;
+}
+
+body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-medal,
+body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-medal img {
+  width: 34px;
+  height: 30px;
+}
+
+body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-rank b {
+  margin-top: -4px;
+  font-size: 1.42rem;
+  transform: translateX(-3px);
+}
+
+body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-rank span {
+  top: 14px;
+  right: 4px;
+  font-size: 0.36rem;
+  transform: translate(-3px, -50%);
+}
+
+body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-copy {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-height: 0;
+  padding: 0 0 0 8px;
+  border-left: 0;
+  white-space: nowrap;
+}
+
+body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-copy strong {
+  font-size: 0.58rem;
+}
+
+body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-copy span {
+  font-size: 0.48rem;
+}
+
 body.is-top-milestone-layout .top-milestone-strip:not(:empty) {
-  position: absolute;
-  left: clamp(16px, calc(24px * var(--ui-scale)), 30px);
-  right: clamp(16px, calc(24px * var(--ui-scale)), 30px);
-  top: clamp(16px, calc(24px * var(--ui-scale)), 30px);
+  position: relative;
   z-index: 7;
   display: flex;
   align-items: stretch;
   gap: 8px;
   min-width: 0;
-  max-width: calc(100% - clamp(32px, calc(48px * var(--ui-scale)), 60px));
+  max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 8px 9px;
-  border: 1px solid rgba(143,255,194,0.18);
-  background:
-    linear-gradient(90deg, rgba(85,255,164,0.07), rgba(255,217,135,0.045)),
-    rgba(0,0,0,0.24);
-  box-shadow: inset 0 1px rgba(255,255,255,0.045), 0 10px 28px rgba(0,0,0,0.18);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   scrollbar-width: none;
+}
+
+body.is-top-milestone-layout .top-milestone-item {
+  min-height: 26px;
+  padding-block: 4px;
 }
 
 body.is-top-milestone-layout .top-milestone-strip::-webkit-scrollbar {
@@ -33,15 +104,15 @@ body.is-top-milestone-layout .blueprint-block-count,
 body.is-top-milestone-layout .app.is-video-only .blueprint-block-count {
   top: auto;
   right: clamp(18px, calc(26px * var(--ui-scale)), 32px);
-  bottom: clamp(68px, calc(82px * var(--ui-scale)), 96px);
+  bottom: clamp(18px, calc(26px * var(--ui-scale)), 32px);
   z-index: 8;
   justify-items: end;
-  padding: 5px 7px 6px;
-  border: 1px solid rgba(216,255,247,0.12);
-  border-radius: 8px;
-  background: rgba(2,12,8,0.42);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.22), inset 0 1px rgba(234,255,239,0.08);
-  backdrop-filter: blur(10px) saturate(1.08);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 body.is-top-milestone-layout .blueprint-block-count span {

@@ -285,6 +285,7 @@ function setTimelineReadout(seconds = 0) {
   consoleMeters.forEach((node) => { node.style.setProperty('--value', progressValue); });
   buildTimeline?.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
   buildTimeline?.setAttribute('aria-valuetext', elapsedTime);
+  syncSkillSurfacesForTimeline(safeSeconds);
   updateTimelineMarkerState(safeSeconds);
   renderTopMilestones(undefined, safeSeconds);
 }

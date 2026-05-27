@@ -76,7 +76,7 @@ function createStructuredFollowupsFromSublines(sublines) {
     return normalizeStructuredField(item[key]).map((text) => ({
       type: typeMap[key],
       text: String(text),
-      label: typeMap[key] === 'skill' ? 'Skill' : typeMap[key] === 'result' ? 'Result' : typeMap[key] === 'note' ? 'Detail' : 'Tool call'
+      label: typeMap[key] === 'skill' ? 'Skill' : typeMap[key] === 'result' ? 'Result' : typeMap[key] === 'note' ? 'Detail' : 'Action'
     }));
   });
 }
@@ -85,9 +85,9 @@ function createStructuredFollowups(event = {}, display = {}) {
   const sublineFollowups = createStructuredFollowupsFromSublines(event.sublines || display.sublines);
   if (sublineFollowups.length) return sublineFollowups;
   const tools = normalizeStructuredField(event.tools || display.tools)
-    .map((text) => ({ type: 'tool', text: String(text), label: 'Tool call' }));
+    .map((text) => ({ type: 'tool', text: String(text), label: 'Action' }));
   const messages = normalizeStructuredField(event.messages || display.messages)
-    .map((text) => ({ type: 'tool', text: String(text), label: 'Tool call' }));
+    .map((text) => ({ type: 'tool', text: String(text), label: 'Action' }));
   const skills = normalizeStructuredField(event.skills || display.skills)
     .map((text) => ({ type: 'skill', text: String(text), label: 'Skill' }));
   const results = normalizeStructuredField(event.results || display.results)
@@ -100,7 +100,7 @@ function createStructuredFollowups(event = {}, display = {}) {
 }
 
 function appendHighlightedText(node, value = '', highlights = []) {
-  const text = String(value || '');
+  const text = cleanToolLanguageForDisplay(value);
   const terms = [...new Set((highlights || [])
     .map((term) => String(term || '').trim())
     .filter(Boolean))]
@@ -125,8 +125,8 @@ function appendHighlightedText(node, value = '', highlights = []) {
 }
 
 function getTraceStepHighlights(value = '') {
-  const text = String(value || '');
-  const traceMatch = text.match(/\bTool trace:\s*(.+)$/i);
+  const text = cleanToolLanguageForDisplay(value);
+  const traceMatch = text.match(/\btrace:\s*(.+)$/i);
   if (!traceMatch) return [];
   return traceMatch[1]
     .split(/\s*->\s*/g)
@@ -151,6 +151,47 @@ function getStructuredLineHighlights(value = '', baseHighlights = []) {
     ...getTraceStepHighlights(value),
     ...getSkillUseHighlights(value)
   ];
+}
+
+function shouldCompactRuntimeLog(event = {}) {
+  const stageIndex = Number(event.stageIndex);
+  if (Number.isFinite(stageIndex)) return stageIndex >= 2;
+  const stageLabel = `${event.stageLabel || ''} ${event.stageId || ''}`;
+  return /\b(build|verified|cleanup)\b/i.test(stageLabel);
+}
+
+function compactRuntimeSentence(value = '', event = {}) {
+  let text = cleanToolLanguageForDisplay(value).trim().replace(/\s+/g, ' ');
+  if (!text) return text;
+  const shouldJoinSentences = shouldCompactRuntimeLog(event);
+  text = text
+    .replace(/\bForeman-([A-E]) assigns one cleanup subplan to each worker in (Worker-\d+\.\.\d+)\.\s*Workers inspect their own cleanup work items and then choose a learned skill or manual steps\./i, 'Foreman-$1 assigns cleanup to $2; workers pick SKILL or manual steps.')
+    .replace(/\bForeman-([A-E]) assigns one subplan to each worker in (Worker-\d+\.\.\d+)\.\s*Workers inspect their own work items and then choose a learned skill or manual steps\./i, 'Foreman-$1 assigns work to $2; workers pick SKILL or manual steps.')
+    .replace(/\bForeman-([A-E]) assigns one subplan to each worker in (Worker-\d+\.\.\d+)\.\s*Workers will inspect their own subplans and decide whether a learned skill matches\./i, 'Foreman-$1 assigns work to $2; workers check for SKILL match.')
+    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned placement subplans[.;]\s*No learned skill matches this sequence yet, so they complete the batch with manual steps and leave the Region Placement trace\./i, 'Worker-$1 run manual placement and leave Region Placement trace.')
+    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned subplans, find the placement pattern matches Region Placement, and use the skill for those work items\./i, 'Worker-$1 use Region Placement on matching subplans.')
+    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned subplans and find the target positions require temporary support[.;]\s*Region Placement alone is not enough, so they run the support sequence with manual steps and leave Scaffold Construction trace examples\./i, 'Worker-$1 run support steps and leave Scaffold Construction traces.')
+    .replace(/\bWorker-(\d+\.\.\d+) complete the reachable part of the high-reach assignment with Region Placement[.;]\s*These tasks are skill reuse, not scaffold trace collection\./i, 'Worker-$1 reuse Region Placement on reachable high targets.')
+    .replace(/\bWorker-(\d+\.\.\d+) find mismatched blocks from the imported blueprint and (?:collect Region Replacement traces while repairing them with the same sequence|repair them with the same manual sequence, collecting Region Replacement trace examples)\./i, 'Worker-$1 repair mismatches and leave Region Replacement traces.')
+    .replace(/\bAll foremen confirmed their regions: placement complete, temporary supports removed, replacements verified, cleanup clean\./i, 'All foremen confirm: placed, cleaned, replaced, verified.')
+    .replace(/\bDone; ([^.]+) has been built, verified, and cleaned up with the discovered workflow chunks\./i, 'Done; $1 is built, verified, and cleaned.')
+    .replace(/\bForeman-A\.\.E initialize the build stage: split Regions A-E into one subplan per worker and open five queues in parallel\./i, 'Foreman-A..E split Regions A-E into worker subplans and open five parallel queues.')
+    .replace(/\bRegion Placement alone is not enough, so they run the support step sequence with manual steps and leave Scaffold Construction trace examples\./i, 'They collect Scaffold Construction traces where Region Placement needs temporary support.')
+    .replace(/\bWorker-(\d+\.\.\d+) finish assigned placement and high-reach work with the existing Region Placement and Scaffold Construction skills\./i, 'Worker-$1 use Region Placement and Scaffold Construction for placement and high-reach work.')
+    .replace(/\bWorker-(\d+\.\.\d+) finish remaining mismatch and closure work with Region Replacement where it matches the learned repair workflow\./i, 'Worker-$1 use Region Replacement for mismatch and closure repairs.')
+    .replace(/\bWorker-(\d+\.\.\d+) remove leftover temporary supports with manual steps; the repeated cleanup sequence becomes Region Cleaning trace evidence\./i, 'Worker-$1 collect Region Cleaning traces by removing leftover temporary supports.')
+    .replace(/\bWorker-(\d+\.\.\d+) scan their cleanup subplans and hit the same leftover-support sequence, completing the Region Cleaning trace evidence\./i, 'Worker-$1 complete Region Cleaning traces by scanning and removing leftover supports.')
+    .replace(/\bwith the same temporary-support step sequence, adding matching Scaffold Construction trace examples\./i, 'with the same temporary-support sequence and add Scaffold Construction traces.')
+    .replace(/\brepeat the temporary-support sequence on the remaining elevated targets, giving ProjectManager enough scaffold examples to create the workflow\./i, 'repeat the temporary-support sequence until ProjectManager has enough Scaffold Construction examples.')
+    .replace(/\brepair them with the same manual sequence, collecting Region Replacement trace examples\./i, 'collect Region Replacement traces while repairing them with the same sequence.')
+    .replace(/\bAll build regions are complete\. Verification now checks the remaining cleanup work\./i, 'All regions are built; verification starts cleanup checks.')
+    .replace(/\bStarted final verification against the blueprint\. The checker is looking for leftover temporary supports and cleanup artifacts\./i, 'ProjectManager starts final verification for leftover supports and cleanup artifacts.');
+  if (!shouldJoinSentences) return text;
+  const parts = text.split(/(?<=[.!?])\s+/g)
+    ?.map((part) => part.trim().replace(/[.!?]+$/g, ''))
+    .filter(Boolean) || [];
+  if (parts.length > 1) text = `${parts.join('; ')}.`;
+  return text;
 }
 
 const ACTOR_COLOR_MAP = {
@@ -195,7 +236,7 @@ function formatTerminalProgressText(progress = {}) {
   const cells = 18;
   const filled = Math.max(0, Math.min(cells, Math.round(ratio * cells)));
   const bar = `${'#'.repeat(filled)}${'-'.repeat(cells - filled)}`;
-  const label = String(progress.label || 'progress').trim();
+  const label = cleanToolLanguageForDisplay(progress.label || 'progress').trim();
   const percent = String(Math.round(ratio * 100)).padStart(3, ' ');
   return `${label} [${bar}] ${percent}% ${Math.round(current)}/${Math.round(total)} ${isDone ? 'done' : 'working'}`;
 }
@@ -251,13 +292,9 @@ function createBatchSummaryRow(kind = '', item = {}, total = 0) {
   const row = document.createElement('span');
   row.className = `chunk-batch-summary-row is-${kind}`;
 
-  const badge = document.createElement('span');
-  badge.className = 'chunk-batch-summary-kind';
-  badge.textContent = kind === 'skill' ? 'SKILL' : 'TOOLS';
-
   const name = document.createElement('span');
   name.className = 'chunk-batch-summary-name';
-  name.textContent = String(item.label || item.name || (kind === 'skill' ? 'Skill' : 'Tool trace'));
+  name.textContent = cleanToolLanguageForDisplay(item.label || item.name || (kind === 'skill' ? 'Skill' : 'trace'));
 
   const amount = document.createElement('span');
   amount.className = 'chunk-batch-summary-amount';
@@ -272,7 +309,15 @@ function createBatchSummaryRow(kind = '', item = {}, total = 0) {
     note.textContent = item.status || 'collecting';
   }
 
-  row.append(badge, name, amount, note);
+  if (kind === 'skill') {
+    const badge = document.createElement('span');
+    badge.className = 'chunk-batch-summary-kind';
+    badge.textContent = 'SKILL';
+    row.append(badge);
+  } else {
+    row.classList.add('has-no-kind');
+  }
+  row.append(name, amount, note);
   return row;
 }
 
@@ -288,7 +333,7 @@ function createBatchSummary(summary = {}, event = {}) {
   header.className = 'chunk-batch-summary-header';
   const title = document.createElement('span');
   title.className = 'chunk-batch-summary-title';
-  title.textContent = String(summary.label || 'Worker batch');
+  title.textContent = cleanToolLanguageForDisplay(summary.label || 'Worker batch');
   const bar = document.createElement('span');
   bar.className = 'chunk-batch-summary-bar';
   bar.textContent = formatBatchSummaryBar(progress);
@@ -344,7 +389,7 @@ function getStructuredSublineMeta(line = '', event = {}, log = {}) {
     };
   }
   if (/^\s*(?:tool call|send message)\b/i.test(text)) {
-    return { className: 'is-tool-call', accent: '#9fb0bd', label: 'Tool call' };
+    return { className: 'is-tool-call', accent: '#9fb0bd', label: 'Action' };
   }
   return { className: 'is-note', accent: '#80918b', label: 'Detail' };
 }
@@ -352,11 +397,11 @@ function getStructuredSublineMeta(line = '', event = {}, log = {}) {
 function getStructuredFollowupMeta(followup = {}, event = {}, log = {}) {
   if (!followup?.type) return getStructuredSublineMeta(followup?.text || '', event, log);
   if (followup.type === 'tool' || followup.type === 'message') {
-    return { className: 'is-tool-call', accent: '#9fb0bd', label: followup.label || 'Tool call' };
+    return { className: 'is-tool-call', accent: '#9fb0bd', label: followup.label || 'Action' };
   }
   if (followup.type === 'skill') {
     if (/\bcreate skill\b/i.test(followup.text || '')) {
-      return { className: 'is-tool-call', accent: '#9fb0bd', label: followup.label || 'Tool call' };
+      return { className: 'is-tool-call', accent: '#9fb0bd', label: followup.label || 'Action' };
     }
     const skillRef = getSkillRefForStructuredSubline(followup.text || '', event, log);
     return {
@@ -472,14 +517,14 @@ function appendStructuredLogEntry(node, event, options = {}) {
   if (hasAction) {
     const action = document.createElement('span');
     action.className = 'structured-action';
-    appendHighlightedText(action, log.action, log.highlights);
+    appendHighlightedText(action, compactRuntimeSentence(log.action, event), log.highlights);
     main.append(action);
   }
 
   if (log.result) {
     const result = document.createElement('span');
     result.className = 'structured-result';
-    result.textContent = `→ ${log.result}`;
+    result.textContent = `→ ${cleanToolLanguageForDisplay(log.result)}`;
     main.append(result);
   }
 
@@ -513,25 +558,26 @@ function appendStructuredLogEntry(node, event, options = {}) {
       const body = document.createElement('span');
       body.className = 'structured-subline-body';
       appendHighlightedText(body, line, getStructuredLineHighlights(line, log.highlights));
-      subline.classList.add('has-prefix');
-      const prefix = document.createElement('span');
-      prefix.className = 'structured-subline-prefix';
-      prefix.textContent = meta.className === 'is-skill' ? 'SKILL' : 'TOOL';
       if (meta.className === 'is-skill') {
-        const cleanSkillLine = line
-          .replace(/^\s*tool call\s+use skill\s*:\s*/i, 'Use Skill: ')
+        subline.classList.add('has-prefix');
+        const prefix = document.createElement('span');
+        prefix.className = 'structured-subline-prefix';
+        prefix.textContent = 'SKILL';
+        const cleanSkillLine = cleanToolLanguageForDisplay(line)
           .replace(/\bLearned\s+(Region Placement|Scaffold Construction|Region Replacement|Region Cleaning)\b/gi, '$1');
         body.replaceChildren();
         appendHighlightedText(body, cleanSkillLine, getStructuredLineHighlights(cleanSkillLine, log.highlights));
-      }
-      if (meta.className === 'is-skill' && meta.skillRef) {
-        const icon = document.createElement('span');
-        icon.className = 'structured-subline-icon';
-        icon.innerHTML = getSkillIconMarkup(meta.skillRef);
-        subline.classList.add('has-icon');
-        subline.append(arrow, prefix, icon, body);
+        if (meta.skillRef) {
+          const icon = document.createElement('span');
+          icon.className = 'structured-subline-icon';
+          icon.innerHTML = getSkillIconMarkup(meta.skillRef);
+          subline.classList.add('has-icon');
+          subline.append(arrow, prefix, icon, body);
+        } else {
+          subline.append(arrow, prefix, body);
+        }
       } else {
-        subline.append(arrow, prefix, body);
+        subline.append(arrow, body);
       }
       followups.append(subline);
     });
@@ -592,6 +638,7 @@ function ensureSkillState(skillRef = '') {
 
 function resetSkillState() {
   skillState = new Map();
+  skillSurfaceTimelineKey = '';
   Object.keys(SKILL_REGISTRY).forEach(ensureSkillState);
   focusedSkillRef = Object.keys(SKILL_REGISTRY)[0] || '';
   renderSkillLibrary();
@@ -614,6 +661,64 @@ function getSkillSchedule(skillRef) {
   return playbackEvents
     .map((event, index) => ({ ...event, index }))
     .filter((event) => (event.skill || event.message?.skillRef) === skillRef);
+}
+
+function getSkillLearningRange(skillRef = '') {
+  const range = activeDemoProfile?.skillLearningRanges?.[skillRef];
+  if (!Array.isArray(range) || range.length < 2) return null;
+  const start = parseTimelineTime(range[0]);
+  const end = parseTimelineTime(range[1]);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return null;
+  return { start, end };
+}
+
+function getSkillUnlockSeconds(skillRef = '') {
+  const explicitRange = getSkillLearningRange(skillRef);
+  if (explicitRange) return explicitRange.end;
+  const skill = skillState.get(skillRef);
+  if (Number.isFinite(Number(skill?.unlockSeconds))) return Number(skill.unlockSeconds);
+  return Number.POSITIVE_INFINITY;
+}
+
+function isSkillUnlockedForTimeline(skill = {}, seconds = currentDemoSeconds) {
+  if (!skill?.learned) return false;
+  const unlockSeconds = getSkillUnlockSeconds(skill.ref);
+  if (!Number.isFinite(unlockSeconds)) return true;
+  return Number(seconds) >= unlockSeconds - 0.05;
+}
+
+function getUnlockedSkillStates(seconds = currentDemoSeconds) {
+  return [...skillState.values()]
+    .filter((skill) => isSkillUnlockedForTimeline(skill, seconds))
+    .sort((a, b) => {
+      const aUnlock = getSkillUnlockSeconds(a.ref);
+      const bUnlock = getSkillUnlockSeconds(b.ref);
+      const aIndex = Number.isFinite(a.learnedIndex) ? a.learnedIndex : a.firstEventIndex;
+      const bIndex = Number.isFinite(b.learnedIndex) ? b.learnedIndex : b.firstEventIndex;
+      return (aUnlock || 0) - (bUnlock || 0) || (aIndex || 0) - (bIndex || 0) || a.name.localeCompare(b.name);
+    });
+}
+
+function getSkillSurfaceTimelineKey(seconds = currentDemoSeconds, activeRef = focusedSkillRef) {
+  const visible = getUnlockedSkillStates(seconds)
+    .map((skill) => `${skill.ref}:${skill.learned ? 1 : 0}:${skill.published ? 1 : 0}:${skill.traceCurrent || 0}/${skill.traceTotal || 0}`)
+    .join('|');
+  return `${activeRef || ''}::${visible}`;
+}
+
+function syncSkillSurfacesForTimeline(seconds = currentDemoSeconds, options = {}) {
+  const isAllowed = updateSkillLibraryTimelineVisibility(seconds);
+  const nextKey = getSkillSurfaceTimelineKey(seconds, focusedSkillRef);
+  if (!options.force && skillSurfaceTimelineKey === nextKey) return;
+  skillSurfaceTimelineKey = nextKey;
+  if (!isAllowed) {
+    skillNotificationStack?.replaceChildren();
+    if (skillNotificationStack) skillNotificationStack.hidden = true;
+    renderSkillLibrary(focusedSkillRef, seconds);
+    return;
+  }
+  renderSkillLibrary(focusedSkillRef, seconds);
+  renderSkillNotifications(focusedSkillRef, seconds);
 }
 
 function updateSkillStateFromEvent(event, index = -1) {
@@ -656,11 +761,14 @@ function updateSkillStateFromEvent(event, index = -1) {
     if (!skill.learnedRoom) skill.learnedRoom = stageTitle;
   }
   if (!wasLearned && skill.learned) skill.learnedIndex = Number.isFinite(index) ? index : skill.events.length;
+  if (!wasLearned && skill.learned && !Number.isFinite(Number(skill.unlockSeconds))) {
+    const eventSeconds = Number(event.seconds);
+    skill.unlockSeconds = Number.isFinite(eventSeconds) ? eventSeconds : currentDemoSeconds;
+  }
   if (!Number.isFinite(skill.firstEventIndex)) skill.firstEventIndex = Number.isFinite(index) ? index : skill.events.length;
   focusedSkillRef = skill.ref;
   skill.events.push({ index, kind, room: event.group?.id || `stage-${event.stageId}`, title: stageTitle });
-  renderSkillLibrary(skill.ref);
-  renderSkillNotifications(skill.ref);
+  syncSkillSurfacesForTimeline(currentDemoSeconds, { force: true });
 }
 
 function getSkillStatus(skill) {
@@ -702,22 +810,22 @@ function getSkillTraceWindowMarkup(skill) {
   if (!trace || !Array.isArray(trace.steps) || !trace.steps.length) return '';
   const source = trace.source || 'Worker trace';
   const steps = trace.steps
-    .map((step) => `<span><b>TOOL</b>${escapeHtml(step)}</span>`)
+    .map((step) => `<span>${escapeHtml(cleanToolLanguageForDisplay(step))}</span>`)
     .join('');
   return `
     <span class="skill-trace-window" role="tooltip">
       <span class="skill-trace-title">Trace source · ${escapeHtml(source)}</span>
-      <span class="skill-trace-line">[${escapeHtml(source)}] Representative tools execution</span>
+      <span class="skill-trace-line">[${escapeHtml(source)}] Representative execution</span>
       <span class="skill-trace-steps">${steps}</span>
-      <span class="skill-trace-note">${escapeHtml(trace.note || 'Similar workers follow the same tools trace.')}</span>
+      <span class="skill-trace-note">${escapeHtml(cleanToolLanguageForDisplay(trace.note || 'Similar workers follow the same trace.'))}</span>
     </span>
   `;
 }
 
-function renderSkillLibrary(activeRef = focusedSkillRef) {
+function renderSkillLibrary(activeRef = focusedSkillRef, seconds = currentDemoSeconds) {
   if (!skillList || !skillRoute) return;
   const skills = Object.keys(SKILL_REGISTRY).map(ensureSkillState).filter(Boolean);
-  const discoveredSkills = skills.filter((skill) => skill.learned);
+  const discoveredSkills = skills.filter((skill) => isSkillUnlockedForTimeline(skill, seconds));
   skillLibrary?.classList.toggle('is-empty', discoveredSkills.length === 0);
   const title = skillLibrary?.querySelector('h3');
   if (title) title.textContent = discoveredSkills.length ? `Skill · ${discoveredSkills.length} learned` : 'Skill';
@@ -734,7 +842,7 @@ function renderSkillLibrary(activeRef = focusedSkillRef) {
     const learnedFrom = skill.learnedRoom || skill.learnedLabel || 'Waiting';
     const usedBy = summarizeRooms(skill.usedRooms, 'No reuse yet');
     const skillName = getSkillDisplayName(skill);
-    button.title = `${skillName}: ${skill.summary} Discovered in ${learnedFrom}. Used by ${usedBy}.`;
+    button.title = cleanToolLanguageForDisplay(`${skillName}: ${skill.summary} Discovered in ${learnedFrom}. Used by ${usedBy}.`);
     button.innerHTML = `
       <span class="skill-icon">${getSkillIconMarkup(skill.ref)}</span>
       <span class="skill-name">${escapeHtml(skillName)}</span>
@@ -789,15 +897,38 @@ function getSkillProgressMarkup(skill) {
   `;
 }
 
-function renderSkillNotifications(activeRef = focusedSkillRef) {
+function getSkillLibraryStartSeconds() {
+  const ranges = activeDemoProfile?.skillLearningRanges || {};
+  const starts = Object.values(ranges)
+    .map((range) => Array.isArray(range) ? parseTimelineTime(range[1]) : Number.NaN)
+    .filter((value) => Number.isFinite(value));
+  if (starts.length) return Math.min(...starts);
+  const keyframeStarts = timelineKeyframes
+    .filter((keyframe) => keyframe.skill)
+    .map((keyframe) => Number(keyframe.demoSeconds))
+    .filter((value) => Number.isFinite(value));
+  return keyframeStarts.length ? Math.min(...keyframeStarts) : Number.POSITIVE_INFINITY;
+}
+
+function isSkillLibraryAllowedForTimeline(seconds = currentDemoSeconds) {
+  const startSeconds = getSkillLibraryStartSeconds();
+  return Number.isFinite(startSeconds) && Number(seconds) >= startSeconds - 0.05;
+}
+
+function updateSkillLibraryTimelineVisibility(seconds = currentDemoSeconds) {
+  const isAllowed = isSkillLibraryAllowedForTimeline(seconds);
+  document.body.classList.toggle('is-skill-library-active', isAllowed);
+  if (!isAllowed && skillNotificationStack) skillNotificationStack.hidden = true;
+  return isAllowed;
+}
+
+function renderSkillNotifications(activeRef = focusedSkillRef, seconds = currentDemoSeconds) {
   if (!skillNotificationStack) return;
-  const visibleSkills = [...skillState.values()]
-    .filter((skill) => skill.learned || Number(skill.traceTotal || 0) > 0)
-    .sort((a, b) => {
-      const aIndex = Number.isFinite(a.learnedIndex) ? a.learnedIndex : a.firstEventIndex;
-      const bIndex = Number.isFinite(b.learnedIndex) ? b.learnedIndex : b.firstEventIndex;
-      return (aIndex || 0) - (bIndex || 0) || a.name.localeCompare(b.name);
-    });
+  if (!updateSkillLibraryTimelineVisibility(seconds)) {
+    skillNotificationStack.replaceChildren();
+    return;
+  }
+  const visibleSkills = getUnlockedSkillStates(seconds);
 
   skillNotificationStack.replaceChildren();
   skillNotificationStack.hidden = visibleSkills.length === 0;
@@ -983,7 +1114,7 @@ function updateChatMessageProgress(article, event) {
     const batchProgress = getBatchSummaryProgress(batchSummary, event);
     article.classList.add('has-chunk-progress', 'has-batch-summary');
     article.style.setProperty('--chunk-progress', `${Math.round(batchProgress.ratio * 1000) / 10}%`);
-    article.dataset.chunkProgressLabel = batchSummary.label || '';
+    article.dataset.chunkProgressLabel = cleanToolLanguageForDisplay(batchSummary.label || '');
     article.append(batchSummaryNode);
     return;
   }
@@ -998,7 +1129,7 @@ function updateChatMessageProgress(article, event) {
   article.classList.add('has-chunk-progress');
   article.classList.remove('has-batch-summary');
   article.style.setProperty('--chunk-progress', `${Math.round(progress.ratio * 1000) / 10}%`);
-  if (progress.label) article.dataset.chunkProgressLabel = progress.label;
+  if (progress.label) article.dataset.chunkProgressLabel = cleanToolLanguageForDisplay(progress.label);
   else delete article.dataset.chunkProgressLabel;
   const progressNode = createTerminalProgress(getEventProgress(event));
   if (progressNode) article.append(progressNode);

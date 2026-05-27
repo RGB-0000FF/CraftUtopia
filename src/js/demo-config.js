@@ -49,6 +49,7 @@ let milestoneRenderKey = '';
 let topMilestoneRenderKey = '';
 let focusedSkillRef = '';
 let skillState = new Map();
+let skillSurfaceTimelineKey = '';
 let mentionRegex = null;
 let isScrubbingTimeline = false;
 let isTimelineScrubberActive = false;

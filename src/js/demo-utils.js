@@ -93,7 +93,7 @@ function buildMentionIndex(groups) {
 }
 
 function appendMentionedText(node, value = '') {
-  const text = String(value || '');
+  const text = cleanToolLanguageForDisplay(value);
   node.replaceChildren();
   if (!mentionRegex) {
     node.textContent = text;
@@ -119,4 +119,18 @@ function appendMentionedText(node, value = '') {
   }
 
   if (cursor < text.length) node.append(document.createTextNode(text.slice(cursor)));
+}
+
+function cleanToolLanguageForDisplay(value = '') {
+  return String(value || '')
+    .replace(/\btool_call\s*:\s*/gi, '')
+    .replace(/\bTool\s+call\s+/gi, '')
+    .replace(/\bTool\s+trace\s*:/gi, 'trace:')
+    .replace(/\btools?\s+trace\b/gi, 'trace')
+    .replace(/\bbasic-tools?\b/gi, 'manual')
+    .replace(/\bbasic\s+tools\b/gi, 'manual steps')
+    .replace(/\bwith\s+tools\b/gi, 'manually')
+    .replace(/\btools?\s+sequence\b/gi, 'step sequence')
+    .replace(/\btools?\s+execution\b/gi, 'execution')
+    .replace(/\btools?\b/gi, 'steps');
 }
