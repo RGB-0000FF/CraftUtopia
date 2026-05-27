@@ -366,17 +366,17 @@ body.is-top-milestone-layout .structured-subline-prefix {
 
 body.is-top-milestone-layout .vote-card {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   align-self: end;
-  column-gap: 10px;
-  row-gap: 8px;
+  gap: 8px;
   min-height: 74px;
   padding: 12px 16px;
   border: 1px solid rgba(255,255,255,0.36);
   border-radius: 8px;
   color: #ffffff;
+  text-align: center;
   background: #d72638;
   box-shadow:
     0 16px 36px rgba(0,0,0,0.30),
@@ -394,7 +394,6 @@ body.is-top-milestone-layout .vote-card span {
   font-weight: 950;
   letter-spacing: 0.04em;
   line-height: 0.95;
-  text-transform: uppercase;
   text-shadow: 0 1px 0 rgba(0,0,0,0.22);
   white-space: nowrap;
 }
@@ -413,11 +412,8 @@ body.is-top-milestone-layout .vote-card strong {
 
 @container right-rail (max-width: 540px) {
   body.is-top-milestone-layout .vote-card {
-    justify-content: center;
-    gap: 8px;
     min-height: 96px;
     padding-block: 14px;
-    text-align: center;
   }
 
   body.is-top-milestone-layout .vote-card span,
