@@ -173,10 +173,7 @@
               "spanSeconds": 2.8,
               "sublines": [
                 {
-                  "tools": "Tool call Split Regions: convert Regions A-E into worker subplans."
-                },
-                {
-                  "tools": "Tool call Assign Subplans: prepare one subplan for each worker."
+                  "tools": "Tool call Split and Assign Subplans: split regions and distribute worker subplans."
                 }
               ]
             }
@@ -191,7 +188,7 @@
             "total": 20,
             "tools": [
               {
-                "label": "Region Placement trace",
+                "label": "Region Construction trace",
                 "count": 20,
                 "status": "collected"
               }
@@ -221,19 +218,19 @@
             {
               "time": "00:35.8",
               "actor": "Worker-001..020",
-              "action": "Worker-001..020 inspect their assigned placement subplans. No learned skill matches this sequence yet, so they complete the batch with basic tools and leave the Region Placement trace.",
+              "action": "Worker-001..020 inspect their assigned placement subplans. No learned skill matches this sequence yet, so they complete the batch with basic tools and leave the Region Construction trace.",
               "highlights": [
                 "Worker-001..020",
                 "No learned skill matches",
                 "basic tools",
-                "Region Placement trace"
+                "Region Construction trace"
               ],
               "sublines": [
                 {
                   "tools": "Tool trace: Read Subplan -> Check Inventory -> Go To Region -> Place Blocks."
                 },
                 {
-                  "results": "Result: Region Placement trace collected 20/20."
+                  "results": "Result: Region Construction trace collected 20/20."
                 }
               ],
               "progress": {
@@ -244,7 +241,7 @@
               "skill": "build_region",
               "skillEvent": "skill-trace",
               "skillProgress": {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "current": 20,
                 "total": 20
               }
@@ -253,68 +250,74 @@
         },
         {
           "groupId": "skill-region-placement",
-          "learningLabel": "Learning · Region Placement",
+          "learningLabel": "Learning a Reusable Skill: Region Construction",
           "time": "00:42.4",
           "entries": [
             {
               "time": "00:42.4",
               "actor": "Foreman-A",
-              "action": "Foreman-A summarizes the completed placement trace and sends it to ProjectManager.",
+              "action": "Foreman-A collects the reported placement trace and sends it to ProjectManager.",
               "highlights": [
                 "placement trace",
                 "ProjectManager"
               ],
               "sublines": [
                 {
-                  "tools": "Send message to ProjectManager: package Region Placement trace."
+                  "tools": "Send message to ProjectManager: package Region Construction trace."
                 }
               ]
             },
             {
               "time": "00:46.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager reviews the repeated worker trace and creates Region Placement.",
+              "action": "ProjectManager reviews the repeated worker trace and creates Region Construction.",
               "highlights": [
                 "Create Skill",
-                "Region Placement"
+                "Region Construction"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Create Skill: Region Placement."
+                  "tools": "Tool call Create Skill: Region Construction."
                 },
                 {
-                  "results": "Result: -> SKILL Region Placement is ready."
+                  "results": "Result: -> SKILL Region Construction is ready."
                 }
-              ]
+              ],
+              "skill": "build_region",
+              "skillEvent": "skill-detection"
             },
             {
               "time": "00:46.6",
               "actor": "ProjectManager",
-              "action": "ProjectManager sends Region Placement back to Foreman-A for distribution.",
+              "action": "ProjectManager sends Region Construction back to Foreman-A for distribution.",
               "highlights": [
-                "Region Placement",
+                "Region Construction",
                 "Foreman-A"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Publish Skill: Send Region Placement to Foreman-A."
+                  "tools": "Tool call Publish Skill: Send Region Construction to Foreman-A."
                 }
-              ]
+              ],
+              "skill": "build_region",
+              "skillEvent": "skill-broadcast"
             },
             {
               "time": "00:47.0",
               "actor": "Foreman-A",
-              "action": "Foreman-A broadcasts Region Placement to workers handling similar placement subplans.",
+              "action": "Foreman-A broadcasts Region Construction to workers handling similar placement subplans.",
               "highlights": [
                 "Broadcast Skill",
-                "Region Placement",
+                "Region Construction",
                 "workers"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Broadcast Skill: Region Placement to the worker pool."
+                  "tools": "Tool call Broadcast Skill: Region Construction to the worker pool."
                 }
-              ]
+              ],
+              "skill": "build_region",
+              "skillEvent": "skill-broadcast"
             }
           ]
         },
@@ -326,7 +329,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "count": 14
               }
             ],
@@ -343,11 +346,10 @@
             {
               "time": "00:55.2",
               "actor": "Foreman-A",
-              "action": "Foreman-A assigns one subplan to each worker in Worker-001..020. Workers will inspect their own subplans and decide whether a learned skill matches.",
+              "action": "Foreman-A assigns one subplan to each worker in Worker-001..020.",
               "highlights": [
                 "Worker-001..020",
-                "one subplan",
-                "decide whether a learned skill matches"
+                "one subplan"
               ],
               "sublines": [
                 {
@@ -363,18 +365,18 @@
             {
               "time": "00:58.4",
               "actor": "Worker-001..014",
-              "action": "Worker-001..014 inspect their assigned subplans, find the placement pattern matches Region Placement, and use the skill for those work items.",
+              "action": "Worker-001..014 inspect their assigned subplans, find the placement pattern matches Region Construction, and use the skill for those work items.",
               "highlights": [
                 "Worker-001..014",
-                "matches Region Placement",
+                "matches Region Construction",
                 "use the skill"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on matched placement work items."
+                  "skills": "Use Skill: Region Construction on matched placement work items."
                 },
                 {
-                  "results": "Result: 14 assigned work items are placed with Region Placement."
+                  "results": "Result: 14 assigned work items are placed with Region Construction."
                 }
               ],
               "progress": {
@@ -386,7 +388,7 @@
             {
               "time": "01:01.0",
               "actor": "Worker-015..020",
-              "action": "Worker-015..020 inspect their assigned subplans and find the target positions require temporary support. Region Placement alone is not enough, so they run the support sequence with basic tools and leave Scaffold Construction trace examples.",
+              "action": "Worker-015..020 inspect their assigned subplans and find the target positions require temporary support. Region Construction alone is not enough, so they run the support sequence with basic tools and leave Scaffold Construction trace examples.",
               "highlights": [
                 "Worker-015..020",
                 "temporary support",
@@ -424,7 +426,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "count": 5
               }
             ],
@@ -441,15 +443,14 @@
             {
               "time": "01:02.0",
               "actor": "Foreman-C",
-              "action": "Foreman-C assigns one subplan to each worker in Worker-021..040. Workers inspect their own work items and then choose a learned skill or basic tools.",
+              "action": "Foreman-C assigns one subplan to each worker in Worker-021..040.",
               "highlights": [
                 "Worker-021..040",
-                "one subplan",
-                "choose a learned skill or basic tools"
+                "one subplan"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Assign Subplans: C-01 through C-20 for high-reach region placement."
+                  "tools": "Tool call Assign Subplans: C-01 through C-20 for high-reach region construction."
                 }
               ],
               "progress": {
@@ -461,15 +462,15 @@
             {
               "time": "01:04.9",
               "actor": "Worker-021..026",
-              "action": "Worker-021..026 complete the reachable part of the high-reach assignment with Region Placement. These tasks are skill reuse, not scaffold trace collection.",
+              "action": "Worker-021..026 complete the reachable part of the high-reach assignment with Region Construction. These tasks are skill reuse, not scaffold trace collection.",
               "highlights": [
                 "Use Skill",
-                "Region Placement",
+                "Region Construction",
                 "skill reuse"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on reachable target volumes C-01..C-06."
+                  "skills": "Use Skill: Region Construction on reachable target volumes C-01..C-06."
                 },
                 {
                   "results": "Result: reachable target volumes are placed."
@@ -545,7 +546,7 @@
         },
         {
           "groupId": "skill-scaffold-construction",
-          "learningLabel": "Learning · Scaffold Construction",
+          "learningLabel": "Learning a Reusable Skill: Scaffold Construction",
           "time": "01:15.1",
           "entries": [
             {
@@ -578,7 +579,9 @@
                 {
                   "results": "Result: -> SKILL Scaffold Construction is ready."
                 }
-              ]
+              ],
+              "skill": "scaffold",
+              "skillEvent": "skill-detection"
             },
             {
               "time": "01:24.0",
@@ -592,7 +595,9 @@
                 {
                   "tools": "Tool call Publish Skill: Send Scaffold Construction to Foreman-C."
                 }
-              ]
+              ],
+              "skill": "scaffold",
+              "skillEvent": "skill-broadcast"
             },
             {
               "time": "01:25.6",
@@ -607,7 +612,9 @@
                 {
                   "tools": "Tool call Broadcast Skill: Scaffold Construction to the worker pool."
                 }
-              ]
+              ],
+              "skill": "scaffold",
+              "skillEvent": "skill-broadcast"
             }
           ]
         },
@@ -619,7 +626,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "count": 6
               },
               {
@@ -640,11 +647,10 @@
             {
               "time": "01:36.9",
               "actor": "Foreman-D",
-              "action": "Foreman-D assigns one subplan to each worker in Worker-041..060. Workers inspect their own work items and then choose a learned skill or basic tools.",
+              "action": "Foreman-D assigns one subplan to each worker in Worker-041..060.",
               "highlights": [
                 "Worker-041..060",
-                "one subplan",
-                "choose a learned skill or basic tools"
+                "one subplan"
               ],
               "sublines": [],
               "progress": {
@@ -656,15 +662,15 @@
             {
               "time": "01:49.7",
               "actor": "Worker-041..046",
-              "action": "Worker-041..046 complete reachable target volumes with Region Placement.",
+              "action": "Worker-041..046 complete reachable target volumes with Region Construction.",
               "highlights": [
                 "Use Skill",
-                "Region Placement",
+                "Region Construction",
                 "reachable target volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on D-01..D-06."
+                  "skills": "Use Skill: Region Construction on D-01..D-06."
                 },
                 {
                   "results": "Result: reachable target volumes are placed."
@@ -713,7 +719,7 @@
                   "tools": "Tool trace: Read Block Map -> Compare Blueprint -> Remove Wrong Block -> Place Correct Block -> Verify Coordinates."
                 },
                 {
-                  "results": "Result: assigned region placement and repair are complete; replacement traces are ready for learning."
+                  "results": "Result: assigned region construction and repair are complete; replacement traces are ready for learning."
                 }
               ],
               "progress": {
@@ -733,7 +739,7 @@
         },
         {
           "groupId": "skill-region-replacement",
-          "learningLabel": "Learning · Region Replacement",
+          "learningLabel": "Learning a Reusable Skill: Region Replacement",
           "time": "02:14.1",
           "entries": [
             {
@@ -766,7 +772,9 @@
                 {
                   "results": "Result: -> SKILL Region Replacement is ready."
                 }
-              ]
+              ],
+              "skill": "replace_region",
+              "skillEvent": "skill-detection"
             },
             {
               "time": "02:23.2",
@@ -780,7 +788,9 @@
                 {
                   "tools": "Tool call Publish Skill: Send Region Replacement to Foreman-B."
                 }
-              ]
+              ],
+              "skill": "replace_region",
+              "skillEvent": "skill-broadcast"
             },
             {
               "time": "02:24.4",
@@ -795,7 +805,9 @@
                 {
                   "tools": "Tool call Broadcast Skill: Region Replacement to the worker pool."
                 }
-              ]
+              ],
+              "skill": "replace_region",
+              "skillEvent": "skill-broadcast"
             }
           ]
         },
@@ -807,7 +819,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "count": 5
               },
               {
@@ -821,7 +833,7 @@
             ],
             "tools": [
               {
-                "label": "Region Cleaning trace",
+                "label": "Scaffold Cleaning trace",
                 "count": 14,
                 "status": "collecting"
               }
@@ -832,11 +844,10 @@
             {
               "time": "02:40.5",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns one subplan to each worker in Worker-061..080. Workers inspect their own work items and then choose a learned skill or basic tools.",
+              "action": "Foreman-E assigns one subplan to each worker in Worker-061..080.",
               "highlights": [
                 "Worker-061..080",
-                "one subplan",
-                "choose a learned skill or basic tools"
+                "one subplan"
               ],
               "sublines": [],
               "progress": {
@@ -848,15 +859,15 @@
             {
               "time": "02:49.2",
               "actor": "Worker-061..067",
-              "action": "Worker-061..067 finish assigned placement and high-reach work with the existing Region Placement and Scaffold Construction skills.",
+              "action": "Worker-061..067 finish assigned placement and high-reach work with the existing Region Construction and Scaffold Construction skills.",
               "highlights": [
                 "Use Skill",
-                "Region Placement",
+                "Region Construction",
                 "Scaffold Construction"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on reachable E subplans."
+                  "skills": "Use Skill: Region Construction on reachable E subplans."
                 },
                 {
                   "skills": "Use Skill: Scaffold Construction for elevated access."
@@ -897,11 +908,11 @@
             {
               "time": "03:09.0",
               "actor": "Worker-075..080",
-              "action": "Worker-075..080 remove leftover temporary supports with basic tools; the repeated cleanup sequence becomes Region Cleaning trace evidence.",
+              "action": "Worker-075..080 remove leftover temporary supports with basic tools; the repeated cleanup sequence becomes Scaffold Cleaning trace evidence.",
               "highlights": [
                 "leftover temporary supports",
                 "basic tools",
-                "Region Cleaning trace"
+                "Scaffold Cleaning trace"
               ],
               "sublines": [
                 {
@@ -919,7 +930,7 @@
               "skill": "clean_region",
               "skillEvent": "skill-trace",
               "skillProgress": {
-                "label": "Region Cleaning",
+                "label": "Scaffold Cleaning",
                 "current": 14,
                 "total": 20
               }
@@ -975,11 +986,11 @@
             {
               "time": "03:11.4",
               "actor": "Worker-081..088",
-              "action": "Worker-081..088 scan their cleanup subplans and hit the same leftover-support sequence, completing the Region Cleaning trace evidence.",
+              "action": "Worker-081..088 scan their cleanup subplans and hit the same leftover-support sequence, completing the Scaffold Cleaning trace evidence.",
               "highlights": [
                 "Worker-081..088",
                 "leftover-support sequence",
-                "Region Cleaning trace"
+                "Scaffold Cleaning trace"
               ],
               "sublines": [
                 {
@@ -997,7 +1008,7 @@
               "skill": "clean_region",
               "skillEvent": "skill-trace",
               "skillProgress": {
-                "label": "Region Cleaning",
+                "label": "Scaffold Cleaning",
                 "current": 20,
                 "total": 20
               }
@@ -1006,7 +1017,7 @@
         },
         {
           "groupId": "skill-region-cleaning",
-          "learningLabel": "Learning · Region Cleaning",
+          "learningLabel": "Learning a Reusable Skill: Scaffold Cleaning",
           "time": "03:11.8",
           "entries": [
             {
@@ -1019,55 +1030,61 @@
               ],
               "sublines": [
                 {
-                  "tools": "Send message to ProjectManager: package Region Cleaning trace."
+                  "tools": "Send message to ProjectManager: package Scaffold Cleaning trace."
                 }
               ]
             },
             {
               "time": "03:14.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager reviews the repeated cleanup trace and creates Region Cleaning.",
+              "action": "ProjectManager reviews the repeated cleanup trace and creates Scaffold Cleaning.",
               "highlights": [
                 "Create Skill",
-                "Region Cleaning"
+                "Scaffold Cleaning"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Create Skill: Region Cleaning."
+                  "tools": "Tool call Create Skill: Scaffold Cleaning."
                 },
                 {
-                  "results": "Result: -> SKILL Region Cleaning is ready."
+                  "results": "Result: -> SKILL Scaffold Cleaning is ready."
                 }
-              ]
+              ],
+              "skill": "clean_region",
+              "skillEvent": "skill-detection"
             },
             {
               "time": "03:18.3",
               "actor": "ProjectManager",
-              "action": "ProjectManager sends Region Cleaning back to Foreman-E.",
+              "action": "ProjectManager sends Scaffold Cleaning back to Foreman-E.",
               "highlights": [
-                "Region Cleaning",
+                "Scaffold Cleaning",
                 "Foreman-E"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Publish Skill: Send Region Cleaning to Foreman-E."
+                  "tools": "Tool call Publish Skill: Send Scaffold Cleaning to Foreman-E."
                 }
-              ]
+              ],
+              "skill": "clean_region",
+              "skillEvent": "skill-broadcast"
             },
             {
               "time": "03:19.1",
               "actor": "Foreman-E",
-              "action": "Foreman-E broadcasts Region Cleaning to workers assigned cleanup subplans.",
+              "action": "Foreman-E broadcasts Scaffold Cleaning to workers assigned cleanup subplans.",
               "highlights": [
                 "Broadcast Skill",
-                "Region Cleaning",
+                "Scaffold Cleaning",
                 "workers"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Broadcast Skill: Region Cleaning to the worker pool."
+                  "tools": "Tool call Broadcast Skill: Scaffold Cleaning to the worker pool."
                 }
-              ]
+              ],
+              "skill": "clean_region",
+              "skillEvent": "skill-broadcast"
             }
           ]
         },
@@ -1079,7 +1096,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Cleaning",
+                "label": "Scaffold Cleaning",
                 "count": 16
               },
               {
@@ -1093,11 +1110,10 @@
             {
               "time": "03:30.2",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns one cleanup subplan to each worker in Worker-081..100. Workers inspect their own cleanup work items and then choose a learned skill or basic tools.",
+              "action": "Foreman-E assigns one cleanup subplan to each worker in Worker-081..100.",
               "highlights": [
                 "Worker-081..100",
-                "one cleanup subplan",
-                "choose a learned skill or basic tools"
+                "one cleanup subplan"
               ],
               "sublines": [
                 {
@@ -1113,15 +1129,15 @@
             {
               "time": "03:36.1",
               "actor": "Worker-081..087",
-              "action": "Used Region Cleaning for leftover support blocks in assigned volumes.",
+              "action": "Used Scaffold Cleaning for leftover support blocks in assigned volumes.",
               "highlights": [
                 "Use Skill",
-                "Region Cleaning",
+                "Scaffold Cleaning",
                 "assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Cleaning on CL-01..CL-07."
+                  "skills": "Use Skill: Scaffold Cleaning on CL-01..CL-07."
                 },
                 {
                   "results": "Result: assigned volumes cleanup scan is clean."
@@ -1138,12 +1154,12 @@
               "actor": "Worker-088..094",
               "action": "Used cleaning for temporary supports in assigned volumes, then used replacement on one exposed mismatch.",
               "highlights": [
-                "Region Cleaning",
+                "Scaffold Cleaning",
                 "Region Replacement"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Cleaning on CL-08..CL-14."
+                  "skills": "Use Skill: Scaffold Cleaning on CL-08..CL-14."
                 },
                 {
                   "skills": "Use Skill: Region Replacement for one exposed mismatched block."
@@ -1168,7 +1184,7 @@
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Cleaning on CL-15..CL-20."
+                  "skills": "Use Skill: Scaffold Cleaning on CL-15..CL-20."
                 },
                 {
                   "results": "Result: assigned cleanup and repair work is complete; no leftover support blocks remain."
@@ -1225,7 +1241,7 @@
               ],
               "sublines": [
                 {
-                  "notes": "Skill summary: Region Placement, Scaffold Construction, Region Replacement, Region Cleaning."
+                  "notes": "Skill summary: Region Construction, Scaffold Construction, Region Replacement, Scaffold Cleaning."
                 }
               ]
             }

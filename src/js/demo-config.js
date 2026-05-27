@@ -67,9 +67,10 @@ let isVideoOnlyMode = false;
 const mentionAccentByTerm = new Map();
 const SKILL_REGISTRY = {
   build_region: {
-    name: 'Learned Region Placement',
+    name: 'Region Construction',
+    aliases: ['Region Placement', 'skill-region-placement', 'region-placement'],
     icon: 'assets/icons/skills/learned-region-placement.png',
-    notificationDescription: 'Places blueprint blocks inside a target region.',
+    notificationDescription: 'Places blueprint blocks inside a region.',
     summary: 'Reusable bounded placement loop learned after many Workers repeat read, script, run, verify, submit.',
     learnedLabel: 'Foreman-A Build',
     sharedTo: 'Foreman-A..Foreman-E',
@@ -86,7 +87,7 @@ const SKILL_REGISTRY = {
     }
   },
   replace_region: {
-    name: 'Learned Region Replacement',
+    name: 'Region Replacement',
     icon: 'assets/icons/skills/learned-region-replacement.png',
     notificationDescription: 'Fixes wrong or missing blocks in a region.',
     summary: 'Wrong-block and missing-block repair pattern learned when mid-build repair pressure increases.',
@@ -106,10 +107,10 @@ const SKILL_REGISTRY = {
     }
   },
   scaffold: {
-    name: 'Learned Scaffold Construction',
+    name: 'Scaffold Construction',
     icon: 'assets/icons/skills/learned-scaffold-construction.png',
     notificationDescription: 'Builds temporary supports for hard-to-reach areas.',
-    summary: 'Temporary support placement with cleanup markers learned from awkward high-region builds.',
+    summary: 'Temporary support placement learned from awkward high-region builds.',
     learnedLabel: 'Foreman-C Build',
     sharedTo: 'Foreman-A..Foreman-E',
     accent: '#ffd166',
@@ -120,13 +121,13 @@ const SKILL_REGISTRY = {
         'Read Subplan: Load the elevated target area.',
         'Check Access: Detect that the target is out of normal reach.',
         'Place Temporary Support: Build a support path to the target.',
-        'Reach Target: Move onto the temporary support.',
-        'Remove Temporary Support: Clear support blocks after placement.'
+        'Reach Target: Move onto the temporary support.'
       ]
     }
   },
   clean_region: {
-    name: 'Learned Region Cleaning',
+    name: 'Scaffold Cleaning',
+    aliases: ['Region Cleaning', 'skill-region-cleaning', 'region-clean'],
     icon: 'assets/icons/skills/learned-region-cleaning.png',
     notificationDescription: 'Removes leftover blocks after construction.',
     summary: 'Final cleanup pass for scaffold and leftover blocks while preserving valid blueprint blocks.',

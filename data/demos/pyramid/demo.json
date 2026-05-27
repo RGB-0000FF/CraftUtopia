@@ -101,7 +101,7 @@
   "timelineKeyframes": [
     {
       "id": "region-placement",
-      "label": "Region Placement",
+      "label": "Region Construction",
       "demoSeconds": 50,
       "skill": "build_region"
     }

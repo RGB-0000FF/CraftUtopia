@@ -101,7 +101,7 @@
   "timelineKeyframes": [
     {
       "id": "region-placement",
-      "label": "Region Placement",
+      "label": "Region Construction",
       "demoSeconds": 38,
       "skill": "build_region"
     },
@@ -119,7 +119,7 @@
     },
     {
       "id": "region-clean",
-      "label": "Region Cleaning",
+      "label": "Scaffold Cleaning",
       "demoSeconds": 222,
       "skill": "clean_region"
     }

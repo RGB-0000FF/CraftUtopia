@@ -4082,7 +4082,7 @@ body:not(.is-skill-library-active) .visual-wrap .skill-notification-stack {
 .visual-wrap .skill-notification-stack::before {
   content: "Skill\A Library";
   display: block;
-  color: #ff6372;
+  color: #fff;
   font-family: var(--font-mono);
   font-size: 0.77rem;
   font-weight: 950;
@@ -4092,7 +4092,7 @@ body:not(.is-skill-library-active) .visual-wrap .skill-notification-stack {
   text-transform: uppercase;
   white-space: pre-line;
   text-shadow:
-    0 0 12px rgba(255,99,114,0.42),
+    0 0 12px rgba(255,255,255,0.42),
     0 1px rgba(0,0,0,0.42);
 }
 

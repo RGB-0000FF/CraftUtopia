@@ -135,10 +135,10 @@ function inferSkillRefFromEvent(event = {}, display = {}) {
     || hasStructuredSublineType(display.sublines, ['skills', 'skill']);
   if (tool !== 'create skill' && tool !== 'use skill' && !hasSkillSubline && !/\b(?:create|use) skill\b/.test(text)) return '';
   const aliases = [
-    { ref: 'build_region', labels: ['learned region placement', 'region placement'] },
-    { ref: 'replace_region', labels: ['learned region replacement', 'region replacement'] },
-    { ref: 'scaffold', labels: ['learned scaffold construction', 'scaffold construction'] },
-    { ref: 'clean_region', labels: ['learned region cleaning', 'region cleaning'] }
+    { ref: 'build_region', labels: ['region construction', 'learned region construction', 'region placement', 'learned region placement'] },
+    { ref: 'replace_region', labels: ['region replacement', 'learned region replacement'] },
+    { ref: 'scaffold', labels: ['scaffold construction', 'learned scaffold construction'] },
+    { ref: 'clean_region', labels: ['scaffold cleaning', 'learned scaffold cleaning', 'region cleaning', 'learned region cleaning'] }
   ];
   return aliases.find((skill) => skill.labels.some((label) => text.includes(label)))?.ref || '';
 }

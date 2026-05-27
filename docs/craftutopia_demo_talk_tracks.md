@@ -16,10 +16,10 @@
    让观众看右侧 log 里的 `trace:` 和左侧视频里重复的放置行为。讲法：前几批 workers 还没有现成 skill，所以他们按 subplan 一步步执行；当相似轨迹重复出现，系统开始收集 trace。这里要点出：trace 是后面 learned skill 的原料。
 
 4. Skill appears, 45-70s  
-   让观众看左侧 Skill Library 和右侧 batch summary 里的 `SKILL` tag。讲法：当 trace 足够稳定，ProjectManager 会把重复流程抽象成 `Region Placement`，发布到 Skill Library，后续 workers 遇到相似任务时直接复用。这里是 demo 的第一个核心点：skill 不是预置脚本，而是在协作中长出来的 reusable workflow。
+   让观众看左侧 Skill Library 和右侧 batch summary 里的 `SKILL` tag。讲法：当 trace 足够稳定，ProjectManager 会把重复流程抽象成 `Region Construction`，发布到 Skill Library，后续 workers 遇到相似任务时直接复用。这里是 demo 的第一个核心点：skill 不是预置脚本，而是在协作中长出来的 reusable workflow。
 
 5. More skills, 70-95s  
-   让观众继续看 Skill Library 的新增 icon，不要逐条读完整 log。讲法：`Scaffold Construction` 处理高处临时支撑，`Region Replacement` 处理错误方块替换，`Region Cleaning` 处理最后的残留支撑清理。每个 skill 都来自重复 trace，然后反过来加速后面的 workers。
+   让观众继续看 Skill Library 的新增 icon，不要逐条读完整 log。讲法：`Scaffold Construction` 处理高处临时支撑，`Region Replacement` 处理错误方块替换，`Scaffold Cleaning` 处理最后的残留支撑清理。每个 skill 都来自重复 trace，然后反过来加速后面的 workers。
 
 6. Final verification, 95-120s  
    让观众看右侧 progress 接近完成和左侧建筑成型。讲法：最后 ProjectManager 做 blueprint comparison，Foreman-A 到 Foreman-E 回报区域完成。收尾强调：这个 demo 展示的是 100-agent collaboration 如何把重复劳动转成 shared skill library，从而让后续建造越来越快。
@@ -35,7 +35,7 @@
    指向右侧 log：注意看 `trace:`，这表示 workers 正在重复执行相似 subplans，系统正在收集可学习的行为轨迹。
 
 3. 25-45s  
-   指向左侧 Skill Library：当 `Region Placement`、`Scaffold Construction`、`Region Replacement`、`Region Cleaning` 出现时，说明重复 trace 已经被抽象成 skill，并开始服务后面的 workers。
+   指向左侧 Skill Library：当 `Region Construction`、`Scaffold Construction`、`Region Replacement`、`Scaffold Cleaning` 出现时，说明重复 trace 已经被抽象成 skill，并开始服务后面的 workers。
 
 4. 45-60s  
    指向右侧 batch summary：`SKILL` tag 表示这批任务复用了 learned workflow；没有 tag 的行就是普通执行或继续收集 trace。最后一句落点：重点不是某个 worker 会建造，而是整个 100-agent system 会在建造过程中学习和复用。

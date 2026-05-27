@@ -173,10 +173,7 @@
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Split Regions: convert Regions A-E into worker subplans."
-                },
-                {
-                  "tools": "Tool call Assign Subplans: prepare one subplan for each worker."
+                  "tools": "Tool call Split and Assign Subplans: split regions and distribute worker subplans."
                 }
               ]
             }
@@ -190,7 +187,7 @@
             "total": 20,
             "tools": [
               {
-                "label": "Region Placement trace",
+                "label": "Region Construction trace",
                 "count": 20,
                 "status": "collected"
               }
@@ -220,19 +217,19 @@
             {
               "time": "00:35.8",
               "actor": "Worker-001..020",
-              "action": "Worker-001..020 inspect their assigned placement subplans. No learned skill matches this sequence yet, so they complete the batch with basic tools and leave the Region Placement trace.",
+              "action": "Worker-001..020 inspect their assigned placement subplans. No learned skill matches this sequence yet, so they complete the batch with basic tools and leave the Region Construction trace.",
               "highlights": [
                 "Worker-001..020",
                 "No learned skill matches",
                 "basic tools",
-                "Region Placement trace"
+                "Region Construction trace"
               ],
               "sublines": [
                 {
                   "tools": "Tool trace: Read Subplan -> Check Inventory -> Go To Region -> Place Blocks."
                 },
                 {
-                  "results": "Result: Region Placement trace collected 20/20."
+                  "results": "Result: Region Construction trace collected 20/20."
                 }
               ],
               "progress": {
@@ -243,7 +240,7 @@
               "skill": "build_region",
               "skillEvent": "skill-trace",
               "skillProgress": {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "current": 20,
                 "total": 20
               }
@@ -253,67 +250,73 @@
         {
           "groupId": "skill-region-placement",
           "time": "00:50.0",
-          "learningLabel": "Learning · Region Placement",
+          "learningLabel": "Learning a Reusable Skill: Region Construction",
           "entries": [
             {
               "time": "00:50.0",
               "actor": "Foreman-A",
-              "action": "Foreman-A summarizes the completed placement trace and sends it to ProjectManager.",
+              "action": "Foreman-A collects the reported placement trace and sends it to ProjectManager.",
               "highlights": [
                 "placement trace",
                 "ProjectManager"
               ],
               "sublines": [
                 {
-                  "tools": "Send message to ProjectManager: package Region Placement trace."
+                  "tools": "Send message to ProjectManager: package Region Construction trace."
                 }
               ]
             },
             {
               "time": "00:52.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager reviews the repeated worker trace and creates Region Placement.",
+              "action": "ProjectManager reviews the repeated worker trace and creates Region Construction.",
               "highlights": [
                 "Create Skill",
-                "Region Placement"
+                "Region Construction"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Create Skill: Region Placement."
+                  "tools": "Tool call Create Skill: Region Construction."
                 },
                 {
-                  "results": "Result: -> SKILL Region Placement is ready."
+                  "results": "Result: -> SKILL Region Construction is ready."
                 }
-              ]
+              ],
+              "skill": "build_region",
+              "skillEvent": "skill-detection"
             },
             {
               "time": "00:58.0",
               "actor": "ProjectManager",
-              "action": "ProjectManager sends Region Placement back to Foreman-A for distribution.",
+              "action": "ProjectManager sends Region Construction back to Foreman-A for distribution.",
               "highlights": [
-                "Region Placement",
+                "Region Construction",
                 "Foreman-A"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Publish Skill: Send Region Placement to Foreman-A."
+                  "tools": "Tool call Publish Skill: Send Region Construction to Foreman-A."
                 }
-              ]
+              ],
+              "skill": "build_region",
+              "skillEvent": "skill-broadcast"
             },
             {
               "time": "01:00.0",
               "actor": "Foreman-A",
-              "action": "Foreman-A broadcasts Region Placement to workers handling similar placement subplans.",
+              "action": "Foreman-A broadcasts Region Construction to workers handling similar placement subplans.",
               "highlights": [
                 "Broadcast Skill",
-                "Region Placement",
+                "Region Construction",
                 "workers"
               ],
               "sublines": [
                 {
-                  "tools": "Tool call Broadcast Skill: Region Placement to the worker pool."
+                  "tools": "Tool call Broadcast Skill: Region Construction to the worker pool."
                 }
-              ]
+              ],
+              "skill": "build_region",
+              "skillEvent": "skill-broadcast"
             }
           ]
         },
@@ -325,7 +328,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "count": 16
               }
             ],
@@ -342,11 +345,10 @@
             {
               "time": "01:10.0",
               "actor": "Foreman-B",
-              "action": "Foreman-B assigns one subplan to each worker in Worker-021..040. Workers inspect their own work items and then choose a learned skill or basic tools.",
+              "action": "Foreman-B assigns one subplan to each worker in Worker-021..040.",
               "highlights": [
                 "Worker-021..040",
-                "one subplan",
-                "choose a learned skill or basic tools"
+                "one subplan"
               ],
               "sublines": [
                 {
@@ -362,15 +364,15 @@
             {
               "time": "01:16.0",
               "actor": "Worker-021..036",
-              "action": "Worker-021..036 complete matching assigned volumes with Region Placement.",
+              "action": "Worker-021..036 complete matching assigned volumes with Region Construction.",
               "highlights": [
                 "Use Skill",
-                "Region Placement",
+                "Region Construction",
                 "matching assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on matching assigned volumes."
+                  "skills": "Use Skill: Region Construction on matching assigned volumes."
                 },
                 {
                   "results": "Result: matched placement work is complete."
@@ -414,7 +416,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "count": 18
               }
             ],
@@ -431,11 +433,10 @@
             {
               "time": "01:53.6",
               "actor": "Foreman-C",
-              "action": "Foreman-C assigns one subplan to each worker in Worker-041..060. Workers inspect their own work items and then choose a learned skill or basic tools.",
+              "action": "Foreman-C assigns one subplan to each worker in Worker-041..060.",
               "highlights": [
                 "Worker-041..060",
-                "one subplan",
-                "choose a learned skill or basic tools"
+                "one subplan"
               ],
               "sublines": [
                 {
@@ -451,15 +452,15 @@
             {
               "time": "01:59.6",
               "actor": "Worker-041..058",
-              "action": "Worker-041..058 complete matching assigned volumes with Region Placement.",
+              "action": "Worker-041..058 complete matching assigned volumes with Region Construction.",
               "highlights": [
                 "Use Skill",
-                "Region Placement",
+                "Region Construction",
                 "matching assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on matching assigned volumes."
+                  "skills": "Use Skill: Region Construction on matching assigned volumes."
                 },
                 {
                   "results": "Result: matched placement work is complete."
@@ -503,7 +504,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "count": 19
               }
             ],
@@ -520,11 +521,10 @@
             {
               "time": "02:38.9",
               "actor": "Foreman-D",
-              "action": "Foreman-D assigns one subplan to each worker in Worker-061..080. Workers inspect their own work items and then choose a learned skill or basic tools.",
+              "action": "Foreman-D assigns one subplan to each worker in Worker-061..080.",
               "highlights": [
                 "Worker-061..080",
-                "one subplan",
-                "choose a learned skill or basic tools"
+                "one subplan"
               ],
               "sublines": [
                 {
@@ -540,15 +540,15 @@
             {
               "time": "02:44.9",
               "actor": "Worker-061..079",
-              "action": "Worker-061..079 complete matching assigned volumes with Region Placement.",
+              "action": "Worker-061..079 complete matching assigned volumes with Region Construction.",
               "highlights": [
                 "Use Skill",
-                "Region Placement",
+                "Region Construction",
                 "matching assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on matching assigned volumes."
+                  "skills": "Use Skill: Region Construction on matching assigned volumes."
                 },
                 {
                   "results": "Result: matched placement work is complete."
@@ -592,7 +592,7 @@
             "total": 20,
             "skills": [
               {
-                "label": "Region Placement",
+                "label": "Region Construction",
                 "count": 20
               }
             ],
@@ -602,11 +602,10 @@
             {
               "time": "03:19.3",
               "actor": "Foreman-E",
-              "action": "Foreman-E assigns one subplan to each worker in Worker-081..100. Workers inspect their own work items and then choose a learned skill or basic tools.",
+              "action": "Foreman-E assigns one subplan to each worker in Worker-081..100.",
               "highlights": [
                 "Worker-081..100",
-                "one subplan",
-                "choose a learned skill or basic tools"
+                "one subplan"
               ],
               "sublines": [
                 {
@@ -622,15 +621,15 @@
             {
               "time": "03:25.3",
               "actor": "Worker-081..100",
-              "action": "Worker-081..100 complete matching final assigned volumes with Region Placement.",
+              "action": "Worker-081..100 complete matching final assigned volumes with Region Construction.",
               "highlights": [
                 "Use Skill",
-                "Region Placement",
+                "Region Construction",
                 "final assigned volumes"
               ],
               "sublines": [
                 {
-                  "skills": "Use Skill: Region Placement on matching final assigned volumes."
+                  "skills": "Use Skill: Region Construction on matching final assigned volumes."
                 },
                 {
                   "results": "Result: final assigned volumes are aligned."
@@ -645,9 +644,9 @@
             {
               "time": "03:31.3",
               "actor": "Worker-081..100",
-              "action": "Completed the assigned work with Region Placement and reported all assigned volumes aligned.",
+              "action": "Completed the assigned work with Region Construction and reported all assigned volumes aligned.",
               "highlights": [
-                "Region Placement",
+                "Region Construction",
                 "aligned"
               ],
               "sublines": [
@@ -714,11 +713,11 @@
             {
               "time": "03:59.6",
               "actor": "ProjectManager",
-              "action": "Done. Pyramid has been built and verified with the discovered Region Placement workflow.",
+              "action": "Done. Pyramid has been built and verified with the discovered Region Construction workflow.",
               "highlights": [
                 "Done",
                 "Pyramid",
-                "Region Placement"
+                "Region Construction"
               ],
               "sublines": [
                 {

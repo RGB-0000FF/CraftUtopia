@@ -165,22 +165,35 @@ function compactRuntimeSentence(value = '', event = {}) {
   if (!text) return text;
   const shouldJoinSentences = shouldCompactRuntimeLog(event);
   text = text
-    .replace(/\bForeman-([A-E]) assigns one cleanup subplan to each worker in (Worker-\d+\.\.\d+)\.\s*Workers inspect their own cleanup work items and then choose a learned skill or manual steps\./i, 'Foreman-$1 assigns cleanup to $2; workers pick SKILL or manual steps.')
-    .replace(/\bForeman-([A-E]) assigns one subplan to each worker in (Worker-\d+\.\.\d+)\.\s*Workers inspect their own work items and then choose a learned skill or manual steps\./i, 'Foreman-$1 assigns work to $2; workers pick SKILL or manual steps.')
-    .replace(/\bForeman-([A-E]) assigns one subplan to each worker in (Worker-\d+\.\.\d+)\.\s*Workers will inspect their own subplans and decide whether a learned skill matches\./i, 'Foreman-$1 assigns work to $2; workers check for SKILL match.')
-    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned placement subplans[.;]\s*No learned skill matches this sequence yet, so they complete the batch with manual steps and leave the Region Placement trace\./i, 'Worker-$1 run manual placement and leave Region Placement trace.')
-    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned subplans, find the placement pattern matches Region Placement, and use the skill for those work items\./i, 'Worker-$1 use Region Placement on matching subplans.')
-    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned subplans and find the target positions require temporary support[.;]\s*Region Placement alone is not enough, so they run the support sequence with manual steps and leave Scaffold Construction trace examples\./i, 'Worker-$1 run support steps and leave Scaffold Construction traces.')
-    .replace(/\bWorker-(\d+\.\.\d+) complete the reachable part of the high-reach assignment with Region Placement[.;]\s*These tasks are skill reuse, not scaffold trace collection\./i, 'Worker-$1 reuse Region Placement on reachable high targets.')
-    .replace(/\bWorker-(\d+\.\.\d+) find mismatched blocks from the imported blueprint and (?:collect Region Replacement traces while repairing them with the same sequence|repair them with the same manual sequence, collecting Region Replacement trace examples)\./i, 'Worker-$1 repair mismatches and leave Region Replacement traces.')
+    .replace(/\bForeman-([A-E]) assigns one cleanup subplan to each worker in (Worker-\d+\.\.\d+)\.\s*Workers [^.]+\./i, 'Foreman-$1 assigns cleanup to $2.')
+    .replace(/\bForeman-([A-E]) assigns one subplan to each worker in (Worker-\d+\.\.\d+)\.\s*Workers [^.]+\./i, 'Foreman-$1 assigns work to $2.')
+    .replace(/\bForeman assigns one cleanup subplan to each worker in worker batch\.\s*Workers [^.]+\./i, 'Foreman assigns cleanup to a worker batch.')
+    .replace(/\bForeman assigns one subplan to each worker in worker batch\.\s*Workers [^.]+\./i, 'Foreman assigns work to a worker batch.')
+    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned placement subplans[.;]\s*No learned skill matches this sequence yet, so they complete the batch with manual steps and leave the Region Construction trace\./i, 'Worker-$1 runs manual placement and leaves Region Construction trace.')
+    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned subplans, find the placement pattern matches Region Construction, and use the skill for those work items\./i, 'Worker-$1 uses Region Construction on matching subplans.')
+    .replace(/\bWorker-(\d+\.\.\d+) inspect their assigned subplans and find the target positions require temporary support[.;]\s*Region Construction alone is not enough, so they run the support sequence with manual steps and leave Scaffold Construction trace examples\./i, 'Worker-$1 runs support steps and leaves Scaffold Construction traces.')
+    .replace(/\bWorker-(\d+\.\.\d+) complete the reachable part of the high-reach assignment with Region Construction[.;]\s*These tasks are skill reuse, not scaffold trace collection\./i, 'Worker-$1 reuses Region Construction on reachable high targets.')
+    .replace(/\bWorker-(\d+\.\.\d+) find mismatched blocks from the imported blueprint and (?:collect Region Replacement traces while repairing them with the same sequence|repair them with the same manual sequence, collecting Region Replacement trace examples)\./i, 'Worker-$1 repairs mismatches and leaves Region Replacement traces.')
+    .replace(/\bworker batch inspect their assigned placement subplans[.;]\s*No learned skill matches this sequence yet, so they complete the batch with manual steps and leave the Region Construction trace\./i, 'Worker batch runs manual placement and leaves Region Construction trace.')
+    .replace(/\bworker batch inspect their assigned subplans, find the placement pattern matches Region Construction, and use the skill for those work items\./i, 'Worker batch uses Region Construction on matching subplans.')
+    .replace(/\bworker batch inspect their assigned subplans and find the target positions require temporary support[.;]\s*Region Construction alone is not enough, so they run the support sequence with manual steps and leave Scaffold Construction trace examples\./i, 'Worker batch runs support steps and leaves Scaffold Construction traces.')
+    .replace(/\bworker batch complete the reachable part of the high-reach assignment with Region Construction[.;]\s*These tasks are skill reuse, not scaffold trace collection\./i, 'Worker batch reuses Region Construction on reachable high targets.')
+    .replace(/\bworker batch find mismatched blocks from the imported blueprint and (?:collect Region Replacement traces while repairing them with the same sequence|repair them with the same manual sequence, collecting Region Replacement trace examples)\./i, 'Worker batch repairs mismatches and leaves Region Replacement traces.')
     .replace(/\bAll foremen confirmed their regions: placement complete, temporary supports removed, replacements verified, cleanup clean\./i, 'All foremen confirm: placed, cleaned, replaced, verified.')
     .replace(/\bDone; ([^.]+) has been built, verified, and cleaned up with the discovered workflow chunks\./i, 'Done; $1 is built, verified, and cleaned.')
-    .replace(/\bForeman-A\.\.E initialize the build stage: split Regions A-E into one subplan per worker and open five queues in parallel\./i, 'Foreman-A..E split Regions A-E into worker subplans and open five parallel queues.')
-    .replace(/\bRegion Placement alone is not enough, so they run the support step sequence with manual steps and leave Scaffold Construction trace examples\./i, 'They collect Scaffold Construction traces where Region Placement needs temporary support.')
-    .replace(/\bWorker-(\d+\.\.\d+) finish assigned placement and high-reach work with the existing Region Placement and Scaffold Construction skills\./i, 'Worker-$1 use Region Placement and Scaffold Construction for placement and high-reach work.')
-    .replace(/\bWorker-(\d+\.\.\d+) finish remaining mismatch and closure work with Region Replacement where it matches the learned repair workflow\./i, 'Worker-$1 use Region Replacement for mismatch and closure repairs.')
-    .replace(/\bWorker-(\d+\.\.\d+) remove leftover temporary supports with manual steps; the repeated cleanup sequence becomes Region Cleaning trace evidence\./i, 'Worker-$1 collect Region Cleaning traces by removing leftover temporary supports.')
-    .replace(/\bWorker-(\d+\.\.\d+) scan their cleanup subplans and hit the same leftover-support sequence, completing the Region Cleaning trace evidence\./i, 'Worker-$1 complete Region Cleaning traces by scanning and removing leftover supports.')
+    .replace(/\bForeman-A\.\.E initialize the build stage: split regions into one subplan per worker and open five queues in parallel\./i, 'Foreman-A..E split regions into worker subplans and open parallel queues.')
+    .replace(/\bForeman-A\.\.E split regions into worker subplans and open five parallel queues\./i, 'Foreman-A..E split regions into worker subplans and open parallel queues.')
+    .replace(/\bForemen initialize the build stage: split regions into one subplan per worker and open five queues in parallel\./i, 'Foremen split regions into worker subplans and open parallel queues.')
+    .replace(/\bForemen split regions into worker subplans and open five parallel queues\./i, 'Foremen split regions into worker subplans and open parallel queues.')
+    .replace(/\bRegion Construction alone is not enough, so they run the support step sequence with manual steps and leave Scaffold Construction trace examples\./i, 'They collect Scaffold Construction traces where Region Construction needs temporary support.')
+    .replace(/\bWorker-(\d+\.\.\d+) finish assigned placement and high-reach work with the existing Region Construction and Scaffold Construction skills\./i, 'Worker-$1 uses Region Construction and Scaffold Construction for placement and high-reach work.')
+    .replace(/\bWorker-(\d+\.\.\d+) finish remaining mismatch and closure work with Region Replacement where it matches the learned repair workflow\./i, 'Worker-$1 uses Region Replacement for mismatch and closure repairs.')
+    .replace(/\bWorker-(\d+\.\.\d+) remove leftover temporary supports with manual steps; the repeated cleanup sequence becomes Scaffold Cleaning trace evidence\./i, 'Worker-$1 collects Scaffold Cleaning traces by removing leftover temporary supports.')
+    .replace(/\bWorker-(\d+\.\.\d+) scan their cleanup subplans and hit the same leftover-support sequence, completing the Scaffold Cleaning trace evidence\./i, 'Worker-$1 completes Scaffold Cleaning traces by scanning and removing leftover supports.')
+    .replace(/\bworker batch finish assigned placement and high-reach work with the existing Region Construction and Scaffold Construction skills\./i, 'Worker batch uses Region Construction and Scaffold Construction for placement and high-reach work.')
+    .replace(/\bworker batch finish remaining mismatch and closure work with Region Replacement where it matches the learned repair workflow\./i, 'Worker batch uses Region Replacement for mismatch and closure repairs.')
+    .replace(/\bworker batch remove leftover temporary supports with manual steps; the repeated cleanup sequence becomes Scaffold Cleaning trace evidence\./i, 'Worker batch collects Scaffold Cleaning traces by removing leftover temporary supports.')
+    .replace(/\bworker batch scan their cleanup subplans and hit the same leftover-support sequence, completing the Scaffold Cleaning trace evidence\./i, 'Worker batch completes Scaffold Cleaning traces by scanning and removing leftover supports.')
     .replace(/\bwith the same temporary-support step sequence, adding matching Scaffold Construction trace examples\./i, 'with the same temporary-support sequence and add Scaffold Construction traces.')
     .replace(/\brepeat the temporary-support sequence on the remaining elevated targets, giving ProjectManager enough scaffold examples to create the workflow\./i, 'repeat the temporary-support sequence until ProjectManager has enough Scaffold Construction examples.')
     .replace(/\brepair them with the same manual sequence, collecting Region Replacement trace examples\./i, 'collect Region Replacement traces while repairing them with the same sequence.')
@@ -210,6 +223,10 @@ const ACTOR_COLOR_POOL = [
   '#f0fff6'
 ];
 
+function getCompactActorLabel(actor = '') {
+  return String(actor || '').trim();
+}
+
 function getActorColor(actor = '') {
   const actorName = String(actor || '').trim();
   if (ACTOR_COLOR_MAP[actorName]) return ACTOR_COLOR_MAP[actorName];
@@ -228,30 +245,11 @@ function createStructuredProgress(progress) {
 }
 
 function formatTerminalProgressText(progress = {}) {
-  const total = Number(progress.total || 0);
-  const current = Number(progress.current || 0);
-  if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(current)) return '';
-  const ratio = Math.max(0, Math.min(1, current / total));
-  const isDone = ratio >= 1;
-  const cells = 18;
-  const filled = Math.max(0, Math.min(cells, Math.round(ratio * cells)));
-  const bar = `${'#'.repeat(filled)}${'-'.repeat(cells - filled)}`;
-  const label = cleanToolLanguageForDisplay(progress.label || 'progress').trim();
-  const percent = String(Math.round(ratio * 100)).padStart(3, ' ');
-  return `${label} [${bar}] ${percent}% ${Math.round(current)}/${Math.round(total)} ${isDone ? 'done' : 'working'}`;
+  return '';
 }
 
 function createTerminalProgress(progress = {}) {
-  const text = formatTerminalProgressText(progress);
-  if (!text) return null;
-  const total = Number(progress.total || 0);
-  const current = Number(progress.current || 0);
-  const ratio = total > 0 ? Math.max(0, Math.min(1, current / total)) : 0;
-  const node = document.createElement('span');
-  node.className = `chunk-terminal-progress${ratio >= 1 ? ' is-complete' : ''}`;
-  node.textContent = text;
-  node.setAttribute('aria-label', text);
-  return node;
+  return null;
 }
 
 function getEventBatchSummary(event = {}) {
@@ -280,10 +278,7 @@ function getBatchSummaryProgress(summary = {}, event = {}) {
 }
 
 function formatBatchSummaryBar(progress = {}) {
-  const cells = 20;
-  const filled = Math.max(0, Math.min(cells, Math.round((progress.ratio || 0) * cells)));
-  const unit = progress.unit ? ` ${progress.unit}` : '';
-  return `[${'#'.repeat(filled)}${'-'.repeat(cells - filled)}] ${Math.round(progress.current)}/${Math.round(progress.total)}${unit} ${progress.ratio >= 1 ? 'done' : 'working'}`;
+  return '';
 }
 
 function createBatchSummaryRow(kind = '', item = {}, total = 0) {
@@ -322,36 +317,7 @@ function createBatchSummaryRow(kind = '', item = {}, total = 0) {
 }
 
 function createBatchSummary(summary = {}, event = {}) {
-  if (!summary) return null;
-  const progress = getBatchSummaryProgress(summary, event);
-  if (!progress || progress.ratio < 1) return null;
-
-  const panel = document.createElement('section');
-  panel.className = 'chunk-batch-summary';
-
-  const header = document.createElement('span');
-  header.className = 'chunk-batch-summary-header';
-  const title = document.createElement('span');
-  title.className = 'chunk-batch-summary-title';
-  title.textContent = cleanToolLanguageForDisplay(summary.label || 'Worker batch');
-  const bar = document.createElement('span');
-  bar.className = 'chunk-batch-summary-bar';
-  bar.textContent = formatBatchSummaryBar(progress);
-  header.append(title, bar);
-
-  const rows = document.createElement('span');
-  rows.className = 'chunk-batch-summary-rows';
-  const total = progress.total;
-  const skillRows = Array.isArray(summary.skills) ? summary.skills : [];
-  const toolRows = Array.isArray(summary.tools) ? summary.tools : [];
-  [...skillRows.map((item) => createBatchSummaryRow('skill', item, total)),
-    ...toolRows.map((item) => createBatchSummaryRow('tools', item, total))]
-    .filter(Boolean)
-    .forEach((row) => rows.append(row));
-
-  panel.append(header);
-  if (rows.children.length) panel.append(rows);
-  return panel;
+  return null;
 }
 
 function getSkillRefForStructuredSubline(line = '', event = {}, log = {}) {
@@ -360,7 +326,12 @@ function getSkillRefForStructuredSubline(line = '', event = {}, log = {}) {
     .find(([, skill]) => {
       const fullName = String(skill.name || '').toLowerCase();
       const cleanName = fullName.replace(/^learned\s+/, '');
-      return (fullName && text.includes(fullName)) || (cleanName && text.includes(cleanName));
+      const aliases = Array.isArray(skill.aliases)
+        ? skill.aliases.map((alias) => String(alias || '').toLowerCase()).filter(Boolean)
+        : [];
+      return (fullName && text.includes(fullName))
+        || (cleanName && text.includes(cleanName))
+        || aliases.some((alias) => text.includes(alias));
     })?.[0] || '';
   const lineMatch = matchSkill(lineText);
   if (lineMatch) return lineMatch;
@@ -469,8 +440,12 @@ function resolveSkillRefForEvent(event = {}) {
     .find(([ref, skill]) => {
       const refText = normalizeSkillMatchText(ref);
       const nameText = normalizeSkillMatchText(skill.name);
+      const aliasTexts = (Array.isArray(skill.aliases) ? skill.aliases : [])
+        .map(normalizeSkillMatchText)
+        .filter(Boolean);
       return (refText && normalized.includes(refText))
-        || (nameText && normalized.includes(nameText));
+        || (nameText && normalized.includes(nameText))
+        || aliasTexts.some((aliasText) => normalized.includes(aliasText));
     })?.[0] || '';
 }
 
@@ -483,7 +458,7 @@ function getLearningLogLabel(event = {}) {
   if (event.learningLabel || event.display?.learningLabel) return event.learningLabel || event.display.learningLabel;
   const groupKey = String(event.logGroup || event.display?.logGroup || '');
   const skill = SKILL_REGISTRY[resolveSkillRefForEvent({ ...event, learningLabel: groupKey })];
-  return skill?.name ? `Learning · ${skill.name.replace(/^Learned\s+/i, '')}` : 'Learning phase';
+  return skill?.name ? `Learning a Reusable Skill: ${skill.name.replace(/^Learned\s+/i, '')}` : 'Learning a Reusable Skill';
 }
 
 function appendStructuredLogEntry(node, event, options = {}) {
@@ -509,7 +484,7 @@ function appendStructuredLogEntry(node, event, options = {}) {
     const actor = document.createElement('span');
     actor.className = 'structured-actor';
     actor.style.setProperty('--actor-color', getActorColor(log.actor));
-    actor.textContent = `[${log.actor}]`;
+    actor.textContent = `[${getCompactActorLabel(log.actor)}]`;
     main.append(timecode, actor);
   }
 
@@ -564,7 +539,7 @@ function appendStructuredLogEntry(node, event, options = {}) {
         prefix.className = 'structured-subline-prefix';
         prefix.textContent = 'SKILL';
         const cleanSkillLine = cleanToolLanguageForDisplay(line)
-          .replace(/\bLearned\s+(Region Placement|Scaffold Construction|Region Replacement|Region Cleaning)\b/gi, '$1');
+          .replace(/\bLearned\s+(Region Construction|Scaffold Construction|Region Replacement|Scaffold Cleaning)\b/gi, '$1');
         body.replaceChildren();
         appendHighlightedText(body, cleanSkillLine, getStructuredLineHighlights(cleanSkillLine, log.highlights));
         if (meta.skillRef) {
@@ -673,10 +648,10 @@ function getSkillLearningRange(skillRef = '') {
 }
 
 function getSkillUnlockSeconds(skillRef = '') {
-  const explicitRange = getSkillLearningRange(skillRef);
-  if (explicitRange) return explicitRange.end;
   const skill = skillState.get(skillRef);
   if (Number.isFinite(Number(skill?.unlockSeconds))) return Number(skill.unlockSeconds);
+  const explicitRange = getSkillLearningRange(skillRef);
+  if (explicitRange) return explicitRange.end;
   return Number.POSITIVE_INFINITY;
 }
 
@@ -900,7 +875,7 @@ function getSkillProgressMarkup(skill) {
 function getSkillLibraryStartSeconds() {
   const ranges = activeDemoProfile?.skillLearningRanges || {};
   const starts = Object.values(ranges)
-    .map((range) => Array.isArray(range) ? parseTimelineTime(range[1]) : Number.NaN)
+    .map((range) => Array.isArray(range) ? parseTimelineTime(range[0]) : Number.NaN)
     .filter((value) => Number.isFinite(value));
   if (starts.length) return Math.min(...starts);
   const keyframeStarts = timelineKeyframes
@@ -1077,62 +1052,19 @@ function getEventProgress(event = {}) {
 }
 
 function getChunkProgressState(event = {}) {
-  const progress = getEventProgress(event);
-  if (!progress) return null;
-  const label = String(progress.label || '');
-  if (/\btrace\b/i.test(label) || !/\bworkers?\b/i.test(label)) return null;
-  const total = Number(progress.total || 0);
-  const current = Number(progress.current || 0);
-  if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(current)) return null;
-  const ratio = Math.max(0, Math.min(1, current / total));
-  if (ratio <= 0) return null;
-  return {
-    ratio,
-    label: String(progress.label || '').trim()
-  };
+  return null;
 }
 
 function getProgressRowKey(event = {}) {
-  if (getStructuredLogGroupKey(event)) return '';
-  const progress = getEventProgress(event);
-  if (!progress?.label) return '';
-  return `${event.stageId}:${progress.label}`;
+  return '';
 }
 
 function updateChatMessageProgress(article, event) {
   article.querySelector('.chunk-terminal-progress')?.remove();
   article.querySelector('.chunk-batch-summary')?.remove();
-  const batchSummary = getEventBatchSummary(event);
-  if (batchSummary) {
-    const batchSummaryNode = createBatchSummary(batchSummary, event);
-    if (!batchSummaryNode) {
-      article.classList.remove('has-chunk-progress', 'has-batch-summary');
-      article.style.removeProperty('--chunk-progress');
-      delete article.dataset.chunkProgressLabel;
-      return;
-    }
-    const batchProgress = getBatchSummaryProgress(batchSummary, event);
-    article.classList.add('has-chunk-progress', 'has-batch-summary');
-    article.style.setProperty('--chunk-progress', `${Math.round(batchProgress.ratio * 1000) / 10}%`);
-    article.dataset.chunkProgressLabel = cleanToolLanguageForDisplay(batchSummary.label || '');
-    article.append(batchSummaryNode);
-    return;
-  }
-
-  const progress = getChunkProgressState(event);
-  if (!progress) {
-    article.classList.remove('has-chunk-progress', 'has-batch-summary');
-    article.style.removeProperty('--chunk-progress');
-    delete article.dataset.chunkProgressLabel;
-    return;
-  }
-  article.classList.add('has-chunk-progress');
-  article.classList.remove('has-batch-summary');
-  article.style.setProperty('--chunk-progress', `${Math.round(progress.ratio * 1000) / 10}%`);
-  if (progress.label) article.dataset.chunkProgressLabel = cleanToolLanguageForDisplay(progress.label);
-  else delete article.dataset.chunkProgressLabel;
-  const progressNode = createTerminalProgress(getEventProgress(event));
-  if (progressNode) article.append(progressNode);
+  article.classList.remove('has-chunk-progress', 'has-batch-summary');
+  article.style.removeProperty('--chunk-progress');
+  delete article.dataset.chunkProgressLabel;
 }
 
 function updateChatMessageMetadata(article, event, index) {

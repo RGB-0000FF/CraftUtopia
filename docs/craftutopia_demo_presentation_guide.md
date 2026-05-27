@@ -119,20 +119,20 @@ Paper 中报告的实验结论可作为讲解背景：CraftUtopia 在代表性�
 
 讲解重点：
 
-- 初始没有 `Region Placement` SKILL。
+- 初始没有 `Region Construction` SKILL。
 - Worker-001..020 接收类似的 placement subplans。
 - 他们用基础 tools 反复执行类似序列：
   `Read Subplan -> Check Inventory -> Go To Region -> Place Blocks`
 - 系统把这些重复出现的 tool sequence 视为 candidate trace。
-- 底部 batch summary 展示 `Region Placement trace 20/20 collected`，说明 trace 收集完成。
+- 底部 batch summary 展示 `Region Construction trace 20/20 collected`，说明 trace 收集完成。
 
 推荐讲法：
 
-> 这里不是系统预设了一个 Region Placement 技能，而是 worker 在执行中多次产生相似 tool sequence。Foreman 看到这些 trace 反复出现后，才有依据把它们汇总给 ProjectManager。
+> 这里不是系统预设了一个 Region Construction 技能，而是 worker 在执行中多次产生相似 tool sequence。Foreman 看到这些 trace 反复出现后，才有依据把它们汇总给 ProjectManager。
 
 ## 8. Learning Chunk：从 trace 到 SKILL
 
-![Region Placement learning](demo-guide-assets/05-region-placement-learning.png)
+![Region Construction learning](demo-guide-assets/05-region-placement-learning.png)
 
 这一屏是 demo 的核心展示之一。
 
@@ -141,10 +141,10 @@ Paper 中报告的实验结论可作为讲解背景：CraftUtopia 在代表性�
 - 左侧视频中红框对应“学习发生”的视觉时间段。
 - 右侧 learning chunk 使用淡色高亮，说明这不是普通 worker execution，而是系统在形成新技能。
 - 流程为：
-  1. Foreman-A summarizes completed placement trace。
+  1. Foreman-A collects the reported placement trace。
   2. ProjectManager reviews repeated worker trace。
-  3. ProjectManager creates `Region Placement`。
-  4. Result 显示 `-> SKILL Region Placement is ready`。
+  3. ProjectManager creates `Region Construction`。
+  4. Result 显示 `-> SKILL Region Construction is ready`。
   5. ProjectManager publish 给 Foreman。
   6. Foreman broadcast 给后续 worker。
 
@@ -160,10 +160,10 @@ Paper 中报告的实验结论可作为讲解背景：CraftUtopia 在代表性�
 
 讲解重点：
 
-- 后续 worker batch 中，一部分任务直接调用 `Region Placement`。
+- 后续 worker batch 中，一部分任务直接调用 `Region Construction`。
 - 另一部分任务仍然用 basic tools，因为它们遇到新的高处或异常场景。
 - Batch summary 用两类指标解释：
-  - `SKILL Region Placement 14/20 tasks saved ... time`
+  - `SKILL Region Construction 14/20 tasks saved ... time`
   - `TOOLS Scaffold trace 6/20 traces emerging`
 - 这说明系统不是“一学会就万事解决”，而是已有 SKILL 处理相似任务，新问题继续积累 trace。
 
@@ -179,7 +179,7 @@ Paper 中报告的实验结论可作为讲解背景：CraftUtopia 在代表性�
 
 讲解重点：
 
-- `Region Placement` 已经能处理可达 target volumes。
+- `Region Construction` 已经能处理可达 target volumes。
 - 高处 target volumes 需要临时支撑。
 - Worker 在高处任务中反复产生 support-related trace。
 - Foreman-C 汇总 high-reach support trace。
@@ -189,14 +189,14 @@ Paper 中报告的实验结论可作为讲解背景：CraftUtopia 在代表性�
 
 > 这个例子说明 SKILL library 是逐步扩展的。第一个 SKILL 解决基础 placement；当高处任务反复出现，系统再总结出 Scaffold Construction。它不是事先写死的技能列表，而是从实际 worker behavior 中抽取出来的能力。
 
-## 11. Region Replacement 与 Region Cleaning
+## 11. Region Replacement 与 Scaffold Cleaning
 
 这两个 skill 在 demo 后半段出现，讲解时可以简洁带过，但要说明它们分别解决什么问题。
 
 - **Region Replacement**
   来自 repeated block-repair trace，用来处理 mismatch、missing、placeholder blocks 等修复任务。
 
-- **Region Cleaning**
+- **Scaffold Cleaning**
   来自 repeated cleanup trace，用来清理 leftover temporary supports 和 cleanup artifacts。
 
 推荐讲法：
@@ -236,7 +236,7 @@ Paper 中报告的实验结论可作为讲解背景：CraftUtopia 在代表性�
 
 ### 2:10-3:10 Trace 与 Learning
 
-> 初始没有 Region Placement。第一批 worker 用 basic tools 完成相似 placement，形成 20/20 trace。Foreman 汇总 trace，ProjectManager 创建 Region Placement，并广播给 worker pool。
+> 初始没有 Region Construction。第一批 worker 用 basic tools 完成相似 placement，形成 20/20 trace。Foreman 汇总 trace，ProjectManager 创建 Region Construction，并广播给 worker pool。
 
 ### 3:10-4:00 复用与加速
 
@@ -244,7 +244,7 @@ Paper 中报告的实验结论可作为讲解背景：CraftUtopia 在代表性�
 
 ### 4:00-5:00 验证与总结
 
-> 最后系统学习到 Region Placement、Scaffold Construction、Region Replacement、Region Cleaning。它不是一开始预设技能，而是从 worker trace 中动态形成。最终 ProjectManager 做 blueprint comparison，Foreman 确认各 region，完成验证和清理。
+> 最后系统学习到 Region Construction、Scaffold Construction、Region Replacement、Scaffold Cleaning。它不是一开始预设技能，而是从 worker trace 中动态形成。最终 ProjectManager 做 blueprint comparison，Foreman 确认各 region，完成验证和清理。
 
 ## 14. 每个 UI 元素该怎么解释
 
@@ -272,7 +272,7 @@ Paper 中报告的实验结论可作为讲解背景：CraftUtopia 在代表性�
 
 ### Q3: `TOOL` 和 `SKILL` 有什么区别？
 
-TOOL 是基础操作或消息调用，例如读取 subplan、移动到目标位置、放置 blocks、发送消息。SKILL 是从重复 tool sequence 中总结出的可复用程序化能力，例如 Region Placement。
+TOOL 是基础操作或消息调用，例如读取 subplan、移动到目标位置、放置 blocks、发送消息。SKILL 是从重复 tool sequence 中总结出的可复用程序化能力，例如 Region Construction。
 
 ### Q4: Foreman 会直接建造吗？
 
@@ -302,9 +302,9 @@ Region 拆分让不同 worker team 在空间上尽量不冲突。它对应 paper
 
 它表示高处目标体积需要临时支撑的重复行为被抽象成 SKILL。这里不要把 scaffold 理解成某个固定建筑部位，而应理解为一种 high-reach support workflow。
 
-### Q11: `Region Replacement` 和 `Region Cleaning` 分别解决什么？
+### Q11: `Region Replacement` 和 `Scaffold Cleaning` 分别解决什么？
 
-`Region Replacement` 处理 mismatch、missing 或 placeholder blocks。`Region Cleaning` 处理 leftover temporary supports 和 cleanup artifacts。它们让系统从“建起来”走向“验证通过”。
+`Region Replacement` 处理 mismatch、missing 或 placeholder blocks。`Scaffold Cleaning` 处理 leftover temporary supports 和 cleanup artifacts。它们让系统从“建起来”走向“验证通过”。
 
 ### Q12: 为什么 paper 说有涌现行为？
 
@@ -316,7 +316,7 @@ Paper 中比较了 MINDcraft：MINDcraft 依赖更强输入，在若干任务上
 
 ### Q14: 所有 demo 都学习同样四个 SKILL 吗？
 
-不是必须。当前多数建筑 demo 展示四类常见能力：Placement、Scaffold、Replacement、Cleaning。Pyramid 只展示 Region Placement，因为它的视频 keyframe 只对应这一类学习事件。原则是以视频和实际展示为准，不强行塞不存在的 SKILL。
+不是必须。当前多数建筑 demo 展示四类常见能力：Placement、Scaffold、Replacement、Cleaning。Pyramid 只展示 Region Construction，因为它的视频 keyframe 只对应这一类学习事件。原则是以视频和实际展示为准，不强行塞不存在的 SKILL。
 
 ### Q15: 如何用一句话收尾？
 
