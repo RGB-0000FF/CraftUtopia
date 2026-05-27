@@ -1,6 +1,6 @@
 body.is-top-milestone-layout .status {
   grid-template-rows: minmax(0, 1fr);
-  padding-top: clamp(8px, calc(12px * var(--ui-scale)), 16px);
+  padding: clamp(8px, calc(12px * var(--ui-scale)), 16px);
   border: 1px solid rgba(243,229,195,0.16);
   background:
     linear-gradient(180deg, rgba(20, 31, 23, 0.54), rgba(4, 8, 6, 0.72)),
@@ -21,62 +21,16 @@ body.is-top-milestone-layout .gif-stage {
 }
 
 body.is-top-milestone-layout .visual-wrap {
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
-  gap: clamp(5px, calc(7px * var(--ui-scale)), 10px);
-}
-
-body.is-top-milestone-layout .visual-wrap > .scale-award {
-  position: relative;
-  top: auto;
-  left: auto;
-  z-index: 8;
-  justify-self: center;
-  height: 30px;
-  gap: 7px;
-  margin-top: -3px;
-  transform: none;
-}
-
-body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-medal,
-body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-medal img {
-  width: 34px;
-  height: 30px;
-}
-
-body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-rank b {
-  margin-top: -4px;
-  font-size: 1.42rem;
-  transform: translateX(-3px);
-}
-
-body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-rank span {
-  top: 14px;
-  right: 4px;
-  font-size: 0.36rem;
-  transform: translate(-3px, -50%);
-}
-
-body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-copy {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  min-height: 0;
-  padding: 0 0 0 8px;
-  border-left: 0;
-  white-space: nowrap;
-}
-
-body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-copy strong {
-  font-size: 0.58rem;
-}
-
-body.is-top-milestone-layout .visual-wrap > .scale-award .scale-award-copy span {
-  font-size: 0.48rem;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(7px, calc(9px * var(--ui-scale)), 12px);
 }
 
 body.is-top-milestone-layout .top-milestone-strip:not(:empty) {
-  position: relative;
-  z-index: 7;
+  position: absolute;
+  top: clamp(14px, calc(18px * var(--ui-scale)), 24px);
+  left: clamp(14px, calc(18px * var(--ui-scale)), 24px);
+  right: clamp(14px, calc(18px * var(--ui-scale)), 24px);
+  z-index: 9;
   display: flex;
   align-items: stretch;
   gap: 8px;
@@ -93,7 +47,28 @@ body.is-top-milestone-layout .top-milestone-strip:not(:empty) {
 
 body.is-top-milestone-layout .top-milestone-item {
   min-height: 26px;
-  padding-block: 4px;
+  padding: 4px 9px;
+  border-color: rgba(143,255,194,0.22);
+  color: rgba(232,255,238,0.72);
+  background: rgba(2, 9, 6, 0.24);
+  box-shadow: none;
+  backdrop-filter: blur(3px);
+}
+
+body.is-top-milestone-layout .top-milestone-item.is-running,
+body.is-top-milestone-layout .top-milestone-item.is-no-progress.is-complete {
+  color: #eaffef;
+  background: rgba(4, 18, 10, 0.34);
+  box-shadow: 0 0 14px rgba(85,255,164,0.08), inset 0 1px rgba(255,255,255,0.05);
+}
+
+body.is-top-milestone-layout .top-milestone-item.is-complete {
+  color: rgba(232,255,238,0.46);
+  background: rgba(0,0,0,0.16);
+}
+
+body.is-top-milestone-layout .top-milestone-segment {
+  background: rgba(0,0,0,0.16);
 }
 
 body.is-top-milestone-layout .top-milestone-strip::-webkit-scrollbar {
@@ -134,7 +109,7 @@ body.is-top-milestone-layout .chat-shell.terminal-console.is-framework-expanded 
 body.is-top-milestone-layout .right-rail {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
-  gap: 12px;
+  gap: 8px;
 }
 
 body.is-top-milestone-layout .console-milestones,
@@ -146,7 +121,7 @@ body.is-top-milestone-layout .console-header {
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
   justify-items: center;
-  padding: 5px 10px 8px;
+  padding: 2px 8px 6px;
   border-bottom: 1px solid rgba(92,255,172,0.12);
 }
 
@@ -156,7 +131,7 @@ body.is-top-milestone-layout .console-title-group {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(14px, calc(20px * var(--ui-scale)), 26px);
+  gap: clamp(12px, calc(16px * var(--ui-scale)), 22px);
   text-align: left;
 }
 
@@ -165,8 +140,8 @@ body.is-top-milestone-layout .console-header h2 {
   width: auto;
   min-width: 0;
   color: rgba(234,255,239,0.88);
-  font-size: clamp(1.1rem, calc(1.34rem * var(--ui-scale)), 1.54rem);
-  line-height: 1.22;
+  font-size: clamp(0.92rem, calc(1.08rem * var(--ui-scale)), 1.24rem);
+  line-height: 1.16;
   letter-spacing: 0.03em;
   overflow: visible;
   text-overflow: clip;
@@ -176,7 +151,7 @@ body.is-top-milestone-layout .console-header h2 {
 
 body.is-top-milestone-layout .console-title-logo {
   display: block;
-  width: clamp(118px, calc(150px * var(--ui-scale)), 178px);
+  width: clamp(112px, calc(136px * var(--ui-scale)), 160px);
   height: auto;
   flex: 0 0 auto;
   filter: drop-shadow(0 5px 14px rgba(0,0,0,0.28));
@@ -202,14 +177,14 @@ body.is-top-milestone-layout .console-title-scale {
 
 @container log-panel (max-width: 560px) {
   body.is-top-milestone-layout .console-header h2 {
-    font-size: clamp(0.98rem, calc(1.16rem * var(--ui-scale)), 1.3rem);
+    font-size: clamp(0.84rem, calc(0.98rem * var(--ui-scale)), 1.12rem);
     white-space: nowrap;
     overflow: visible;
     text-overflow: clip;
   }
 
   body.is-top-milestone-layout .console-title-logo {
-    width: clamp(96px, calc(118px * var(--ui-scale)), 138px);
+    width: clamp(96px, calc(112px * var(--ui-scale)), 132px);
   }
 }
 
@@ -218,7 +193,7 @@ body.is-top-milestone-layout .console-header-spacer {
 }
 
 body.is-top-milestone-layout .console-log .chat-feed {
-  padding: 14px 16px 18px;
+  padding: 12px 13px 15px;
 }
 
 body.is-top-milestone-layout .skill-notification-stack {
@@ -227,9 +202,9 @@ body.is-top-milestone-layout .skill-notification-stack {
 
 body.is-top-milestone-layout .terminal-log-line,
 body.is-top-milestone-layout .event-row.terminal-log-line {
-  padding: 8px 5px 14px;
-  font-size: clamp(0.96rem, calc(1.08rem * var(--ui-scale)), 1.22rem);
-  line-height: 1.62;
+  padding: 10px 6px 14px;
+  font-size: clamp(1.08rem, calc(1.2rem * var(--ui-scale)), 1.36rem);
+  line-height: 1.52;
 }
 
 body.is-top-milestone-layout .event-row.terminal-log-line.has-chunk-progress {
@@ -245,7 +220,7 @@ body.is-top-milestone-layout .chunk-terminal-progress {
   padding: 6px 9px;
   border-color: rgba(116,214,196,0.18);
   color: rgba(209,255,224,0.86);
-  font-size: 0.76em;
+  font-size: 0.82em;
 }
 
 body.is-top-milestone-layout .chunk-batch-summary {
@@ -253,14 +228,14 @@ body.is-top-milestone-layout .chunk-batch-summary {
   padding: 8px 9px;
   border-color: rgba(116,214,196,0.20);
   color: rgba(214,255,229,0.90);
-  font-size: 0.76em;
+  font-size: 0.82em;
 }
 
 body.is-top-milestone-layout .event-row.terminal-log-line.is-learning-chunk {
   --learning-accent: #72ffd1;
   position: relative;
-  margin-bottom: 12px;
-  padding: 32px 12px 14px;
+  margin-bottom: 8px;
+  padding: 32px 11px 14px;
   border: 1px solid color-mix(in srgb, var(--learning-accent) 24%, transparent);
   border-left: 4px solid color-mix(in srgb, var(--learning-accent) 62%, transparent);
   border-radius: 8px;
@@ -284,7 +259,7 @@ body.is-top-milestone-layout .event-row.terminal-log-line.is-learning-chunk::bef
   right: 12px;
   color: color-mix(in srgb, var(--learning-accent) 76%, #ffffff);
   font-family: var(--font-mono);
-  font-size: 0.56rem;
+  font-size: 0.66rem;
   font-weight: 950;
   letter-spacing: 0.12em;
   line-height: 1;
@@ -318,16 +293,16 @@ body.is-top-milestone-layout .terminal-log-line + .terminal-log-line {
 }
 
 body.is-top-milestone-layout .structured-main {
-  font-size: 1em;
-  line-height: 1.48;
+  font-size: 1.04em;
+  line-height: 1.42;
   color: rgba(222,245,228,0.80);
 }
 
 body.is-top-milestone-layout .structured-sublines {
-  margin-top: 5px;
+  margin-top: 4px;
   padding-left: 1.15em;
-  font-size: 0.82em;
-  line-height: 1.34;
+  font-size: 0.88em;
+  line-height: 1.38;
   color: rgba(178,204,188,0.50);
 }
 
@@ -370,27 +345,29 @@ body.is-top-milestone-layout .vote-card {
   align-items: center;
   justify-content: center;
   align-self: end;
-  gap: 8px;
-  min-height: 74px;
-  padding: 12px 16px;
-  border: 1px solid rgba(255,255,255,0.36);
+  gap: 4px;
+  min-height: 58px;
+  padding: 7px 14px 8px;
+  border: 1px solid rgba(255,102,89,0.48);
   border-radius: 8px;
-  color: #ffffff;
+  color: rgba(245,238,211,0.94);
   text-align: center;
-  background: #d72638;
+  background:
+    linear-gradient(180deg, rgba(255,102,89,0.20), rgba(255,102,89,0.10)),
+    linear-gradient(90deg, rgba(13,23,17,0.94), rgba(4,10,7,0.96));
   box-shadow:
     0 16px 36px rgba(0,0,0,0.30),
-    0 0 22px rgba(215,38,56,0.18),
-    inset 0 1px rgba(255,255,255,0.24),
-    inset 0 -14px 28px rgba(0,0,0,0.10);
+    0 0 22px rgba(255,102,89,0.10),
+    inset 0 1px rgba(255,255,255,0.12),
+    inset 0 -14px 28px rgba(0,0,0,0.16);
 }
 
 body.is-top-milestone-layout .vote-card span {
   flex: 0 0 auto;
   min-width: 0;
-  color: #ffffff;
+  color: rgba(245,238,211,0.84);
   font-family: var(--font-mono);
-  font-size: clamp(1.32rem, calc(1.64rem * var(--ui-scale)), 2rem);
+  font-size: clamp(1.14rem, calc(1.38rem * var(--ui-scale)), 1.66rem);
   font-weight: 950;
   letter-spacing: 0.04em;
   line-height: 0.95;
@@ -401,9 +378,9 @@ body.is-top-milestone-layout .vote-card span {
 body.is-top-milestone-layout .vote-card strong {
   flex: 0 0 auto;
   min-width: 0;
-  color: #ffffff;
+  color: #ff6659;
   font-family: var(--font-mono);
-  font-size: clamp(1.32rem, calc(1.64rem * var(--ui-scale)), 2rem);
+  font-size: clamp(1.14rem, calc(1.38rem * var(--ui-scale)), 1.66rem);
   font-weight: 950;
   letter-spacing: 0.04em;
   line-height: 0.95;
@@ -412,8 +389,8 @@ body.is-top-milestone-layout .vote-card strong {
 
 @container right-rail (max-width: 540px) {
   body.is-top-milestone-layout .vote-card {
-    min-height: 96px;
-    padding-block: 14px;
+    min-height: 72px;
+    padding-block: 9px;
   }
 
   body.is-top-milestone-layout .vote-card span,

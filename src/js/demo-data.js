@@ -271,7 +271,7 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260527-vote-card-v2';
+const DATA_ASSET_VERSION = '20260527-fmp4-hls-v19';
 let runEventsManifestPath = '';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;
@@ -379,16 +379,16 @@ function loadWorldVideoSource(videoPath) {
   bindHlsPreloadThrottle();
 
   worldVideo.removeAttribute('src');
-  if (worldVideo.canPlayType('application/vnd.apple.mpegurl')) {
-    worldVideo.src = sourceUrl;
-    worldVideo.load?.();
-    return;
-  }
-
   if (window.Hls?.isSupported?.()) {
     activeHlsController = new window.Hls(HLS_PLAYBACK_CONFIG);
     activeHlsController.loadSource(sourceUrl);
     activeHlsController.attachMedia(worldVideo);
+    return;
+  }
+
+  if (worldVideo.canPlayType('application/vnd.apple.mpegurl')) {
+    worldVideo.src = sourceUrl;
+    worldVideo.load?.();
     return;
   }
 

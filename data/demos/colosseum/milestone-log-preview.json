@@ -9,14 +9,14 @@
       "stageId": 1,
       "timeRange": [
         "00:00.0",
-        "00:20.0"
+        "00:09.4"
       ],
       "events": [
         {
-          "time": "00:00.8",
+          "time": "00:00.4",
           "entries": [
             {
-              "time": "00:00.8",
+              "time": "00:00.4",
               "action": "The user requested a build. We have a PNG and need a usable blueprint.",
               "highlights": [
                 "PNG",
@@ -32,10 +32,10 @@
           ]
         },
         {
-          "time": "00:06.0",
+          "time": "00:02.8",
           "entries": [
             {
-              "time": "00:06.0",
+              "time": "00:02.8",
               "action": "Got it. I'll turn the image into a blueprint. First, I'll generate a 3D model.",
               "highlights": [
                 "image",
@@ -50,7 +50,7 @@
               "actor": "Designer"
             },
             {
-              "time": "00:10.0",
+              "time": "00:04.7",
               "action": "The 3D model is ready. Next, I'll export it as a Minecraft-compatible OBJ file.",
               "highlights": [
                 "3D model",
@@ -64,7 +64,7 @@
               "actor": "Designer"
             },
             {
-              "time": "00:15.0",
+              "time": "00:07.0",
               "action": "The OBJ file is ready. Now I'll convert it into a buildable JSON blueprint.",
               "highlights": [
                 "OBJ file",
@@ -86,15 +86,15 @@
       "label": "2. Blueprint Split",
       "stageId": 2,
       "timeRange": [
-        "00:20.0",
-        "00:32.0"
+        "00:09.4",
+        "00:15.0"
       ],
       "events": [
         {
-          "time": "00:20.0",
+          "time": "00:09.4",
           "entries": [
             {
-              "time": "00:20.0",
+              "time": "00:09.4",
               "action": "Great. We now have the JSON blueprint. I'll notify the Foreman to recruit workers and start the build.",
               "sublines": [
                 {
@@ -109,7 +109,7 @@
               "actor": "ProjectManager"
             },
             {
-              "time": "00:25.0",
+              "time": "00:11.7",
               "action": "I'll split the blueprint into subtasks[Region A-E] and assign each subtask to the foreman.",
               "highlights": [
                 "Read Blueprint",
@@ -132,7 +132,7 @@
               "actor": "ProjectManager"
             },
             {
-              "time": "00:30.0",
+              "time": "00:14.1",
               "action": "The blueprint has been split and verified. I should assign each region to a foreman and start the build queues.",
               "highlights": [
                 "regions",
@@ -154,15 +154,15 @@
       "label": "3. Regions [A,B,C,D,E] Build",
       "stageId": 3,
       "timeRange": [
-        "00:32.0",
-        "03:34.0"
+        "00:15.0",
+        "01:40.4"
       ],
       "events": [
         {
-          "time": "00:32.0",
+          "time": "00:15.0",
           "entries": [
             {
-              "time": "00:32.0",
+              "time": "00:15.0",
               "actor": "Foreman-A..E",
               "action": "Foreman-A..E initialize the build stage: split Regions A-E into one subplan per worker and open five queues in parallel.",
               "highlights": [
@@ -182,7 +182,7 @@
         },
         {
           "groupId": "chunk-worker-001-020-placement-trace",
-          "time": "00:35.0",
+          "time": "00:16.4",
           "batchSummary": {
             "label": "Workers 001-020 assigned work",
             "total": 20,
@@ -197,7 +197,7 @@
           },
           "entries": [
             {
-              "time": "00:35.0",
+              "time": "00:16.4",
               "actor": "Foreman-A",
               "action": "Foreman-A assigns A-01 through A-20 to Worker-001..020.",
               "highlights": [
@@ -216,7 +216,7 @@
               }
             },
             {
-              "time": "00:35.8",
+              "time": "00:16.8",
               "actor": "Worker-001..020",
               "action": "Worker-001..020 inspect their assigned placement subplans. No learned skill matches this sequence yet, so they complete the batch with basic tools and leave the Region Construction trace.",
               "highlights": [
@@ -251,10 +251,10 @@
         {
           "groupId": "skill-region-placement",
           "learningLabel": "Learning a Reusable Skill: Region Construction",
-          "time": "00:40.9",
+          "time": "00:19.2",
           "entries": [
             {
-              "time": "00:40.9",
+              "time": "00:19.2",
               "actor": "Foreman-A",
               "action": "Foreman-A collects the reported placement trace and sends it to ProjectManager.",
               "highlights": [
@@ -268,7 +268,7 @@
               ]
             },
             {
-              "time": "00:44.0",
+              "time": "00:20.6",
               "actor": "ProjectManager",
               "action": "ProjectManager reviews the repeated worker trace and creates Region Construction.",
               "highlights": [
@@ -287,7 +287,7 @@
               "skillEvent": "skill-detection"
             },
             {
-              "time": "00:44.8",
+              "time": "00:21.0",
               "actor": "ProjectManager",
               "action": "ProjectManager sends Region Construction back to Foreman-A for distribution.",
               "highlights": [
@@ -303,7 +303,7 @@
               "skillEvent": "skill-broadcast"
             },
             {
-              "time": "00:45.3",
+              "time": "00:21.3",
               "actor": "Foreman-A",
               "action": "Foreman-A broadcasts Region Construction to workers handling similar placement subplans.",
               "highlights": [
@@ -323,7 +323,7 @@
         },
         {
           "groupId": "chunk-worker-001-020-placement",
-          "time": "00:56.3",
+          "time": "00:26.4",
           "batchSummary": {
             "label": "Workers 001-020 assigned work",
             "total": 20,
@@ -344,7 +344,7 @@
           },
           "entries": [
             {
-              "time": "00:56.3",
+              "time": "00:26.4",
               "actor": "Foreman-A",
               "action": "Foreman-A assigns one subplan to each worker in Worker-001..020.",
               "highlights": [
@@ -363,7 +363,7 @@
               }
             },
             {
-              "time": "01:02.0",
+              "time": "00:29.1",
               "actor": "Worker-001..014",
               "action": "Worker-001..014 inspect their assigned subplans, find the placement pattern matches Region Construction, and use the skill for those work items.",
               "highlights": [
@@ -386,7 +386,7 @@
               }
             },
             {
-              "time": "01:04.0",
+              "time": "00:30.0",
               "actor": "Worker-015..020",
               "action": "Worker-015..020 inspect their assigned subplans and find the target positions require temporary support. Region Construction alone is not enough, so they run the support sequence with basic tools and leave Scaffold Construction trace examples.",
               "highlights": [
@@ -420,7 +420,7 @@
         },
         {
           "groupId": "chunk-worker-021-040-placement-accumulating-scaffold",
-          "time": "01:05.3",
+          "time": "00:30.6",
           "batchSummary": {
             "label": "Workers 021-040 assigned work",
             "total": 20,
@@ -441,7 +441,7 @@
           },
           "entries": [
             {
-              "time": "01:05.3",
+              "time": "00:30.6",
               "actor": "Foreman-C",
               "action": "Foreman-C assigns one subplan to each worker in Worker-021..040.",
               "highlights": [
@@ -460,7 +460,7 @@
               }
             },
             {
-              "time": "01:09.2",
+              "time": "00:32.5",
               "actor": "Worker-021..026",
               "action": "Worker-021..026 complete the reachable part of the high-reach assignment with Region Construction. These tasks are skill reuse, not scaffold trace collection.",
               "highlights": [
@@ -483,7 +483,7 @@
               }
             },
             {
-              "time": "01:13.7",
+              "time": "00:34.6",
               "actor": "Worker-027..033",
               "action": "Worker-027..033 reach elevated targets with the same temporary-support tool sequence, adding matching Scaffold Construction trace examples.",
               "highlights": [
@@ -513,7 +513,7 @@
               }
             },
             {
-              "time": "01:18.8",
+              "time": "00:37.0",
               "actor": "Worker-034..040",
               "action": "Worker-034..040 repeat the temporary-support sequence on the remaining elevated targets, giving ProjectManager enough scaffold examples to create the workflow.",
               "highlights": [
@@ -547,10 +547,10 @@
         {
           "groupId": "skill-scaffold-construction",
           "learningLabel": "Learning a Reusable Skill: Scaffold Construction",
-          "time": "01:22.8",
+          "time": "00:38.9",
           "entries": [
             {
-              "time": "01:22.8",
+              "time": "00:38.9",
               "actor": "Foreman-C",
               "action": "Foreman-C summarizes the completed high-reach support trace for ProjectManager.",
               "highlights": [
@@ -565,7 +565,7 @@
               ]
             },
             {
-              "time": "01:24.0",
+              "time": "00:39.4",
               "actor": "ProjectManager",
               "action": "ProjectManager reviews the repeated high-reach support trace and creates Scaffold Construction.",
               "highlights": [
@@ -584,7 +584,7 @@
               "skillEvent": "skill-detection"
             },
             {
-              "time": "01:32.4",
+              "time": "00:43.4",
               "actor": "ProjectManager",
               "action": "ProjectManager sends Scaffold Construction back to Foreman-C.",
               "highlights": [
@@ -600,7 +600,7 @@
               "skillEvent": "skill-broadcast"
             },
             {
-              "time": "01:34.1",
+              "time": "00:44.2",
               "actor": "Foreman-C",
               "action": "Foreman-C broadcasts Scaffold Construction to workers assigned elevated support work.",
               "highlights": [
@@ -620,7 +620,7 @@
         },
         {
           "groupId": "chunk-worker-041-060-placement-scaffold",
-          "time": "01:45.9",
+          "time": "00:49.7",
           "batchSummary": {
             "label": "Workers 041-060 assigned work",
             "total": 20,
@@ -645,7 +645,7 @@
           },
           "entries": [
             {
-              "time": "01:45.9",
+              "time": "00:49.7",
               "actor": "Foreman-D",
               "action": "Foreman-D assigns one subplan to each worker in Worker-041..060.",
               "highlights": [
@@ -660,7 +660,7 @@
               }
             },
             {
-              "time": "01:59.4",
+              "time": "00:56.0",
               "actor": "Worker-041..046",
               "action": "Worker-041..046 complete reachable target volumes with Region Construction.",
               "highlights": [
@@ -683,7 +683,7 @@
               }
             },
             {
-              "time": "02:12.8",
+              "time": "01:02.3",
               "actor": "Worker-047..051",
               "action": "Worker-047..051 complete high-reach access with Scaffold Construction.",
               "highlights": [
@@ -706,7 +706,7 @@
               }
             },
             {
-              "time": "02:24.6",
+              "time": "01:07.9",
               "actor": "Worker-052..060",
               "action": "Worker-052..060 find mismatched blocks from the imported blueprint and repair them with the same basic-tool sequence, collecting Region Replacement trace examples.",
               "highlights": [
@@ -740,10 +740,10 @@
         {
           "groupId": "skill-region-replacement",
           "learningLabel": "Learning a Reusable Skill: Region Replacement",
-          "time": "02:25.0",
+          "time": "01:08.0",
           "entries": [
             {
-              "time": "02:25.0",
+              "time": "01:08.0",
               "actor": "Foreman-B",
               "action": "Foreman-B summarizes the completed block-repair trace for ProjectManager.",
               "highlights": [
@@ -758,7 +758,7 @@
               ]
             },
             {
-              "time": "02:28.0",
+              "time": "01:09.4",
               "actor": "ProjectManager",
               "action": "ProjectManager reviews the repeated block-repair trace and creates Region Replacement.",
               "highlights": [
@@ -777,7 +777,7 @@
               "skillEvent": "skill-detection"
             },
             {
-              "time": "02:35.2",
+              "time": "01:12.8",
               "actor": "ProjectManager",
               "action": "ProjectManager sends Region Replacement back to Foreman-B.",
               "highlights": [
@@ -793,7 +793,7 @@
               "skillEvent": "skill-broadcast"
             },
             {
-              "time": "02:36.6",
+              "time": "01:13.5",
               "actor": "Foreman-B",
               "action": "Foreman-B broadcasts Region Replacement to workers assigned mismatch repair tasks.",
               "highlights": [
@@ -813,7 +813,7 @@
         },
         {
           "groupId": "chunk-worker-061-080-mixed-skills-accumulating-cleanup",
-          "time": "02:55.3",
+          "time": "01:22.3",
           "batchSummary": {
             "label": "Workers 061-080 assigned work",
             "total": 20,
@@ -842,7 +842,7 @@
           },
           "entries": [
             {
-              "time": "02:55.3",
+              "time": "01:22.3",
               "actor": "Foreman-E",
               "action": "Foreman-E assigns one subplan to each worker in Worker-061..080.",
               "highlights": [
@@ -857,7 +857,7 @@
               }
             },
             {
-              "time": "03:05.3",
+              "time": "01:27.0",
               "actor": "Worker-061..067",
               "action": "Worker-061..067 finish assigned placement and high-reach work with the existing Region Construction and Scaffold Construction skills.",
               "highlights": [
@@ -883,7 +883,7 @@
               }
             },
             {
-              "time": "03:18.2",
+              "time": "01:33.0",
               "actor": "Worker-068..074",
               "action": "Worker-068..074 finish remaining mismatch and closure work with Region Replacement where it matches the learned repair workflow.",
               "highlights": [
@@ -906,7 +906,7 @@
               }
             },
             {
-              "time": "03:28.3",
+              "time": "01:37.7",
               "actor": "Worker-075..080",
               "action": "Worker-075..080 remove leftover temporary supports with basic tools; the repeated cleanup sequence becomes Scaffold Cleaning trace evidence.",
               "highlights": [
@@ -939,10 +939,10 @@
         },
         {
           "groupId": "chunk-region-progress",
-          "time": "03:29.0",
+          "time": "01:38.1",
           "entries": [
             {
-              "time": "03:29.0",
+              "time": "01:38.1",
               "actor": "ProjectManager",
               "action": "All build regions are complete. Verification now checks the remaining cleanup work.",
               "highlights": [
@@ -961,16 +961,16 @@
       "label": "4. Verified and Cleanup",
       "stageId": 8,
       "timeRange": [
-        "03:34.0",
-        "04:07.6"
+        "01:40.4",
+        "01:56.2"
       ],
       "events": [
         {
           "groupId": "chunk-verification-start",
-          "time": "03:30.6",
+          "time": "01:38.8",
           "entries": [
             {
-              "time": "03:30.6",
+              "time": "01:38.8",
               "actor": "ProjectManager",
               "action": "Started final verification against the blueprint. The checker is looking for leftover temporary supports and cleanup artifacts.",
               "highlights": [
@@ -984,7 +984,7 @@
               ]
             },
             {
-              "time": "03:31.0",
+              "time": "01:39.0",
               "actor": "Worker-081..088",
               "action": "Worker-081..088 scan their cleanup subplans and hit the same leftover-support sequence, completing the Scaffold Cleaning trace evidence.",
               "highlights": [
@@ -1018,10 +1018,10 @@
         {
           "groupId": "skill-region-cleaning",
           "learningLabel": "Learning a Reusable Skill: Scaffold Cleaning",
-          "time": "03:31.4",
+          "time": "01:39.2",
           "entries": [
             {
-              "time": "03:31.4",
+              "time": "01:39.2",
               "actor": "Foreman-E",
               "action": "Foreman-E summarizes the completed cleanup trace for ProjectManager.",
               "highlights": [
@@ -1035,7 +1035,7 @@
               ]
             },
             {
-              "time": "03:34.0",
+              "time": "01:40.4",
               "actor": "ProjectManager",
               "action": "ProjectManager reviews the repeated cleanup trace and creates Scaffold Cleaning.",
               "highlights": [
@@ -1054,7 +1054,7 @@
               "skillEvent": "skill-detection"
             },
             {
-              "time": "03:36.3",
+              "time": "01:41.5",
               "actor": "ProjectManager",
               "action": "ProjectManager sends Scaffold Cleaning back to Foreman-E.",
               "highlights": [
@@ -1070,7 +1070,7 @@
               "skillEvent": "skill-broadcast"
             },
             {
-              "time": "03:36.7",
+              "time": "01:41.7",
               "actor": "Foreman-E",
               "action": "Foreman-E broadcasts Scaffold Cleaning to workers assigned cleanup subplans.",
               "highlights": [
@@ -1090,7 +1090,7 @@
         },
         {
           "groupId": "chunk-worker-081-100-cleanup",
-          "time": "03:42.6",
+          "time": "01:44.5",
           "batchSummary": {
             "label": "Workers 081-100 assigned work",
             "total": 20,
@@ -1108,7 +1108,7 @@
           },
           "entries": [
             {
-              "time": "03:42.6",
+              "time": "01:44.5",
               "actor": "Foreman-E",
               "action": "Foreman-E assigns one cleanup subplan to each worker in Worker-081..100.",
               "highlights": [
@@ -1127,7 +1127,7 @@
               }
             },
             {
-              "time": "03:45.7",
+              "time": "01:45.9",
               "actor": "Worker-081..087",
               "action": "Used Scaffold Cleaning for leftover support blocks in assigned volumes.",
               "highlights": [
@@ -1150,7 +1150,7 @@
               }
             },
             {
-              "time": "03:49.3",
+              "time": "01:47.6",
               "actor": "Worker-088..094",
               "action": "Used cleaning for temporary supports in assigned volumes, then used replacement on one exposed mismatch.",
               "highlights": [
@@ -1175,7 +1175,7 @@
               }
             },
             {
-              "time": "03:53.4",
+              "time": "01:49.5",
               "actor": "Worker-095..100",
               "action": "Completed the final cleanup subplans and reported every scanned volume as clean.",
               "highlights": [
@@ -1200,10 +1200,10 @@
         },
         {
           "groupId": "chunk-final-verification",
-          "time": "03:55.2",
+          "time": "01:50.4",
           "entries": [
             {
-              "time": "03:55.2",
+              "time": "01:50.4",
               "actor": "ProjectManager",
               "action": "Ran the final blueprint comparison after cleanup and repair work completed.",
               "highlights": [
@@ -1216,7 +1216,7 @@
               ]
             },
             {
-              "time": "03:58.8",
+              "time": "01:52.1",
               "actor": "Foreman-A..E",
               "action": "All foremen confirmed their regions: placement complete, temporary supports removed, replacements verified, cleanup clean.",
               "highlights": [
@@ -1232,7 +1232,7 @@
               ]
             },
             {
-              "time": "04:03.3",
+              "time": "01:54.2",
               "actor": "ProjectManager",
               "action": "Prepared final acceptance using the discovered workflows as the build summary.",
               "highlights": [
@@ -1249,10 +1249,10 @@
         },
         {
           "groupId": "chunk-final-acceptance",
-          "time": "04:06.7",
+          "time": "01:55.8",
           "entries": [
             {
-              "time": "04:06.7",
+              "time": "01:55.8",
               "actor": "ProjectManager",
               "action": "Done. Colosseum has been built, verified, and cleaned up with the discovered workflow chunks.",
               "highlights": [

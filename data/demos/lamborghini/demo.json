@@ -3,7 +3,7 @@
   "pageTitle": "Lamborghini Demo",
   "taskTitle": "Lamborghini with 100 Agents",
   "stylesheet": "data/demos/shared/top-milestone-layout.css",
-  "video": "hls-primer/lamborghini/master.m3u8?v=20260525-ts-hls",
+  "video": "hls-primer/lamborghini/master.m3u8?v=20260527-fmp4-hls",
   "coverImage": "data/demos/lamborghini/cover.png",
   "blockCount": 50400,
   "introImage": "assets/images/architecture.jpg",
@@ -19,63 +19,63 @@
       "label": "Transfer png to blueprint",
       "timeRange": [
         0,
-        20
+        9.143
       ]
     },
     {
       "id": "blueprint-split",
       "label": "Blueprint split",
       "timeRange": [
-        20,
-        32
+        9.143,
+        14.629
       ]
     },
     {
       "id": "regions-build",
       "label": "Build Region",
       "timeRange": [
-        32,
-        222
+        14.629,
+        101.492
       ],
       "segments": [
         {
           "id": "region-a",
           "label": "A",
           "timeRange": [
-            32,
-            222
+            14.629,
+            101.492
           ]
         },
         {
           "id": "region-b",
           "label": "B",
           "timeRange": [
-            32,
-            222
+            14.629,
+            101.492
           ]
         },
         {
           "id": "region-c",
           "label": "C",
           "timeRange": [
-            32,
-            222
+            14.629,
+            101.492
           ]
         },
         {
           "id": "region-d",
           "label": "D",
           "timeRange": [
-            32,
-            222
+            14.629,
+            101.492
           ]
         },
         {
           "id": "region-e",
           "label": "E",
           "timeRange": [
-            32,
-            222
+            14.629,
+            101.492
           ]
         }
       ]
@@ -84,16 +84,16 @@
       "id": "verified-cleanup",
       "label": "Verified and CleanUp",
       "timeRange": [
-        222,
-        237.84
+        101.492,
+        108.733
       ]
     },
     {
       "id": "complete",
       "label": "Complete",
       "timeRange": [
-        237.84,
-        237.84
+        108.733,
+        108.733
       ],
       "noProgress": true
     }
@@ -102,45 +102,45 @@
     {
       "id": "region-placement",
       "label": "Region Construction",
-      "demoSeconds": 38,
+      "demoSeconds": 17.372,
       "skill": "build_region"
     },
     {
       "id": "scaffold-construction",
       "label": "Scaffold Construction",
-      "demoSeconds": 76,
+      "demoSeconds": 34.745,
       "skill": "scaffold"
     },
     {
       "id": "region-replace",
       "label": "Region Replacement",
-      "demoSeconds": 133,
+      "demoSeconds": 60.804,
       "skill": "replace_region"
     },
     {
       "id": "region-clean",
       "label": "Scaffold Cleaning",
-      "demoSeconds": 222,
+      "demoSeconds": 101.492,
       "skill": "clean_region"
     }
   ],
-  "durationSeconds": 237.84,
+  "durationSeconds": 108.733333,
   "skillLearningRanges": {
     "build_region": [
-      37,
-      52
+      16.915,
+      23.773
     ],
     "scaffold": [
-      76,
-      86
+      34.745,
+      39.317
     ],
     "replace_region": [
-      133,
-      148
+      60.804,
+      67.661
     ],
     "clean_region": [
-      222,
-      237.84
+      101.492,
+      108.733
     ]
   }
 }

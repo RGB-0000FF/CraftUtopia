@@ -3,7 +3,7 @@
   "pageTitle": "United States Capitol Demo",
   "taskTitle": "United States Capitol with 100 Agents",
   "stylesheet": "data/demos/shared/top-milestone-layout.css",
-  "video": "hls-primer/united-states-capitol/master.m3u8?v=20260525-ts-hls",
+  "video": "hls-primer/united-states-capitol/master.m3u8?v=20260527-fmp4-hls",
   "coverImage": "data/demos/united-states-capitol/cover.png",
   "blockCount": 256386,
   "introImage": "assets/images/architecture.jpg",
@@ -19,63 +19,63 @@
       "label": "Transfer png to blueprint",
       "timeRange": [
         0,
-        20
+        8.142
       ]
     },
     {
       "id": "blueprint-split",
       "label": "Blueprint split",
       "timeRange": [
-        20,
-        32
+        8.142,
+        13.027
       ]
     },
     {
       "id": "regions-build",
       "label": "Build Region",
       "timeRange": [
-        32,
-        207
+        13.027,
+        84.271
       ],
       "segments": [
         {
           "id": "region-a",
           "label": "A",
           "timeRange": [
-            32,
-            207
+            13.027,
+            84.271
           ]
         },
         {
           "id": "region-b",
           "label": "B",
           "timeRange": [
-            32,
-            207
+            13.027,
+            84.271
           ]
         },
         {
           "id": "region-c",
           "label": "C",
           "timeRange": [
-            32,
-            207
+            13.027,
+            84.271
           ]
         },
         {
           "id": "region-d",
           "label": "D",
           "timeRange": [
-            32,
-            207
+            13.027,
+            84.271
           ]
         },
         {
           "id": "region-e",
           "label": "E",
           "timeRange": [
-            32,
-            207
+            13.027,
+            84.271
           ]
         }
       ]
@@ -84,16 +84,16 @@
       "id": "verified-cleanup",
       "label": "Verified and CleanUp",
       "timeRange": [
-        207,
-        233.6
+        84.271,
+        95.1
       ]
     },
     {
       "id": "complete",
       "label": "Complete",
       "timeRange": [
-        233.6,
-        233.6
+        95.1,
+        95.1
       ],
       "noProgress": true
     }
@@ -102,45 +102,45 @@
     {
       "id": "region-placement",
       "label": "Region Construction",
-      "demoSeconds": 46,
+      "demoSeconds": 18.727,
       "skill": "build_region"
     },
     {
       "id": "scaffold-construction",
       "label": "Scaffold Construction",
-      "demoSeconds": 89,
+      "demoSeconds": 36.232,
       "skill": "scaffold"
     },
     {
       "id": "region-replace",
       "label": "Region Replacement",
-      "demoSeconds": 137,
+      "demoSeconds": 55.774,
       "skill": "replace_region"
     },
     {
       "id": "region-clean",
       "label": "Scaffold Cleaning",
-      "demoSeconds": 207,
+      "demoSeconds": 84.271,
       "skill": "clean_region"
     }
   ],
-  "durationSeconds": 233.6,
+  "durationSeconds": 95.1,
   "skillLearningRanges": {
     "build_region": [
-      45,
-      60
+      18.32,
+      24.426
     ],
     "scaffold": [
-      89,
-      99
+      36.232,
+      40.304
     ],
     "replace_region": [
-      137,
-      152
+      55.774,
+      61.88
     ],
     "clean_region": [
-      207,
-      223
+      84.271,
+      90.785
     ]
   }
 }

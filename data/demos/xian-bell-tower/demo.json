@@ -3,7 +3,7 @@
   "pageTitle": "Xi'an Bell Tower Demo",
   "taskTitle": "Xi'an Bell Tower with 100 Agents",
   "stylesheet": "data/demos/shared/top-milestone-layout.css",
-  "video": "hls-primer/xian-bell-tower/master.m3u8?v=20260525-ts-hls",
+  "video": "hls-primer/xian-bell-tower/master.m3u8?v=20260527-fmp4-hls",
   "coverImage": "data/demos/xian-bell-tower/cover.png",
   "blockCount": 74734,
   "introImage": "assets/images/architecture.jpg",
@@ -19,63 +19,63 @@
       "label": "Transfer png to blueprint",
       "timeRange": [
         0,
-        20
+        9.868
       ]
     },
     {
       "id": "blueprint-split",
       "label": "Blueprint split",
       "timeRange": [
-        20,
-        32
+        9.868,
+        15.789
       ]
     },
     {
       "id": "regions-build",
       "label": "Build Region",
       "timeRange": [
-        32,
-        202
+        15.789,
+        99.666
       ],
       "segments": [
         {
           "id": "region-a",
           "label": "A",
           "timeRange": [
-            32,
-            202
+            15.789,
+            99.666
           ]
         },
         {
           "id": "region-b",
           "label": "B",
           "timeRange": [
-            32,
-            202
+            15.789,
+            99.666
           ]
         },
         {
           "id": "region-c",
           "label": "C",
           "timeRange": [
-            32,
-            202
+            15.789,
+            99.666
           ]
         },
         {
           "id": "region-d",
           "label": "D",
           "timeRange": [
-            32,
-            202
+            15.789,
+            99.666
           ]
         },
         {
           "id": "region-e",
           "label": "E",
           "timeRange": [
-            32,
-            202
+            15.789,
+            99.666
           ]
         }
       ]
@@ -84,16 +84,16 @@
       "id": "verified-cleanup",
       "label": "Verified and CleanUp",
       "timeRange": [
-        202,
-        237.2
+        99.666,
+        117.033
       ]
     },
     {
       "id": "complete",
       "label": "Complete",
       "timeRange": [
-        237.2,
-        237.2
+        117.033,
+        117.033
       ],
       "noProgress": true
     }
@@ -102,45 +102,45 @@
     {
       "id": "region-placement",
       "label": "Region Construction",
-      "demoSeconds": 43,
+      "demoSeconds": 21.216,
       "skill": "build_region"
     },
     {
       "id": "scaffold-construction",
       "label": "Scaffold Construction",
-      "demoSeconds": 98,
+      "demoSeconds": 48.353,
       "skill": "scaffold"
     },
     {
       "id": "region-replace",
       "label": "Region Replacement",
-      "demoSeconds": 148,
+      "demoSeconds": 73.022,
       "skill": "replace_region"
     },
     {
       "id": "region-clean",
       "label": "Scaffold Cleaning",
-      "demoSeconds": 202,
+      "demoSeconds": 99.666,
       "skill": "clean_region"
     }
   ],
-  "durationSeconds": 237.2,
+  "durationSeconds": 117.033334,
   "skillLearningRanges": {
     "build_region": [
-      42,
-      57
+      20.723,
+      28.124
     ],
     "scaffold": [
-      98,
-      108
+      48.353,
+      53.287
     ],
     "replace_region": [
-      148,
-      163
+      73.022,
+      80.423
     ],
     "clean_region": [
-      202,
-      218
+      99.666,
+      107.56
     ]
   }
 }
