@@ -2,7 +2,7 @@
   "id": "demo",
   "pageTitle": "Architecture Overview",
   "taskTitle": "Architecture Overview",
-  "video": "hls-primer/demo/master.m3u8?v=20260527-fmp4-hls",
+  "video": "hls-primer/demo/master.m3u8?v=20260528-source-manual-hls",
   "introImage": "assets/images/architecture.jpg",
   "coverImage": "data/demos/demo/cover.png",
   "videoFit": "contain",

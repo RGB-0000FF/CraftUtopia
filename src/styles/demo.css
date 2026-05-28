@@ -365,7 +365,7 @@ body.is-video-only-locked .demo-video-button {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: clamp(88px, 8.5vw, 134px) minmax(0, 1fr);
+  grid-template-columns: clamp(104px, 9.5vw, 152px) minmax(0, 1fr);
   align-items: center;
   gap: clamp(16px, 1.8vw, 28px);
   min-width: 0;
@@ -382,7 +382,8 @@ body.is-video-only-locked .demo-video-button {
 }
 
 .firsts-claim-card + .firsts-claim-card {
-  border-left: 1px solid rgba(214, 177, 104, 0.22);
+  border-left: 0;
+  padding-left: clamp(32px, 3.8vw, 62px);
 }
 
 .firsts-claim-card + .firsts-claim-card::before {
@@ -391,11 +392,14 @@ body.is-video-only-locked .demo-video-button {
   left: -1px;
   top: 14%;
   bottom: 14%;
+  z-index: 0;
   width: 1px;
   background: linear-gradient(180deg, transparent, rgba(255, 86, 74, 0.46), transparent);
 }
 
 .firsts-rank {
+  position: relative;
+  z-index: 1;
   justify-self: end;
   color: #f1d28f;
   font-family: var(--font-mono);
@@ -409,6 +413,8 @@ body.is-video-only-locked .demo-video-button {
 }
 
 .firsts-claim-card p {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;

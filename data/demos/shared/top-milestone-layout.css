@@ -1,3 +1,11 @@
+body.is-top-milestone-layout .app {
+  --app-pad: clamp(6px, calc(9px * var(--ui-scale)), 11px);
+  --app-resizer-width: 12px;
+  --log-board-min: 360px;
+  --log-board-width: 400px;
+  gap: clamp(6px, calc(8px * var(--ui-scale)), 10px);
+}
+
 body.is-top-milestone-layout .status {
   grid-template-rows: minmax(0, 1fr);
   padding: clamp(8px, calc(12px * var(--ui-scale)), 16px);
@@ -15,21 +23,33 @@ body.is-top-milestone-layout .status::after {
 }
 
 body.is-top-milestone-layout .gif-stage {
+  align-self: center;
+  justify-self: stretch;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  container: video-stage / size;
   border: 0;
   box-shadow: none;
   clip-path: none;
 }
 
 body.is-top-milestone-layout .visual-wrap {
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-content: center;
   gap: clamp(7px, calc(9px * var(--ui-scale)), 12px);
+}
+
+body.is-top-milestone-layout .world-video {
+  object-fit: contain;
+  object-position: center center;
 }
 
 body.is-top-milestone-layout .top-milestone-strip:not(:empty) {
   position: absolute;
-  top: clamp(14px, calc(18px * var(--ui-scale)), 24px);
-  left: clamp(14px, calc(18px * var(--ui-scale)), 24px);
-  right: clamp(14px, calc(18px * var(--ui-scale)), 24px);
+  top: clamp(10px, calc(14px * var(--ui-scale)), 18px);
+  left: clamp(10px, calc(14px * var(--ui-scale)), 18px);
+  right: clamp(10px, calc(14px * var(--ui-scale)), 18px);
   z-index: 9;
   display: flex;
   align-items: stretch;
@@ -78,8 +98,8 @@ body.is-top-milestone-layout .top-milestone-strip::-webkit-scrollbar {
 body.is-top-milestone-layout .blueprint-block-count,
 body.is-top-milestone-layout .app.is-video-only .blueprint-block-count {
   top: auto;
-  right: clamp(18px, calc(26px * var(--ui-scale)), 32px);
-  bottom: clamp(18px, calc(26px * var(--ui-scale)), 32px);
+  right: clamp(14px, calc(18px * var(--ui-scale)), 22px);
+  bottom: clamp(14px, calc(18px * var(--ui-scale)), 22px);
   z-index: 8;
   justify-items: end;
   padding: 0;
@@ -97,6 +117,26 @@ body.is-top-milestone-layout .blueprint-block-count span {
 
 body.is-top-milestone-layout .blueprint-block-count strong {
   font-size: clamp(0.82rem, calc(1rem * var(--ui-scale)), 1.16rem);
+}
+
+body.is-top-milestone-layout .blueprint-cover-card,
+body.is-top-milestone-layout .app.is-video-only .blueprint-cover-card {
+  left: clamp(14px, calc(18px * var(--ui-scale)), 22px);
+  bottom: clamp(14px, calc(18px * var(--ui-scale)), 22px);
+  z-index: 8;
+  width: clamp(92px, calc(120px * var(--ui-scale)), 138px);
+  max-height: clamp(72px, calc(92px * var(--ui-scale)), 110px);
+}
+
+body.is-top-milestone-layout .blueprint-cover-card.is-expanded,
+body.is-top-milestone-layout .app.is-video-only .blueprint-cover-card.is-expanded {
+  width: clamp(210px, calc(260px * var(--ui-scale)), 310px);
+  max-height: clamp(164px, calc(210px * var(--ui-scale)), 260px);
+}
+
+body.is-top-milestone-layout .cover-card-label {
+  bottom: 0;
+  transform: translate(-2px, 2px);
 }
 
 body.is-top-milestone-layout .terminal-console,
@@ -198,6 +238,141 @@ body.is-top-milestone-layout .console-log .chat-feed {
 
 body.is-top-milestone-layout .skill-notification-stack {
   padding-inline: 16px;
+}
+
+body.is-top-milestone-layout .visual-wrap .skill-notification-stack {
+  top: clamp(54px, calc(66px * var(--ui-scale)), 82px);
+  left: clamp(12px, calc(16px * var(--ui-scale)), 20px);
+  width: clamp(76px, calc(92px * var(--ui-scale)), 104px);
+  max-height: calc(100% - clamp(150px, 30%, 210px));
+  gap: clamp(6px, calc(8px * var(--ui-scale)), 10px);
+  padding: clamp(8px, calc(10px * var(--ui-scale)), 12px) clamp(7px, calc(9px * var(--ui-scale)), 10px);
+}
+
+body.is-top-milestone-layout .visual-wrap .skill-notification-stack::before {
+  font-size: clamp(0.58rem, calc(0.68rem * var(--ui-scale)), 0.77rem);
+  line-height: 1.08;
+}
+
+body.is-top-milestone-layout .visual-wrap .skill-notification {
+  width: clamp(58px, calc(68px * var(--ui-scale)), 78px);
+  height: clamp(42px, calc(48px * var(--ui-scale)), 54px);
+  min-width: clamp(58px, calc(68px * var(--ui-scale)), 78px);
+  min-height: clamp(42px, calc(48px * var(--ui-scale)), 54px);
+  padding: 5px 6px 5px 10px;
+}
+
+body.is-top-milestone-layout .visual-wrap .skill-notification-icon {
+  width: clamp(42px, calc(50px * var(--ui-scale)), 58px);
+  height: clamp(30px, calc(36px * var(--ui-scale)), 42px);
+}
+
+@container video-stage (max-height: 560px) {
+  .top-milestone-strip:not(:empty) {
+    top: 9px;
+    left: 9px;
+    right: 9px;
+    gap: 5px;
+  }
+
+  .top-milestone-item {
+    min-height: 22px;
+    padding: 3px 7px;
+    font-size: 0.58rem;
+  }
+
+  .top-milestone-segments {
+    gap: 3px;
+  }
+
+  .top-milestone-segment {
+    min-width: 22px;
+    padding: 3px 5px;
+  }
+
+  .visual-wrap .skill-notification-stack {
+    top: 50px;
+    left: 10px;
+    width: 78px;
+    max-height: calc(100% - 138px);
+    gap: 6px;
+    padding: 8px 6px 9px;
+  }
+
+  .visual-wrap .skill-notification-stack::before {
+    font-size: 0.58rem;
+  }
+
+  .visual-wrap .skill-notification {
+    width: 60px;
+    height: 42px;
+    min-width: 60px;
+    min-height: 42px;
+    padding: 4px 5px 4px 9px;
+  }
+
+  .visual-wrap .skill-notification-icon {
+    width: 44px;
+    height: 32px;
+  }
+
+  .blueprint-cover-card,
+  .app.is-video-only .blueprint-cover-card {
+    left: 12px;
+    bottom: 12px;
+    width: 100px;
+    max-height: 78px;
+  }
+
+  .blueprint-block-count,
+  .app.is-video-only .blueprint-block-count {
+    right: 12px;
+    bottom: 12px;
+  }
+}
+
+@container video-stage (max-height: 440px) {
+  .top-milestone-strip:not(:empty) {
+    top: 7px;
+    left: 7px;
+    right: 7px;
+  }
+
+  .top-milestone-item {
+    min-height: 20px;
+    padding: 2px 6px;
+    font-size: 0.52rem;
+  }
+
+  .visual-wrap .skill-notification-stack {
+    top: 42px;
+    width: 68px;
+    max-height: calc(100% - 116px);
+    gap: 5px;
+    padding: 7px 5px;
+  }
+
+  .visual-wrap .skill-notification-stack::before {
+    font-size: 0.52rem;
+  }
+
+  .visual-wrap .skill-notification {
+    width: 52px;
+    height: 36px;
+    min-width: 52px;
+    min-height: 36px;
+  }
+
+  .visual-wrap .skill-notification-icon {
+    width: 38px;
+    height: 28px;
+  }
+
+  .blueprint-cover-card,
+  .app.is-video-only .blueprint-cover-card {
+    width: 84px;
+    max-height: 66px;
+  }
 }
 
 body.is-top-milestone-layout .terminal-log-line,
@@ -308,6 +483,42 @@ body.is-top-milestone-layout .structured-sublines {
 
 body.is-top-milestone-layout .structured-action {
   color: rgba(222,245,228,0.80);
+}
+
+body.is-top-milestone-layout .structured-subline.is-skill {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  padding: 8px 10px 9px;
+}
+
+body.is-top-milestone-layout .structured-subline.is-skill.has-icon {
+  grid-template-columns: none;
+}
+
+body.is-top-milestone-layout .structured-subline.is-skill .structured-subline-arrow {
+  display: none;
+}
+
+body.is-top-milestone-layout .structured-subline.is-skill .structured-subline-prefix {
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 2px 8px;
+  font-size: 0.78em;
+  justify-self: start;
+}
+
+body.is-top-milestone-layout .structured-subline.is-skill .structured-subline-icon {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 24px;
+  justify-self: start;
+}
+
+body.is-top-milestone-layout .structured-subline.is-skill .structured-subline-body {
+  flex: 1 1 100%;
+  line-height: 1.25;
 }
 
 body.is-top-milestone-layout .structured-subline-body {

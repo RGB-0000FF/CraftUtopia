@@ -3,7 +3,7 @@
   "pageTitle": "Sydney Opera House Demo",
   "taskTitle": "Sydney Opera House with 100 Agents",
   "stylesheet": "data/demos/shared/top-milestone-layout.css",
-  "video": "hls-primer/sydney-opera-house/master.m3u8?v=20260525-ts-hls",
+  "video": "hls-primer/sydney-opera-house/master.m3u8?v=20260528-source527-xini-jinzita-hls",
   "coverImage": "data/demos/sydney-opera-house/cover.png",
   "blockCount": 95151,
   "introImage": "assets/images/architecture.jpg",
@@ -85,15 +85,15 @@
       "label": "Verified and CleanUp",
       "timeRange": [
         185,
-        259.48
+        259.433333
       ]
     },
     {
       "id": "complete",
       "label": "Complete",
       "timeRange": [
-        259.48,
-        259.48
+        259.433333,
+        259.433333
       ],
       "noProgress": true
     }
@@ -126,7 +126,7 @@
   ],
   "skillLearningRanges": {
     "build_region": [
-      38,
+      39,
       53
     ],
     "scaffold": [
@@ -139,8 +139,8 @@
     ],
     "clean_region": [
       185,
-      201
+      203
     ]
   },
-  "durationSeconds": 259.48
+  "durationSeconds": 259.433333
 }

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preload" as="image" href="assets/ui/craftutopia-logo-tight-260.png">
-  <link rel="stylesheet" href="src/styles/demo.css?v=20260527-firsts-banner-v12">
+  <link rel="stylesheet" href="src/styles/demo.css?v=20260528-firsts-minecraft-v1">
   <link rel="stylesheet" id="demo-profile-stylesheet" disabled>
 </head>
 <body>
@@ -33,6 +33,7 @@
         <p>
           <span>Project that transforms 2D images into</span>
           <em>3D buildings</em>
+          <small>in Minecraft</small>
         </p>
       </div>
     </section>
@@ -47,10 +48,10 @@
       </header>
 
       <div class="visual-wrap">
-        <section class="top-milestone-strip" id="top-milestone-strip" aria-label="Build milestones"></section>
-        <div class="skill-notification-stack" id="skill-notification-stack" aria-label="Skill library" aria-live="polite" hidden></div>
         <div class="gif-stage" aria-label="Minecraft replay preview" tabindex="0">
           <video class="world-video" muted playsinline preload="auto" aria-label="Minecraft build replay"></video>
+          <section class="top-milestone-strip" id="top-milestone-strip" aria-label="Build milestones"></section>
+          <div class="skill-notification-stack" id="skill-notification-stack" aria-label="Skill library" aria-live="polite" hidden></div>
           <div class="timeline-intro is-visible" id="timeline-intro" aria-hidden="true">
             <img src="assets/images/architecture.jpg" alt="">
           </div>
@@ -58,6 +59,13 @@
             <span>Blocks</span>
             <strong id="blueprint-block-count-value">95,151</strong>
           </div>
+          <button class="blueprint-cover-card" id="blueprint-cover-toggle" type="button" aria-label="Expand blueprint cover preview" aria-expanded="false">
+            <img id="blueprint-cover-image" src="assets/images/stage-preview.jpg" alt="Blueprint cover preview">
+            <span class="cover-card-label">
+              <i class="cover-card-icon cover-card-icon-zoom-in" data-lucide="zoom-in" aria-hidden="true"></i>
+              <i class="cover-card-icon cover-card-icon-zoom-out" data-lucide="zoom-out" aria-hidden="true"></i>
+            </span>
+          </button>
         </div>
         <div class="build-timeline" role="slider" tabindex="0" aria-label="Elapsed build timeline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="00:00.0">
           <div class="timeline-control-slot" id="timeline-control-slot" aria-label="Playback controls"></div>
@@ -70,17 +78,10 @@
             <input id="timeline-scrubber" class="timeline-scrubber" type="range" min="0" max="1000" step="1" value="0" aria-label="Scrub build timeline">
           </div>
         </div>
-        <button class="blueprint-cover-card" id="blueprint-cover-toggle" type="button" aria-label="Expand blueprint cover preview" aria-expanded="false">
-          <img id="blueprint-cover-image" src="assets/images/stage-preview.jpg" alt="Blueprint cover preview">
-          <span class="cover-card-label">
-            <i class="cover-card-icon cover-card-icon-zoom-in" data-lucide="zoom-in" aria-hidden="true"></i>
-            <i class="cover-card-icon cover-card-icon-zoom-out" data-lucide="zoom-out" aria-hidden="true"></i>
-          </span>
-        </button>
       </div>
     </section>
 
-    <div class="app-resizer" id="app-resizer" role="separator" tabindex="0" aria-label="Resize terminal console" aria-orientation="vertical" aria-valuemin="420" aria-valuemax="720" aria-valuenow="560"></div>
+    <div class="app-resizer" id="app-resizer" role="separator" tabindex="0" aria-label="Resize terminal console" aria-orientation="vertical" aria-valuemin="360" aria-valuemax="720" aria-valuenow="560"></div>
 
     <div class="right-rail">
       <aside class="log-board" aria-label="Terminal task console">
@@ -157,11 +158,11 @@
   <script src="https://unpkg.com/lucide@1.16.0/dist/umd/lucide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.16/dist/hls.min.js"></script>
   <script src="src/js/hls-preload.js?v=20260526-block-counts"></script>
-  <script src="src/js/demo-config.js?v=20260527-skill-library-v3"></script>
+  <script src="src/js/demo-config.js?v=20260528-scaffold-no-remove-support"></script>
   <script src="src/js/demo-utils.js?v=20260527-skill-library-v3"></script>
-  <script src="src/js/demo-render.js?v=20260527-skill-library-v3"></script>
-  <script src="src/js/demo-playback.js?v=20260527-skill-library-v3"></script>
-  <script src="src/js/demo-data.js?v=20260527-fmp4-hls-v19"></script>
+  <script src="src/js/demo-render.js?v=20260528-skill-stack-stable"></script>
+  <script src="src/js/demo-playback.js?v=20260527-high-speed-clock"></script>
+  <script src="src/js/demo-data.js?v=20260528-scaffold-no-remove-support"></script>
   <script src="src/js/demo-events.js?v=20260527-skill-library-v3"></script>
 </body>
 </html>

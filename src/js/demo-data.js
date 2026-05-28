@@ -271,11 +271,18 @@ const HLS_PLAYBACK_CONFIG = {
   maxMaxBufferLength: 90,
   backBufferLength: 30
 };
-const DATA_ASSET_VERSION = '20260527-fmp4-hls-v19';
+const DATA_ASSET_VERSION = '20260528-scaffold-no-remove-support';
 let runEventsManifestPath = '';
 const DEFAULT_DEMO_ID = 'sydney-opera-house';
 let hlsPreloadThrottleBound = false;
 const LEARNING_RANGE_ENTRY_FRACTIONS = [0, 0.72, 0.92, 1];
+
+function getTopMilestoneLogBoardWidth() {
+  const viewportWidth = Number(window.innerWidth) || 0;
+  if (viewportWidth >= 1800) return 460;
+  if (viewportWidth >= 1440) return 420;
+  return 380;
+}
 
 function getRequestedDemoParam() {
   const params = new URLSearchParams(window.location.search);
@@ -424,6 +431,7 @@ function applyDemoProfile(profile = {}) {
   const useTimelinePlaybackControls = Boolean(profile.topMilestoneMode || profile.videoOnly);
   document.body.classList.toggle('is-top-milestone-layout', Boolean(profile.topMilestoneMode));
   document.body.classList.toggle('is-timeline-playback-controls', useTimelinePlaybackControls);
+  if (profile.topMilestoneMode) setLogBoardWidth(getTopMilestoneLogBoardWidth());
   positionPlaybackControls(useTimelinePlaybackControls);
   topMilestoneRenderKey = '';
   renderTopMilestones(stages[0]?.id ?? 0);

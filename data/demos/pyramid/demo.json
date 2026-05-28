@@ -3,7 +3,7 @@
   "pageTitle": "Pyramid Demo",
   "taskTitle": "Pyramid with 100 Agents",
   "stylesheet": "data/demos/shared/top-milestone-layout.css",
-  "video": "hls-primer/pyramid/master.m3u8?v=20260525-ts-hls",
+  "video": "hls-primer/pyramid/master.m3u8?v=20260528-source527-xini-jinzita-hls",
   "coverImage": "data/demos/pyramid/cover.png",
   "blockCount": 85320,
   "introImage": "assets/images/architecture.jpg",
@@ -35,7 +35,7 @@
       "label": "Build Region",
       "timeRange": [
         32,
-        239.6
+        239.866667
       ],
       "segments": [
         {
@@ -43,7 +43,7 @@
           "label": "A",
           "timeRange": [
             32,
-            239.6
+            239.866667
           ]
         },
         {
@@ -51,7 +51,7 @@
           "label": "B",
           "timeRange": [
             32,
-            239.6
+            239.866667
           ]
         },
         {
@@ -59,7 +59,7 @@
           "label": "C",
           "timeRange": [
             32,
-            239.6
+            239.866667
           ]
         },
         {
@@ -67,7 +67,7 @@
           "label": "D",
           "timeRange": [
             32,
-            239.6
+            239.866667
           ]
         },
         {
@@ -75,7 +75,7 @@
           "label": "E",
           "timeRange": [
             32,
-            239.6
+            239.866667
           ]
         }
       ]
@@ -84,16 +84,16 @@
       "id": "verified-cleanup",
       "label": "Verified and CleanUp",
       "timeRange": [
-        239.6,
-        239.6
+        239.866667,
+        239.866667
       ]
     },
     {
       "id": "complete",
       "label": "Complete",
       "timeRange": [
-        239.6,
-        239.6
+        239.866667,
+        239.866667
       ],
       "noProgress": true
     }
@@ -106,11 +106,11 @@
       "skill": "build_region"
     }
   ],
-  "durationSeconds": 239.6,
+  "durationSeconds": 239.866667,
   "skillLearningRanges": {
     "build_region": [
-      49,
-      64
+      50,
+      70
     ]
   }
 }

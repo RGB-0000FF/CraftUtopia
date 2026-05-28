@@ -127,6 +127,10 @@ function getVideoDemoSeconds() {
   return clamp(introArchitectureSeconds + videoSeconds, 0, getPresentationTotalSeconds());
 }
 
+function shouldUseVideoAsTimelineClock() {
+  return playbackSpeed <= VIDEO_CLOCK_MAX_PLAYBACK_SPEED;
+}
+
 function getInternalAutoDemoSeconds(now = performance.now()) {
   const elapsed = Math.min(Math.max((now - autoPlayClockStartedAt) / 1000, 0), 0.16) * playbackSpeed;
   return clamp(autoPlayClockStartSeconds + elapsed, 0, getPresentationTotalSeconds());
@@ -135,7 +139,7 @@ function getInternalAutoDemoSeconds(now = performance.now()) {
 function getCurrentAutoDemoSeconds(now = performance.now()) {
   if (!isAutoPlaying) return getDemoSecondsForEventCount(playbackCursor);
   const internalSeconds = getInternalAutoDemoSeconds(now);
-  if (isVideoClockRange(internalSeconds) || isVideoClockRange(autoPlayClockStartSeconds)) {
+  if (shouldUseVideoAsTimelineClock() && (isVideoClockRange(internalSeconds) || isVideoClockRange(autoPlayClockStartSeconds))) {
     if (performance.now() < videoSyncBlockedUntil) return internalSeconds;
     const videoSeconds = getVideoDemoSeconds();
     if (videoSeconds !== null) return videoSeconds;
@@ -153,6 +157,7 @@ function shouldGateTimelineForVideo(demoSeconds = getDemoSecondsForEventCount(pl
     && isAutoPlaying
     && !isKeyframeHolding
     && !isScrubbingTimeline
+    && shouldUseVideoAsTimelineClock()
     && isVideoClockRange(Number(demoSeconds) || 0)
     && playbackCursor < playbackEvents.length;
 }
@@ -991,6 +996,8 @@ function setPlaybackSpeed(nextSpeed) {
     Math.abs(speed - nextSpeed) < Math.abs(best - nextSpeed) ? speed : best
   ), PLAYBACK_SPEED_STEPS[0]);
   playbackSpeed = closest;
+  highSpeedVideoResyncAt = 0;
+  if (!shouldUseVideoAsTimelineClock()) clearVideoWaitState();
   if (worldVideo) worldVideo.playbackRate = playbackSpeed;
   updatePlaybackControls();
   if (isAutoPlaying && !isKeyframeHolding) startAutoPlayLoop(currentSeconds);
@@ -1137,6 +1144,12 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
   const clampedVideoTime = clamp(targetVideoTime, 0, duration);
   const isVideoTargetComplete = !isIntro && duration > 0 && clampedVideoTime >= duration - 0.08;
   const shouldSeek = !options.noSeek && (options.force || !isAutoPlaying || isKeyframeHolding || isIntro);
+  const shouldResyncHighSpeedVideo = isAutoPlaying
+    && !options.force
+    && !isIntro
+    && !isKeyframeHolding
+    && !isVideoTargetComplete
+    && !shouldUseVideoAsTimelineClock();
   try {
     if (options.force && !options.noSeek && !isAutoPlaying && clampedVideoTime <= 0.05) {
       worldVideo.pause();
@@ -1150,6 +1163,20 @@ function updateVideoForDemoSeconds(seconds = 0, options = {}) {
         worldVideo.currentTime = clampedVideoTime;
       } catch (seekError) {
         worldVideo.fastSeek?.(clampedVideoTime);
+      }
+    } else if (shouldResyncHighSpeedVideo) {
+      const now = performance.now();
+      const driftSeconds = Math.abs((worldVideo.currentTime || 0) - clampedVideoTime);
+      if (
+        driftSeconds > HIGH_SPEED_VIDEO_RESYNC_DRIFT_SECONDS
+        && now - highSpeedVideoResyncAt > HIGH_SPEED_VIDEO_RESYNC_INTERVAL_MS
+      ) {
+        highSpeedVideoResyncAt = now;
+        try {
+          worldVideo.currentTime = clampedVideoTime;
+        } catch (seekError) {
+          worldVideo.fastSeek?.(clampedVideoTime);
+        }
       }
     }
   } catch (error) {

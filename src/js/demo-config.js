@@ -4,7 +4,10 @@ const AUTO_PLAY_MIN_DELAY = 1000;
 const AUTO_PLAY_MAX_DELAY = 1000;
 const AUTO_PLAY_MS_PER_WORD = 22;
 const KEYFRAME_HOLD_MS = 5000;
-const PLAYBACK_SPEED_STEPS = [0.5, 1, 1.5, 2, 4];
+const PLAYBACK_SPEED_STEPS = [0.5, 1, 1.5, 2, 4, 8, 16];
+const VIDEO_CLOCK_MAX_PLAYBACK_SPEED = 4;
+const HIGH_SPEED_VIDEO_RESYNC_INTERVAL_MS = 450;
+const HIGH_SPEED_VIDEO_RESYNC_DRIFT_SECONDS = 1.4;
 const DESIGN_WIDTH = 1440;
 const DESIGN_HEIGHT = 900;
 const COMPACT_BREAKPOINT = 980;
@@ -50,6 +53,7 @@ let topMilestoneRenderKey = '';
 let focusedSkillRef = '';
 let skillState = new Map();
 let skillSurfaceTimelineKey = '';
+let skillNotificationRenderKey = null;
 let mentionRegex = null;
 let isScrubbingTimeline = false;
 let isTimelineScrubberActive = false;
@@ -61,6 +65,7 @@ let suppressNextTimelineClick = false;
 let shouldResumeAfterTimelineSeek = false;
 let isTimelineWaitingForVideo = false;
 let videoSyncBlockedUntil = 0;
+let highSpeedVideoResyncAt = 0;
 let videoWaitPauseTimer = null;
 let videoWaitResumeTimer = null;
 let isVideoOnlyMode = false;
@@ -98,11 +103,11 @@ const SKILL_REGISTRY = {
       source: 'Worker-045',
       note: 'Same tools trace repeats across mismatch repair subplans.',
       steps: [
-        'Read Subplan: Load the target block list for the repair area.',
-        'Scan Region: Compare placed blocks with the blueprint target.',
-        'Remove Wrong Blocks: Clear blocks that do not match the target.',
-        'Place Missing Blocks: Restore the required blocks.',
-        'Verify Region: Confirm the repaired region matches the blueprint.'
+        'Read Block Map: Load the existing blocks for the repair area.',
+        'Compare Blueprint: Compare placed blocks with the blueprint target.',
+        'Remove Wrong Block: Clear blocks that do not match the target.',
+        'Place Correct Block: Restore the required blocks.',
+        'Verify Coordinates: Confirm the repaired region matches the blueprint.'
       ]
     }
   },
@@ -119,9 +124,10 @@ const SKILL_REGISTRY = {
       note: 'Same tools trace repeats across elevated access subplans.',
       steps: [
         'Read Subplan: Load the elevated target area.',
-        'Check Access: Detect that the target is out of normal reach.',
+        'Check Height: Detect that the target is out of normal reach.',
         'Place Temporary Support: Build a support path to the target.',
-        'Reach Target: Move onto the temporary support.'
+        'Reach Target: Move onto the temporary support.',
+        'Place Blocks: Place the elevated target blocks.'
       ]
     }
   },
@@ -138,10 +144,10 @@ const SKILL_REGISTRY = {
       source: 'Worker-083',
       note: 'Same tools trace repeats across final cleanup subplans.',
       steps: [
-        'Read Cleanup Subplan: Load the scan volume for CL-03.',
-        'Scan Region: Find leftover scaffold or stray blocks.',
-        'Validate Blueprint: Keep blocks that belong to the final build.',
-        'Remove Leftovers: Clear only non-blueprint blocks.',
+        'Scan Volume: Load the scan volume for CL-03.',
+        'Find Leftover Support: Locate leftover scaffold or temporary blocks.',
+        'Remove Support Block: Clear only non-blueprint support blocks.',
+        'Recheck Volume: Confirm no valid build blocks were removed.',
         'Report Clean: Submit the cleaned volume to the foreman.'
       ]
     }
@@ -151,7 +157,7 @@ const SKILL_REGISTRY = {
 const appShell = document.querySelector('.app');
 const appResizer = document.querySelector('#app-resizer');
 const logBoard = document.querySelector('.log-board');
-const LOG_BOARD_MIN_WIDTH = 420;
+const LOG_BOARD_MIN_WIDTH = 360;
 const LOG_BOARD_MAX_WIDTH = 720;
 const STATUS_MIN_WIDTH = 360;
 const roomList = document.querySelector('#room-list');

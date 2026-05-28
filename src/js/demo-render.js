@@ -539,6 +539,7 @@ function appendStructuredLogEntry(node, event, options = {}) {
         prefix.className = 'structured-subline-prefix';
         prefix.textContent = 'SKILL';
         const cleanSkillLine = cleanToolLanguageForDisplay(line)
+          .replace(/^Use Skill:\s*/i, '')
           .replace(/\bLearned\s+(Region Construction|Scaffold Construction|Region Replacement|Scaffold Cleaning)\b/gi, '$1');
         body.replaceChildren();
         appendHighlightedText(body, cleanSkillLine, getStructuredLineHighlights(cleanSkillLine, log.highlights));
@@ -614,6 +615,7 @@ function ensureSkillState(skillRef = '') {
 function resetSkillState() {
   skillState = new Map();
   skillSurfaceTimelineKey = '';
+  skillNotificationRenderKey = null;
   Object.keys(SKILL_REGISTRY).forEach(ensureSkillState);
   focusedSkillRef = Object.keys(SKILL_REGISTRY)[0] || '';
   renderSkillLibrary();
@@ -897,13 +899,42 @@ function updateSkillLibraryTimelineVisibility(seconds = currentDemoSeconds) {
   return isAllowed;
 }
 
+function getSkillNotificationRenderKey(visibleSkills = []) {
+  return visibleSkills
+    .map((skill) => [
+      skill.ref,
+      skill.learned ? 1 : 0,
+      skill.published ? 1 : 0,
+      skill.learnedRoom || skill.learnedLabel || '',
+      skill.traceTotal || 0
+    ].join(':'))
+    .join('|');
+}
+
+function updateSkillNotificationActiveState(activeRef = focusedSkillRef) {
+  if (!skillNotificationStack) return;
+  skillNotificationStack.querySelectorAll('.skill-notification').forEach((item) => {
+    item.classList.toggle('is-current', item.dataset.skillRef === activeRef);
+  });
+}
+
 function renderSkillNotifications(activeRef = focusedSkillRef, seconds = currentDemoSeconds) {
   if (!skillNotificationStack) return;
   if (!updateSkillLibraryTimelineVisibility(seconds)) {
     skillNotificationStack.replaceChildren();
+    skillNotificationRenderKey = '';
     return;
   }
   const visibleSkills = getUnlockedSkillStates(seconds);
+  const nextKey = getSkillNotificationRenderKey(visibleSkills);
+
+  if (skillNotificationRenderKey === nextKey) {
+    skillNotificationStack.hidden = visibleSkills.length === 0;
+    updateSkillNotificationActiveState(activeRef);
+    return;
+  }
+
+  skillNotificationRenderKey = nextKey;
 
   skillNotificationStack.replaceChildren();
   skillNotificationStack.hidden = visibleSkills.length === 0;
@@ -931,6 +962,7 @@ function renderSkillNotifications(activeRef = focusedSkillRef, seconds = current
     `;
     skillNotificationStack.append(item);
   });
+  updateSkillNotificationActiveState(activeRef);
 }
 
 function accessoryMarkup(kind, trim, dark) {
