@@ -133,8 +133,20 @@ playbackJump?.addEventListener('click', jumpPlaybackToInput);
 playbackStep?.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') jumpPlaybackToInput();
 });
+
+function shouldIgnoreGlobalPlaybackShortcut(target) {
+  if (!(target instanceof Element)) return false;
+  if (target.closest('button, textarea, select, [contenteditable="true"]')) return true;
+  const input = target.closest('input');
+  return Boolean(input && input.type !== 'range');
+}
+
 window.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') closeFrameworkLightbox();
+  if (event.code !== 'Space' || event.repeat) return;
+  if (shouldIgnoreGlobalPlaybackShortcut(event.target)) return;
+  event.preventDefault();
+  toggleAutoPlay();
 });
 
 updateUiScale();
