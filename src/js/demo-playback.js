@@ -637,7 +637,7 @@ function renderTopMilestones(currentStageId = stages[0]?.id ?? 0, currentSeconds
     : getDemoSecondsForEventCount(playbackCursor);
   const finalMilestoneRange = milestones.length ? getTopMilestoneSecondsRange(milestones.at(-1)) : null;
   const isComplete = (total > 0 && playbackCursor >= total)
-    || (finalMilestoneRange && currentSeconds >= finalMilestoneRange.start);
+    || (finalMilestoneRange && currentSeconds >= finalMilestoneRange.end);
   const currentId = Number(currentStageId);
   const visibleMilestones = milestones.filter((node) => {
     const range = getTopMilestoneSecondsRange(node);

@@ -82,20 +82,11 @@
     },
     {
       "id": "verified-cleanup",
-      "label": "Verified and CleanUp",
+      "label": "Clean Up and Verified",
       "timeRange": [
         221.5,
         237.7
       ]
-    },
-    {
-      "id": "complete",
-      "label": "Complete",
-      "timeRange": [
-        237.7,
-        237.7
-      ],
-      "noProgress": true
     }
   ],
   "timelineKeyframes": [
