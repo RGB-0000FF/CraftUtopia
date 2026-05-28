@@ -1,5 +1,5 @@
 {
-  "version": "pyramid-20260528-source527-xini-jinzita-log-sync-trace-details-worker-traces",
+  "version": "pyramid-20260528-stagger-duplicate-timestamps",
   "title": "Pyramid with 100 Agents",
   "intro": "BOOT runtime started · Pyramid with 100 Agents · concise worker log aligned to updated video timestamps",
   "milestones": [
@@ -449,10 +449,10 @@
             ],
             "unit": "work items"
           },
-          "time": "03:59.6",
+          "time": "03:59.2",
           "entries": [
             {
-              "time": "03:59.6",
+              "time": "03:59.2",
               "actor": "Foreman-E",
               "action": "Assign Workers 081-100.",
               "highlights": [
@@ -465,7 +465,7 @@
               }
             },
             {
-              "time": "03:59.6",
+              "time": "03:59.4",
               "actor": "Worker-081..100",
               "action": "Finish final layers with Region Construction.",
               "highlights": [
@@ -498,7 +498,7 @@
               ]
             },
             {
-              "time": "03:59.6",
+              "time": "03:59.8",
               "actor": "Foreman-A..E",
               "action": "Regions accepted; layers aligned.",
               "highlights": [

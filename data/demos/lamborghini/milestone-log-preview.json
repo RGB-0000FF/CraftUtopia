@@ -1,5 +1,5 @@
 {
-  "version": "lamborghini-20260528-sydney-concise-log-sync-trace-details-worker-traces-no-remove-support",
+  "version": "lamborghini-20260528-first-trace-before-learning-staggered",
   "title": "Lamborghini with 100 Agents",
   "intro": "BOOT runtime started · Lamborghini with 100 Agents · concise worker log aligned to skill timestamps",
   "milestones": [
@@ -179,10 +179,10 @@
             ],
             "unit": "work items"
           },
-          "time": "00:39.5",
+          "time": "00:35.0",
           "entries": [
             {
-              "time": "00:39.5",
+              "time": "00:35.0",
               "actor": "Foreman-A",
               "action": "Assign Workers 001-020.",
               "highlights": [
@@ -200,7 +200,7 @@
               }
             },
             {
-              "time": "00:41.0",
+              "time": "00:37.2",
               "actor": "Worker-001..020",
               "action": "Complete first placement batch and leave Region Construction trace.",
               "highlights": [
@@ -883,10 +883,10 @@
       "events": [
         {
           "groupId": "chunk-verification-start",
-          "time": "03:41.5",
+          "time": "03:40.7",
           "entries": [
             {
-              "time": "03:41.5",
+              "time": "03:40.7",
               "actor": "ProjectManager",
               "action": "Run final verification and cleanup checks.",
               "highlights": [
@@ -899,7 +899,7 @@
               ]
             },
             {
-              "time": "03:41.5",
+              "time": "03:41.2",
               "actor": "Worker-081..088",
               "action": "Complete Scaffold Cleaning trace.",
               "highlights": [
@@ -1017,10 +1017,10 @@
             ],
             "unit": "work items"
           },
-          "time": "03:57.0",
+          "time": "03:57.1",
           "entries": [
             {
-              "time": "03:57.0",
+              "time": "03:57.1",
               "actor": "Foreman-E",
               "action": "Assign Workers 081-100 cleanup.",
               "highlights": [
@@ -1033,7 +1033,7 @@
               }
             },
             {
-              "time": "03:57.1",
+              "time": "03:57.2",
               "actor": "Worker-081..087",
               "action": "Reuse Scaffold Cleaning.",
               "highlights": [
@@ -1047,7 +1047,7 @@
               }
             },
             {
-              "time": "03:57.2",
+              "time": "03:57.3",
               "actor": "Worker-088..094",
               "action": "Reuse Scaffold Cleaning and Region Replacement.",
               "highlights": [
@@ -1061,7 +1061,7 @@
               }
             },
             {
-              "time": "03:57.3",
+              "time": "03:57.4",
               "actor": "Worker-095..100",
               "action": "Finish cleanup; all volumes clean.",
               "highlights": [
@@ -1077,10 +1077,10 @@
         },
         {
           "groupId": "chunk-final-verification",
-          "time": "03:57.4",
+          "time": "03:57.5",
           "entries": [
             {
-              "time": "03:57.4",
+              "time": "03:57.5",
               "actor": "ProjectManager",
               "action": "Run final blueprint comparison.",
               "highlights": [
@@ -1093,7 +1093,7 @@
               ]
             },
             {
-              "time": "03:57.5",
+              "time": "03:57.6",
               "actor": "Foreman-A..E",
               "action": "Regions accepted: placement, support, replacement, cleanup.",
               "highlights": [
@@ -1106,7 +1106,7 @@
               ]
             },
             {
-              "time": "03:57.6",
+              "time": "03:57.65",
               "actor": "ProjectManager",
               "action": "Prepare final acceptance.",
               "highlights": [

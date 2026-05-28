@@ -1,5 +1,5 @@
 {
-  "version": "taj-mahal-20260528-sydney-concise-log-sync-trace-details-worker-traces-no-remove-support",
+  "version": "taj-mahal-20260528-stagger-duplicate-timestamps",
   "title": "Taj Mahal with 100 Agents",
   "intro": "BOOT runtime started · Taj Mahal with 100 Agents · concise worker log aligned to skill timestamps",
   "milestones": [
@@ -883,10 +883,10 @@
       "events": [
         {
           "groupId": "chunk-verification-start",
-          "time": "02:43.0",
+          "time": "02:42.6",
           "entries": [
             {
-              "time": "02:43.0",
+              "time": "02:42.6",
               "actor": "ProjectManager",
               "action": "Run final verification and cleanup checks.",
               "highlights": [

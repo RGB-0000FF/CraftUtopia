@@ -1,5 +1,5 @@
 {
-  "version": "sydney-opera-house-20260528-source527-xini-jinzita-log-sync-trace-details-worker-traces-no-remove-support",
+  "version": "sydney-opera-house-20260528-stagger-duplicate-timestamps",
   "title": "Sydney Opera House with 100 Agents",
   "intro": "BOOT runtime started · Sydney Opera House with 100 Agents · concise worker log aligned to updated video timestamps",
   "milestones": [
@@ -883,10 +883,10 @@
       "events": [
         {
           "groupId": "chunk-verification-start",
-          "time": "03:05.0",
+          "time": "03:03.8",
           "entries": [
             {
-              "time": "03:05.0",
+              "time": "03:03.8",
               "actor": "ProjectManager",
               "action": "Run final verification and cleanup checks.",
               "highlights": [
@@ -899,7 +899,7 @@
               ]
             },
             {
-              "time": "03:05.0",
+              "time": "03:04.6",
               "actor": "Worker-081..088",
               "action": "Complete Scaffold Cleaning trace.",
               "highlights": [

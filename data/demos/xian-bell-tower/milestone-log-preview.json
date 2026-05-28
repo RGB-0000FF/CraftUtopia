@@ -1,5 +1,5 @@
 {
-  "version": "xian-bell-tower-20260528-sydney-concise-log-sync-trace-details-worker-traces-no-remove-support",
+  "version": "xian-bell-tower-20260528-stagger-duplicate-timestamps",
   "title": "Xi'an Bell Tower with 100 Agents",
   "intro": "BOOT runtime started · Xi'an Bell Tower with 100 Agents · concise worker log aligned to skill timestamps",
   "milestones": [
@@ -772,10 +772,10 @@
             ],
             "unit": "work items"
           },
-          "time": "02:43.6",
+          "time": "02:44.1",
           "entries": [
             {
-              "time": "02:43.6",
+              "time": "02:44.1",
               "actor": "Foreman-E",
               "action": "Assign Workers 061-080.",
               "highlights": [
@@ -883,10 +883,10 @@
       "events": [
         {
           "groupId": "chunk-verification-start",
-          "time": "03:21.5",
+          "time": "03:20.8",
           "entries": [
             {
-              "time": "03:21.5",
+              "time": "03:20.8",
               "actor": "ProjectManager",
               "action": "Run final verification and cleanup checks.",
               "highlights": [
@@ -899,7 +899,7 @@
               ]
             },
             {
-              "time": "03:21.5",
+              "time": "03:21.2",
               "actor": "Worker-081..088",
               "action": "Complete Scaffold Cleaning trace.",
               "highlights": [
